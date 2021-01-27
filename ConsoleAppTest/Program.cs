@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows.Forms;
+using GeneralTool.General.WebExtensioins;
 
 namespace ConsoleAppTest
 {
@@ -14,22 +15,31 @@ namespace ConsoleAppTest
         [STAThread]
         private static void Main(string[] args)
         {
-            //RunFrm();
-            Form f1 = new Form();
-
-            //var m = GetMyStruct();
-            //Sys(f1);
-            //Console.WriteLine("1");
+            var tu = PageHelper.Pages(8, 9, 7);
 
 
+            for (int i = 1; i < 100; i++)
+            {
+                for (int j = i; j < 1000; j++)
+                {
+                    for (int k = 1; k < 100; k++)
+                    {
+                        var tt = PageHelper.Pages(i, j, k);
 
-            var my = GetMyStruct();
-            Custom(GetMyStruct());
-            Console.WriteLine("2");
+                        var count = tt.Item2 - tt.Item1 + 1;
+                        bool re = count == k || count == j;
+                        if (!re)
+                        {
+                            Console.WriteLine($"pageIndex:{i},pageSum:{j},pageCount:{k} == {re},result:{tt.Item1}--{tt.Item2}");
 
+                        }
+                        
+                    }
 
+                }
+            }
 
-
+            Console.WriteLine("完成");
             Console.ReadKey();
         }
 
