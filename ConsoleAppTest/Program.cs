@@ -7,6 +7,9 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows.Forms;
 using GeneralTool.General.WebExtensioins;
+using System.Net.Http;
+using Newtonsoft.Json;
+using GeneralTool.General.DataSetExtensions;
 
 namespace ConsoleAppTest
 {
@@ -15,32 +18,60 @@ namespace ConsoleAppTest
         [STAThread]
         private static void Main(string[] args)
         {
-            var tu = PageHelper.Pages(8, 9, 7);
-
-
-            for (int i = 1; i < 100; i++)
-            {
-                for (int j = i; j < 1000; j++)
-                {
-                    for (int k = 1; k < 100; k++)
-                    {
-                        var tt = PageHelper.Pages(i, j, k);
-
-                        var count = tt.Item2 - tt.Item1 + 1;
-                        bool re = count == k || count == j;
-                        if (!re)
-                        {
-                            Console.WriteLine($"pageIndex:{i},pageSum:{j},pageCount:{k} == {re},result:{tt.Item1}--{tt.Item2}");
-
-                        }
-                        
-                    }
-
-                }
-            }
+            // TestPostWcf();
+            TestTableConvert();
 
             Console.WriteLine("完成");
             Console.ReadKey();
+        }
+
+        private static void TestTableConvert()
+        {
+            var table = InitTable();
+            var doc = table.ToXmlDocument();
+            var dt = doc.ToDataTable();
+        }
+
+        private static async void TestPostWcf()
+        {
+            var Client = new HttpClient();
+
+            var table = InitTable();
+            var xmlStr = table.ToXmlString();
+            var json = JsonConvert.SerializeObject(new { table = xmlStr });
+
+
+            var content = new StringContent(json);
+
+
+            content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+            try
+            {
+                var resultConent = await Client.PostAsync("http://localhost:15500/ServiceAjax.svc/ParamterTable", content);
+
+                var result = await resultConent.Content.ReadAsStringAsync();
+
+            }
+            catch (Exception ex)
+            {
+            }
+        }
+
+        private static DataTable InitTable()
+        {
+            var table = new DataTable("ta");
+            table.Columns.Add("ID");
+            table.Columns.Add("Name");
+            for (int i = 0; i < 5; i++)
+            {
+                table.Rows.Add(i, i + 1);
+            }
+
+            table.AcceptChanges();
+            table.Rows.Add(1, "2");
+            table.Rows[0]["Name"] = "33";
+            table.Rows[1].Delete();
+            return table;
         }
 
         static MyStruct GetMyStruct()

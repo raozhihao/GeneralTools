@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.IO;
 using System.Linq;
+using System.Text;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace GeneralTool.General.DataSetExtensions
 {
@@ -252,6 +256,110 @@ namespace GeneralTool.General.DataSetExtensions
             OrderedEnumerableRowCollection<DataRow> resultTmp = dtTmp.AsEnumerable().OrderBy(keySelector);
             dtTmp.Dispose();
             return resultTmp;
+        }
+
+        /// <summary>
+        /// 将DataTable转为xml文档
+        /// </summary>
+        /// <param name="dt">要转换的表格</param>
+        /// <returns></returns>
+        public static XmlDocument ToXmlDocument(this DataTable dt)
+        {
+            //检查Table的名称是否为空
+            if (string.IsNullOrWhiteSpace(dt.TableName))
+            {
+                //如果为空,则给一个命名,一定要有名称
+                dt.TableName = "table";
+            }
+
+            //检查Table的命名空间是否为空
+            if (!string.IsNullOrWhiteSpace(dt.Namespace))
+            {
+                //如果不为空,则一定要删除它的命名空间
+                dt.Namespace = null;
+            }
+            var stream = new MemoryStream();
+            XmlSerializer xs = new XmlSerializer(dt.GetType());
+
+            XmlWriterSettings settings = new XmlWriterSettings()
+            {
+                CheckCharacters = true,
+                CloseOutput = true,
+                ConformanceLevel = ConformanceLevel.Auto,
+                Encoding = new UTF8Encoding(false),
+                DoNotEscapeUriAttributes = true,
+                NamespaceHandling = NamespaceHandling.OmitDuplicates,
+                NewLineHandling = NewLineHandling.Entitize,
+                NewLineOnAttributes = false,
+                OmitXmlDeclaration = false,
+                WriteEndDocumentOnClose = true
+            };
+            using (var writer = XmlWriter.Create(stream, settings))
+            {
+                xs.Serialize(stream, dt);
+            }
+
+            string xmlStr = Encoding.UTF8.GetString(stream.ToArray());
+            stream.Dispose();
+
+            //下面还需要做一些其它的事情,所以装载到xmldocument中
+            var xml = new XmlDocument();
+            xml.LoadXml(xmlStr);
+
+            //给根路径添加命名空间,这是必须的
+            xml.DocumentElement.SetAttribute("xmlns", "http://schemas.datacontract.org/2004/07/System.Data");
+            //创建一个空的命名空间,这也是必须的
+            var attr = xml.CreateAttribute("xmlns");
+            attr.Value = "";
+            //找到第一个子节点下的DocumentElement子节点(因为DataTable序列化后是固定的,所以直接下标获取)
+            var element = xml.DocumentElement.ChildNodes[1].ChildNodes[0];
+            //设置命名空间
+            element.Attributes.SetNamedItem(attr);
+            //找到所有的diffgr:before节点下的子节点
+            var elements = xml.DocumentElement.ChildNodes[1].ChildNodes[1].ChildNodes;
+            foreach (XmlNode node in elements)
+            {
+                //循环添加空命名空间,这是必须的
+                node.Attributes.SetNamedItem(attr);
+            }
+
+            return xml;
+        }
+
+        /// <summary>
+        /// 将DataTable转为xml字符串
+        /// </summary>
+        /// <param name="dt">要转换的表格</param>
+        /// <returns></returns>
+        public static string ToXmlString(this DataTable dt)
+        {
+            return dt.ToXmlDocument().OuterXml;
+        }
+
+        /// <summary>
+        /// 将xml文档转为DataTable
+        /// </summary>
+        /// <param name="xml">xml文档</param>
+        /// <returns></returns>
+        public static DataTable ToDataTable(this XmlDocument xml)
+        {
+            return xml.OuterXml.ToDataTable();
+        }
+
+        /// <summary>
+        /// 将xml文档转为DataTable
+        /// </summary>
+        /// <param name="xmlString">xml字符串</param>
+        /// <returns></returns>
+        public static DataTable ToDataTable(this string xmlString)
+        {
+            StringReader reader = new StringReader(xmlString);
+            XmlTextReader xr = new XmlTextReader(reader);
+            DataTable table = new DataTable();
+            table.ReadXml(xr);
+            reader.Dispose();
+            xr.Dispose();
+            return table;
         }
     }
 }
