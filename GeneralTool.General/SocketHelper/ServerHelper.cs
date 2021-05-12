@@ -1,10 +1,10 @@
-﻿using GeneralTool.General.Models;
-using GeneralTool.General.ReflectionHelper;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using GeneralTool.General.Models;
+using GeneralTool.General.ReflectionHelper;
 
 namespace GeneralTool.General.SocketHelper.Server
 {
@@ -13,7 +13,7 @@ namespace GeneralTool.General.SocketHelper.Server
     /// </summary>
     public class ServerHelper : IDisposable
     {
-        private System.Net.Sockets.Socket serverSocket;
+        private Socket serverSocket;
         private readonly System.Collections.Concurrent.ConcurrentDictionary<string, ReflectionClass> caches;
         private readonly System.Collections.Concurrent.ConcurrentDictionary<string, System.Net.Sockets.Socket> clients;
         private readonly SerializeHelpers serialize = new SerializeHelpers();
@@ -40,24 +40,14 @@ namespace GeneralTool.General.SocketHelper.Server
         /// <summary>
         /// 注册类型
         /// </summary>
-        /// <typeparam name="TInterface">接口类型</typeparam>
         /// <typeparam name="TCallType">实现 TInterface 的实际类型</typeparam>
         /// <returns></returns>
-        public bool RegisterClass<TInterface, TCallType>()
+        public bool RegisterClass<TCallType>()
         {
-            bool re = typeof(TInterface).IsInterface;
-            if (!re)
-            {
-                throw new Exception("参数 TInterface 不是一个接口类型");
-            }
 
             Type callType = typeof(TCallType);
-            re = callType.GetInterface(typeof(TInterface).Name) == null;
-            if (re)
-            {
-                throw new Exception("参数 callClass 未从参数 TInterface 继承");
-            }
-            string name = typeof(TInterface).Name;
+
+            string name = callType.Name;
             ReflectionClass reflection = new ReflectionClass(callType);
             if (caches.ContainsKey(name))
             {
@@ -75,25 +65,12 @@ namespace GeneralTool.General.SocketHelper.Server
         /// <summary>
         /// 注册类型
         /// </summary>
-        /// <typeparam name="TInterface">接口类型</typeparam>
         /// <param name="instance">实现 TInterface 的实际对象</param>
         /// <returns></returns>
-        public bool RegisterClass<TInterface>(object instance)
+        public bool RegisterClass(object instance)
         {
-            bool re = typeof(TInterface).IsInterface;
-            if (!re)
-            {
-                throw new Exception("参数 TInterface 不是一个接口类型");
-            }
-
             Type callType = instance.GetType();
-
-            re = callType.GetInterface(typeof(TInterface).Name) == null;
-            if (re)
-            {
-                throw new Exception("参数 callClass 未从参数 TInterface 继承");
-            }
-            string name = typeof(TInterface).Name;
+            string name = callType.Name;
             ReflectionClass reflection = new ReflectionClass(instance);
             if (caches.ContainsKey(name))
             {
@@ -108,7 +85,7 @@ namespace GeneralTool.General.SocketHelper.Server
         }
 
         /// <summary>
-        /// 开启侦听(在调用此方法之前,请先调用 <see cref="RegisterClass{TInterface, TCallType}"/> 或 <see cref="RegisterClass{TInterface}(object)"/>)
+        /// 开启侦听(在调用此方法之前,请先调用 <see cref="RegisterClass{ TCallType}"/> 或 <see cref="RegisterClass(object)"/>)
         /// </summary>
         /// <param name="backListenCount"> 挂起连接队列的最大长度。</param>
         /// <returns></returns>

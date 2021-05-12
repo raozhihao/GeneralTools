@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GeneralTool.General.Models
+﻿namespace GeneralTool.General.Models
 {
     /// <summary>
     /// 错误消息

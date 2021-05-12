@@ -10,6 +10,7 @@ using GeneralTool.General.WebExtensioins;
 using System.Net.Http;
 using Newtonsoft.Json;
 using GeneralTool.General.DataSetExtensions;
+using GeneralTool.General.ProcessHelpers;
 
 namespace ConsoleAppTest
 {
@@ -18,8 +19,10 @@ namespace ConsoleAppTest
         [STAThread]
         private static void Main(string[] args)
         {
-            // TestPostWcf();
-            TestTableConvert();
+            //// TestPostWcf();
+            //TestTableConvert();
+
+            ProcessHelper.Run(@"C:\Demo\DemoProject\MaterialWpf\bin\Debug\MaterialWpf.exe", out var result);
 
             Console.WriteLine("完成");
             Console.ReadKey();

@@ -1,0 +1,39 @@
+﻿<Window x:Class="WpfAppTest.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfAppTest"
+        xmlns:wpf="clr-namespace:GeneralTool.General.WPFHelper.Events;assembly=GeneralTool.General"
+        mc:Ignorable="d"
+        Title="MainWindow"
+        Height="450"
+        Width="800"
+        x:Name="window">
+
+    <wpf:EventHosts.EventCommands>
+        <wpf:EventHostCollection>
+            <wpf:EventHost Command="{Binding LoadCommand}"
+                           CommandParameter="{Binding ElementName=window,Path=Width}"
+                           EventName="Loaded" />
+
+        </wpf:EventHostCollection>
+    </wpf:EventHosts.EventCommands>
+
+    <DockPanel>
+
+        <wpf:EventHosts.EventCommands>
+            <wpf:EventHostCollection>
+                <wpf:EventHost Command="{Binding MoveCommand}"
+                               CommandParameter="{Binding ElementName=window,Path=Width}"
+                               EventName="MouseMove" />
+
+                <wpf:EventHost Command="{Binding RightClickCommand}"
+                               CommandParameter="{Binding ElementName=window,Path=Height}"
+                               EventName="MouseRightButtonDown" />
+            </wpf:EventHostCollection>
+        </wpf:EventHosts.EventCommands>
+        <TextBlock Text="{Binding ResultText}"
+                   DockPanel.Dock="Bottom" />
+    </DockPanel>
+</Window>

@@ -1,5 +1,4 @@
-﻿using GeneralTool.General.ValueTypeExtensions;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
@@ -7,6 +6,7 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using GeneralTool.General.ValueTypeExtensions;
 
 namespace GeneralTool.General
 {

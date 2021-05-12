@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleAppTest", "ConsoleAp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeneralTool.General", "GeneralTool.General\GeneralTool.General.csproj", "{41796E7D-0AC1-4330-BF92-0C3878AA58B3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfAppTest", "WpfAppTest\WpfAppTest.csproj", "{A3FE841F-B2F3-40FE-AF25-245C617316B0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{41796E7D-0AC1-4330-BF92-0C3878AA58B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{41796E7D-0AC1-4330-BF92-0C3878AA58B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{41796E7D-0AC1-4330-BF92-0C3878AA58B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3FE841F-B2F3-40FE-AF25-245C617316B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3FE841F-B2F3-40FE-AF25-245C617316B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3FE841F-B2F3-40FE-AF25-245C617316B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3FE841F-B2F3-40FE-AF25-245C617316B0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -57,6 +57,8 @@
     <Compile Include="ExceptionHelper\DesrializeException.cs" />
     <Compile Include="ExceptionHelper\ExceptionExtensions.cs" />
     <Compile Include="ExceptionHelper\SerializeException.cs" />
+    <Compile Include="IniHelpers\IniHelper.cs" />
+    <Compile Include="IniHelpers\Node.cs" />
     <Compile Include="IOExtensions\PathExtensions.cs" />
     <Compile Include="IPCHelper\IPCClientHelper.cs" />
     <Compile Include="IPCHelper\IPCServerHelper.cs" />
@@ -66,6 +68,7 @@
     <Compile Include="NetHelper\HttpHelper.cs" />
     <Compile Include="NetHelper\NetException\HttpGetRequestException.cs" />
     <Compile Include="NetHelper\PublicEnum.cs" />
+    <Compile Include="ProcessHelpers\ProcessHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SerializeExtensions.cs" />
     <Compile Include="SerializeHelpers.cs" />
@@ -92,6 +95,11 @@
       <DependentUpon>WaitView.xaml</DependentUpon>
     </Compile>
     <Compile Include="WPFHelper\DialogHelper\WaitViewModel.cs" />
+    <Compile Include="WPFHelper\Events\EventCommand.cs" />
+    <Compile Include="WPFHelper\Events\EventHost.cs" />
+    <Compile Include="WPFHelper\Events\EventHostCollection.cs" />
+    <Compile Include="WPFHelper\Events\EventHosts.cs" />
+    <Compile Include="WPFHelper\Events\IMyEventCommand.cs" />
     <Compile Include="WPFHelper\SimpleCommand.cs" />
     <Compile Include="WPFHelper\WPFControls\NoBorderWindow\NoBorderWindowExtenstion.cs" />
   </ItemGroup>
