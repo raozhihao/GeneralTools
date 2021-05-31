@@ -113,6 +113,9 @@ namespace GeneralTool.General.IniHelpers
             m_path = System.IO.Path.GetFullPath(path);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public IniHelper()
         {
             var path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Configs\\default.ini");
@@ -120,7 +123,11 @@ namespace GeneralTool.General.IniHelpers
             m_path = System.IO.Path.GetFullPath(path);
         }
 
-        private static Lazy<IniHelper> _instance = new Lazy<IniHelper>(() => new IniHelper());
+        private static readonly Lazy<IniHelper> _instance = new Lazy<IniHelper>(() => new IniHelper());
+
+        /// <summary>
+        /// Ini对象
+        /// </summary>
         public static IniHelper IniHelperInstance = _instance.Value;
 
         /// <summary>
@@ -245,8 +252,7 @@ namespace GeneralTool.General.IniHelpers
             if (String.IsNullOrEmpty(str))
                 return defaultValue;
 
-            double retval;
-            if (!Double.TryParse(str, NumberStyles.Float, CultureInfo.InvariantCulture, out retval))
+            if (!Double.TryParse(str, NumberStyles.Float, CultureInfo.InvariantCulture, out double retval))
                 retval = defaultValue;
 
             return retval;
@@ -273,8 +279,7 @@ namespace GeneralTool.General.IniHelpers
             if (String.IsNullOrEmpty(str))
                 return defaultValue;
 
-            bool retval;
-            if (!Boolean.TryParse(str, out retval))
+            if (!Boolean.TryParse(str, out bool retval))
             {
                 retval = defaultValue;
             }
@@ -282,6 +287,14 @@ namespace GeneralTool.General.IniHelpers
             return retval;
         }
 
+        /// <summary>
+        /// 获取值
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="sectionName"></param>
+        /// <param name="keyName"></param>
+        /// <param name="defaultVal"></param>
+        /// <returns></returns>
         public T GetValue<T>(string sectionName, string keyName, T defaultVal = default)
         {
             if (!this.InTypeCode<T>())
@@ -293,6 +306,12 @@ namespace GeneralTool.General.IniHelpers
             return (T)Convert.ChangeType(strTmp, typeof(T));
         }
 
+        /// <summary>
+        /// 获取值
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="Node"></param>
+        /// <returns></returns>
         public T GetValue<T>(Node<T> Node)
         {
             if (!this.InTypeCode<T>())
@@ -302,6 +321,12 @@ namespace GeneralTool.General.IniHelpers
             return GetValue<T>(Node.SectionName, Node.KeyName, Node.Value);
         }
 
+        /// <summary>
+        /// 获取值
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="node"></param>
+        /// <returns></returns>
         public T[] GetValues<T>(Node<T> node)
         {
             if (!this.InTypeCode<T>())
@@ -331,7 +356,7 @@ namespace GeneralTool.General.IniHelpers
 
         private bool InTypeCode<T>()
         {
-            return Enum.TryParse<TypeCode>(typeof(T).Name, out var result);
+            return Enum.TryParse<TypeCode>(typeof(T).Name, out _);
         }
         #endregion
 
@@ -693,13 +718,26 @@ namespace GeneralTool.General.IniHelpers
             WriteValue(sectionName, keyName, value.ToString(CultureInfo.InvariantCulture));
         }
 
-
+        /// <summary>
+        /// 写入值
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="sectionName"></param>
+        /// <param name="keyName"></param>
+        /// <param name="arrary"></param>
         public void WriteValue<T>(string sectionName, string keyName, IEnumerable<T> arrary)
         {
             var str = String.Join(",", arrary);
             this.WriteValue(sectionName, keyName, str);
         }
 
+        /// <summary>
+        /// 写入值
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="sectionName"></param>
+        /// <param name="keyName"></param>
+        /// <param name="item"></param>
         public void WriteValue<T>(string sectionName, string keyName, T item)
         {
 
@@ -712,6 +750,12 @@ namespace GeneralTool.General.IniHelpers
 
         }
 
+
+        /// <summary>
+        /// 写入值
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="node"></param>
         public void WriteValue<T>(Node<T> node)
         {
             this.WriteValue<T>(node.SectionName, node.KeyName, node.Value);

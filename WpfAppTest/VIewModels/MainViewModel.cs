@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Input;
 using GeneralTool.General.WPFHelper;
 using GeneralTool.General.WPFHelper.Events;
@@ -13,6 +14,7 @@ namespace WpfAppTest.VIewModels
         public EventCommand<MouseEventArgs> MoveCommand { get; set; }
         public EventCommand<MouseButtonEventArgs> RightClickCommand { get; set; }
         public EventCommand<RoutedEventArgs> LoadCommand { get; set; }
+        public EventCommand<MouseButtonEventArgs> TextClickCommand { get; set; }
 
 
         public MainViewModel()
@@ -20,6 +22,12 @@ namespace WpfAppTest.VIewModels
             this.MoveCommand = new EventCommand<MouseEventArgs>(DockPanelMouseMoveEventMethod);
             this.RightClickCommand = new EventCommand<MouseButtonEventArgs>(DockPanelMouseRightClickEventMethod);
             this.LoadCommand = new EventCommand<RoutedEventArgs>(WindowLoadedEventMethod);
+            this.TextClickCommand = new EventCommand<MouseButtonEventArgs>(TextClickEventMethod);
+        }
+
+        private void TextClickEventMethod(object sender, MouseButtonEventArgs e)
+        {
+            this.TextClickCommand.RemoveEvent();
         }
 
         private void WindowLoadedEventMethod(object sender, RoutedEventArgs e)

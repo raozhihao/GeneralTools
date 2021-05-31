@@ -96,17 +96,25 @@
     </Compile>
     <Compile Include="WPFHelper\DialogHelper\WaitViewModel.cs" />
     <Compile Include="WPFHelper\Events\EventCommand.cs" />
+    <Compile Include="WPFHelper\Events\EventCommandBind.cs" />
     <Compile Include="WPFHelper\Events\EventHost.cs" />
     <Compile Include="WPFHelper\Events\EventHostCollection.cs" />
     <Compile Include="WPFHelper\Events\EventHosts.cs" />
     <Compile Include="WPFHelper\Events\IMyEventCommand.cs" />
     <Compile Include="WPFHelper\SimpleCommand.cs" />
+    <Compile Include="WPFHelper\WPFControls\ImageViewControl.xaml.cs">
+      <DependentUpon>ImageViewControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WPFHelper\WPFControls\NoBorderWindow\NoBorderWindowExtenstion.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="WPFHelper\DialogHelper\WaitView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="WPFHelper\WPFControls\ImageViewControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="WPFHelper\WPFControls\NoBorderWindow\WindowResources.xaml">
       <Generator>MSBuild:Compile</Generator>

@@ -2,17 +2,17 @@
 <package >
   <metadata>
     <id>$id$</id>
-    <version>2.0.0.0</version>
+    <version>2.0.0.1</version>
     <title>GeneralTool.General</title>
     <authors>raozhihao</authors>
     <owners>raozhihao</owners>
-    <licenseUrl>http://LICENSE_URL_HERE_OR_DELETE_THIS_LINE</licenseUrl>
+    <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>
     <projectUrl>https://github.com/raozhihao/GeneralTools</projectUrl>
     <iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>封装的常用的扩展方法,包括Http请求,Linq扩展,IPC管道通信,使用Socket模拟的WCF服务通信,不需要打Serializable标记即可序列化的扩展等</description>
+    <description>封装的常用的扩展方法,包括Http请求,Linq扩展,IPC管道通信,INI文件使用,使用Socket模拟的WCF服务通信,不需要打Serializable标记即可序列化的扩展等</description>
     <releaseNotes>Summary of changes made in this release of the package.</releaseNotes>
     <copyright>Copyright 2020</copyright>
-    <tags>Tag1 Tag2</tags>
+    <tags>工具类</tags>
   </metadata>
 </package>

@@ -23,8 +23,7 @@ namespace GeneralTool.General.WPFHelper.Events
             if (e.NewValue == null)
                 return;
 
-            var eve = e.NewValue as EventHostCollection;
-            if (eve == null)
+            if (!(e.NewValue is EventHostCollection eve))
                 return;
 
             AddEventHost(d, eve);

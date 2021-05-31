@@ -34,6 +34,8 @@
             </wpf:EventHostCollection>
         </wpf:EventHosts.EventCommands>
         <TextBlock Text="{Binding ResultText}"
-                   DockPanel.Dock="Bottom" />
+                   DockPanel.Dock="Bottom"
+                   wpf:EventCommandBind.Command="{Binding TextClickCommand}"
+                   wpf:EventCommandBind.EventName="MouseDown" />
     </DockPanel>
 </Window>
