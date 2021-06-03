@@ -77,9 +77,83 @@ namespace GeneralTool.General.WPFHelper.WPFControls
             return c;
         }
 
+
+        /// <summary>
+        /// 向图像控件中增加右键菜单
+        /// </summary>
+        public static readonly DependencyProperty ImageContextMenus = DependencyProperty.RegisterAttached("ImageContextMenus", typeof(ContextItemCollection), typeof(ImageViewControl), new FrameworkPropertyMetadata(MenuItemsChanged));
+
+        private static void MenuItemsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (e.NewValue != null)
+            {
+                var list = e.NewValue as ContextItemCollection;
+                var c = d as ImageViewControl;
+                SetImageContextMenus(c, list);
+            }
+        }
+
+        /// <summary>
+        /// 设置工具按钮
+        /// </summary>
+        /// <param name="control"></param>
+        /// <param name="items"></param>
+        public static void SetImageContextMenus(ImageViewControl control, ContextItemCollection items)
+        {
+            if (control.Img.ContextMenu == null)
+            {
+                control.Img.ContextMenu = new ContextMenu();
+            }
+            foreach (var item in items)
+            {
+                _ = control.Img.ContextMenu.Items.Add(item);
+            }
+        }
+
+        /// <summary>
+        /// 获取工具按钮
+        /// </summary>
+        /// <param name="control"></param>
+        /// <returns></returns>
+        public static ContextItemCollection GetImageContextMenus(ImageViewControl control)
+        {
+            var c = new ContextItemCollection();
+            if (control.Img.ContextMenu == null)
+            {
+                return c;
+            }
+            foreach (MenuItem item in control.Img.ContextMenu.Items)
+            {
+                c.Add(item);
+            }
+            return c;
+        }
+
+
         #endregion
 
         #region 对外属性
+
+        /// <summary>
+        /// 保存当前点击的像素点坐标
+        /// </summary>
+        [Description("保存当前点击的像素点坐标"), Category("自定义属性")]
+        public Point CurrentPixelPoint { get; set; }
+        /// <summary>
+        /// 保存当前点击的屏幕坐标
+        /// </summary>
+        [Description("保存当前点击的屏幕坐标"), Category("自定义属性")]
+        public Point CurrentMousePoint { get; set; }
+
+        /// <summary>
+        /// 当前缩放倍数
+        /// </summary>
+        [Description("当前缩放倍数"), Category("自定义属性")]
+        public int ImageScale
+        {
+            get => Convert.ToInt32(this.Slider.GetValue(System.Windows.Controls.Slider.ValueProperty));
+            set => this.Slider.SetValue(System.Windows.Controls.Slider.ValueProperty, value * 1.0);
+        }
 
         /// <summary>
         /// 最大缩放倍数
@@ -167,6 +241,16 @@ namespace GeneralTool.General.WPFHelper.WPFControls
         }
 
         /// <summary>
+        /// 右侧工具条截图按钮显示状态
+        /// </summary>
+        [Description("右侧工具条截图按钮显示状态"), Category("自定义属性")]
+        public Visibility CutButtonVisibility
+        {
+            get => (Visibility)this.CutRectButton.GetValue(VisibilityProperty);
+            set => this.CutRectButton.SetValue(VisibilityProperty, value);
+        }
+
+        /// <summary>
         /// 确定截图按钮样式
         /// </summary>
         [Description("确定截图按钮样式"), Category("自定义属性")]
@@ -243,6 +327,16 @@ namespace GeneralTool.General.WPFHelper.WPFControls
             set => this.Img.Source = value;
         }
 
+        /// <summary>
+        /// 获取右铡工具条Panel
+        /// </summary>
+        public StackPanel ToolPanel { get => this.stackTools; }
+
+
+        /// <summary>
+        /// 获取图像MenuContext
+        /// </summary>
+        public ContextMenu ImageContextMenu { get => this.Img.ContextMenu; }
         #endregion
 
         #region 对外事件
@@ -271,9 +365,89 @@ namespace GeneralTool.General.WPFHelper.WPFControls
         [Description("在图像进行缩放时触发事件"), Category("自定义事件")]
         public event EventHandler<double> MouseWheelScaleEvent;
 
+        /// <summary>
+        /// 在图像进行缩放时触发事件
+        /// </summary>
+        [Description("在截图框状态更改时触发事件"), Category("自定义事件")]
+        public event EventHandler<Int32Rect> CutPanelVisibleChanged;
+
         #endregion
 
         #region 对外方法
+
+        /// <summary>
+        /// 获取右侧工具条的所有控件
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<object> GetToolPanelControls()
+        {
+            foreach (var item in this.stackTools.Children)
+            {
+                yield return item;
+            }
+        }
+
+        /// <summary>
+        /// 根据Tag获取右侧工具条的对应控件
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="tag"></param>
+        /// <returns></returns>
+        public T GetToolButton<T>(object tag)
+        {
+            foreach (var item in this.stackTools.Children)
+            {
+                if (item is Control c)
+                {
+                    if (c.Tag == null)
+                        continue;
+                    if (c.Tag.Equals(tag))
+                        return (T)item;
+                }
+            }
+            return default;
+        }
+
+        /// <summary>
+        /// 获取所有Image上的右键菜单项,如果有
+        /// </summary>
+        /// <returns></returns>
+        public List<object> GetImageMenuItems()
+        {
+            var objs = new List<object>();
+            if (this.Img.ContextMenu == null)
+                return objs;
+
+            foreach (var item in this.Img.ContextMenu.Items)
+            {
+                objs.Add(item);
+            }
+            return objs;
+        }
+
+        /// <summary>
+        /// 根据Tag获取Image上的右键菜单项,如果有
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="tag"></param>
+        /// <returns></returns>
+        public T GetMenuItem<T>(object tag)
+        {
+            if (this.Img.ContextMenu == null)
+                return default;
+
+            foreach (var item in this.Img.ContextMenu.Items)
+            {
+                if (item is Control c)
+                {
+                    if (c.Tag == null)
+                        continue;
+                    if (c.Tag.Equals(tag))
+                        return (T)item;
+                }
+            }
+            return default;
+        }
 
         /// <summary>
         /// 获取到当前的截取范围
@@ -489,16 +663,6 @@ namespace GeneralTool.General.WPFHelper.WPFControls
             //截取车头模板
             if (sender is ToggleButton toggle)
             {
-                foreach (UIElement item in this.stackTools.Children)
-                {
-                    if (item is ToggleButton t)
-                    {
-                        if (t != toggle)
-                        {
-                            t.IsChecked = false;
-                        }
-                    }
-                }
                 this.cuting = toggle.IsChecked.Value;
                 this.CutPanel.Visibility = this.cuting ? Visibility.Visible : Visibility.Collapsed;
                 this.CutRectangle.Visibility = this.cuting ? Visibility.Visible : Visibility.Collapsed;
@@ -622,7 +786,7 @@ namespace GeneralTool.General.WPFHelper.WPFControls
         {
             if (this.cuting)
             {
-                 this.StackMenu.Visibility = Visibility.Visible;
+                this.StackMenu.Visibility = Visibility.Visible;
                 this.CutRectangle.Fill = new SolidColorBrush(Color.FromArgb(30, 2, 3, 4));
 
                 this.cuting = false;
@@ -631,6 +795,9 @@ namespace GeneralTool.General.WPFHelper.WPFControls
                 var stPoint = this.CutRectangle.TranslatePoint(new Point(0, 0), this.Img);
                 if (stPoint.X < 0 || stPoint.Y < 0 || this.CutRectangle.Width <= 0 || this.CutRectangle.Height <= 0)
                     this.CutTempCancelClick(null, null);
+                else
+                    this.CutPanelVisibleChanged?.Invoke(sender, this.GetChooseRect());
+
             }
             this.isDrag = false;
             this.Cursor = null;
@@ -645,6 +812,8 @@ namespace GeneralTool.General.WPFHelper.WPFControls
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 this.ResizeAndDragCutRectangle(e);
+                if (CutPanel.Visibility == Visibility.Visible)
+                    this.CutPanelVisibleChanged?.Invoke(sender, this.GetChooseRect());
             }
             else
             {
@@ -862,6 +1031,8 @@ namespace GeneralTool.General.WPFHelper.WPFControls
 
         private void Img_MouseDown(object sender, MouseButtonEventArgs e)
         {
+            this.CurrentPixelPoint = this.GetCurrentPixelPoint(e);
+            this.CurrentMousePoint = e.GetPosition(this.ImageCanvas);
         }
 
         private void Img_MouseMove(object sender, MouseEventArgs e)
@@ -908,7 +1079,6 @@ namespace GeneralTool.General.WPFHelper.WPFControls
 
             this.CutImageDownEvent?.Invoke(sender, new ImageEventArgs(source, sucess, msg));
 
-            this.Slider.Value = 1;
             this.CutRectButton.IsChecked = false;
             this.isDrag = false;
             this.ClearRectangle();
@@ -939,13 +1109,13 @@ namespace GeneralTool.General.WPFHelper.WPFControls
 
         private void CutRectangle_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            if(e.RightButton== MouseButtonState.Pressed)
+            if (e.RightButton == MouseButtonState.Pressed)
             {
-                this.CutTempCancelClick(null,null);
+                this.CutTempCancelClick(null, null);
                 return;
             }
 
-            if(e.ClickCount>=2)
+            if (e.ClickCount >= 2)
             {
                 CutRectButton_Click(this.MenuOk, null);
                 return;
@@ -1007,6 +1177,19 @@ namespace GeneralTool.General.WPFHelper.WPFControls
     /// 工具箱按钮集合
     /// </summary>
     public class ToolButtonCollection : FreezableCollection<ButtonBase>
+    {
+
+        /// <inheritdoc/>
+        protected override bool FreezeCore(bool isChecking) => !isChecking;
+
+        /// <inheritdoc/>
+        protected override Freezable CreateInstanceCore() => new ToolButtonCollection();
+    }
+
+    /// <summary>
+    /// 工具箱按钮集合
+    /// </summary>
+    public class ContextItemCollection : FreezableCollection<MenuItem>
     {
 
         /// <inheritdoc/>

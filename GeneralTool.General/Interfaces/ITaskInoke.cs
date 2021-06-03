@@ -1,4 +1,5 @@
 ﻿using GeneralTool.General.Models;
+using GeneralTool.General.TaskLib;
 using System.Collections.Generic;
 
 namespace GeneralTool.General.Interfaces
@@ -13,7 +14,7 @@ namespace GeneralTool.General.Interfaces
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        Dictionary<string, DoTaskParameterItem> this[ITaskInoke obj]
+        Dictionary<string, DoTaskParameterItem> this[BaseTaskInvoke obj]
         {
             get;
         }
@@ -33,14 +34,14 @@ namespace GeneralTool.General.Interfaces
         /// <param name="ip"></param>
         /// <param name="port"></param>
         /// <returns></returns>
-        bool Open(string ip, int port, params object[] tartget);
+        bool Open(string ip, int port, params BaseTaskInvoke[] tartget);
 
         /// <summary>
         /// 不使用服务开启任务
         /// </summary>
         /// <param name="taskInokes">任务列表</param>
         /// <returns></returns>
-        bool OpenWithoutServer(params object[] taskInokes);
+        bool OpenWithoutServer(params BaseTaskInvoke[] taskInokes);
 
         /// <summary>
         /// 获取所有任务

@@ -101,12 +101,13 @@
                                 </StackPanel>
                             </StackPanel>
                             <Image Name="Img"
-                                   Source="C:\Ruizi\SmallCarWindow\SmallCarAutomation\bin\x64\Debug\carmera.bmp"
                                    MouseDown="Img_MouseDown"
                                    MouseMove="Img_MouseMove"
                                    Stretch="Uniform"
                                    Width="{Binding Path=ActualWidth, ElementName=ImageScroll}"
-                                   Height="{Binding Path=ActualHeight, ElementName=ImageScroll}" />
+                                   Height="{Binding Path=ActualHeight, ElementName=ImageScroll}">
+                               
+                            </Image>
                         </Canvas>
                     </ScrollViewer>
                 </Grid>

@@ -3,6 +3,8 @@ using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -19,8 +21,13 @@ namespace WpfAppTest
             this.ImageControl.ImageMouseMoveEvent += ImageControl_ImageMouseMoveEvent;
             //this.ImageControl.SaveCutImageEvent += ImageControl_SaveCutImageEvent;
             this.ImageControl.CutImageDownEvent += this.ImageControl_CutImageDownEvent;
-
+            this.ImageControl.CutPanelVisibleChanged += this.ImageControl_CutPanelVisibleChanged;
             this.ImageControl.SizeChanged += this.ImageControl_SizeChanged;
+        }
+
+        private void ImageControl_CutPanelVisibleChanged(object sender, Int32Rect e)
+        {
+            this.CutRect.Text = e + "";
         }
 
         private void ImageControl_CutImageDownEvent(object sender, GeneralTool.General.Models.ImageEventArgs e)
@@ -29,6 +36,11 @@ namespace WpfAppTest
                 this.ImageControl.ImageSource = e.Source;
             else
                 MessageBox.Show(e.ErroMsg);
+
+            this.ImageControl.ImageScale = 1;
+            var btn = this.ImageControl.GetToolButton<ToggleButton>("btn1");
+            var item = this.ImageControl.GetMenuItem<MenuItem>("btn1");
+            this.CheckRaise();
         }
 
         private void ImageControl_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -38,6 +50,7 @@ namespace WpfAppTest
             //{
             //    this.DrawRect(i);
             //});
+           
         }
        
         private void ImageControl_ImageMouseMoveEvent(Point obj)
@@ -86,6 +99,36 @@ namespace WpfAppTest
         private void Clear_click(object sender, RoutedEventArgs e)
         {
             this.ImageControl.ClearAll();
+        }
+
+        private void SetPoint(object sender, RoutedEventArgs e)
+        {
+            this.SetPosText.Text = this.ImageControl.CurrentPixelPoint + "";
+            this.ImageControl.SetPoint(this.ImageControl.CurrentPixelPoint, new SolidColorBrush(Colors.Red));
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+           
+            this.ImageControl.SendMouseCutRectStart();
+            
+            foreach (var item in this.ImageControl.ToolPanel.Children)
+            {
+                if (item.Equals(sender))
+                    continue;
+
+                if (item is ToggleButton b)
+                    b.IsChecked = false;
+            }
+        }
+
+        private void CheckRaise()
+        {
+            foreach (var item in this.ImageControl.ToolPanel.Children)
+            {
+                if (item is ToggleButton b)
+                    b.IsChecked = false;
+            }
         }
     }
 }

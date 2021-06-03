@@ -26,6 +26,11 @@
             <Setter Property="Padding"
                     Value="10" />
         </Style>
+        <Style x:Key="ToolCutButtonStyle"
+               TargetType="ContentControl">
+            <Setter Property="Visibility"
+                    Value="Visible" />
+        </Style>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -47,24 +52,45 @@
             <MenuItem Header="清除所有"
                       Click="Clear_click" />
         </Menu>
-        <UI:ImageViewControl x:Name="ImageControl"
-                             Grid.Row="1"
-                             MaxScaleValue="20"
-                             Background="DarkCyan"
-                             ToolExpanderVisibility="Visible"
-                             SliderVisibility="Visible"
-                             MenuOkContent="OK"
-                             ToolExpanderStyle="{StaticResource ToolStyle}"
-                             MenuOkStyle="{StaticResource MenuOkStyle}"
-                             SliderStyle="{StaticResource SliderStyle}">
-            <!--<UI:MyControl.ToolButtons>
-                <UI:ToolButtonCollection>
-                    <Button Content="XXX"/>
-                </UI:ToolButtonCollection>
-            </UI:MyControl.ToolButtons>-->
-        </UI:ImageViewControl>
+        <Grid Grid.Row="1" x:Name="can">
+            
+            <UI:ImageViewControl x:Name="ImageControl"
+                                 Width="{Binding ElementName=can,Path=Width}"
+                                 ImageSource="C:\Ruizi\SmallCarWindow\SmallCarAutomation\bin\x64\Debug\carmera.bmp"
+                                 MaxScaleValue="20"
+                                 Background="DarkCyan"
+                                 ToolExpanderVisibility="Visible"
+                                 SliderVisibility="Visible"
+                                 MenuOkContent="OK"
+                                 ToolExpanderStyle="{StaticResource ToolStyle}"
+                                 MenuOkStyle="{StaticResource MenuOkStyle}"
+                                 SliderStyle="{StaticResource SliderStyle}"
+                                 ToolCutButtonStyle="{StaticResource ToolCutButtonStyle}"
+                                 CutButtonVisibility="Collapsed">
+                <UI:ImageViewControl.ToolButtons>
+                    <UI:ToolButtonCollection>
+                        <ToggleButton Content="bbc"
+                                      Tag="btn1"
+                                      Click="Button_Click" />
+                    </UI:ToolButtonCollection>
+                </UI:ImageViewControl.ToolButtons>
+                <UI:ImageViewControl.ImageContextMenus>
+                    <UI:ContextItemCollection>
+                        <MenuItem Header="标记点位"
+                                  Tag="btn1"
+                                  Click="SetPoint" />
+                    </UI:ContextItemCollection>
+                </UI:ImageViewControl.ImageContextMenus>
+            </UI:ImageViewControl>
+        </Grid>
         <StatusBar Grid.Row="2">
-            <TextBlock x:Name="PosText" />
+            <TextBlock x:Name="PosText"
+                       Text="0,0" />
+            <TextBlock x:Name="CutRect"
+                       Margin="10 0"
+                       Text="2560,2048" />
+            <TextBlock x:Name="SetPosText"
+                       Margin="10 0" />
         </StatusBar>
     </Grid>
 </Window>

@@ -42,7 +42,7 @@ namespace GeneralTool.General.Logs
         public void Waring(string msg) => this.Log(msg, LogType.Waring);
 
         /// <inheritdoc/>
-        public void Error(string msg) => this.Log(msg, LogType.Erro);
+        public void Error(string msg) => this.Log(msg, LogType.Error);
 
         /// <inheritdoc/>
         public void Log(string msg, LogType logType = LogType.Info)

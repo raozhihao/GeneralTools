@@ -19,7 +19,7 @@ namespace GeneralTool.General.Enums
         /// <summary>
         /// 错误
         /// </summary>
-        Erro,
+        Error,
         /// <summary>
         /// 警告
         /// </summary>

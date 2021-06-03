@@ -13,7 +13,7 @@ namespace GeneralTool.General.TaskLib
     /// <summary>
     /// 任务对象
     /// </summary>
-    public class TaskManager
+    public class TaskManager:ITaskInoke
     {
         private string erroMsg;
 

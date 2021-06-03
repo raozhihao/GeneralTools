@@ -45,7 +45,7 @@ namespace TaskTest
                         log.Debug($"{LogType.Debug}");
                         break;
                     case 2:
-                        log.Error($"{LogType.Erro}");
+                        log.Error($"{LogType.Error}");
                         break;
                     case 3:
                         log.Waring($"{LogType.Waring}");
@@ -72,7 +72,7 @@ namespace TaskTest
                 case LogType.Debug:
                     Console.ForegroundColor = ConsoleColor.Gray;
                     break;
-                case LogType.Erro:
+                case LogType.Error:
                     Console.ForegroundColor = ConsoleColor.Red;
                     break;
                 case LogType.Waring:

@@ -27,7 +27,7 @@ namespace GeneralTool.General.TaskLib
         /// <summary>
         /// 日志
         /// </summary>
-        protected ILog Log { get; set; }
+        public ILog Log { get; set; }
 
         /// <summary>
         /// 
