@@ -1,0 +1,32 @@
+﻿using System;
+
+namespace GeneralTool.General.Enums
+{
+    /// <summary>
+    /// 日志类型
+    /// </summary>
+    [Flags]
+    public enum LogType
+    {
+        /// <summary>
+        /// Info
+        /// </summary>
+        Info,
+        /// <summary>
+        /// Debug
+        /// </summary>
+        Debug,
+        /// <summary>
+        /// 错误
+        /// </summary>
+        Erro,
+        /// <summary>
+        /// 警告
+        /// </summary>
+        Waring,
+        /// <summary>
+        /// 失败
+        /// </summary>
+        Fail
+    }
+}

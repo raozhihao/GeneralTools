@@ -6,12 +6,25 @@
         xmlns:local="clr-namespace:WpfAppTest"
         xmlns:UI="clr-namespace:GeneralTool.General.WPFHelper.WPFControls;assembly=GeneralTool.General"
         mc:Ignorable="d"
-        Title="ImageWindow" Height="450" Width="800">
+        Title="ImageWindow"
+        Height="741"
+        Width="948.333">
     <Window.Resources>
         <Style x:Key="SliderStyle"
                TargetType="Slider">
             <Setter Property="Background"
                     Value="OliveDrab" />
+        </Style>
+        <Style x:Key="MenuOkStyle"
+               TargetType="Button">
+            <Setter Property="Background"
+                    Value="Red" />
+        </Style>
+        <Style x:Key="ToolStyle"
+               TargetType="Expander"></Style>
+        <Style TargetType="MenuItem">
+            <Setter Property="Padding"
+                    Value="10" />
         </Style>
     </Window.Resources>
     <Grid>
@@ -35,11 +48,14 @@
                       Click="Clear_click" />
         </Menu>
         <UI:ImageViewControl x:Name="ImageControl"
-                      Grid.Row="1"
-                      MaxScaleValue="20"
-                      Background="DarkCyan"
-                      ToolExpanderVisibility="Visible"
-                      SliderVisibility="Visible"
+                             Grid.Row="1"
+                             MaxScaleValue="20"
+                             Background="DarkCyan"
+                             ToolExpanderVisibility="Visible"
+                             SliderVisibility="Visible"
+                             MenuOkContent="OK"
+                             ToolExpanderStyle="{StaticResource ToolStyle}"
+                             MenuOkStyle="{StaticResource MenuOkStyle}"
                              SliderStyle="{StaticResource SliderStyle}">
             <!--<UI:MyControl.ToolButtons>
                 <UI:ToolButtonCollection>

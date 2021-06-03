@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GeneralTool.General.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
@@ -8,7 +9,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using System.Linq;
 
 namespace GeneralTool.General.WPFHelper.WPFControls
 {
@@ -127,6 +127,16 @@ namespace GeneralTool.General.WPFHelper.WPFControls
         }
 
         /// <summary>
+        /// 右侧工具条样式
+        /// </summary>
+        [Description("右侧工具条样式"), Category("自定义属性")]
+        public Style ToolExpanderStyle
+        {
+            get => (Style)this.ToolExpander.GetValue(StyleProperty);
+            set => this.ToolExpander.SetValue(StyleProperty, value);
+        }
+
+        /// <summary>
         /// 右侧工具条截图按钮样式
         /// </summary>
         [Description("右侧工具条截图按钮样式"), Category("自定义属性")]
@@ -147,13 +157,26 @@ namespace GeneralTool.General.WPFHelper.WPFControls
         }
 
         /// <summary>
+        /// 右侧工具条截图按钮提示文字
+        /// </summary>
+        [Description("右侧工具条截图按钮提示文字"), Category("自定义属性")]
+        public string CutButtonToolTip
+        {
+            get => (string)this.CutRectButton.GetValue(ToolTipProperty);
+            set => this.CutRectButton.SetValue(ToolTipProperty, value);
+        }
+
+        /// <summary>
         /// 确定截图按钮样式
         /// </summary>
         [Description("确定截图按钮样式"), Category("自定义属性")]
         public Style MenuOkStyle
         {
             get => (Style)this.MenuOk.GetValue(StyleProperty);
-            set => this.MenuOk.SetValue(StyleProperty, value);
+            set
+            {
+                this.MenuOk.SetValue(StyleProperty, value);
+            }
         }
 
         /// <summary>
@@ -163,7 +186,35 @@ namespace GeneralTool.General.WPFHelper.WPFControls
         public Style MenuCancelStyle
         {
             get => (Style)this.MenuCancel.GetValue(StyleProperty);
-            set => this.MenuCancel.SetValue(StyleProperty, value);
+            set
+            {
+                this.MenuCancel.SetValue(StyleProperty, value);
+            }
+        }
+
+        /// <summary>
+        /// 确定截图按钮内容
+        /// </summary>
+        [Description("确定截图按钮内容"), Category("自定义属性")]
+        public object MenuOkContent
+        {
+            get => this.MenuOk.GetValue(ContentProperty);
+            set
+            {
+                this.MenuOk.SetValue(ContentProperty, value);
+            }
+        }
+        /// <summary>
+        /// 取消截图按钮内容
+        /// </summary>
+        [Description("取消截图按钮内容"), Category("自定义属性")]
+        public object MenuCancelContent
+        {
+            get => this.MenuCancel.GetValue(ContentProperty);
+            set
+            {
+                this.MenuCancel.SetValue(ContentProperty, value);
+            }
         }
 
         /// <summary>
@@ -212,7 +263,7 @@ namespace GeneralTool.General.WPFHelper.WPFControls
         /// 确定截图成功后触发事件
         /// </summary>
         [Description("确定截图成功后触发事件"), Category("自定义事件")]
-        public event EventHandler<BitmapSource> CutImageDownEvent;
+        public event EventHandler<ImageEventArgs> CutImageDownEvent;
 
         /// <summary>
         /// 在图像进行缩放时触发事件
@@ -406,6 +457,7 @@ namespace GeneralTool.General.WPFHelper.WPFControls
                 return;
             }
             rect.Tag = drawRect;
+
             Canvas.SetLeft(rect, pos.X);
             Canvas.SetTop(rect, pos.Y);
         }
@@ -558,7 +610,6 @@ namespace GeneralTool.General.WPFHelper.WPFControls
                 //清除截取框的移动轨迹,否则下一次截图将会受其影响
                 if (this.CutPanel.Visibility == Visibility.Collapsed)
                 {
-
                     this.cutTrans.X = this.cutTrans.Y = 0;
                 }
             }
@@ -571,9 +622,15 @@ namespace GeneralTool.General.WPFHelper.WPFControls
         {
             if (this.cuting)
             {
+                 this.StackMenu.Visibility = Visibility.Visible;
                 this.CutRectangle.Fill = new SolidColorBrush(Color.FromArgb(30, 2, 3, 4));
-                this.StackMenu.Visibility = Visibility.Visible;
+
                 this.cuting = false;
+
+                //如果不在范围内,则不显示了
+                var stPoint = this.CutRectangle.TranslatePoint(new Point(0, 0), this.Img);
+                if (stPoint.X < 0 || stPoint.Y < 0 || this.CutRectangle.Width <= 0 || this.CutRectangle.Height <= 0)
+                    this.CutTempCancelClick(null, null);
             }
             this.isDrag = false;
             this.Cursor = null;
@@ -594,7 +651,7 @@ namespace GeneralTool.General.WPFHelper.WPFControls
                 this.ShowSizeInCutRectangleCursors();
             }
 
-            if (e.LeftButton == MouseButtonState.Pressed && cuting)
+            if (e.LeftButton == MouseButtonState.Pressed && cuting && sender is Image)
             {
                 this.DrawRectangle(e);
             }
@@ -738,6 +795,19 @@ namespace GeneralTool.General.WPFHelper.WPFControls
                 //计算拖动距离
                 var disY = mousePoint.Y - this.dragPoint.Y;
                 var disX = mousePoint.X - this.dragPoint.X;
+
+                //查看有无越界
+                var startPoint = this.CutRectangle.TranslatePoint(new Point(0, 0), this.Img);
+                if ((startPoint.X + disX + this.CutRectangle.Width) >= this.Img.ActualWidth)
+                    return;
+                if ((startPoint.Y + disY + this.CutRectangle.Height) >= this.Img.ActualHeight)
+                    return;
+                if (startPoint.Y + disY <= 0)
+                    return;
+                if (startPoint.X + disX <= 0)
+                    return;
+
+
                 this.cutTrans.X += disX;
                 this.cutTrans.Y += disY;
                 this.dragPoint = mousePoint;
@@ -798,6 +868,7 @@ namespace GeneralTool.General.WPFHelper.WPFControls
         {
             var point = this.GetCurrentPixelPoint(e);
             this.ImageMouseMoveEvent?.Invoke(point);
+            this.Canvas_MouseMove(this.Img, e);
             // this.lbPosition.Text = point.X + Environment.NewLine + point.Y;
         }
 
@@ -821,7 +892,22 @@ namespace GeneralTool.General.WPFHelper.WPFControls
         {
             this.CutPanel.Visibility = Visibility.Collapsed;
             this.CutImageEvent?.Invoke(sender, this.GetChooseRect());
-            this.CutImageDownEvent?.Invoke(sender, this.GetChooseRectImageSouce());
+
+            var sucess = false;
+            var msg = "";
+            BitmapSource source = null;
+            try
+            {
+                source = this.GetChooseRectImageSouce();
+                sucess = true;
+            }
+            catch (Exception ex)
+            {
+                msg = ex.Message;
+            }
+
+            this.CutImageDownEvent?.Invoke(sender, new ImageEventArgs(source, sucess, msg));
+
             this.Slider.Value = 1;
             this.CutRectButton.IsChecked = false;
             this.isDrag = false;
@@ -853,6 +939,17 @@ namespace GeneralTool.General.WPFHelper.WPFControls
 
         private void CutRectangle_MouseDown(object sender, MouseButtonEventArgs e)
         {
+            if(e.RightButton== MouseButtonState.Pressed)
+            {
+                this.CutTempCancelClick(null,null);
+                return;
+            }
+
+            if(e.ClickCount>=2)
+            {
+                CutRectButton_Click(this.MenuOk, null);
+                return;
+            }
             if (this.Cursor != null)
             {
                 return;

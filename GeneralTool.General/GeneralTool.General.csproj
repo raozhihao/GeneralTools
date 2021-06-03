@@ -51,20 +51,45 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\AttributeExtensions.cs" />
+    <Compile Include="Attributes\RouteAttribute.cs" />
+    <Compile Include="Attributes\WaterMarkAttribute.cs" />
     <Compile Include="DataSetExtensions\DataRowEqualityComparer.cs" />
     <Compile Include="DataSetExtensions\DataTableExtensions.cs" />
+    <Compile Include="Enums\AttachDataType.cs" />
+    <Compile Include="Enums\LogType.cs" />
+    <Compile Include="Enums\RecEncodingType.cs" />
+    <Compile Include="Enums\RequestStateCode.cs" />
     <Compile Include="EqualityComparer.cs" />
     <Compile Include="ExceptionHelper\DesrializeException.cs" />
     <Compile Include="ExceptionHelper\ExceptionExtensions.cs" />
+    <Compile Include="ExceptionHelper\IPException.cs" />
     <Compile Include="ExceptionHelper\SerializeException.cs" />
+    <Compile Include="ExceptionHelper\TypeNotEqualsException.cs" />
     <Compile Include="IniHelpers\IniHelper.cs" />
     <Compile Include="IniHelpers\Node.cs" />
+    <Compile Include="Interfaces\IClientHelper.cs" />
+    <Compile Include="Interfaces\IJsonConvert.cs" />
+    <Compile Include="Interfaces\Ilog.cs" />
+    <Compile Include="Interfaces\ITaskInoke.cs" />
     <Compile Include="IOExtensions\PathExtensions.cs" />
     <Compile Include="IPCHelper\IPCClientHelper.cs" />
     <Compile Include="IPCHelper\IPCServerHelper.cs" />
     <Compile Include="LinqExtensions\ArraryExtensions.cs" />
     <Compile Include="LinqExtensions\IEnumerableExtensions.cs" />
+    <Compile Include="Logs\ConsoleLogInfo.cs" />
+    <Compile Include="Logs\FileInfoLog.cs" />
+    <Compile Include="Models\DoTaskParameterItem.cs" />
+    <Compile Include="Models\ImageEventArgs.cs" />
+    <Compile Include="Models\IP.cs" />
+    <Compile Include="Models\LogMessageInfo.cs" />
+    <Compile Include="Models\ParameterItem.cs" />
+    <Compile Include="Models\ParamterConvertItem.cs" />
     <Compile Include="Models\ProxyErroModel.cs" />
+    <Compile Include="Models\RequestAddressItem.cs" />
+    <Compile Include="Models\ServerRequest.cs" />
+    <Compile Include="Models\ServerResponse.cs" />
+    <Compile Include="Models\SocketLinkObject.cs" />
     <Compile Include="NetHelper\HttpHelper.cs" />
     <Compile Include="NetHelper\NetException\HttpGetRequestException.cs" />
     <Compile Include="NetHelper\PublicEnum.cs" />
@@ -72,6 +97,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SerializeExtensions.cs" />
     <Compile Include="SerializeHelpers.cs" />
+    <Compile Include="SerialPortEx\SerialControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="SerialPortEx\SerialRequest.cs" />
+    <Compile Include="SerialPortEx\SerialResponse.cs" />
     <Compile Include="SocketHelper\ClientFactory.cs" />
     <Compile Include="SocketHelper\ClientHelper.cs" />
     <Compile Include="SocketHelper\ClientProxy.cs" />
@@ -83,8 +113,18 @@
     <Compile Include="ExceptionHelper\SocketConnectException.cs" />
     <Compile Include="SocketHelper\SocketExtensions.cs" />
     <Compile Include="SocketHelper\TempeleteBuilder.cs" />
+    <Compile Include="TaskExtensions\DelegateExtensions.cs" />
+    <Compile Include="TaskLib\BaseJsonCovert.cs" />
+    <Compile Include="TaskLib\BaseTaskInvoke.cs" />
+    <Compile Include="TaskLib\TaskManager.cs" />
+    <Compile Include="TaskLib\RecDataObject.cs" />
+    <Compile Include="TaskLib\ServerStation.cs" />
+    <Compile Include="TaskLib\SocketMast.cs" />
+    <Compile Include="TaskLib\SocketServer.cs" />
+    <Compile Include="TaskLib\Station.cs" />
     <Compile Include="ValueTypeExtensions\ByteExtensions.cs" />
     <Compile Include="ValueTypeExtensions\EnumExtensions.cs" />
+    <Compile Include="ValueTypeExtensions\Int32Extensions.cs" />
     <Compile Include="ValueTypeExtensions\StringExtensions.cs" />
     <Compile Include="WebExtensioins\PageHelper.cs" />
     <Compile Include="WebExtensioins\QueryHelpers.cs" />

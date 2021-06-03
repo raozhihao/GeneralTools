@@ -1,5 +1,5 @@
-﻿using System;
-using GeneralTool.General.Models;
+﻿using GeneralTool.General.Models;
+using System;
 
 namespace GeneralTool.General.SocketHelper
 {

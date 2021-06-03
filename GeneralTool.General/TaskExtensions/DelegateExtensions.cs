@@ -1,7 +1,7 @@
-﻿using System;
+﻿using GeneralTool.General.ExceptionHelper;
+using System;
 using System.Reflection;
 using System.Threading.Tasks;
-using GeneralTool.General.ExceptionHelper;
 
 namespace GeneralTool.General.TaskExtensions
 {

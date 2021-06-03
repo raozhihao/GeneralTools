@@ -1,8 +1,7 @@
-﻿using System;
+﻿using GeneralTool.General.WPFHelper;
+using GeneralTool.General.WPFHelper.Events;
 using System.Windows;
 using System.Windows.Input;
-using GeneralTool.General.WPFHelper;
-using GeneralTool.General.WPFHelper.Events;
 
 namespace WpfAppTest.VIewModels
 {

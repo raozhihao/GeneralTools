@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Xml.Serialization;
 
 namespace GeneralTool.General
@@ -39,6 +40,18 @@ namespace GeneralTool.General
         {
             var serialize = new System.Web.Script.Serialization.JavaScriptSerializer();
             return serialize.Deserialize<T>(jsonStr);
+        }
+
+        /// <summary>
+        /// 将字符串反序列化回对象
+        /// </summary>
+        /// <param name="jsonStr"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public static object DeserializeJsonToObject(this string jsonStr, Type type)
+        {
+            var serialize = new System.Web.Script.Serialization.JavaScriptSerializer();
+            return serialize.Deserialize(jsonStr, type);
         }
         /// <summary>
         /// 将字节数组转换回指定对象,使用该方法的前提是使用<see cref="Serialize(object)"/>方法转换的字节数组
