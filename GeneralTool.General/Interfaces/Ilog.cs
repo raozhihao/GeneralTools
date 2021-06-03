@@ -47,7 +47,7 @@ namespace GeneralTool.General.Interfaces
         /// </summary>
         /// <param name="msg"></param>
         /// <returns></returns>
-        void Erro(string msg);
+        void Error(string msg);
 
         /// <summary>
         /// 写入信息

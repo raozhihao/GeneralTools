@@ -164,7 +164,7 @@ namespace GeneralTool.General.TaskLib
         }
 
         /// <inheritdoc/>
-        public Dictionary<string, DoTaskParameterItem> this[ITaskInoke obj]
+        public Dictionary<string, DoTaskParameterItem> this[BaseTaskInvoke obj]
         {
             get
             {
@@ -263,7 +263,7 @@ namespace GeneralTool.General.TaskLib
 
                             if (this.TaskParameterItems.ContainsKey(key))
                             {
-                                this.log.Erro($"已经存在 {key} ,跳过不加入");
+                                this.log.Error($"已经存在 {key} ,跳过不加入");
                             }
                             else
                             {

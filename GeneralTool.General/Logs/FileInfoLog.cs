@@ -42,7 +42,7 @@ namespace GeneralTool.General.Logs
         public void Waring(string msg) => this.Log(msg, LogType.Waring);
 
         /// <inheritdoc/>
-        public void Erro(string msg) => this.Log(msg, LogType.Erro);
+        public void Error(string msg) => this.Log(msg, LogType.Erro);
 
         /// <inheritdoc/>
         public void Log(string msg, LogType logType = LogType.Info)
@@ -50,7 +50,7 @@ namespace GeneralTool.General.Logs
             try
             {
                 this.LogEvent?.Invoke(this, new LogMessageInfo(msg, logType));
-                msg += Environment.NewLine;
+                msg = $"{DateTime.Now} : {msg}{Environment.NewLine}";
                 string fileName = Path.Combine(this.logPathDir, DateTime.Now.ToString("yyyy-MM-dd_1") + ".log");
                 var fileInfo = new FileInfo(fileName);
                 if (fileInfo.Exists)

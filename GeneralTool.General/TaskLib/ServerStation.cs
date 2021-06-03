@@ -138,7 +138,7 @@ namespace GeneralTool.General.TaskLib
             bool result;
             if (flag)
             {
-                this.log.Erro($"类型: {target} 方法: {url} 已存在,不添加");
+                this.log.Error($"类型: {target} 方法: {url} 已存在,不添加");
                 result = false;
             }
             else
