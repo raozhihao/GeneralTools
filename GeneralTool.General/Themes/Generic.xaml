@@ -1,0 +1,11 @@
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:wp="clr-namespace:GeneralTool.General.WPFHelper.WPFControls">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/GeneralTool.General;component/Themes/ImageViewControl.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+    <!--  set up default styles for our custom controls  -->
+    <Style TargetType="{x:Type wp:ImageViewControl}"
+           BasedOn="{StaticResource ImageViewControl}" />
+</ResourceDictionary>

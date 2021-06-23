@@ -78,7 +78,7 @@ namespace GeneralTool.General.TaskExtensions
         {
             if (reTryCount == 0)
             {
-                Console.WriteLine("重试完成");
+                System.Diagnostics.Trace.WriteLine("重试完成");
                 return default;
             }
             CheckType<T>(handler.Method, args);
@@ -92,7 +92,7 @@ namespace GeneralTool.General.TaskExtensions
             {
                 var exMsg = ex.GetInnerExceptionMessage();
                 string msg = $"任务执行失败,失败消息:{exMsg + Environment.NewLine}当前执行间隔:{reTryTime},当前次数剩余{--reTryCount},准备进行下一次尝试";
-                Console.WriteLine(msg);
+                System.Diagnostics.Trace.WriteLine(msg);
                 lastErroMsg = exMsg;
                 System.Threading.Thread.Sleep(reTryTime);
                 return handler.Retry<T>(reTryTime, reTryCount, args);
@@ -114,7 +114,7 @@ namespace GeneralTool.General.TaskExtensions
         {
             if (reTryCount == 0)
             {
-                Console.WriteLine("重试完成");
+                System.Diagnostics.Trace.WriteLine("重试完成");
                 return new Result<T>() { LastErroMsg = lastErroMsg, ResultBool = false, ResultItem = default };
             }
             CheckType<T>(handler.Method, args);
@@ -128,7 +128,7 @@ namespace GeneralTool.General.TaskExtensions
             {
                 var exMsg = ex.GetInnerExceptionMessage();
                 string msg = $"任务执行失败,失败消息:{exMsg + Environment.NewLine}当前执行间隔:{reTryTime},当前次数剩余{--reTryCount},准备进行下一次尝试";
-                Console.WriteLine(msg);
+                System.Diagnostics.Trace.WriteLine(msg);
                 lastErroMsg = exMsg;
                 System.Threading.Thread.Sleep(reTryTime);
                 return handler.RetryResult<T>(reTryTime, reTryCount, args);
@@ -156,7 +156,7 @@ namespace GeneralTool.General.TaskExtensions
         {
             if (reTryCount == 0)
             {
-                Console.WriteLine("重试完成");
+                System.Diagnostics.Trace.WriteLine("重试完成");
                 return default;
             }
 
@@ -172,7 +172,7 @@ namespace GeneralTool.General.TaskExtensions
             {
                 var exMsg = ex.GetInnerExceptionMessage();
                 string msg = $"任务执行失败,失败消息:{exMsg + Environment.NewLine}当前执行间隔:{reTryTime},当前次数剩余{--reTryCount},准备进行下一次尝试";
-                Console.WriteLine(msg);
+                System.Diagnostics.Trace.WriteLine(msg);
                 lastErroMsg = exMsg;
                 await Task.Delay(reTryTime);
                 return await handler.RetryAsync<T>(reTryTime, reTryCount, args);
@@ -194,7 +194,7 @@ namespace GeneralTool.General.TaskExtensions
         {
             if (reTryCount == 0)
             {
-                Console.WriteLine("重试完成");
+                System.Diagnostics.Trace.WriteLine("重试完成");
                 return new Result<T>() { LastErroMsg = lastErroMsg, ResultBool = false, ResultItem = default }; ;
             }
 
@@ -210,7 +210,7 @@ namespace GeneralTool.General.TaskExtensions
             {
                 var exMsg = ex.GetInnerExceptionMessage();
                 string msg = $"任务执行失败,失败消息:{exMsg + Environment.NewLine}当前执行间隔:{reTryTime},当前次数剩余{--reTryCount},准备进行下一次尝试";
-                Console.WriteLine(msg);
+                System.Diagnostics.Trace.WriteLine(msg);
                 lastErroMsg = exMsg;
                 await Task.Delay(reTryTime);
                 return await handler.RetryResultAsync<T>(reTryTime, reTryCount, args);

@@ -1,5 +1,6 @@
 ﻿using GeneralTool.General.Enums;
 using GeneralTool.General.Interfaces;
+using GeneralTool.General.Logs;
 using GeneralTool.General.Models;
 using System;
 using System.Collections.Generic;
@@ -9,22 +10,26 @@ namespace GeneralTool.General.TaskLib
 {
     internal class ServerStation
     {
-        private readonly IJsonConvert jsonCovert;
+        private readonly IJsonConvert _jsonCovert;
         private Dictionary<string, RequestAddressItem> RequestRoute { get; set; } = new Dictionary<string, RequestAddressItem>();
 
 
         private Dictionary<string, ParamterConvertItem> ParamterConverters { get; set; } = new Dictionary<string, ParamterConvertItem>();
 
-
-        public SocketServer SocketServer { get; set; } = new SocketServer();
+        public SocketServer SocketServer { get; set; }
 
 
         private readonly ILog log;
         public ServerStation(IJsonConvert jsonConvert = null, ILog log = null)
         {
+            if (log == null)
+                log = new ConsoleLogInfo();
             if (jsonConvert == null)
-                this.jsonCovert = new BaseJsonCovert();
+                jsonConvert = new BaseJsonCovert();
+
+            this._jsonCovert = jsonConvert;
             this.log = log;
+            this.SocketServer = new SocketServer(log);
             this.SocketServer.RecDataEvent += this.SocketServer_RecDataEvent;
         }
 
@@ -41,7 +46,7 @@ namespace GeneralTool.General.TaskLib
                 ServerRequest serverRequest = null;
                 try
                 {
-                    serverRequest = jsonCovert.DeserializeObject<ServerRequest>(obj.StringDatas);
+                    serverRequest = _jsonCovert.DeserializeObject<ServerRequest>(obj.StringDatas);
                     log.Debug($"获取到客户端调用:{serverRequest.Url}");
                 }
                 catch (Exception ex)
@@ -82,7 +87,7 @@ namespace GeneralTool.General.TaskLib
                                 }
                                 else
                                 {
-                                    array[parameterInfo.Position] = jsonCovert.DeserializeObject(value, parameterInfo.ParameterType);
+                                    array[parameterInfo.Position] = _jsonCovert.DeserializeObject(value, parameterInfo.ParameterType);
                                 }
                             }
                             try
@@ -127,7 +132,7 @@ namespace GeneralTool.General.TaskLib
             }
             finally
             {
-                this.SocketServer.Send(jsonCovert.SerializeObject(serverResponse), obj.Socket);
+                this.SocketServer.Send(_jsonCovert.SerializeObject(serverResponse), obj.Socket);
             }
         }
 
@@ -192,7 +197,7 @@ namespace GeneralTool.General.TaskLib
             this.SocketServer.IsDelMsgAsyn = true;
             this.SocketServer.IsReciverForAll = true;
             this.SocketServer.InitSocket(ip, port);
-            this.SocketServer.Start();
+            this.SocketServer.Connect();
             return true;
         }
 

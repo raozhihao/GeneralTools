@@ -9,9 +9,11 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>GeneralTool.General</RootNamespace>
     <AssemblyName>GeneralTool.General</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -22,7 +24,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Debug\GeneralTool.General.xml</DocumentationFile>
-    <CheckForOverflowUnderflow>true</CheckForOverflowUnderflow>
+    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -57,6 +59,7 @@
     <Compile Include="DataSetExtensions\DataRowEqualityComparer.cs" />
     <Compile Include="DataSetExtensions\DataTableExtensions.cs" />
     <Compile Include="Enums\AttachDataType.cs" />
+    <Compile Include="Enums\BitmapEncoderEnum.cs" />
     <Compile Include="Enums\LogType.cs" />
     <Compile Include="Enums\RecEncodingType.cs" />
     <Compile Include="Enums\RequestStateCode.cs" />
@@ -82,6 +85,7 @@
     <Compile Include="Models\DoTaskParameterItem.cs" />
     <Compile Include="Models\ImageEventArgs.cs" />
     <Compile Include="Models\IP.cs" />
+    <Compile Include="Models\LogMessage.cs" />
     <Compile Include="Models\LogMessageInfo.cs" />
     <Compile Include="Models\ParameterItem.cs" />
     <Compile Include="Models\ParamterConvertItem.cs" />
@@ -116,6 +120,7 @@
     <Compile Include="TaskExtensions\DelegateExtensions.cs" />
     <Compile Include="TaskLib\BaseJsonCovert.cs" />
     <Compile Include="TaskLib\BaseTaskInvoke.cs" />
+    <Compile Include="TaskLib\SocketClient.cs" />
     <Compile Include="TaskLib\TaskManager.cs" />
     <Compile Include="TaskLib\RecDataObject.cs" />
     <Compile Include="TaskLib\ServerStation.cs" />
@@ -130,6 +135,7 @@
     <Compile Include="WebExtensioins\QueryHelpers.cs" />
     <Compile Include="WinForm\WaitLoadHelper.cs" />
     <Compile Include="WPFHelper\BaseNotifyModel.cs" />
+    <Compile Include="WPFHelper\BitmapSouceExtension.cs" />
     <Compile Include="WPFHelper\DialogHelper\WaitProgressHelper.cs" />
     <Compile Include="WPFHelper\DialogHelper\WaitView.xaml.cs">
       <DependentUpon>WaitView.xaml</DependentUpon>
@@ -141,20 +147,30 @@
     <Compile Include="WPFHelper\Events\EventHostCollection.cs" />
     <Compile Include="WPFHelper\Events\EventHosts.cs" />
     <Compile Include="WPFHelper\Events\IMyEventCommand.cs" />
+    <Compile Include="WPFHelper\Extensions\DataGridScrollHelper.cs" />
+    <Compile Include="WPFHelper\Extensions\DialogResultDependencyProperty.cs" />
+    <Compile Include="WPFHelper\Extensions\DoTaskParameterConvert.cs" />
+    <Compile Include="WPFHelper\Extensions\ScrollViewerExtensions.cs" />
     <Compile Include="WPFHelper\SimpleCommand.cs" />
-    <Compile Include="WPFHelper\WPFControls\ImageViewControl.xaml.cs">
-      <DependentUpon>ImageViewControl.xaml</DependentUpon>
-    </Compile>
+    <Compile Include="WPFHelper\WPFControls\ImageViewControl.cs" />
     <Compile Include="WPFHelper\WPFControls\NoBorderWindow\NoBorderWindowExtenstion.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Themes\BaseStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\Generic.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\ImageViewControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="WPFHelper\DialogHelper\WaitView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="WPFHelper\WPFControls\ImageViewControl.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="WPFHelper\WPFControls\NoBorderWindow\WindowResources.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -163,6 +179,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="XmlExtensions\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="iconttf\iconfont.ttf" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,11 +1,13 @@
 ﻿using GeneralTool.General.Enums;
+using System;
 
 namespace GeneralTool.General.Models
 {
     /// <summary>
     /// Log日志消息
     /// </summary>
-    public class LogMessageInfo
+    [Serializable]
+    public struct LogMessageInfo
     {
         /// <summary>
         /// 日志消息
@@ -17,14 +19,20 @@ namespace GeneralTool.General.Models
         public LogType LogType { get; internal set; }
 
         /// <summary>
+        /// 写入的路径
+        /// </summary>
+        public string CurrentFileName { get; set; }
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="msg"></param>
         /// <param name="logType"></param>
-        public LogMessageInfo(string msg, LogType logType)
+        /// <param name="path"></param>
+        public LogMessageInfo(string msg, LogType logType, string path)
         {
             this.Msg = msg;
             this.LogType = logType;
+            this.CurrentFileName = path;
         }
     }
 }

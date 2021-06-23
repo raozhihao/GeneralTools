@@ -9,6 +9,8 @@ namespace GeneralTool.General.Models
     /// <summary>
     /// IP
     /// </summary>
+
+    [Serializable]
     public class IP
     {
         internal string getIp()

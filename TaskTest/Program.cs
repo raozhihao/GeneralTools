@@ -2,7 +2,8 @@
 using GeneralTool.General.Logs;
 using GeneralTool.General.TaskLib;
 using System;
-using System.Threading;
+using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace TaskTest
 {
@@ -10,51 +11,51 @@ namespace TaskTest
     {
         static void Main(string[] args)
         {
-           // TestManager();
+            // TestManager();
             TestLog();
+            Console.ReadKey();
         }
 
         private static int count;
         private static void TestLog()
         {
-            var log = new FileInfoLog("logTest");
-            log.LogEvent += Log_LogEvent;
-            for (int i = 0; i < 100000; i++)
+            var watch = new Stopwatch();
+            watch.Start();
+            var log = new ConsoleLogInfo();
+            // log.MaxLength = 1024;
+            // log.LogEvent += Log_LogEvent;
+            Parallel.For(0, 1000, i =>
             {
-                //if (i % 2 == 0)
-                //{
-                //    try
-                //    {
-                //        throw new NotImplementedException();
-                //    }
-                //    catch (Exception ex)
-                //    {
-                //        log.Fail(ex + "");
-                //        continue;
-                //    }
-                //}
-                count++;
-                var index = new Random().Next(0, 5);
-                var time = DateTime.Now;
-                switch (index)
-                {
-                    case 0:
-                        log.Info($"{LogType.Info}");
-                        break;
-                    case 1:
-                        log.Debug($"{LogType.Debug}");
-                        break;
-                    case 2:
-                        log.Error($"{LogType.Error}");
-                        break;
-                    case 3:
-                        log.Waring($"{LogType.Waring}");
-                        break;
-                    case 4:
-                        log.Fail($"{LogType.Fail}");
-                        break;
-                }
-            }
+                log.Log("测试..." + i);
+            });
+            watch.Stop();
+            Console.WriteLine(watch.Elapsed);
+
+            //for (int i = 0; i < 100000; i++)
+            //{
+
+            //    count++;
+            //    var index = new Random().Next(0, 5);
+            //    var time = DateTime.Now;
+            //    switch (index)
+            //    {
+            //        case 0:
+            //            log.Info($"{LogType.Info}");
+            //            break;
+            //        case 1:
+            //            log.Debug($"{LogType.Debug}");
+            //            break;
+            //        case 2:
+            //            log.Error($"{LogType.Error}");
+            //            break;
+            //        case 3:
+            //            log.Waring($"{LogType.Waring}");
+            //            break;
+            //        case 4:
+            //            log.Fail($"{LogType.Fail}");
+            //            break;
+            //    }
+            //}
         }
 
         private static void Log_LogEvent(object sender, GeneralTool.General.Models.LogMessageInfo e)
@@ -83,7 +84,7 @@ namespace TaskTest
                     break;
             }
             Console.WriteLine($"{sender} {e.Msg} {e.LogType}");
-            Thread.Sleep(300);
+            //Thread.Sleep(300);
         }
 
         private static void TestManager()
@@ -93,7 +94,7 @@ namespace TaskTest
             @base.Open("127.0.0.1", 8820, test);
 
             var dic = @base.GetInterfaces();
-            var faces= @base[test];
+            var faces = @base[test];
 
             var item = dic["Test/Add"];
             item.Paramters[0].Value = 22;

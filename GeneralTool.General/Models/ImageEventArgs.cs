@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Media.Imaging;
+﻿using System.Windows.Media.Imaging;
 
 namespace GeneralTool.General.Models
 {
@@ -30,7 +25,7 @@ namespace GeneralTool.General.Models
         /// <param name="source"></param>
         /// <param name="sucess"></param>
         /// <param name="msg"></param>
-        public ImageEventArgs(BitmapSource source,bool sucess,string msg)
+        public ImageEventArgs(BitmapSource source, bool sucess, string msg)
         {
             this.Source = source;
             this.Sucess = sucess;

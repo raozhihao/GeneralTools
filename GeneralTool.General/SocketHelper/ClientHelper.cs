@@ -125,7 +125,7 @@ namespace GeneralTool.General.SocketHelper
         /// </summary>
         public void Close()
         {
-            Console.WriteLine("调用客户端Close");
+            System.Diagnostics.Trace.WriteLine("调用客户端Close");
             if (clientSocket == null)
             {
                 return;

@@ -1,8 +1,10 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 
 namespace GeneralTool.General.Models
 {
-    internal struct RequestAddressItem
+    [Serializable]
+    public struct RequestAddressItem
     {
         public string Url { get; set; }
 

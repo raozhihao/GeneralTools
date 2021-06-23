@@ -14,13 +14,26 @@ namespace GeneralTool.General.TaskLib
     /// </summary>
     public abstract class SocketMast
     {
-        internal delegate void RecDataFrom(RecDataObject obj);
-        internal delegate void ClsedLink(Socket socket);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        public delegate void RecDataFrom(RecDataObject obj);
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="socket"></param>
+        public delegate void ClsedLink(Socket socket);
 
-        internal event RecDataFrom RecDataEvent = null;
+        /// <summary>
+        /// 消息返回事件
+        /// </summary>
+        public event RecDataFrom RecDataEvent = null;
 
-
-        internal event ClsedLink CloseLinkEvent = null;
+        /// <summary>
+        /// 连接关闭事件
+        /// </summary>
+        public event ClsedLink CloseLinkEvent = null;
         /// <summary>
         /// 
         /// </summary>
@@ -33,12 +46,12 @@ namespace GeneralTool.General.TaskLib
         }
 
         /// <summary>
-        /// 
+        /// 缓冲区大小
         /// </summary>
         public int ReciveBuffSize { get; set; } = -1;
 
         /// <summary>
-        /// 
+        /// Ip
         /// </summary>
         public string Ip
         {
@@ -53,7 +66,7 @@ namespace GeneralTool.General.TaskLib
         }
 
         /// <summary>
-        /// 
+        /// 端口
         /// </summary>
         public int Port
         {
@@ -68,7 +81,7 @@ namespace GeneralTool.General.TaskLib
         }
 
         /// <summary>
-        /// 
+        /// 连接池
         /// </summary>
         public Dictionary<string, SocketLinkObject> LinkPool
         {
@@ -90,7 +103,7 @@ namespace GeneralTool.General.TaskLib
         }
 
         /// <summary>
-        /// 
+        /// 缓冲区大小
         /// </summary>
         public int DataPageLength
         {
@@ -110,7 +123,7 @@ namespace GeneralTool.General.TaskLib
         }
 
         /// <summary>
-        /// 
+        /// 是否已开启
         /// </summary>
         public bool IsOpen
         {
@@ -121,7 +134,7 @@ namespace GeneralTool.General.TaskLib
         }
 
         /// <summary>
-        /// 
+        /// 编码格式
         /// </summary>
         public RecEncodingType EncodingType
         {
@@ -136,7 +149,7 @@ namespace GeneralTool.General.TaskLib
         }
 
         /// <summary>
-        /// 
+        /// 是否自动计算大小
         /// </summary>
         public bool IsAutoSize
         {
@@ -224,7 +237,7 @@ namespace GeneralTool.General.TaskLib
         /// <summary>
         /// 
         /// </summary>
-        public abstract void Start();
+        public abstract void Connect();
 
         /// <summary>
         /// 
@@ -487,7 +500,7 @@ namespace GeneralTool.General.TaskLib
         private RecEncodingType encodingType = RecEncodingType.UTF8;
 
         /// <summary>
-        /// 
+        /// 是否接收所有消息
         /// </summary>
         public bool IsReciverForAll = false;
 

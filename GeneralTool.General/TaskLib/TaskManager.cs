@@ -13,7 +13,7 @@ namespace GeneralTool.General.TaskLib
     /// <summary>
     /// 任务对象
     /// </summary>
-    public class TaskManager:ITaskInoke
+    public class TaskManager : ITaskInoke
     {
         private string erroMsg;
 
@@ -44,6 +44,10 @@ namespace GeneralTool.General.TaskLib
         private readonly ILog log;
 
         /// <summary>
+        /// Json转换器
+        /// </summary>
+        public IJsonConvert JsonCovert { get; set; }
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="jsonConvert">Json转换器</param>
@@ -52,11 +56,15 @@ namespace GeneralTool.General.TaskLib
         {
             if (log == null)
                 log = new ConsoleLogInfo();
+            if (jsonConvert == null)
+                jsonConvert = new BaseJsonCovert();
 
+            this.JsonCovert = jsonConvert;
             this.log = log;
             this.ServerStation = new Station(jsonConvert, log);
         }
 
+        public event Action<string> TaskEvent;
 
         /// <summary>
         /// 
@@ -136,6 +144,9 @@ namespace GeneralTool.General.TaskLib
             var paras = new object[paramterInfos.Length];
             foreach (var info in paramterInfos)
             {
+                if (info.IsOut)
+                    continue;
+
                 var valueMsg = parameterItem.GetValue(info.Name);
                 var parameterType = info.ParameterType;
                 //如果是值类型/String类型
@@ -155,7 +166,7 @@ namespace GeneralTool.General.TaskLib
                 else
                 {
 
-                    paras[info.Position] = valueMsg;// JsonConvert.DeserializeObject(valueMsg, parameterType);
+                    paras[info.Position] = valueMsg;//this.JsonCovert.DeserializeObject(valueMsg, parameterType);
                 }
             }
 

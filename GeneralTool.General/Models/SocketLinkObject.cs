@@ -1,4 +1,5 @@
-﻿using System.Net.Sockets;
+﻿using System;
+using System.Net.Sockets;
 using System.Threading;
 
 namespace GeneralTool.General.Models
@@ -6,6 +7,7 @@ namespace GeneralTool.General.Models
     /// <summary>
     /// 
     /// </summary>
+    [Serializable]
     public struct SocketLinkObject
     {
         /// <summary>

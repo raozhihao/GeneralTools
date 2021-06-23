@@ -45,9 +45,16 @@ namespace GeneralTool.General
             datas.AddRange(typeData);//写入类型信息
 
             byte[] data = null;
-
             SerializableAttribute attr = type.GetCustomAttribute<SerializableAttribute>();
-            if (attr != null)
+            if (type.IsGenericType)
+            {
+                data = SerializeGeneric(param, type);//读取泛型数据
+            }
+            else if (type.IsArray)
+            {
+                data = SerializeArrary(param, type);//读取数组数据
+            }
+            else if (attr != null)
             {
                 data = SerializeToBytes(param);
             }
@@ -132,22 +139,26 @@ namespace GeneralTool.General
                     data = SerializeClass(param, type);
                 }
             }
-            else
+            else if (type.IsClass || param is IntPtr)
             {
-                if (type.IsGenericType)
-                {
-                    data = SerializeGeneric(param, type);//读取泛型数据
-                }
-                else if (type.IsArray)
-                {
-                    data = SerializeArrary(param, type);//读取数组数据
-                }
-                else if (type.IsClass || param is IntPtr)
-                {
-                    data = SerializeClass(param, type);//读取类型数据
-                }
-
+                data = SerializeClass(param, type);//读取类型数据
             }
+            //else
+            //{
+            //    if (type.IsGenericType)
+            //    {
+            //        data = SerializeGeneric(param, type);//读取泛型数据
+            //    }
+            //    else if (type.IsArray)
+            //    {
+            //        data = SerializeArrary(param, type);//读取数组数据
+            //    }
+            //    else if (type.IsClass || param is IntPtr)
+            //    {
+            //        data = SerializeClass(param, type);//读取类型数据
+            //    }
+
+            //}
 
             if (data != null)
             {
@@ -171,7 +182,7 @@ namespace GeneralTool.General
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                System.Diagnostics.Trace.WriteLine(ex.Message);
             }
             return byts;
         }
@@ -219,7 +230,7 @@ namespace GeneralTool.General
                                 }
                                 catch (Exception ex)
                                 {
-                                    Console.WriteLine(ex.Message);
+                                    System.Diagnostics.Trace.WriteLine(ex.Message);
 
 
                                 }
@@ -336,7 +347,20 @@ namespace GeneralTool.General
                 data = binary.ReadBytes(Convert.ToInt32(ms.Length - len));
             }
             object obj;
-            if (type.GetCustomAttribute<SerializableAttribute>() != null)
+            if (type.IsValueType && !type.IsPrimitive)
+            {
+                //反序列化自定义结构
+                obj = DesrializeClass(data, type);
+            }
+            else if (type.IsGenericType)
+            {
+                obj = DesrializeGeneric(data, type);
+            }
+            else if (type.IsArray)
+            {
+                obj = DesrializeArrary(data, type);
+            }
+            else if (type.GetCustomAttribute<SerializableAttribute>() != null)
             {
                 obj = DeserializeToObj(data);
             }
@@ -410,19 +434,6 @@ namespace GeneralTool.General
             {
                 obj = data;
             }
-            else if (type.IsValueType && !type.IsPrimitive)
-            {
-                //反序列化自定义结构
-                obj = DesrializeClass(data, type);
-            }
-            else if (type.IsGenericType)
-            {
-                obj = DesrializeGeneric(data, type);
-            }
-            else if (type.IsArray)
-            {
-                obj = DesrializeArrary(data, type);
-            }
             else if (type.IsClass)
             {
                 obj = DesrializeClass(data, type);
@@ -448,7 +459,7 @@ namespace GeneralTool.General
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                System.Diagnostics.Trace.WriteLine(ex.Message);
             }
             return obj;
         }
@@ -499,7 +510,7 @@ namespace GeneralTool.General
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine(ex.Message);
+                        System.Diagnostics.Trace.WriteLine(ex.Message);
                     }
 
                 }
@@ -534,7 +545,7 @@ namespace GeneralTool.General
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine(ex.Message);
+                        System.Diagnostics.Trace.WriteLine(ex.Message);
                     }
                 }
             }
@@ -580,7 +591,7 @@ namespace GeneralTool.General
                             }
                             catch (Exception ex)
                             {
-                                Console.WriteLine(ex.Message);
+                                System.Diagnostics.Trace.WriteLine(ex.Message);
                             }
                         }
                         else
@@ -600,7 +611,7 @@ namespace GeneralTool.General
                                 }
                                 catch (Exception ex)
                                 {
-                                    Console.WriteLine(ex.Message);
+                                    System.Diagnostics.Trace.WriteLine(ex.Message);
                                 }
 
                             }

@@ -2,6 +2,7 @@
 using GeneralTool.General.Interfaces;
 using GeneralTool.General.Models;
 using System;
+using System.Diagnostics;
 
 namespace GeneralTool.General.Logs
 {
@@ -31,8 +32,9 @@ namespace GeneralTool.General.Logs
         /// <inheritdoc/>
         public void Log(string msg, LogType logType = LogType.Info)
         {
-            this.LogEvent?.Invoke(this, new LogMessageInfo(msg, logType));
-            Console.WriteLine($"ConsoleLog: {msg} ,LogType: {logType}");
+            Trace.WriteLine(msg);
+            //System.Diagnostics.Trace.WriteLine($"ConsoleLog: {msg} ,LogType: {logType}");
+            this.LogEvent?.Invoke(this, new LogMessageInfo(msg, logType, ""));
         }
 
     }

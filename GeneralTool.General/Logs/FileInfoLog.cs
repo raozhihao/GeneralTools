@@ -2,6 +2,8 @@
 using GeneralTool.General.Interfaces;
 using GeneralTool.General.Models;
 using System;
+using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 
@@ -12,8 +14,15 @@ namespace GeneralTool.General.Logs
     /// </summary>
     public class FileInfoLog : ILog
     {
+        private ConcurrentQueue<LogMessageInfo> lockDic = new ConcurrentQueue<LogMessageInfo>();
+
         private readonly string logPathDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs");
 
+        public bool ConsoleLogEnable { get; set; } = true;
+        /// <summary>
+        /// 当前日志路径
+        /// </summary>
+        public string CurrentPath { get; protected set; }
         /// <summary>
         /// 单个Log最大字节数
         /// </summary>
@@ -26,6 +35,8 @@ namespace GeneralTool.General.Logs
         {
             this.logPathDir = Directory.CreateDirectory(Path.Combine(logPathDir, logName)).FullName;
         }
+
+
         /// <inheritdoc/>
         public event EventHandler<LogMessageInfo> LogEvent;
 
@@ -44,69 +55,93 @@ namespace GeneralTool.General.Logs
         /// <inheritdoc/>
         public void Error(string msg) => this.Log(msg, LogType.Error);
 
+        static readonly object locker = new object();
+        FileStream currentFileStream = null;
         /// <inheritdoc/>
         public void Log(string msg, LogType logType = LogType.Info)
         {
+            if (this.ConsoleLogEnable)
+                Trace.WriteLine(msg);
             try
             {
-                this.LogEvent?.Invoke(this, new LogMessageInfo(msg, logType));
-                msg = $"{DateTime.Now} : {msg}{Environment.NewLine}";
-                string fileName = Path.Combine(this.logPathDir, DateTime.Now.ToString("yyyy-MM-dd_1") + ".log");
-                var fileInfo = new FileInfo(fileName);
-                if (fileInfo.Exists)
+                lock (locker)
                 {
-                    //查看是否已有日志
-                    var files = Directory.GetFiles(this.logPathDir, "*.log");
-
-                    if (files.Length > 0)
+                    string fileName = Path.Combine(this.logPathDir, DateTime.Now.ToString("yyyy-MM-dd_1") + ".log");
+                    var fileInfo = new FileInfo(fileName);
+                    var createNew = true;
+                    if (fileInfo.Exists)
                     {
-                        var file = new FileInfo(Path.Combine(this.logPathDir, DateTime.Now.ToString("yyyy-MM-dd_") + files.Length + ".log"));
-                        if (file.Exists)
+                        //查看是否已有日志
+                        var files = Directory.GetFiles(this.logPathDir, "*.log");
+
+                        if (files.Length > 0)
                         {
-                            if (file.Length > MaxLength)
+                            var file = new FileInfo(Path.Combine(this.logPathDir, DateTime.Now.ToString("yyyy-MM-dd_") + files.Length + ".log"));
+                            if (file.Exists)
                             {
-                                fileName = Path.Combine(this.logPathDir, DateTime.Now.ToString("yyyy-MM-dd_") + (files.Length + 1) + ".log");
+                                if (file.Length > MaxLength)
+                                {
+                                    fileName = Path.Combine(this.logPathDir, DateTime.Now.ToString("yyyy-MM-dd_") + (files.Length + 1) + ".log");
+                                    createNew = true;
+                                }
+                                else
+                                {
+                                    fileName = file.FullName;
+                                    createNew = false;
+                                }
                             }
                             else
                             {
-                                fileName = file.FullName;
-                            }
-                        }
-                        else
-                        {
-                            if (fileInfo.Length > MaxLength)
-                            {
-                                fileName = Path.Combine(this.logPathDir, DateTime.Now.ToString("yyyy-MM-dd_") + (files.Length + 1) + ".log");
-                            }
-                            else
-                            {
-                                fileName = fileInfo.FullName;
+                                if (fileInfo.Length > MaxLength)
+                                {
+                                    fileName = Path.Combine(this.logPathDir, DateTime.Now.ToString("yyyy-MM-dd_") + (files.Length + 1) + ".log");
+                                    createNew = true;
+                                }
+                                else
+                                {
+                                    fileName = fileInfo.FullName;
+                                    createNew = false;
+                                }
                             }
                         }
                     }
 
 
-                    //写入日志
-                    using (var fileStream = File.Open(fileName, FileMode.Append))
+                    if (createNew)
                     {
-                        byte[] bytes = Encoding.UTF8.GetBytes(msg);
-                        fileStream.Write(bytes, 0, bytes.Length);
+                        this.currentFileStream?.Close();
+                        this.currentFileStream?.Dispose();
+                        this.currentFileStream = new FileStream(fileName, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
                     }
-                }
-                else
-                {
-                    using (FileStream fileStream2 = File.Create(fileName))
-                    {
-                        byte[] bytes2 = Encoding.UTF8.GetBytes(msg);
-                        fileStream2.Write(bytes2, 0, bytes2.Length);
-                    }
+                    else if (this.currentFileStream == null)
+                        this.currentFileStream = new FileStream(fileName, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
+
+
+                    msg = $"{DateTime.Now} : {msg}";
+                    var info = new LogMessageInfo(msg, logType, fileName);
+                    this.lockDic.Enqueue(info);
+                    WriteLog();
+                    this.CurrentPath = fileName;
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex);
+                Trace.WriteLine(ex);
             }
         }
 
+
+        private void WriteLog()
+        {
+            var re = this.lockDic.TryDequeue(out var result);
+            if (re)
+            {
+                var data = Encoding.UTF8.GetBytes(result.Msg + Environment.NewLine);
+                this.currentFileStream.Write(data, 0, data.Length);
+                this.currentFileStream.Flush();
+                this.LogEvent?.Invoke(this, result);
+            }
+
+        }
     }
 }

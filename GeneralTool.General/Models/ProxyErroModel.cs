@@ -1,8 +1,11 @@
-﻿namespace GeneralTool.General.Models
+﻿using System;
+
+namespace GeneralTool.General.Models
 {
     /// <summary>
     /// 错误消息
     /// </summary>
+    [Serializable]
     public class ProxyErroModel
     {
         /// <summary>

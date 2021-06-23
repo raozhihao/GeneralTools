@@ -9,7 +9,8 @@ namespace GeneralTool.General.Models
     /// <summary>
     /// 任务项目
     /// </summary>
-    public class DoTaskParameterItem : General.WPFHelper.BaseNotifyModel
+    [Serializable]
+    public class DoTaskParameterItem
     {
         /// <summary>
         /// 路由地址

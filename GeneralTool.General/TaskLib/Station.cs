@@ -1,6 +1,7 @@
 ﻿using GeneralTool.General.Attributes;
 using GeneralTool.General.Interfaces;
 using GeneralTool.General.LinqExtensions;
+using GeneralTool.General.Logs;
 using System;
 using System.Linq;
 using System.Reflection;
@@ -18,6 +19,7 @@ namespace GeneralTool.General.TaskLib
             set;
         }
 
+
         private readonly ILog log;
 
         /// <summary>
@@ -27,6 +29,13 @@ namespace GeneralTool.General.TaskLib
         /// <param name="log"></param>
         public Station(IJsonConvert jsonConvert = null, ILog log = null)
         {
+            if (log == null)
+                log = new ConsoleLogInfo();
+            if (jsonConvert == null)
+                jsonConvert = new BaseJsonCovert();
+
+            this.log = log;
+
             ServerStation = (ServerStation)(object)new ServerStation(jsonConvert, log);
             this.log = log;
         }

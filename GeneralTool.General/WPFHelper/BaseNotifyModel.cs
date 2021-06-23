@@ -6,6 +6,7 @@ namespace GeneralTool.General.WPFHelper
     /// <summary>
     /// 用作WPF属性通知模型类的基类
     /// </summary>
+    [System.Serializable]
     public abstract class BaseNotifyModel : INotifyPropertyChanged
     {
         /// <summary>

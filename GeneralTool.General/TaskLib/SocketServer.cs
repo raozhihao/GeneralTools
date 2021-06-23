@@ -1,4 +1,7 @@
-﻿using GeneralTool.General.Models;
+﻿using GeneralTool.General.Interfaces;
+using GeneralTool.General.Logs;
+using GeneralTool.General.Models;
+using GeneralTool.General.SocketHelper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,8 +14,15 @@ namespace GeneralTool.General.TaskLib
     /// <summary>
     /// 
     /// </summary>
-    internal class SocketServer : SocketMast, IDisposable
+    public class SocketServer : SocketMast, IDisposable
     {
+        private ILog log;
+        public SocketServer(ILog log)
+        {
+            if (log == null)
+                log = new ConsoleLogInfo();
+            this.log = log;
+        }
         /// <summary>
         /// 
         /// </summary>
@@ -26,22 +36,12 @@ namespace GeneralTool.General.TaskLib
         /// <summary>
         /// 
         /// </summary>
-        public int ClientNum
-        {
-            get
-            {
-                return this._clientNum;
-            }
-            set
-            {
-                this._clientNum = value;
-            }
-        }
+        public int ClientNum { get; set; } = 5;
 
         /// <summary>
         /// 
         /// </summary>
-        public override void Start()
+        public override void Connect()
         {
             bool flag = !base.IsInit;
             if (flag)
@@ -60,13 +60,15 @@ namespace GeneralTool.General.TaskLib
                     this.Close();
                 }
                 this._socket.Listen(this.ClientNum);
+                this._socket.SetSocketKeepAlive();
                 this._listenningThread = new Thread(new ThreadStart(this.ListenningLink));
                 this._listenningThread.IsBackground = true;
                 this._listenningThread.Start();
                 this._isOpen = true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                log.Fail($"开启sokcet服务失败:{ex}");
             }
         }
 
@@ -88,9 +90,11 @@ namespace GeneralTool.General.TaskLib
             }
             catch (ThreadAbortException)
             {
+
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                log.Error($"监听客户端连接出现错误:{ex.Message}");
             }
         }
 
@@ -135,6 +139,7 @@ namespace GeneralTool.General.TaskLib
         private void CommunicationToClient(object client)
         {
             Socket socket = client as Socket;
+
             try
             {
                 bool flag = base.ReciveBuffSize != -1;
@@ -143,38 +148,33 @@ namespace GeneralTool.General.TaskLib
                     socket.ReceiveBufferSize = base.ReciveBuffSize;
                 }
                 List<byte> list = new List<byte>();
-                byte[] array = new byte[base.DataPageLength];
+
                 for (; ; )
                 {
+                    if (!socket.IsClientConnected())
+                    {
+                        break;
+                    }
                     list.Clear();
                     bool isReciverForAll = this.IsReciverForAll;
                     if (isReciverForAll)
                     {
-                        int num = socket.Receive(array);
-                        while (socket.Available > 0 || num > 0)
+                        while (true)
                         {
-                            bool flag2 = num == 0;
-                            if (flag2)
+                            byte[] array = new byte[base.DataPageLength];
+                            var num = socket.Receive(array);
+                            list.AddRange(array.Take(num));
+                            Array.Clear(array, 0, array.Length);
+
+                            if (num < array.Length || socket.Available <= 0)
                             {
-                                num = socket.Receive(array);
+                                break;
                             }
-                            bool flag3 = num == array.Length;
-                            if (flag3)
-                            {
-                                list.AddRange(array);
-                            }
-                            else
-                            {
-                                for (int i = 0; i < num; i++)
-                                {
-                                    list.Add(array[i]);
-                                }
-                            }
-                            num = 0;
                         }
                     }
                     else
                     {
+                        byte[] array = new byte[base.DataPageLength];
                         socket.Receive(array, base.DataPageLength, SocketFlags.None);
                         list.AddRange(array);
                     }
@@ -303,8 +303,9 @@ namespace GeneralTool.General.TaskLib
             {
                 client.Send(sendBytes, SocketFlags.None);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                log.Error($"向客户端 [{client.RemoteEndPoint}] 发送消息失败:{ex.Message}");
             }
         }
 
@@ -334,11 +335,6 @@ namespace GeneralTool.General.TaskLib
 
 
         private Thread _listenningThread = null;
-
-
-        private int _clientNum = 5;
-
-
         private bool disposedValue = false;
     }
 }

@@ -6,6 +6,7 @@ namespace GeneralTool.General.Models
     /// <summary>
     /// 参数信息
     /// </summary>
+    [Serializable]
     public class ParameterItem : BaseNotifyModel
     {
         private string parameterName = "";
@@ -54,6 +55,17 @@ namespace GeneralTool.General.Models
         }
 
         private Type parameterType;
+
+        public ParameterItem(string parameterName, object value)
+        {
+            this.ParameterName = parameterName;
+            this.Value = value;
+        }
+        public ParameterItem()
+        {
+
+        }
+
         /// <summary>
         /// 参数类型
         /// </summary>

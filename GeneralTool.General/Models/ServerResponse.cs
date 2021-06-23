@@ -1,10 +1,12 @@
 ﻿using GeneralTool.General.Enums;
+using System;
 
 namespace GeneralTool.General.Models
 {
     /// <summary>
     /// 服务返回
     /// </summary>
+    [Serializable]
     public class ServerResponse
     {
         /// <summary>

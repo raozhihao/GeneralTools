@@ -6,6 +6,7 @@ namespace GeneralTool.General.TaskLib
     /// <summary>
     /// 任务基础类
     /// </summary>
+    [System.Serializable]
     public class BaseTaskInvoke
     {
         /// <summary>

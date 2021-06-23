@@ -6,6 +6,7 @@ namespace GeneralTool.General.Models
     /// <summary>
     /// 服务请求对象
     /// </summary>
+    [Serializable]
     public class ServerRequest
     {
         /// <summary>

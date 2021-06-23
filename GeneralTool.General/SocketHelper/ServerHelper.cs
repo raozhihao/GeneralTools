@@ -40,15 +40,15 @@ namespace GeneralTool.General.SocketHelper.Server
         /// <summary>
         /// 注册类型
         /// </summary>
-        /// <typeparam name="TCallType">实现 TInterface 的实际类型</typeparam>
+        /// <typeparam name="TCallTypeInterface">接口</typeparam>
+        /// <typeparam name="TCallType">实现 TCallTypeInterface 的实际类型</typeparam>
         /// <returns></returns>
-        public bool RegisterClass<TCallType>()
+        public bool RegisterClass<TCallTypeInterface, TCallType>()
         {
-
-            Type callType = typeof(TCallType);
+            Type callType = typeof(TCallTypeInterface);
 
             string name = callType.Name;
-            ReflectionClass reflection = new ReflectionClass(callType);
+            ReflectionClass reflection = new ReflectionClass(typeof(TCallType));
             if (caches.ContainsKey(name))
             {
                 caches[name] = null;
@@ -65,11 +65,12 @@ namespace GeneralTool.General.SocketHelper.Server
         /// <summary>
         /// 注册类型
         /// </summary>
+        /// <typeparam name="TCallTypeInterface">接口</typeparam>
         /// <param name="instance">实现 TInterface 的实际对象</param>
         /// <returns></returns>
-        public bool RegisterClass(object instance)
+        public bool RegisterClass<TCallTypeInterface>(object instance)
         {
-            Type callType = instance.GetType();
+            Type callType = typeof(TCallTypeInterface);
             string name = callType.Name;
             ReflectionClass reflection = new ReflectionClass(instance);
             if (caches.ContainsKey(name))
@@ -109,7 +110,7 @@ namespace GeneralTool.General.SocketHelper.Server
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"客户端连接发生异常 : {ex.Message}");
+                System.Diagnostics.Trace.WriteLine($"客户端连接发生异常 : {ex.Message}");
                 return;
             }
 
@@ -120,12 +121,12 @@ namespace GeneralTool.General.SocketHelper.Server
             if (!clients.ContainsKey(key))
             {
                 clients.TryAdd(key, clientSocket);
-                Console.WriteLine($"新的客户端 {key} 已连接");
+                System.Diagnostics.Trace.WriteLine($"新的客户端 {key} 已连接");
             }
             else
             {
                 clients[key] = clientSocket;
-                Console.WriteLine($"客户端 {key} 已重新连接");
+                System.Diagnostics.Trace.WriteLine($"客户端 {key} 已重新连接");
             }
 
 
@@ -134,7 +135,7 @@ namespace GeneralTool.General.SocketHelper.Server
             {
                 if (!clientSocket.IsClientConnected())
                 {
-                    Console.WriteLine($"客户端 {key} 已下线");
+                    System.Diagnostics.Trace.WriteLine($"客户端 {key} 已下线");
                     clients.TryRemove(key, out _);
                     clientSocket.Close();
                     clientSocket.Dispose();
@@ -239,7 +240,7 @@ namespace GeneralTool.General.SocketHelper.Server
                     }
                     catch (Exception ex)
                     {
-                        Console.WriteLine(ex.Message);
+                        System.Diagnostics.Trace.WriteLine(ex.Message);
                     }
                 }
                 serverSocket = null;
