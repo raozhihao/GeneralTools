@@ -8,10 +8,10 @@
         xmlns:local="clr-namespace:WpfAppTest"
         mc:Ignorable="d"
         Title="PropertyTest" Height="450" Width="800">
-    <Window.DataContext>
+    <!--<Window.DataContext>
         <ObjectDataProvider ObjectType="{x:Type vm:PropertyViewModel}" />
     </Window.DataContext>
-    <Grid>
+    <Grid x:Name="grid">
         <ItemsControl ItemsSource="{Binding TaskItems}">
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
@@ -19,5 +19,17 @@
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>
+        <wpf:PropertyGridControl SelectedObject="{Binding}" />
+    </Grid>-->
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+        <wpf:PropertyGridControl SelectedObject="{Binding ElementName=btn}" />
+        <Button Content="Test"
+                x:Name="btn" 
+                Grid.Row="1"/>
     </Grid>
 </Window>

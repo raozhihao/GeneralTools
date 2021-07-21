@@ -35,7 +35,7 @@ namespace WpfAppTest.VIewModels
         public string Header { get => this.header; set => this.RegisterProperty(ref this.header, value); }
 
         public User1ViewModel User1ViewModel { get; set; }
-        public  void MouseDownMethod(object sender, MouseButtonEventArgs eventArgs)
+        public void MouseDownMethod(object sender, MouseButtonEventArgs eventArgs)
         {
             this.SelectedObject = sender;
         }

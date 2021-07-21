@@ -206,5 +206,8 @@
   <ItemGroup>
     <Resource Include="iconttf\iconfont.ttf" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Readme.md" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
