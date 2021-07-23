@@ -8,19 +8,16 @@ using System.Reflection;
 
 namespace GeneralTool.General.TaskLib
 {
-    internal class ServerStation
+    internal class ServerStation : ServerStationBase
     {
         private readonly IJsonConvert _jsonCovert;
-        private Dictionary<string, RequestAddressItem> RequestRoute { get; set; } = new Dictionary<string, RequestAddressItem>();
-
-
-        private Dictionary<string, ParamterConvertItem> ParamterConverters { get; set; } = new Dictionary<string, ParamterConvertItem>();
+      
 
         public SocketServer SocketServer { get; set; }
 
 
         private readonly ILog log;
-        public ServerStation(IJsonConvert jsonConvert = null, ILog log = null)
+        public ServerStation(IJsonConvert jsonConvert = null, ILog log = null):base(log)
         {
             if (log == null)
                 log = new ConsoleLogInfo();
@@ -32,6 +29,7 @@ namespace GeneralTool.General.TaskLib
             this.SocketServer = new SocketServer(log);
             this.SocketServer.RecDataEvent += this.SocketServer_RecDataEvent;
         }
+
 
         // Token: 0x0600000C RID: 12 RVA: 0x00002278 File Offset: 0x00000478
         private void SocketServer_RecDataEvent(RecDataObject obj)
@@ -140,59 +138,9 @@ namespace GeneralTool.General.TaskLib
         }
 
         // Token: 0x0600000D RID: 13 RVA: 0x00002604 File Offset: 0x00000804
-        public bool AddRoute(string url, object target, MethodInfo m)
-        {
-            bool flag = this.RequestRoute.ContainsKey(url);
-            bool result;
-            if (flag)
-            {
-                this.log.Error($"类型: {target} 方法: {url} 已存在,不添加");
-                result = false;
-            }
-            else
-            {
-
-                this.RequestRoute.Add(url, new RequestAddressItem
-                {
-                    Url = url,
-                    MethodInfo = m,
-                    Target = target
-                });
-                result = true;
-            }
-            return result;
-        }
-
-        // Token: 0x0600000E RID: 14 RVA: 0x00002668 File Offset: 0x00000868
-        public bool AddTypeConverter<T>(Func<string, object> converter)
-        {
-            Type typeFromHandle = typeof(T);
-            bool flag = this.ParamterConverters.ContainsKey(typeFromHandle.FullName);
-            bool result;
-            if (flag)
-            {
-                result = false;
-            }
-            else
-            {
-                this.ParamterConverters.Add(typeFromHandle.FullName, new ParamterConvertItem
-                {
-                    Type = typeFromHandle,
-                    Converter = converter
-                });
-                result = true;
-            }
-            return result;
-        }
-
-        public bool RemoveRoute(string url)
-        {
-            bool flag = !this.RequestRoute.ContainsKey(url);
-            return !flag && this.RequestRoute.Remove(url);
-        }
-
+       
         // Token: 0x06000010 RID: 16 RVA: 0x00002708 File Offset: 0x00000908
-        public bool Start(string ip, int port)
+        public override bool Start(string ip, int port)
         {
             this.SocketServer.IsDelMsgAsyn = false;
             this.SocketServer.IsCheckLink = true;
@@ -205,7 +153,7 @@ namespace GeneralTool.General.TaskLib
         }
 
         // Token: 0x06000011 RID: 17 RVA: 0x00002778 File Offset: 0x00000978
-        public bool Close()
+        public override bool Close()
         {
             this.SocketServer.Close();
             this.SocketServer.Dispose();

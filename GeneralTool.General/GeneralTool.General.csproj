@@ -131,6 +131,8 @@
     <Compile Include="TaskExtensions\DelegateExtensions.cs" />
     <Compile Include="TaskLib\BaseJsonCovert.cs" />
     <Compile Include="TaskLib\BaseTaskInvoke.cs" />
+    <Compile Include="TaskLib\IServerStation.cs" />
+    <Compile Include="TaskLib\ServerStationBase.cs" />
     <Compile Include="TaskLib\SocketClient.cs" />
     <Compile Include="TaskLib\TaskManager.cs" />
     <Compile Include="TaskLib\RecDataObject.cs" />

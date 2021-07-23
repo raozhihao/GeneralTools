@@ -499,7 +499,7 @@ namespace GeneralTool.General.WPFHelper.WPFControls
         /// <summary>
         /// 当前图像源
         /// </summary>
-        public static readonly DependencyProperty ImageSourceProperty = DependencyProperty.Register(nameof(ImageSource), typeof(ImageSource), typeof(ImageViewControl),new PropertyMetadata(ImageSourceChanged));
+        public static readonly DependencyProperty ImageSourceProperty = DependencyProperty.Register(nameof(ImageSource), typeof(ImageSource), typeof(ImageViewControl), new PropertyMetadata(ImageSourceChanged));
 
         private static void ImageSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -618,19 +618,13 @@ namespace GeneralTool.General.WPFHelper.WPFControls
         public Int32Rect GetChooseRect()
         {
             var recStartPoint = this.CutRectangle.TranslatePoint(new Point(), Img);
-            //var recEndPoint = this.CutRectangle.TranslatePoint(new Point(this.CutRectangle.Width, this.CutRectangle.Height), Img);
 
             var x = recStartPoint.X * this.w;
             var y = recStartPoint.Y * this.h;
 
-            //var endX = recEndPoint.X * this.w;
-            //var endY = recEndPoint.Y * this.h;
-
-            //var width = endX - x;
-            //var height = endY - y;
-
-            var width = this.CutRectangle.Width * this.w;
-            var height = this.CutRectangle.Height * this.h;
+            //将其取整
+            var width = Math.Ceiling(this.CutRectangle.Width * this.w);
+            var height = Math.Ceiling(this.CutRectangle.Height * this.h);
 
             var rect = new Int32Rect((int)x, (int)y, (int)width, (int)height);
             return rect;
@@ -1272,6 +1266,7 @@ namespace GeneralTool.General.WPFHelper.WPFControls
                 topLeft = this.Img.TranslatePoint(topLeft, this.ImageCanvas);
                 Canvas.SetTop(this.CutPanel, topLeft.Y);
             }
+
         }
         private void Canvas_MouseLeave(object sender, MouseEventArgs e)
         {

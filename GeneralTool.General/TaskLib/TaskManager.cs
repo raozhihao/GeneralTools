@@ -53,7 +53,8 @@ namespace GeneralTool.General.TaskLib
         /// </summary>
         /// <param name="jsonConvert">Json转换器</param>
         /// <param name="log">日志组件</param>
-        public TaskManager(IJsonConvert jsonConvert, ILog log)
+        /// <param name="station">站点</param>
+        public TaskManager(IJsonConvert jsonConvert, ILog log,ServerStationBase station=null)
         {
             if (log == null)
                 log = new ConsoleLogInfo();
@@ -62,7 +63,7 @@ namespace GeneralTool.General.TaskLib
 
             this.JsonCovert = jsonConvert;
             this.log = log;
-            this.ServerStation = new Station(jsonConvert, log);
+            this.ServerStation = new Station(jsonConvert, log,station);
         }
 
 

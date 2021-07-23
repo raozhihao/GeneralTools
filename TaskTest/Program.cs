@@ -11,8 +11,8 @@ namespace TaskTest
     {
         static void Main(string[] args)
         {
-            new SocketClientTest().Test();
-            // TestManager();
+            //new SocketClientTest().Test();
+             TestManager();
             //TestLog();
             Console.ReadKey();
         }
@@ -90,7 +90,7 @@ namespace TaskTest
 
         private static void TestManager()
         {
-            var @base = new TaskManager();
+            var @base = new TaskManager(null,null,new HttpServerStation(null));
             var test = new TaskLibs.Test();
             @base.Open("127.0.0.1", 8820, test);
 

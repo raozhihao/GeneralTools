@@ -27,7 +27,7 @@ namespace WpfAppTest
             this.ImageControl.SizeChanged += this.ImageControl_SizeChanged;
             this.Loaded += this.ImageWindow_Loaded;
 
-
+          
 
         }
 

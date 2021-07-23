@@ -13,7 +13,10 @@ namespace GeneralTool.General.TaskLib
     /// </summary>
     public class Station
     {
-        private ServerStation ServerStation
+        /// <summary>
+        /// 获取或设置服务站点
+        /// </summary>
+        public IServerStation ServerStation
         {
             get;
             set;
@@ -27,17 +30,18 @@ namespace GeneralTool.General.TaskLib
         /// </summary>
         /// <param name="jsonConvert"></param>
         /// <param name="log"></param>
-        public Station(IJsonConvert jsonConvert = null, ILog log = null)
+        /// <param name="serverStation"></param>
+        public Station(IJsonConvert jsonConvert = null, ILog log = null,IServerStation serverStation=null)
         {
             if (log == null)
                 log = new ConsoleLogInfo();
             if (jsonConvert == null)
                 jsonConvert = new BaseJsonCovert();
+            if(serverStation==null)
+                serverStation = new ServerStation(jsonConvert, log);
 
             this.log = log;
-
-            ServerStation = (ServerStation)(object)new ServerStation(jsonConvert, log);
-            this.log = log;
+            this.ServerStation = serverStation;
         }
 
         /// <summary>
