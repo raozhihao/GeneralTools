@@ -1,4 +1,7 @@
-﻿### GeneralTool.General 部分使用指南
+﻿### nuget
+> Install-Package GeneralTool.General
+> 
+### GeneralTool.General 部分使用指南
 
 #### WPF 属性通知注册
 > 将要被通知的类继承自GeneralTool.General.WPFHelper.BaseNotifyModel <br>
