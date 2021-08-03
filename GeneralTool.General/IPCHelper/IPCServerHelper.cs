@@ -10,32 +10,24 @@ namespace GeneralTool.General.IPCHelper
     /// <summary>
     /// IPC服务端帮助类
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">
+    /// </typeparam>
     public class IPCServerHelper<T> : IDisposable where T : MarshalByRefObject
     {
-        /// <summary>
-        /// 获取或设备服务端URL
-        /// </summary>
-        public string RemoteUrl { get; private set; }
-        /// <summary>
-        /// 获取或设备服务端口
-        /// </summary>
-        public string PortName { get; private set; }
-        /// <summary>
-        /// 获取错误信息
-        /// </summary>
-
-        public string ErroMsg { get; private set; }
-        /// <summary>
-        /// 是否已注册
-        /// </summary>
-        public bool IsRegisted { get; private set; }
+        #region Private 字段
 
         private IpcChannel channel;
+
+        #endregion Private 字段
+
+        #region Public 构造函数
+
         /// <summary>
         /// 构造函数
         /// </summary>
-        /// <param name="portName">端口名称</param>
+        /// <param name="portName">
+        /// 端口名称
+        /// </param>
         public IPCServerHelper(string portName)
         {
             PortName = portName;
@@ -49,10 +41,60 @@ namespace GeneralTool.General.IPCHelper
             PortName = typeof(T).Name;
         }
 
+        #endregion Public 构造函数
+
+        #region Private 析构函数
+
+        /// <summary>
+        /// </summary>
+        ~IPCServerHelper()
+        {
+            Stop();
+        }
+
+        #endregion Private 析构函数
+
+        #region Public 属性
+        /// <summary>
+        /// 
+        /// </summary>
+        public string ErroMsg { get; private set; }
+
+        /// <summary>
+        /// 获取错误信息
+        /// </summary>
+        /// <summary>
+        /// 是否已注册
+        /// </summary>
+        public bool IsRegisted { get; private set; }
+
+        /// <summary>
+        /// 获取或设备服务端口
+        /// </summary>
+        public string PortName { get; private set; }
+
+        /// <summary>
+        /// 获取或设备服务端URL
+        /// </summary>
+        public string RemoteUrl { get; private set; }
+
+        #endregion Public 属性
+
+        #region Public 方法
+
+        /// <summary>
+        /// 释放资源
+        /// </summary>
+        public void Dispose()
+        {
+            Stop();
+        }
+
         /// <summary>
         /// 注册服务
         /// </summary>
-        /// <returns></returns>
+        /// <returns>
+        /// </returns>
         public bool RegisterServer()
         {
             if (IsRegisted)
@@ -66,7 +108,6 @@ namespace GeneralTool.General.IPCHelper
                 BinaryClientFormatterSinkProvider clientProvider = new BinaryClientFormatterSinkProvider();
                 Hashtable properties = new Hashtable
                 {
-
                     //指定信道的端口
                     ["portName"] = PortName,
                     ["name"] = "ipc",
@@ -96,7 +137,8 @@ namespace GeneralTool.General.IPCHelper
         /// <summary>
         /// 停止服务（其实没多大用）
         /// </summary>
-        /// <returns></returns>
+        /// <returns>
+        /// </returns>
         public bool Stop()
         {
             try
@@ -117,20 +159,6 @@ namespace GeneralTool.General.IPCHelper
             }
         }
 
-        /// <summary>
-        /// 释放资源
-        /// </summary>
-        public void Dispose()
-        {
-            Stop();
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        ~IPCServerHelper()
-        {
-            Stop();
-        }
+        #endregion Public 方法
     }
 }

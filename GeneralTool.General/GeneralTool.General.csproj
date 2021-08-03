@@ -40,9 +40,12 @@
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Remoting" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
@@ -79,6 +82,9 @@
     <Compile Include="Interfaces\Ilog.cs" />
     <Compile Include="Interfaces\ITaskInoke.cs" />
     <Compile Include="Interfaces\IUIEditorConvert.cs" />
+    <Compile Include="Ioc\DefinedClass.cs" />
+    <Compile Include="Ioc\InitInterface.cs" />
+    <Compile Include="Ioc\SimpleIocSerivce.cs" />
     <Compile Include="IOExtensions\PathExtensions.cs" />
     <Compile Include="IPCHelper\IPCClientHelper.cs" />
     <Compile Include="IPCHelper\IPCServerHelper.cs" />
@@ -96,6 +102,7 @@
     <Compile Include="Models\LogMessageInfo.cs" />
     <Compile Include="Models\ParameterItem.cs" />
     <Compile Include="Models\ParamterConvertItem.cs" />
+    <Compile Include="Models\PropertyStruct.cs" />
     <Compile Include="Models\ProxyErroModel.cs" />
     <Compile Include="Models\RequestAddressItem.cs" />
     <Compile Include="Models\ServerRequest.cs" />
@@ -155,7 +162,7 @@
       <DependentUpon>WaitView.xaml</DependentUpon>
     </Compile>
     <Compile Include="WPFHelper\DialogHelper\WaitViewModel.cs" />
-    <Compile Include="WPFHelper\EventBindingExtension.cs" />
+    <Compile Include="WPFHelper\Extensions\EventBindingExtension.cs" />
     <Compile Include="WPFHelper\Events\EventCommand.cs" />
     <Compile Include="WPFHelper\Events\EventCommandBind.cs" />
     <Compile Include="WPFHelper\Events\EventHost.cs" />
@@ -166,10 +173,13 @@
     <Compile Include="WPFHelper\Extensions\DataGridScrollHelper.cs" />
     <Compile Include="WPFHelper\Extensions\DialogResultDependencyProperty.cs" />
     <Compile Include="WPFHelper\Extensions\DoTaskParameterConvert.cs" />
+    <Compile Include="WPFHelper\Extensions\LangExtension.cs" />
+    <Compile Include="WPFHelper\Extensions\LangHelper.cs" />
     <Compile Include="WPFHelper\Extensions\ParagrahDependency.cs" />
     <Compile Include="WPFHelper\Extensions\ScrollViewerExtensions.cs" />
     <Compile Include="WPFHelper\Extensions\BitmapExtensions.cs" />
     <Compile Include="WPFHelper\Extensions\ValueConverter.cs" />
+    <Compile Include="WPFHelper\LangProvider.cs" />
     <Compile Include="WPFHelper\SimpleCommand.cs" />
     <Compile Include="WPFHelper\UIEditorConverts\BooleanEditorConvert.cs" />
     <Compile Include="WPFHelper\UIEditorConverts\EnumEditorConvert.cs" />
@@ -209,6 +219,7 @@
     <Resource Include="iconttf\iconfont.ttf" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="LangProvider.md" />
     <None Include="Readme.md" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

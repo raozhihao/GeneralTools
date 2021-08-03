@@ -8,47 +8,14 @@ namespace GeneralTool.General.LinqExtensions
     /// </summary>
     public static class ArraryExtensions
     {
+        #region Public 方法
         /// <summary>
-        /// 循环数组类型
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="arrary"></param>
-        /// <param name="action"></param>
-        /// <returns></returns>
-        public static IEnumerable<T> Foreach<T>(this T[] arrary, Action<T> action)
-        {
-            foreach (T t in arrary)
-            {
-                action?.Invoke(t);
-            }
-            return arrary;
-        }
-
-        /// <summary>
-        /// 循环数组类型
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="arrary"></param>
-        /// <param name="action"></param>
-        /// <returns></returns>
-        public static IEnumerable<T> For<T>(this T[] arrary, Action<T> action)
-        {
-            for (int i = 0; i < arrary.Length; i++)
-            {
-                action?.Invoke(arrary[i]);
-            }
-            return arrary;
-        }
-
-
-        /// <summary>
-        /// 查找指定值位置
+        /// 
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="arrary"></param>
         /// <param name="match"></param>
-        /// <returns>如果不存在则返回-1</returns>
-
+        /// <returns></returns>
         public static int FindIndex<T>(this T[] arrary, Predicate<T> match)
         {
             for (int i = 0; i < arrary.Length; i++)
@@ -64,10 +31,26 @@ namespace GeneralTool.General.LinqExtensions
         /// <summary>
         /// 查找指定值位置
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="arrary"></param>
-        /// <param name="item"></param>
-        /// <returns>如果不存在则返回-1</returns>
+        /// <typeparam name="T">
+        /// </typeparam>
+        /// <param name="arrary">
+        /// </param>
+        /// </param>
+        /// <returns>
+        /// 如果不存在则返回-1
+        /// </returns>
+        /// <summary>
+        /// 查找指定值位置
+        /// </summary>
+        /// <typeparam name="T">
+        /// </typeparam>
+        /// <param name="arrary">
+        /// </param>
+        /// <param name="item">
+        /// </param>
+        /// <returns>
+        /// 如果不存在则返回-1
+        /// </returns>
         public static int FindIndex<T>(this T[] arrary, T item)
         {
             for (int i = 0; i < arrary.Length; i++)
@@ -80,5 +63,46 @@ namespace GeneralTool.General.LinqExtensions
             return -1;
         }
 
+        /// <summary>
+        /// 循环数组类型
+        /// </summary>
+        /// <typeparam name="T">
+        /// </typeparam>
+        /// <param name="arrary">
+        /// </param>
+        /// <param name="action">
+        /// </param>
+        /// <returns>
+        /// </returns>
+        public static IEnumerable<T> For<T>(this T[] arrary, Action<T> action)
+        {
+            for (int i = 0; i < arrary.Length; i++)
+            {
+                action?.Invoke(arrary[i]);
+            }
+            return arrary;
+        }
+
+        /// <summary>
+        /// 循环数组类型
+        /// </summary>
+        /// <typeparam name="T">
+        /// </typeparam>
+        /// <param name="arrary">
+        /// </param>
+        /// <param name="action">
+        /// </param>
+        /// <returns>
+        /// </returns>
+        public static IEnumerable<T> Foreach<T>(this T[] arrary, Action<T> action)
+        {
+            foreach (T t in arrary)
+            {
+                action?.Invoke(t);
+            }
+            return arrary;
+        }
+
+        #endregion Public 方法
     }
 }

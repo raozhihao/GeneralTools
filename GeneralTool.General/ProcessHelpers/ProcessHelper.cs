@@ -9,13 +9,22 @@ namespace GeneralTool.General.ProcessHelpers
     /// </summary>
     public static class ProcessHelper
     {
+        #region Public 方法
+
         /// <summary>
         /// 启动
         /// </summary>
-        /// <param name="exePath">exe应用程序路径</param>
-        /// <param name="result">输出结果</param>
-        /// <param name="args">参数</param>
-        /// <returns></returns>
+        /// <param name="exePath">
+        /// exe应用程序路径
+        /// </param>
+        /// <param name="result">
+        /// 输出结果
+        /// </param>
+        /// <param name="args">
+        /// 参数
+        /// </param>
+        /// <returns>
+        /// </returns>
         public static string Run(string exePath, out string result, string args = "")
         {
             result = "";
@@ -44,5 +53,7 @@ namespace GeneralTool.General.ProcessHelpers
             process.Dispose();
             return result;
         }
+
+        #endregion Public 方法
     }
 }

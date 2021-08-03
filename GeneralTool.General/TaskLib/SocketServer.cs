@@ -12,38 +12,93 @@ using System.Threading;
 namespace GeneralTool.General.TaskLib
 {
     /// <summary>
-    /// 
     /// </summary>
     public class SocketServer : SocketMast, IDisposable
     {
+        #region Private 字段
+
+        private Thread _listenningThread = null;
+        private bool disposedValue = false;
         private ILog log;
+
+        #endregion Private 字段
+
+        #region Public 构造函数
+
         /// <summary>
-        /// 
         /// </summary>
-        /// <param name="log"></param>
+        /// <param name="log">
+        /// </param>
         public SocketServer(ILog log)
         {
             if (log == null)
                 log = new ConsoleLogInfo();
             this.log = log;
         }
+
+        #endregion Public 构造函数
+
+        #region Public 委托
+
         /// <summary>
-        /// 
         /// </summary>
-        /// <param name="socket"></param>
+        /// <param name="socket">
+        /// </param>
         public delegate void RecLink(Socket socket);
+
+        #endregion Public 委托
+
+        #region Public 事件
+
         /// <summary>
-        /// 
         /// </summary>
         public event RecLink RecLinkSocket = null;
 
+        #endregion Public 事件
+
+        #region Public 属性
+
         /// <summary>
-        /// 
         /// </summary>
         public int ClientNum { get; set; } = 5;
 
+        #endregion Public 属性
+
+        #region Public 方法
+
         /// <summary>
-        /// 
+        /// </summary>
+        public override void Close()
+        {
+            try
+            {
+                bool isOpen = base.IsOpen;
+                if (isOpen)
+                {
+                    this._socket.Close();
+                    this._listenningThread.Abort();
+                    foreach (KeyValuePair<string, SocketLinkObject> keyValuePair in this._linkPool)
+                    {
+                        keyValuePair.Value.LinkSocket.Close();
+                        bool isAlive = keyValuePair.Value.LinkThread.IsAlive;
+                        if (isAlive)
+                        {
+                            keyValuePair.Value.LinkThread.Abort();
+                        }
+                    }
+                    this._linkPool.Clear();
+                }
+            }
+            catch (Exception)
+            {
+            }
+            finally
+            {
+                this._isOpen = false;
+            }
+        }
+
+        /// <summary>
         /// </summary>
         public override void Connect()
         {
@@ -77,36 +132,98 @@ namespace GeneralTool.General.TaskLib
             }
         }
 
-
-        private void ListenningLink()
+        /// <summary>
+        /// </summary>
+        public void Dispose()
         {
-            try
+            this.Dispose(true);
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="msg">
+        /// </param>
+        public override void Send(string msg)
+        {
+            byte[] sendBytes = base.GetSendBytes(msg);
+            string text = "";
+            foreach (KeyValuePair<string, SocketLinkObject> keyValuePair in this._linkPool)
             {
-                for (; ; )
+                bool flag = keyValuePair.Value.LinkSocket != null && !keyValuePair.Value.LinkSocket.Poll(10, SelectMode.SelectRead);
+                if (flag)
                 {
-                    Socket socket = this._socket.Accept();
-                    bool flag = this.RecLinkSocket != null;
-                    if (flag)
-                    {
-                        this.RecLinkSocket(socket);
-                    }
-                    this.AddClientSocket(socket);
+                    keyValuePair.Value.LinkSocket.Send(sendBytes, SocketFlags.None);
+                }
+                else
+                {
+                    text = keyValuePair.Key;
                 }
             }
-            catch (ThreadAbortException)
+            bool flag2 = text != "";
+            if (flag2)
             {
-
-            }
-            catch (Exception ex)
-            {
-                log.Error($"监听客户端连接出现错误:{ex.Message}");
+                this._linkPool.Remove(text);
             }
         }
 
         /// <summary>
-        /// 
         /// </summary>
-        /// <param name="client"></param>
+        /// <param name="msg">
+        /// </param>
+        public override void Send(byte[] msg)
+        {
+            bool flag = !base.IsAutoSize;
+            if (flag)
+            {
+                msg = base.GetForntBytes(msg);
+            }
+            string text = "";
+            foreach (KeyValuePair<string, SocketLinkObject> keyValuePair in this._linkPool)
+            {
+                bool flag2 = keyValuePair.Value.LinkSocket != null && !keyValuePair.Value.LinkSocket.Poll(10, SelectMode.SelectRead);
+                if (flag2)
+                {
+                    keyValuePair.Value.LinkSocket.Send(msg, SocketFlags.None);
+                }
+                else
+                {
+                    text = keyValuePair.Key;
+                }
+            }
+            bool flag3 = text != "";
+            if (flag3)
+            {
+                this._linkPool.Remove(text);
+            }
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="msg">
+        /// </param>
+        /// <param name="client">
+        /// </param>
+        public void Send(string msg, Socket client)
+        {
+            byte[] sendBytes = base.GetSendBytes(msg);
+            try
+            {
+                client.Send(sendBytes, SocketFlags.None);
+            }
+            catch (Exception ex)
+            {
+                log.Error($"向客户端 [{client.RemoteEndPoint}] 发送消息失败:{ex.Message}");
+            }
+        }
+
+        #endregion Public 方法
+
+        #region Protected 方法
+
+        /// <summary>
+        /// </summary>
+        /// <param name="client">
+        /// </param>
         protected void AddClientSocket(Socket client)
         {
             bool flag = !this._linkPool.Keys.Contains(client.RemoteEndPoint.ToString()) && base.IsOpen;
@@ -120,9 +237,9 @@ namespace GeneralTool.General.TaskLib
         }
 
         /// <summary>
-        /// 
         /// </summary>
-        /// <param name="client"></param>
+        /// <param name="client">
+        /// </param>
         protected void DelClientSocket(Socket client)
         {
             try
@@ -140,6 +257,25 @@ namespace GeneralTool.General.TaskLib
             }
         }
 
+        /// <summary>
+        /// </summary>
+        /// <param name="disposing">
+        /// </param>
+        protected virtual void Dispose(bool disposing)
+        {
+            bool flag = !this.disposedValue;
+            if (flag)
+            {
+                if (disposing)
+                {
+                }
+                this.disposedValue = true;
+            }
+        }
+
+        #endregion Protected 方法
+
+        #region Private 方法
 
         private void CommunicationToClient(object client)
         {
@@ -205,141 +341,30 @@ namespace GeneralTool.General.TaskLib
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public override void Close()
+        private void ListenningLink()
         {
             try
             {
-                bool isOpen = base.IsOpen;
-                if (isOpen)
+                for (; ; )
                 {
-                    this._socket.Close();
-                    this._listenningThread.Abort();
-                    foreach (KeyValuePair<string, SocketLinkObject> keyValuePair in this._linkPool)
+                    Socket socket = this._socket.Accept();
+                    bool flag = this.RecLinkSocket != null;
+                    if (flag)
                     {
-                        keyValuePair.Value.LinkSocket.Close();
-                        bool isAlive = keyValuePair.Value.LinkThread.IsAlive;
-                        if (isAlive)
-                        {
-                            keyValuePair.Value.LinkThread.Abort();
-                        }
+                        this.RecLinkSocket(socket);
                     }
-                    this._linkPool.Clear();
+                    this.AddClientSocket(socket);
                 }
             }
-            catch (Exception)
+            catch (ThreadAbortException)
             {
-            }
-            finally
-            {
-                this._isOpen = false;
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="msg"></param>
-        public override void Send(string msg)
-        {
-            byte[] sendBytes = base.GetSendBytes(msg);
-            string text = "";
-            foreach (KeyValuePair<string, SocketLinkObject> keyValuePair in this._linkPool)
-            {
-                bool flag = keyValuePair.Value.LinkSocket != null && !keyValuePair.Value.LinkSocket.Poll(10, SelectMode.SelectRead);
-                if (flag)
-                {
-                    keyValuePair.Value.LinkSocket.Send(sendBytes, SocketFlags.None);
-                }
-                else
-                {
-                    text = keyValuePair.Key;
-                }
-            }
-            bool flag2 = text != "";
-            if (flag2)
-            {
-                this._linkPool.Remove(text);
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="msg"></param>
-        public override void Send(byte[] msg)
-        {
-            bool flag = !base.IsAutoSize;
-            if (flag)
-            {
-                msg = base.GetForntBytes(msg);
-            }
-            string text = "";
-            foreach (KeyValuePair<string, SocketLinkObject> keyValuePair in this._linkPool)
-            {
-                bool flag2 = keyValuePair.Value.LinkSocket != null && !keyValuePair.Value.LinkSocket.Poll(10, SelectMode.SelectRead);
-                if (flag2)
-                {
-                    keyValuePair.Value.LinkSocket.Send(msg, SocketFlags.None);
-                }
-                else
-                {
-                    text = keyValuePair.Key;
-                }
-            }
-            bool flag3 = text != "";
-            if (flag3)
-            {
-                this._linkPool.Remove(text);
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="msg"></param>
-        /// <param name="client"></param>
-        public void Send(string msg, Socket client)
-        {
-            byte[] sendBytes = base.GetSendBytes(msg);
-            try
-            {
-                client.Send(sendBytes, SocketFlags.None);
             }
             catch (Exception ex)
             {
-                log.Error($"向客户端 [{client.RemoteEndPoint}] 发送消息失败:{ex.Message}");
+                log.Error($"监听客户端连接出现错误:{ex.Message}");
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="disposing"></param>
-        protected virtual void Dispose(bool disposing)
-        {
-            bool flag = !this.disposedValue;
-            if (flag)
-            {
-                if (disposing)
-                {
-                }
-                this.disposedValue = true;
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public void Dispose()
-        {
-            this.Dispose(true);
-        }
-
-
-        private Thread _listenningThread = null;
-        private bool disposedValue = false;
+        #endregion Private 方法
     }
 }

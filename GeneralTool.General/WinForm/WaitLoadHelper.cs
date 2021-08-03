@@ -6,140 +6,33 @@ using System.Windows.Forms;
 
 namespace GeneralTool.General.WinForm
 {
-
     /// <summary>
     /// 等待框帮助类
     /// </summary>
     public class WaitDialogHelper
     {
+        #region Private 字段
+
+        private DialogFrm dialog;
+
+        private MaskPanel maskPanel;
+
+        private Form parentFrm;
+
+        #endregion Private 字段
+
+        #region Public 构造函数
+
         /// <summary>
         /// 构造函数
         /// </summary>
         public WaitDialogHelper()
         {
-
         }
 
-        private DialogFrm dialog;
-        private MaskPanel maskPanel;
-        private Form parentFrm;
+        #endregion Public 构造函数
 
-        /// <summary>
-        /// 获取等待框是否已关闭
-        /// </summary>
-        public bool IsClosed { get; private set; }
-
-        /// <summary>
-        /// 显示等待框
-        /// </summary>
-        /// <param name="parentFrm">要显示的等待框父窗体</param>
-        /// <param name="caption">在等待框上要显示的文本</param>
-        /// <param name="alpha">遮罩层的透明度</param>
-        /// <param name="canDragAndResize">主窗体是否可以响应拖动,更改大小事件(在对主窗体更改大小时视觉会有拖影)</param>
-        public async void ShowDialog(Form parentFrm, string caption = "", int alpha = 220, bool canDragAndResize = false)
-        {
-            IsClosed = false;
-            this.parentFrm = parentFrm;
-            dialog = new DialogFrm();
-            maskPanel = new MaskPanel(parentFrm, alpha);
-
-
-            parentFrm.LocationChanged += ParentFrm_LocationChanged;
-            parentFrm.SizeChanged += ParentFrm_SizeChanged;
-
-            EnableParentFrm(false);
-
-
-            maskPanel.Visible = true;
-
-
-            //dialog.Show(parentFrm);
-            //CenterToParent();
-
-            await Task.Run(() =>
-             {
-                 parentFrm.BeginInvoke(new Action(() =>
-                 {
-                     if (canDragAndResize)
-                     {
-                         dialog.Show(parentFrm);
-                     }
-                     else
-                     {
-                         dialog.ShowDialog(parentFrm);
-
-                     }
-
-                 }));
-             });
-            dialog.Caption = caption;
-            CenterToParent();
-        }
-
-
-
-        private void EnableParentFrm(bool enable)
-        {
-            foreach (Control control in parentFrm.Controls)
-            {
-                control.Enabled = enable;//避免用户可以通过TAB来切换到其它控件
-            }
-
-
-
-            parentFrm.UseWaitCursor = !enable;
-        }
-
-        private void ParentFrm_SizeChanged(object sender, EventArgs e)
-        {
-            CenterToParent();
-        }
-
-
-
-        private void ParentFrm_LocationChanged(object sender, EventArgs e)
-        {
-            CenterToParent();
-        }
-
-        /// <summary>
-        /// 将等待框放置于父窗体中间
-        /// </summary>
-        private void CenterToParent()
-        {
-            dialog.Width = parentFrm.ClientSize.Width;
-            dialog.Left = parentFrm.Left + (parentFrm.Width - dialog.Width) / 2;
-            dialog.Top = parentFrm.Top + (parentFrm.Height - dialog.Height) / 2;
-
-            dialog.Update();
-            parentFrm.Update();
-        }
-
-
-        /// <summary>
-        /// 获取或设置等待框上进度条是否显示
-        /// </summary>
-        public bool ProgressVisible
-        {
-            get
-            {
-                if (IsClosed)
-                {
-                    return false;
-                }
-                else
-                {
-                    return dialog.ProgressVisible;
-                }
-            }
-            set
-            {
-                if (!IsClosed)
-                {
-                    dialog.ProgressVisible = value;
-                }
-            }
-        }
+        #region Public 属性
 
         /// <summary>
         /// 获取或设置等待框上的文本信息
@@ -157,6 +50,7 @@ namespace GeneralTool.General.WinForm
                     return dialog.Caption;
                 }
             }
+
             set
             {
                 if (!IsClosed)
@@ -165,6 +59,11 @@ namespace GeneralTool.General.WinForm
                 }
             }
         }
+
+        /// <summary>
+        /// 获取等待框是否已关闭
+        /// </summary>
+        public bool IsClosed { get; private set; }
 
         /// <summary>
         /// 获取或设置等待框上进度条进度
@@ -182,11 +81,38 @@ namespace GeneralTool.General.WinForm
                     return dialog.ProgressValue;
                 }
             }
+
             set
             {
                 if (!IsClosed && value > -1)
                 {
                     dialog.ProgressValue = value;
+                }
+            }
+        }
+
+        /// <summary>
+        /// 获取或设置等待框上进度条是否显示
+        /// </summary>
+        public bool ProgressVisible
+        {
+            get
+            {
+                if (IsClosed)
+                {
+                    return false;
+                }
+                else
+                {
+                    return dialog.ProgressVisible;
+                }
+            }
+
+            set
+            {
+                if (!IsClosed)
+                {
+                    dialog.ProgressVisible = value;
                 }
             }
         }
@@ -207,6 +133,7 @@ namespace GeneralTool.General.WinForm
                     return dialog.BackColor;
                 }
             }
+
             set
             {
                 if (!IsClosed)
@@ -232,6 +159,7 @@ namespace GeneralTool.General.WinForm
                     return dialog.ForeColor;
                 }
             }
+
             set
             {
                 if (!IsClosed)
@@ -241,6 +169,9 @@ namespace GeneralTool.General.WinForm
             }
         }
 
+        #endregion Public 属性
+
+        #region Public 方法
 
         /// <summary>
         /// 关闭等待框
@@ -261,13 +192,119 @@ namespace GeneralTool.General.WinForm
         }
 
         /// <summary>
+        /// 显示等待框
+        /// </summary>
+        /// <param name="parentFrm">
+        /// 要显示的等待框父窗体
+        /// </param>
+        /// <param name="caption">
+        /// 在等待框上要显示的文本
+        /// </param>
+        /// <param name="alpha">
+        /// 遮罩层的透明度
+        /// </param>
+        /// <param name="canDragAndResize">
+        /// 主窗体是否可以响应拖动,更改大小事件(在对主窗体更改大小时视觉会有拖影)
+        /// </param>
+        public async void ShowDialog(Form parentFrm, string caption = "", int alpha = 220, bool canDragAndResize = false)
+        {
+            IsClosed = false;
+            this.parentFrm = parentFrm;
+            dialog = new DialogFrm();
+            maskPanel = new MaskPanel(parentFrm, alpha);
+
+            parentFrm.LocationChanged += ParentFrm_LocationChanged;
+            parentFrm.SizeChanged += ParentFrm_SizeChanged;
+
+            EnableParentFrm(false);
+
+            maskPanel.Visible = true;
+
+            //dialog.Show(parentFrm);
+            //CenterToParent();
+
+            await Task.Run(() =>
+             {
+                 parentFrm.BeginInvoke(new Action(() =>
+                 {
+                     if (canDragAndResize)
+                     {
+                         dialog.Show(parentFrm);
+                     }
+                     else
+                     {
+                         dialog.ShowDialog(parentFrm);
+                     }
+                 }));
+             });
+            dialog.Caption = caption;
+            CenterToParent();
+        }
+
+        #endregion Public 方法
+
+        #region Private 方法
+
+        /// <summary>
+        /// 将等待框放置于父窗体中间
+        /// </summary>
+        private void CenterToParent()
+        {
+            dialog.Width = parentFrm.ClientSize.Width;
+            dialog.Left = parentFrm.Left + (parentFrm.Width - dialog.Width) / 2;
+            dialog.Top = parentFrm.Top + (parentFrm.Height - dialog.Height) / 2;
+
+            dialog.Update();
+            parentFrm.Update();
+        }
+
+        private void EnableParentFrm(bool enable)
+        {
+            foreach (Control control in parentFrm.Controls)
+            {
+                control.Enabled = enable;//避免用户可以通过TAB来切换到其它控件
+            }
+
+            parentFrm.UseWaitCursor = !enable;
+        }
+
+        private void ParentFrm_LocationChanged(object sender, EventArgs e)
+        {
+            CenterToParent();
+        }
+
+        private void ParentFrm_SizeChanged(object sender, EventArgs e)
+        {
+            CenterToParent();
+        }
+
+        #endregion Private 方法
+
+        #region Private 类
+
+        /// <summary>
         /// 等待框类
         /// </summary>
         private partial class DialogFrm : Form
         {
+            #region Public 构造函数
+
+            public DialogFrm()
+            {
+                InitializeComponent();
+                DoubleBuffered = true;
+            }
+
+            #endregion Public 构造函数
+
+
+
+            #region Public 属性
+
             public string Caption
             {
                 get => captionLable.Text;
+
                 set
                 {
                     if (string.IsNullOrWhiteSpace(value))
@@ -301,12 +338,12 @@ namespace GeneralTool.General.WinForm
             public int ProgressValue
             {
                 get => progressBar1.Value;
+
                 set
                 {
                     if (value > 0)
                     {
                         progressBar1.Style = ProgressBarStyle.Continuous;
-
                     }
                     else
                     {
@@ -319,6 +356,7 @@ namespace GeneralTool.General.WinForm
             public bool ProgressVisible
             {
                 get => progressBar1.Visible;
+
                 set
                 {
                     if (!value)
@@ -338,29 +376,39 @@ namespace GeneralTool.General.WinForm
                             progressBar1.Location = new Point(12, 12);
                             captionLable.Location = new Point(12, 44);
                         }
-
                     }
                     progressBar1.Visible = value;
                 }
             }
-            public DialogFrm()
-            {
-                InitializeComponent();
-                DoubleBuffered = true;
-            }
+
+            #endregion Public 属性
         }
 
         private partial class DialogFrm
         {
+            #region Private 字段
+
             /// <summary>
             /// Required designer variable.
             /// </summary>
             private readonly System.ComponentModel.IContainer components = null;
 
+            private System.Windows.Forms.Label captionLable;
+
+            private System.Windows.Forms.ProgressBar progressBar1;
+
+            #endregion Private 字段
+
+
+
+            #region Protected 方法
+
             /// <summary>
             /// Clean up any resources being used.
             /// </summary>
-            /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+            /// <param name="disposing">
+            /// true if managed resources should be disposed; otherwise, false.
+            /// </param>
             protected override void Dispose(bool disposing)
             {
                 if (disposing && (components != null))
@@ -370,20 +418,21 @@ namespace GeneralTool.General.WinForm
                 base.Dispose(disposing);
             }
 
-            #region Windows Form Designer generated code
+            #endregion Protected 方法
+
+            #region Private 方法
 
             /// <summary>
-            /// Required method for Designer support - do not modify
-            /// the contents of this method with the code editor.
+            /// Required method for Designer support - do not modify the contents of this method
+            /// with the code editor.
             /// </summary>
             private void InitializeComponent()
             {
                 progressBar1 = new System.Windows.Forms.ProgressBar();
                 captionLable = new System.Windows.Forms.Label();
                 SuspendLayout();
-                // 
+
                 // progressBar1
-                // 
                 progressBar1.Anchor = (((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                 | System.Windows.Forms.AnchorStyles.Left)
                 | System.Windows.Forms.AnchorStyles.Right);
@@ -393,18 +442,16 @@ namespace GeneralTool.General.WinForm
                 progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Marquee;
                 progressBar1.TabIndex = 0;
                 progressBar1.Visible = true;
-                // 
+
                 // label1
-                // 
                 captionLable.AutoSize = true;
                 captionLable.Location = new System.Drawing.Point(12, 44);
                 captionLable.Name = "label1";
                 captionLable.Size = new System.Drawing.Size(47, 12);
                 captionLable.TabIndex = 1;
                 captionLable.Text = "Caption";
-                // 
+
                 // DialogFrm
-                // 
                 AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
                 AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
                 BackColor = System.Drawing.SystemColors.AppWorkspace;
@@ -422,55 +469,40 @@ namespace GeneralTool.General.WinForm
                 Text = "DialogFrm";
                 ResumeLayout(false);
                 PerformLayout();
-
             }
 
-            #endregion
-
-            private System.Windows.Forms.ProgressBar progressBar1;
-            private System.Windows.Forms.Label captionLable;
+            #endregion Private 方法
         }
 
         private class MaskPanel : Control
         {
+            #region Private 字段
+
             private readonly System.ComponentModel.Container components = new System.ComponentModel.Container();
 
-            private bool _isTransparent = true;//是否透明
-            [Category("透明"), Description("是否使用透明,默认为True")]
-            public bool IsTransparent
-            {
-                get => _isTransparent;
-                set
-                {
-                    _isTransparent = value;
-                    Invalidate();
-                }
-            }
+            private int _alpha = 125;
 
-            private int _alpha = 125;//设置透明度
-            [Category("透明"), Description("设置透明度")]
-            public int Alpha
-            {
-                get => _alpha;
-                set
-                {
-                    _alpha = value;
-                    Invalidate();
-                }
-            }
+            private bool _isTransparent = true;
 
+            #endregion Private 字段
 
+            #region Public 构造函数
+
+            //是否透明
             public MaskPanel(Control parent)
                 : this(parent, 125)
             {
-
             }
 
             /// <summary>
             /// 初始化加载控件
             /// </summary>
-            /// <param name="parent">父控件</param>
-            /// <param name="alpha">透明度</param>
+            /// <param name="parent">
+            /// 父控件
+            /// </param>
+            /// <param name="alpha">
+            /// 透明度
+            /// </param>
             public MaskPanel(Control parent, int alpha)
             {
                 SetStyle(ControlStyles.Opaque, true);//设置背景透明
@@ -485,9 +517,45 @@ namespace GeneralTool.General.WinForm
                 Anchor = AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Bottom;
                 BringToFront();
 
-
                 Visible = false;
             }
+
+            #endregion Public 构造函数
+
+
+
+            #region Public 属性
+
+            //设置透明度
+            [Category("透明"), Description("设置透明度")]
+            public int Alpha
+            {
+                get => _alpha;
+
+                set
+                {
+                    _alpha = value;
+                    Invalidate();
+                }
+            }
+
+            [Category("透明"), Description("是否使用透明,默认为True")]
+            public bool IsTransparent
+            {
+                get => _isTransparent;
+
+                set
+                {
+                    _isTransparent = value;
+                    Invalidate();
+                }
+            }
+
+            #endregion Public 属性
+
+
+
+            #region Protected 属性
 
             protected override CreateParams CreateParams
             {
@@ -497,6 +565,24 @@ namespace GeneralTool.General.WinForm
                     cp.ExStyle |= 0x20; // 开启 WS_EX_TRANSPARENT,使控件支持透明
                     return cp;
                 }
+            }
+
+            #endregion Protected 属性
+
+
+
+            #region Protected 方法
+
+            protected override void Dispose(bool disposing)
+            {
+                if (disposing)
+                {
+                    if (!((components == null)))
+                    {
+                        components.Dispose();
+                    }
+                }
+                base.Dispose(disposing);
             }
 
             protected override void OnPaint(PaintEventArgs pe)
@@ -519,18 +605,9 @@ namespace GeneralTool.General.WinForm
                 pe.Graphics.FillRectangle(labelBackColorBrush, 0, 0, Width, Height);
             }
 
-            protected override void Dispose(bool disposing)
-            {
-                if (disposing)
-                {
-                    if (!((components == null)))
-                    {
-                        components.Dispose();
-                    }
-                }
-                base.Dispose(disposing);
-            }
-
+            #endregion Protected 方法
         }
+
+        #endregion Private 类
     }
 }

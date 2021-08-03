@@ -11,8 +11,10 @@ namespace GeneralTool.General.WPFHelper.UIEditorConverts
     /// </summary>
     public class StringEditorConvert : IUIEditorConvert
     {
+        #region Public 方法
+
         ///<inheritdoc/>
-        public void ConvertTo(Grid gridParent, object instance, PropertyInfo propertyInfo,bool? sort, ref int Row,string header=null)
+        public void ConvertTo(Grid gridParent, object instance, PropertyInfo propertyInfo, bool? sort, ref int Row, string header = null)
         {
             var left = new TextBlock()
             {
@@ -31,7 +33,6 @@ namespace GeneralTool.General.WPFHelper.UIEditorConverts
 
             left.Visibility = right.Visibility = UIEditorHelper.GetVisibility(propertyInfo);
 
-
             right.Text = instance == null ? "" : instance + "";
 
             BindingMode bindingMode = BindingMode.TwoWay;
@@ -48,5 +49,7 @@ namespace GeneralTool.General.WPFHelper.UIEditorConverts
             gridParent.Children.Add(left);
             gridParent.Children.Add(right);
         }
+
+        #endregion Public 方法
     }
 }

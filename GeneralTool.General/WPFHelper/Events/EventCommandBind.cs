@@ -8,11 +8,73 @@ namespace GeneralTool.General.WPFHelper.Events
     /// </summary>
     public class EventCommandBind : DependencyObject
     {
+        #region Public 字段
 
         /// <summary>
         /// 事件,这是依赖属性
         /// </summary>
         public static readonly DependencyProperty EventCommandProerty = DependencyProperty.RegisterAttached("Command", typeof(IEventCommand), typeof(EventCommandBind), new PropertyMetadata(null, new PropertyChangedCallback(CommandChanged)));
+
+        /// <summary>
+        /// 事件名称,这是依赖属性
+        /// </summary>
+        public static readonly DependencyProperty EventNameProperty = DependencyProperty.Register("EventName", typeof(string), typeof(EventCommandBind));
+
+        #endregion Public 字段
+
+        #region Public 方法
+
+        /// <summary>
+        /// 获取Command
+        /// </summary>
+        /// <param name="dp">
+        /// </param>
+        /// <returns>
+        /// </returns>
+        public static object GetCommand(DependencyObject dp)
+        {
+            return dp.GetValue(EventCommandProerty);
+        }
+
+        /// <summary>
+        /// 获取事件名称
+        /// </summary>
+        /// <param name="dp">
+        /// </param>
+        /// <returns>
+        /// </returns>
+        public static string GetEventName(DependencyObject dp)
+        {
+            return (string)dp.GetValue(EventNameProperty);
+        }
+
+        /// <summary>
+        /// 设置Command
+        /// </summary>
+        /// <param name="dp">
+        /// </param>
+        /// <param name="value">
+        /// </param>
+        public static void SetCommand(DependencyObject dp, object value)
+        {
+            dp.SetValue(EventCommandProerty, value);
+        }
+
+        /// <summary>
+        /// 设置事件名称
+        /// </summary>
+        /// <param name="dp">
+        /// </param>
+        /// <param name="value">
+        /// </param>
+        public static void SetEventName(DependencyObject dp, string value)
+        {
+            dp.SetValue(EventNameProperty, value);
+        }
+
+        #endregion Public 方法
+
+        #region Private 方法
 
         private static void CommandChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -33,6 +95,18 @@ namespace GeneralTool.General.WPFHelper.Events
             }
         }
 
+        private static RoutedEvent GetRouteEvent(UIElement b, string eventName)
+        {
+            eventName += "Event";
+
+            var property = typeof(UIElement).GetField(eventName);
+            if (property != null)
+            {
+                return (RoutedEvent)property.GetValue(b);
+            }
+            return null;
+        }
+
         private static void RegisterEvent(UIElement d, string eventName, IEventCommand cmd)
         {
             var action = cmd.ActionEventHandler;
@@ -48,7 +122,6 @@ namespace GeneralTool.General.WPFHelper.Events
             //}
             //else
             //{
-
             //    @event.AddEventHandler(d, handler);
             //}
             var routeEvent = GetRouteEvent(d, eventName);
@@ -56,66 +129,8 @@ namespace GeneralTool.General.WPFHelper.Events
                 d.AddHandler(routeEvent, handler, true);
             else
                 @event.AddEventHandler(d, handler);
-
         }
 
-        private static RoutedEvent GetRouteEvent(UIElement b, string eventName)
-        {
-            eventName += "Event";
-
-            var property = typeof(UIElement).GetField(eventName);
-            if (property != null)
-            {
-                return (RoutedEvent)property.GetValue(b);
-            }
-            return null;
-        }
-
-
-        /// <summary>
-        /// 设置Command
-        /// </summary>
-        /// <param name="dp"></param>
-        /// <param name="value"></param>
-        public static void SetCommand(DependencyObject dp, object value)
-        {
-            dp.SetValue(EventCommandProerty, value);
-        }
-
-
-        /// <summary>
-        /// 获取Command
-        /// </summary>
-        /// <param name="dp"></param>
-        /// <returns></returns>
-        public static object GetCommand(DependencyObject dp)
-        {
-            return dp.GetValue(EventCommandProerty);
-        }
-
-        /// <summary>
-        /// 事件名称,这是依赖属性
-        /// </summary>
-        public static readonly DependencyProperty EventNameProperty = DependencyProperty.Register("EventName", typeof(string), typeof(EventCommandBind));
-
-        /// <summary>
-        /// 设置事件名称
-        /// </summary>
-        /// <param name="dp"></param>
-        /// <param name="value"></param>
-        public static void SetEventName(DependencyObject dp, string value)
-        {
-            dp.SetValue(EventNameProperty, value);
-        }
-
-        /// <summary>
-        /// 获取事件名称
-        /// </summary>
-        /// <param name="dp"></param>
-        /// <returns></returns>
-        public static string GetEventName(DependencyObject dp)
-        {
-            return (string)dp.GetValue(EventNameProperty);
-        }
+        #endregion Private 方法
     }
 }

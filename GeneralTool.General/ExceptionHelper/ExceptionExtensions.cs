@@ -7,11 +7,15 @@ namespace GeneralTool.General.ExceptionHelper
     /// </summary>
     public static class ExceptionExtensions
     {
+        #region Public 方法
+
         /// <summary>
         /// 获取异常信息
         /// </summary>
-        /// <param name="exception"></param>
-        /// <returns></returns>
+        /// <param name="exception">
+        /// </param>
+        /// <returns>
+        /// </returns>
         public static string GetInnerExceptionMessage(this Exception exception)
         {
             if (exception.InnerException != null)
@@ -20,5 +24,7 @@ namespace GeneralTool.General.ExceptionHelper
             }
             return exception.Message;
         }
+
+        #endregion Public 方法
     }
 }

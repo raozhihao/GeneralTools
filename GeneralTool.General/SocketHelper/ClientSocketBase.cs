@@ -11,9 +11,34 @@ namespace GeneralTool.General.SocketHelper
     /// </summary>
     public class ClientSocketBase
     {
+        #region Private 字段
+
         private readonly Socket clientSocket;
         private readonly string host;
         private readonly int port;
+
+        #endregion Private 字段
+
+        #region Public 构造函数
+
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="host">
+        /// </param>
+        /// <param name="port">
+        /// </param>
+        public ClientSocketBase(string host = "127.0.0.1", int port = 55155)
+        {
+            this.host = host;
+            this.port = port;
+
+            clientSocket = new System.Net.Sockets.Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        }
+
+        #endregion Public 构造函数
+
+        #region Public 属性
 
         /// <summary>
         /// 错误信息
@@ -27,17 +52,40 @@ namespace GeneralTool.General.SocketHelper
         {
             get; private set;
         }
-        /// <summary>
-        /// 构造函数
-        /// </summary>
-        /// <param name="host"></param>
-        /// <param name="port"></param>
-        public ClientSocketBase(string host = "127.0.0.1", int port = 55155)
-        {
-            this.host = host;
-            this.port = port;
 
-            clientSocket = new System.Net.Sockets.Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        #endregion Public 属性
+
+        #region Public 方法
+
+        /// <summary>
+        /// 关闭连接
+        /// </summary>
+        public void Close()
+        {
+            System.Diagnostics.Trace.WriteLine("调用客户端Close");
+            if (clientSocket == null)
+            {
+                return;
+            }
+            clientSocket.Close();
+            clientSocket.Dispose();
+            this.IsConnected = false;
+        }
+
+        /// <summary>
+        /// 发送命令并获取返回命令
+        /// </summary>
+        /// <param name="buffer">
+        /// </param>
+        /// <returns>
+        /// </returns>
+        public List<byte> Send(byte[] buffer)
+        {
+            this.ErroMsg = "";
+            clientSocket.Send(buffer);
+            var list = GetResponseCommand();
+
+            return list;
         }
 
         /// <summary>
@@ -45,7 +93,6 @@ namespace GeneralTool.General.SocketHelper
         /// </summary>
         public void Start()
         {
-
             try
             {
                 clientSocket.Connect(host, port);
@@ -59,20 +106,9 @@ namespace GeneralTool.General.SocketHelper
             }
         }
 
+        #endregion Public 方法
 
-        /// <summary>
-        /// 发送命令并获取返回命令
-        /// </summary>
-        /// <param name="buffer"></param>
-        /// <returns></returns>
-        public List<byte> Send(byte[] buffer)
-        {
-            this.ErroMsg = "";
-            clientSocket.Send(buffer);
-            var list = GetResponseCommand();
-
-            return list;
-        }
+        #region Private 方法
 
         private List<byte> GetResponseCommand()
         {
@@ -100,19 +136,6 @@ namespace GeneralTool.General.SocketHelper
             return list;
         }
 
-        /// <summary>
-        /// 关闭连接
-        /// </summary>
-        public void Close()
-        {
-            System.Diagnostics.Trace.WriteLine("调用客户端Close");
-            if (clientSocket == null)
-            {
-                return;
-            }
-            clientSocket.Close();
-            clientSocket.Dispose();
-            this.IsConnected = false;
-        }
+        #endregion Private 方法
     }
 }

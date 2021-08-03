@@ -7,6 +7,8 @@ namespace GeneralTool.General.SocketHelper
     /// </summary>
     internal static class ProxyTemple
     {
+        #region Internal 属性
+
         /// <summary>
         /// 获取预编译模板
         /// </summary>
@@ -49,5 +51,7 @@ namespace GeneralTool.General.SocketHelper
                 return builder.ToString();
             }
         }
+
+        #endregion Internal 属性
     }
 }

@@ -15,10 +15,35 @@ namespace GeneralTool.General.TaskLib
     /// </summary>
     public class SocketClient : SocketMast
     {
+        #region Private 字段
+
+        private Thread _recMsgThread = null;
+
+        #endregion Private 字段
+
+        #region Public 构造函数
+
+        /// <summary>
+        /// </summary>
+        public SocketClient(ILog log)
+        {
+            if (log == null)
+                log = new ConsoleLogInfo();
+            this.Log = log;
+        }
+
+        #endregion Public 构造函数
+
+        #region Public 事件
+
         /// <summary>
         /// 客户端连接事件
         /// </summary>
         public event RecLink LinkEvent = null;
+
+        #endregion Public 事件
+
+        #region Public 属性
 
         /// <summary>
         /// 客户端是否连接中
@@ -36,15 +61,10 @@ namespace GeneralTool.General.TaskLib
         /// 日志
         /// </summary>
         public ILog Log { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
-        public SocketClient(ILog log)
-        {
-            if (log == null)
-                log = new ConsoleLogInfo();
-            this.Log = log;
-        }
+
+        #endregion Public 属性
+
+        #region Public 方法
 
         /// <summary>
         /// 关闭服务端
@@ -68,41 +88,6 @@ namespace GeneralTool.General.TaskLib
             {
                 this.Log.Fail("关闭客户端连接出现问题:" + ex.Message);
             }
-        }
-
-        /// <summary>
-        /// 发送消息
-        /// </summary>
-        /// <param name="msg">发送字符串</param>
-        public override void Send(string msg)
-        {
-            bool flag = !base.IsAutoSize;
-            if (flag)
-            {
-                this._socket.Send(base.GetSendBytes(msg), base.DataPageLength, SocketFlags.None);
-            }
-            else
-            {
-                this._socket.Send(base.GetSendBytes(msg));
-            }
-            Log.Debug("发送消息成功");
-        }
-        /// <summary>
-        /// 发送消息
-        /// </summary>
-        /// <param name="msg"></param>
-        public override void Send(byte[] msg)
-        {
-            bool flag = !base.IsAutoSize;
-            if (flag)
-            {
-                this._socket.Send(base.GetForntBytes(msg), base.DataPageLength, SocketFlags.None);
-            }
-            else
-            {
-                this._socket.Send(msg);
-            }
-            Log.Debug("发送消息成功");
         }
 
         /// <summary>
@@ -146,6 +131,49 @@ namespace GeneralTool.General.TaskLib
                 throw ex;
             }
         }
+
+        /// <summary>
+        /// 发送消息
+        /// </summary>
+        /// <param name="msg">
+        /// 发送字符串
+        /// </param>
+        public override void Send(string msg)
+        {
+            bool flag = !base.IsAutoSize;
+            if (flag)
+            {
+                this._socket.Send(base.GetSendBytes(msg), base.DataPageLength, SocketFlags.None);
+            }
+            else
+            {
+                this._socket.Send(base.GetSendBytes(msg));
+            }
+            Log.Debug("发送消息成功");
+        }
+
+        /// <summary>
+        /// 发送消息
+        /// </summary>
+        /// <param name="msg">
+        /// </param>
+        public override void Send(byte[] msg)
+        {
+            bool flag = !base.IsAutoSize;
+            if (flag)
+            {
+                this._socket.Send(base.GetForntBytes(msg), base.DataPageLength, SocketFlags.None);
+            }
+            else
+            {
+                this._socket.Send(msg);
+            }
+            Log.Debug("发送消息成功");
+        }
+
+        #endregion Public 方法
+
+        #region Protected 方法
 
         /// <summary>
         /// 接收消息
@@ -211,6 +239,6 @@ namespace GeneralTool.General.TaskLib
             this.Close();
         }
 
-        private Thread _recMsgThread = null;
+        #endregion Protected 方法
     }
 }

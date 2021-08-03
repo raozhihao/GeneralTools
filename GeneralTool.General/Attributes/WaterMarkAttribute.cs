@@ -8,6 +8,21 @@ namespace GeneralTool.General.Attributes
     [AttributeUsage(AttributeTargets.Parameter)]
     public class WaterMarkAttribute : Attribute
     {
+        #region Public 构造函数
+
+        /// <summary>
+        /// </summary>
+        /// <param name="waterMark">
+        /// </param>
+        public WaterMarkAttribute(string waterMark)
+        {
+            WaterMark = waterMark;
+        }
+
+        #endregion Public 构造函数
+
+        #region Public 属性
+
         /// <summary>
         /// 水印
         /// </summary>
@@ -17,13 +32,6 @@ namespace GeneralTool.General.Attributes
             set;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="waterMark"></param>
-        public WaterMarkAttribute(string waterMark)
-        {
-            WaterMark = waterMark;
-        }
+        #endregion Public 属性
     }
 }

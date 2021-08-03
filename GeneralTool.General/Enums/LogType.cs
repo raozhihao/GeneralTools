@@ -12,18 +12,22 @@ namespace GeneralTool.General.Enums
         /// Info
         /// </summary>
         Info,
+
         /// <summary>
         /// Debug
         /// </summary>
         Debug,
+
         /// <summary>
         /// 错误
         /// </summary>
         Error,
+
         /// <summary>
         /// 警告
         /// </summary>
         Waring,
+
         /// <summary>
         /// 失败
         /// </summary>

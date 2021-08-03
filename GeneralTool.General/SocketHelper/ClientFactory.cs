@@ -12,15 +12,24 @@ namespace GeneralTool.General.SocketHelper
     /// <summary>
     /// 客户端接口创建类
     /// </summary>
-    /// <typeparam name="TInterface">需要创建的远程对象的接口类,接口中不应包含委托,属性,只应包含纯粹的方法</typeparam>
+    /// <typeparam name="TInterface">
+    /// 需要创建的远程对象的接口类,接口中不应包含委托,属性,只应包含纯粹的方法
+    /// </typeparam>
     public static class ClientFactory<TInterface>
     {
+        #region Public 方法
+
         /// <summary>
         /// 根据指定的Url和端口创建远程对象
         /// </summary>
-        /// <param name="host">路径</param>
-        /// <param name="port">端口</param>
-        /// <returns></returns>
+        /// <param name="host">
+        /// 路径
+        /// </param>
+        /// <param name="port">
+        /// 端口
+        /// </param>
+        /// <returns>
+        /// </returns>
         public static TInterface GetClientObj(string host = "127.0.0.1", int port = 55155)
         {
             Type type = typeof(TInterface);
@@ -41,18 +50,24 @@ namespace GeneralTool.General.SocketHelper
 
             string tempClass = templete.Replace("@Interface@", type.FullName).Replace("@Content@", string.Join(Environment.NewLine, list));
 
-
             //创建对象
             object obj = CreateObject(tempClass);
 
             return (TInterface)obj;
         }
 
+        #endregion Public 方法
+
+        #region Private 方法
+
         /// <summary>
         /// 根据模板创建对象
         /// </summary>
-        /// <param name="tempClass">模板类</param>
-        /// <returns></returns>
+        /// <param name="tempClass">
+        /// 模板类
+        /// </param>
+        /// <returns>
+        /// </returns>
         private static object CreateObject(string tempClass)
         {
             CSharpCodeProvider objCSharpCodePrivoder = new CSharpCodeProvider();
@@ -78,7 +93,6 @@ namespace GeneralTool.General.SocketHelper
 
             CompilerResults cr = objCSharpCodePrivoder.CompileAssemblyFromFile(options, fileName);
 
-
             //如果当前编译有错误
             if (cr.Errors.HasErrors)
             {
@@ -102,15 +116,11 @@ namespace GeneralTool.General.SocketHelper
         {
             foreach (MethodInfo method in methods)
             {
-
                 StringBuilder builder = new StringBuilder();
                 builder.Append("public ");
                 string methodName = method.Name;
                 Type reType = method.ReturnType;
                 string returnTypeStr = reType.FullName;
-
-
-
 
                 if (reType.Equals(typeof(void)))
                 {
@@ -130,14 +140,11 @@ namespace GeneralTool.General.SocketHelper
                 }
                 else if (reType.IsValueType || reType.IsClass)
                 {
-
                 }
                 else
                 {
                     throw new Exception($"方法 {method.Name} 的返回类型 {reType.FullName} 不受支持");
                 }
-
-
 
                 if (method.IsGenericMethod)
                 {
@@ -158,7 +165,6 @@ namespace GeneralTool.General.SocketHelper
                 else
                 {
                     builder.Append($" {returnTypeStr} {methodName}(");
-
                 }
 
                 ParameterInfo[] parameters = method.GetParameters();
@@ -174,7 +180,6 @@ namespace GeneralTool.General.SocketHelper
                 builder.Append(string.Join(",", parList) + ")");
 
                 builder.AppendLine("{");
-
 
                 builder.AppendLine("var methodName = new StackFrame(false).GetMethod().ToString();");
                 builder.AppendLine(" var cmd = new RequestCommand(){ ClassName = this.className,MethodName = methodName,");
@@ -192,8 +197,6 @@ namespace GeneralTool.General.SocketHelper
                 builder.AppendLine("reCmd.Messages = ex.GetInnerExceptionMessage();");
                 builder.AppendLine("reCmd.Success = false;");
                 builder.AppendLine("}");
-
-
 
                 builder.AppendLine("if (!reCmd.Success)");
                 builder.AppendLine("{");
@@ -222,5 +225,7 @@ namespace GeneralTool.General.SocketHelper
                 yield return builder.ToString();
             }
         }
+
+        #endregion Private 方法
     }
 }

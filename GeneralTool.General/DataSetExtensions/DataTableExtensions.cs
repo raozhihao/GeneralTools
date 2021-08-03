@@ -14,108 +14,16 @@ namespace GeneralTool.General.DataSetExtensions
     /// </summary>
     public static class DataTableExtensions
     {
-        /// <summary>
-        /// 指示以自定义的比较方法来确定指定的列值是否存在
-        /// </summary>
-        /// <param name="rowCollection">行集合</param>
-        /// <param name="columnName">列名称</param>
-        /// <param name="value">要搜索的列值</param>
-        /// <param name="predicate">比较的方法(参数1:当前循环到的行列值,参数2:当前传入要搜索的 <paramref name="value"/>)</param>
-        /// <returns>返回列值是否存在</returns>
-        public static bool Contains(this DataRowCollection rowCollection, string columnName, object value, Func<object, object, bool> predicate = null)
-        {
-            if (rowCollection.Count == 0)
-            {
-                return false;
-            }
-
-            if (string.IsNullOrWhiteSpace(columnName))
-            {
-                return false;
-            }
-
-
-            foreach (DataRow row in rowCollection)
-            {
-                object rowValue = row[columnName];
-                if (predicate(rowValue, value))
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-
-
-        /// <summary>
-        /// 指示以默认的比较方法来确定指定的列值是否存在
-        /// </summary>
-        /// <param name="rowCollection">行集合</param>
-        /// <param name="column">列名称</param>
-        /// <param name="value">要搜索的列值</param>
-        /// <returns>返回列值是否存在</returns>
-        public static bool Contains(this DataRowCollection rowCollection, DataColumn column, object value)
-        {
-            return rowCollection.Contains(column.ColumnName, value);
-        }
-
-        /// <summary>
-        /// 指示以默认的比较方法来确定指定的列值是否存在
-        /// </summary>
-        /// <param name="table">表格</param>
-        /// <param name="columnName">列名称</param>
-        /// <param name="value">要搜索的列值</param>
-        /// <returns>返回列值是否存在</returns>
-        public static bool Contains(this DataTable table, string columnName, object value)
-        {
-            return table.Contains(columnName, value);
-        }
-
-        /// <summary>
-        /// 指示以自定义的比较方法来确定指定的列值是否存在
-        /// </summary>
-        /// <param name="table">表格</param>
-        /// <param name="column">列</param>
-        /// <param name="value">要搜索的列值</param>
-        /// <param name="predicate">比较的方法(参数1:当前循环到的行列值,参数2:当前传入要搜索的 <paramref name="value"/>)</param>
-        /// <returns>返回列值是否存在</returns>
-        public static bool Contains(this DataTable table, DataColumn column, object value, Func<object, object, bool> predicate = null)
-        {
-            return table.Rows.Contains(column.ColumnName, value, predicate);
-        }
-
-        /// <summary>
-        /// 在DataTable上对DataRow循环迭代计算
-        /// </summary>
-        /// <param name="table"></param>
-        /// <param name="action"></param>
-        public static void Foreach(this DataTable table, Action<DataRow> action)
-        {
-            foreach (DataRow row in table.Rows)
-            {
-                action?.Invoke(row);
-            }
-        }
-
-        /// <summary>
-        /// 在DataTable上对DataColumn循环迭代计算
-        /// </summary>
-        /// <param name="table"></param>
-        /// <param name="action"></param>
-        public static void Foreach(this DataTable table, Action<DataColumn> action)
-        {
-            foreach (DataColumn column in table.Columns)
-            {
-                action?.Invoke(column);
-            }
-        }
+        #region Public 方法
 
         /// <summary>
         /// 使用指定的条件清除表格中的重复行数
         /// </summary>
-        /// <param name="table"></param>
-        /// <param name="predicate">清除条件</param>
+        /// <param name="table">
+        /// </param>
+        /// <param name="predicate">
+        /// 清除条件
+        /// </param>
         public static void ClearSame(this DataTable table, Func<DataRow, bool> predicate)
         {
             int count = table.Rows.Count;
@@ -135,8 +43,11 @@ namespace GeneralTool.General.DataSetExtensions
         /// <summary>
         /// 使用指定的条件清除表格中的重复行数
         /// </summary>
-        /// <param name="table"></param>
-        /// <param name="equality">清除条件</param>
+        /// <param name="table">
+        /// </param>
+        /// <param name="equality">
+        /// 清除条件
+        /// </param>
         public static void ClearSame(this DataTable table, IEqualityComparer<DataRow> equality)
         {
             int count = table.Rows.Count;
@@ -159,10 +70,168 @@ namespace GeneralTool.General.DataSetExtensions
         }
 
         /// <summary>
+        /// 指示以自定义的比较方法来确定指定的列值是否存在
+        /// </summary>
+        /// <param name="rowCollection">
+        /// 行集合
+        /// </param>
+        /// <param name="columnName">
+        /// 列名称
+        /// </param>
+        /// <param name="value">
+        /// 要搜索的列值
+        /// </param>
+        /// <param name="predicate">
+        /// 比较的方法(参数1:当前循环到的行列值,参数2:当前传入要搜索的 <paramref name="value"/>)
+        /// </param>
+        /// <returns>
+        /// 返回列值是否存在
+        /// </returns>
+        public static bool Contains(this DataRowCollection rowCollection, string columnName, object value, Func<object, object, bool> predicate = null)
+        {
+            if (rowCollection.Count == 0)
+            {
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(columnName))
+            {
+                return false;
+            }
+
+            foreach (DataRow row in rowCollection)
+            {
+                object rowValue = row[columnName];
+                if (predicate(rowValue, value))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// 指示以默认的比较方法来确定指定的列值是否存在
+        /// </summary>
+        /// <param name="rowCollection">
+        /// 行集合
+        /// </param>
+        /// <param name="column">
+        /// 列名称
+        /// </param>
+        /// <param name="value">
+        /// 要搜索的列值
+        /// </param>
+        /// <returns>
+        /// 返回列值是否存在
+        /// </returns>
+        public static bool Contains(this DataRowCollection rowCollection, DataColumn column, object value)
+        {
+            return rowCollection.Contains(column.ColumnName, value);
+        }
+
+        /// <summary>
+        /// 指示以默认的比较方法来确定指定的列值是否存在
+        /// </summary>
+        /// <param name="table">
+        /// 表格
+        /// </param>
+        /// <param name="columnName">
+        /// 列名称
+        /// </param>
+        /// <param name="value">
+        /// 要搜索的列值
+        /// </param>
+        /// <returns>
+        /// 返回列值是否存在
+        /// </returns>
+        public static bool Contains(this DataTable table, string columnName, object value)
+        {
+            return table.Contains(columnName, value);
+        }
+
+        /// <summary>
+        /// 指示以自定义的比较方法来确定指定的列值是否存在
+        /// </summary>
+        /// <param name="table">
+        /// 表格
+        /// </param>
+        /// <param name="column">
+        /// 列
+        /// </param>
+        /// <param name="value">
+        /// 要搜索的列值
+        /// </param>
+        /// <param name="predicate">
+        /// 比较的方法(参数1:当前循环到的行列值,参数2:当前传入要搜索的 <paramref name="value"/>)
+        /// </param>
+        /// <returns>
+        /// 返回列值是否存在
+        /// </returns>
+        public static bool Contains(this DataTable table, DataColumn column, object value, Func<object, object, bool> predicate = null)
+        {
+            return table.Rows.Contains(column.ColumnName, value, predicate);
+        }
+
+        /// <summary>
+        /// 在DataTable上对DataRow循环迭代计算
+        /// </summary>
+        /// <param name="table">
+        /// </param>
+        /// <param name="action">
+        /// </param>
+        public static void Foreach(this DataTable table, Action<DataRow> action)
+        {
+            foreach (DataRow row in table.Rows)
+            {
+                action?.Invoke(row);
+            }
+        }
+
+        /// <summary>
+        /// 在DataTable上对DataColumn循环迭代计算
+        /// </summary>
+        /// <param name="table">
+        /// </param>
+        /// <param name="action">
+        /// </param>
+        public static void Foreach(this DataTable table, Action<DataColumn> action)
+        {
+            foreach (DataColumn column in table.Columns)
+            {
+                action?.Invoke(column);
+            }
+        }
+
+        /// <summary>
+        /// 按指定键升序排序 System.Data.EnumerableRowCollection 的行。
+        /// </summary>
+        /// <typeparam name="TKey">
+        /// </typeparam>
+        /// <param name="dt">
+        /// </param>
+        /// <param name="keySelector">
+        /// 应用于每个元素的转换函数
+        /// </param>
+        /// <returns>
+        /// </returns>
+        public static OrderedEnumerableRowCollection<DataRow> OrderBy<TKey>(this DataTable dt, Func<DataRow, TKey> keySelector)
+        {
+            DataTable dtTmp = dt.Copy();
+            dtTmp.AcceptChanges();
+
+            OrderedEnumerableRowCollection<DataRow> resultTmp = dtTmp.AsEnumerable().OrderBy(keySelector);
+            dtTmp.Dispose();
+            return resultTmp;
+        }
+
+        /// <summary>
         /// 使用指定的条件删除行
         /// </summary>
-        /// <param name="table"></param>
-        /// <param name="predicate"></param>
+        /// <param name="table">
+        /// </param>
+        /// <param name="predicate">
+        /// </param>
         public static void RemoveWhere(this DataTable table, Predicate<DataRow> predicate)
         {
             int count = table.Rows.Count;
@@ -178,8 +247,10 @@ namespace GeneralTool.General.DataSetExtensions
         /// <summary>
         /// 使用指定的条件删除列
         /// </summary>
-        /// <param name="table"></param>
-        /// <param name="predicate"></param>
+        /// <param name="table">
+        /// </param>
+        /// <param name="predicate">
+        /// </param>
         public static void RemoveWhere(this DataTable table, Predicate<DataColumn> predicate)
         {
             int count = table.Columns.Count;
@@ -193,12 +264,17 @@ namespace GeneralTool.General.DataSetExtensions
         }
 
         /// <summary>
-        ///  将 System.Data.EnumerableRowCollection`1 中的每个元素投影到新窗体。
+        /// 将 System.Data.EnumerableRowCollection`1 中的每个元素投影到新窗体。
         /// </summary>
-        /// <typeparam name="S"></typeparam>
-        /// <param name="dt"></param>
-        /// <param name="selector">应用于每个元素的转换函数。</param>
-        /// <returns></returns>
+        /// <typeparam name="S">
+        /// </typeparam>
+        /// <param name="dt">
+        /// </param>
+        /// <param name="selector">
+        /// 应用于每个元素的转换函数。
+        /// </param>
+        /// <returns>
+        /// </returns>
         public static IEnumerable<S> Select<S>(this DataTable dt, Func<DataRow, S> selector)
         {
             foreach (DataRow row in dt.Rows)
@@ -208,32 +284,19 @@ namespace GeneralTool.General.DataSetExtensions
                     yield return selector(row);
                 }
             }
-
-        }
-
-        /// <summary>
-        /// 按指定谓词筛选行序列。
-        /// </summary>
-        /// <param name="dt"></param>
-        /// <param name="predicate">用于测试每个元素是否满足条件的函数。</param>
-        /// <returns></returns>
-        public static IEnumerable<DataRow> Where(this DataTable dt, Func<DataRow, bool> predicate)
-        {
-            foreach (DataRow row in dt.Rows)
-            {
-                if (row.RowState != DataRowState.Deleted && predicate(row))
-                {
-                    yield return row;
-                }
-            }
         }
 
         /// <summary>
         /// 按照指定的列进行排序
         /// </summary>
-        /// <param name="dt"></param>
-        /// <param name="columnName">指定排序的列名</param>
-        /// <returns>返回新的表格</returns>
+        /// <param name="dt">
+        /// </param>
+        /// <param name="columnName">
+        /// 指定排序的列名
+        /// </param>
+        /// <returns>
+        /// 返回新的表格
+        /// </returns>
         public static DataTable Sort(this DataTable dt, string columnName)
         {
             DataView view = dt.AsDataView();
@@ -242,27 +305,45 @@ namespace GeneralTool.General.DataSetExtensions
         }
 
         /// <summary>
-        /// 按指定键升序排序 System.Data.EnumerableRowCollection 的行。
+        /// 将xml文档转为DataTable
         /// </summary>
-        /// <typeparam name="TKey"></typeparam>
-        /// <param name="dt"></param>
-        /// <param name="keySelector">应用于每个元素的转换函数</param>
-        /// <returns></returns>
-        public static OrderedEnumerableRowCollection<DataRow> OrderBy<TKey>(this DataTable dt, Func<DataRow, TKey> keySelector)
+        /// <param name="xml">
+        /// xml文档
+        /// </param>
+        /// <returns>
+        /// </returns>
+        public static DataTable ToDataTable(this XmlDocument xml)
         {
-            DataTable dtTmp = dt.Copy();
-            dtTmp.AcceptChanges();
+            return xml.OuterXml.ToDataTable();
+        }
 
-            OrderedEnumerableRowCollection<DataRow> resultTmp = dtTmp.AsEnumerable().OrderBy(keySelector);
-            dtTmp.Dispose();
-            return resultTmp;
+        /// <summary>
+        /// 将xml文档转为DataTable
+        /// </summary>
+        /// <param name="xmlString">
+        /// xml字符串
+        /// </param>
+        /// <returns>
+        /// </returns>
+        public static DataTable ToDataTable(this string xmlString)
+        {
+            StringReader reader = new StringReader(xmlString);
+            XmlTextReader xr = new XmlTextReader(reader);
+            DataTable table = new DataTable();
+            table.ReadXml(xr);
+            reader.Dispose();
+            xr.Dispose();
+            return table;
         }
 
         /// <summary>
         /// 将DataTable转为xml文档
         /// </summary>
-        /// <param name="dt">要转换的表格</param>
-        /// <returns></returns>
+        /// <param name="dt">
+        /// 要转换的表格
+        /// </param>
+        /// <returns>
+        /// </returns>
         public static XmlDocument ToXmlDocument(this DataTable dt)
         {
             //检查Table的名称是否为空
@@ -329,37 +410,37 @@ namespace GeneralTool.General.DataSetExtensions
         /// <summary>
         /// 将DataTable转为xml字符串
         /// </summary>
-        /// <param name="dt">要转换的表格</param>
-        /// <returns></returns>
+        /// <param name="dt">
+        /// 要转换的表格
+        /// </param>
+        /// <returns>
+        /// </returns>
         public static string ToXmlString(this DataTable dt)
         {
             return dt.ToXmlDocument().OuterXml;
         }
 
         /// <summary>
-        /// 将xml文档转为DataTable
+        /// 按指定谓词筛选行序列。
         /// </summary>
-        /// <param name="xml">xml文档</param>
-        /// <returns></returns>
-        public static DataTable ToDataTable(this XmlDocument xml)
+        /// <param name="dt">
+        /// </param>
+        /// <param name="predicate">
+        /// 用于测试每个元素是否满足条件的函数。
+        /// </param>
+        /// <returns>
+        /// </returns>
+        public static IEnumerable<DataRow> Where(this DataTable dt, Func<DataRow, bool> predicate)
         {
-            return xml.OuterXml.ToDataTable();
+            foreach (DataRow row in dt.Rows)
+            {
+                if (row.RowState != DataRowState.Deleted && predicate(row))
+                {
+                    yield return row;
+                }
+            }
         }
 
-        /// <summary>
-        /// 将xml文档转为DataTable
-        /// </summary>
-        /// <param name="xmlString">xml字符串</param>
-        /// <returns></returns>
-        public static DataTable ToDataTable(this string xmlString)
-        {
-            StringReader reader = new StringReader(xmlString);
-            XmlTextReader xr = new XmlTextReader(reader);
-            DataTable table = new DataTable();
-            table.ReadXml(xr);
-            reader.Dispose();
-            xr.Dispose();
-            return table;
-        }
+        #endregion Public 方法
     }
 }

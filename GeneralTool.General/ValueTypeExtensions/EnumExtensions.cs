@@ -7,27 +7,39 @@ namespace GeneralTool.General.ValueTypeExtensions
     /// </summary>
     public static class EnumExtensions
     {
+        #region Public 方法
+
         /// <summary>
         /// 获取枚举指定特性类型的说明
         /// </summary>
-        /// <param name="enum"></param>
-        /// <param name="attrType">要查找的自定义特性类型</param>
-        /// <param name="attrName">要查找的自定义特性中的属性名称(区分大小写)</param>
-        /// <returns></returns>
+        /// <param name="enum">
+        /// </param>
+        /// <param name="attrType">
+        /// 要查找的自定义特性类型
+        /// </param>
+        /// <param name="attrName">
+        /// 要查找的自定义特性中的属性名称(区分大小写)
+        /// </param>
+        /// <returns>
+        /// </returns>
         public static string GetDescription(this Enum @enum, Type attrType, string attrName)
         {
             return @enum.GetInnerDescription(attrType, attrName) + "";
         }
 
-
-
         /// <summary>
         /// 获取枚举指定特性类型的说明
         /// </summary>
-        /// <param name="enum"></param>
-        /// <param name="attrType">要查找的自定义特性类型</param>
-        /// <param name="attrName">要查找的自定义特性中的属性名称(区分大小写)</param>
-        /// <returns></returns>
+        /// <param name="enum">
+        /// </param>
+        /// <param name="attrType">
+        /// 要查找的自定义特性类型
+        /// </param>
+        /// <param name="attrName">
+        /// 要查找的自定义特性中的属性名称(区分大小写)
+        /// </param>
+        /// <returns>
+        /// </returns>
         public static T GetDescription<T>(this Enum @enum, Type attrType, string attrName)
         {
             return (T)@enum.GetInnerDescription(attrType, attrName);
@@ -36,10 +48,52 @@ namespace GeneralTool.General.ValueTypeExtensions
         /// <summary>
         /// 获取枚举指定特性类型的说明
         /// </summary>
-        /// <param name="enum"></param>
-        /// <param name="attrType">要查找的自定义特性类型</param>
-        /// <param name="attrName">要查找的自定义特性中的属性名称(区分大小写)</param>
-        /// <returns></returns>
+        /// <param name="enum">
+        /// </param>
+        /// <param name="attrType">
+        /// 要查找的自定义特性类型
+        /// </param>
+        /// <param name="attrIndex">
+        /// 要查找的自定义特性中的属性下标
+        /// </param>
+        /// <returns>
+        /// </returns>
+        public static string GetDescription(this Enum @enum, Type attrType, int attrIndex = 0)
+        {
+            return @enum.GetInnerDescription(attrType, attrIndex) + "";
+        }
+
+        /// <summary>
+        /// 获取枚举指定特性类型的说明
+        /// </summary>
+        /// <param name="enum">
+        /// </param>
+        /// <param name="attrType">
+        /// 要查找的自定义特性类型
+        /// </param>
+        /// <param name="attrIndex">
+        /// 要查找的自定义特性中的属性下标
+        /// </param>
+        /// <returns>
+        /// </returns>
+        public static T GetDescription<T>(this Enum @enum, Type attrType, int attrIndex = 0)
+        {
+            return (T)@enum.GetInnerDescription(attrType, attrIndex);
+        }
+
+        /// <summary>
+        /// 获取枚举指定特性类型的说明
+        /// </summary>
+        /// <param name="enum">
+        /// </param>
+        /// <param name="attrType">
+        /// 要查找的自定义特性类型
+        /// </param>
+        /// <param name="attrName">
+        /// 要查找的自定义特性中的属性名称(区分大小写)
+        /// </param>
+        /// <returns>
+        /// </returns>
         public static object GetInnerDescription(this Enum @enum, Type attrType, string attrName)
         {
             if (attrType == null)
@@ -67,41 +121,21 @@ namespace GeneralTool.General.ValueTypeExtensions
             return result;
         }
 
-
         /// <summary>
         /// 获取枚举指定特性类型的说明
         /// </summary>
-        /// <param name="enum"></param>
-        /// <param name="attrType">要查找的自定义特性类型</param>
-        /// <param name="attrIndex">要查找的自定义特性中的属性下标</param>
-        /// <returns></returns>
-        public static string GetDescription(this Enum @enum, Type attrType, int attrIndex = 0)
-        {
-            return @enum.GetInnerDescription(attrType, attrIndex) + "";
-        }
-
-        /// <summary>
-        /// 获取枚举指定特性类型的说明
-        /// </summary>
-        /// <param name="enum"></param>
-        /// <param name="attrType">要查找的自定义特性类型</param>
-        /// <param name="attrIndex">要查找的自定义特性中的属性下标</param>
-        /// <returns></returns>
-        public static T GetDescription<T>(this Enum @enum, Type attrType, int attrIndex = 0)
-        {
-            return (T)@enum.GetInnerDescription(attrType, attrIndex);
-        }
-
-        /// <summary>
-        /// 获取枚举指定特性类型的说明
-        /// </summary>
-        /// <param name="enum"></param>
-        /// <param name="attrType">要查找的自定义特性类型</param>
-        /// <param name="attrIndex">要查找的自定义特性中的属性下标</param>
-        /// <returns></returns>
+        /// <param name="enum">
+        /// </param>
+        /// <param name="attrType">
+        /// 要查找的自定义特性类型
+        /// </param>
+        /// <param name="attrIndex">
+        /// 要查找的自定义特性中的属性下标
+        /// </param>
+        /// <returns>
+        /// </returns>
         public static object GetInnerDescription(this Enum @enum, Type attrType, int attrIndex = 0)
         {
-
             if (attrType == null)
             {
                 return null;
@@ -131,7 +165,7 @@ namespace GeneralTool.General.ValueTypeExtensions
             object result = attrPro.GetValue(obj);
             return result;
         }
+
+        #endregion Public 方法
     }
-
-
 }

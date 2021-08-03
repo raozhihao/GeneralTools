@@ -1,4 +1,0 @@
-﻿[*.cs]
-
-# CS1570: XML 注释出现 XML 格式错误
-dotnet_diagnostic.CS1570.severity = none

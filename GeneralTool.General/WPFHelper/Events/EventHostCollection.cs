@@ -7,12 +7,7 @@ namespace GeneralTool.General.WPFHelper.Events
     /// </summary>
     public class EventHostCollection : FreezableCollection<EventHost>
     {
-
-        /// <inheritdoc/>
-        protected override bool FreezeCore(bool isChecking)
-        {
-            return !isChecking;
-        }
+        #region Protected 方法
 
         /// <inheritdoc/>
         protected override Freezable CreateInstanceCore()
@@ -20,6 +15,12 @@ namespace GeneralTool.General.WPFHelper.Events
             return new EventHostCollection();
         }
 
+        /// <inheritdoc/>
+        protected override bool FreezeCore(bool isChecking)
+        {
+            return !isChecking;
+        }
 
+        #endregion Protected 方法
     }
 }

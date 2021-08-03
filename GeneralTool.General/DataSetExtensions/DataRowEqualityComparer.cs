@@ -9,17 +9,28 @@ namespace GeneralTool.General.DataSetExtensions
     /// </summary>
     public class DataRowEqualityComparer : IEqualityComparer<DataRow>
     {
+        #region Private 字段
+
         private readonly string[] _columnNames;
+
+        #endregion Private 字段
+
+        #region Public 构造函数
 
         /// <summary>
         /// 构造函数
         /// </summary>
-        /// <param name="columnNames">要比较的列名称</param>
+        /// <param name="columnNames">
+        /// 要比较的列名称
+        /// </param>
         public DataRowEqualityComparer(params string[] columnNames)
         {
             _columnNames = columnNames;
         }
 
+        #endregion Public 构造函数
+
+        #region Public 方法
 
         /// <inheritdoc/>
         public bool Equals(DataRow x, DataRow y)
@@ -39,5 +50,7 @@ namespace GeneralTool.General.DataSetExtensions
         {
             return obj.ToString().GetHashCode();
         }
+
+        #endregion Public 方法
     }
 }

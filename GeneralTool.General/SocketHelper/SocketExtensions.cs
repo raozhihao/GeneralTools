@@ -10,11 +10,15 @@ namespace GeneralTool.General.SocketHelper
     /// </summary>
     public static class SocketExtensions
     {
+        #region Public 方法
+
         /// <summary>
         /// 确定当前Socket是否还处于连接状态
         /// </summary>
-        /// <param name="socket"></param>
-        /// <returns></returns>
+        /// <param name="socket">
+        /// </param>
+        /// <returns>
+        /// </returns>
         public static bool IsClientConnected(this Socket socket)
         {
             IPGlobalProperties ipProperties = IPGlobalProperties.GetIPGlobalProperties();
@@ -44,7 +48,8 @@ namespace GeneralTool.General.SocketHelper
         /// <summary>
         /// 设置Socket为长连接
         /// </summary>
-        /// <param name="socket"></param>
+        /// <param name="socket">
+        /// </param>
         public static void SetSocketKeepAlive(this Socket socket)
         {
             uint dummy = 0;
@@ -56,5 +61,7 @@ namespace GeneralTool.General.SocketHelper
             socket.IOControl(IOControlCode.KeepAliveValues, inOptionValues, null);
             socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
         }
+
+        #endregion Public 方法
     }
 }

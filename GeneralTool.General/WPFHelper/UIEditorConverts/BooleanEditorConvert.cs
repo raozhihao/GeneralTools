@@ -11,8 +11,10 @@ namespace GeneralTool.General.WPFHelper.UIEditorConverts
     /// </summary>
     public class BooleanEditorConvert : IUIEditorConvert
     {
+        #region Public 方法
+
         ///<inheritdoc/>
-        public void ConvertTo(Grid gridParent, object instance, PropertyInfo propertyInfo,bool? sort, ref int Row,string header=null)
+        public void ConvertTo(Grid gridParent, object instance, PropertyInfo propertyInfo, bool? sort, ref int Row, string header = null)
         {
             var left = new TextBlock()
             {
@@ -56,5 +58,6 @@ namespace GeneralTool.General.WPFHelper.UIEditorConverts
             gridParent.Children.Add(right);
         }
 
+        #endregion Public 方法
     }
 }

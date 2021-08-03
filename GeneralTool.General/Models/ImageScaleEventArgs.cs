@@ -7,18 +7,26 @@ namespace GeneralTool.General.Models
     /// </summary>
     public class ImageScaleEventArgs : EventArgs
     {
+        #region Public 构造函数
+
+        /// <summary>
+        /// </summary>
+        /// <param name="scale">
+        /// </param>
+        public ImageScaleEventArgs(double scale)
+        {
+            this.ScaleValue = scale;
+        }
+
+        #endregion Public 构造函数
+
+        #region Public 属性
+
         /// <summary>
         /// 当前缩放比例
         /// </summary>
         public double ScaleValue { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="scale"></param>
-        public ImageScaleEventArgs(double scale)
-        {
-            this.ScaleValue = scale;
-        }
+        #endregion Public 属性
     }
 }

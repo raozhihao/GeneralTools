@@ -7,14 +7,23 @@ namespace GeneralTool.General.Attributes
     /// </summary>
     public class RouteAttribute : Attribute
     {
+        #region Public 构造函数
+
         /// <summary>
-        /// 路由地址
         /// </summary>
-        public string Url
+        /// <param name="url">
+        /// </param>
+        /// <param name="explanation">
+        /// </param>
+        public RouteAttribute(string url, string explanation = "")
         {
-            get;
-            set;
+            Url = url;
+            Explanation = explanation;
         }
+
+        #endregion Public 构造函数
+
+        #region Public 属性
 
         /// <summary>
         /// 提示信息
@@ -26,14 +35,14 @@ namespace GeneralTool.General.Attributes
         }
 
         /// <summary>
-        /// 
+        /// 路由地址
         /// </summary>
-        /// <param name="url"></param>
-        /// <param name="explanation"></param>
-        public RouteAttribute(string url, string explanation = "")
+        public string Url
         {
-            Url = url;
-            Explanation = explanation;
+            get;
+            set;
         }
+
+        #endregion Public 属性
     }
 }

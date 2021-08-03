@@ -7,12 +7,18 @@ namespace GeneralTool.General.ValueTypeExtensions
     /// </summary>
     public static class StringExtensions
     {
+        #region Public 方法
+
         /// <summary>
         /// 连接指定的 System.String 数组的元素。
         /// </summary>
-        /// <param name="str"></param>
-        /// <param name="obj">要连接的第一个对象。</param>
-        /// <returns></returns>
+        /// <param name="str">
+        /// </param>
+        /// <param name="obj">
+        /// 要连接的第一个对象。
+        /// </param>
+        /// <returns>
+        /// </returns>
         public static string Concat(this string str, object obj)
         {
             return str + obj;
@@ -21,9 +27,13 @@ namespace GeneralTool.General.ValueTypeExtensions
         /// <summary>
         /// 连接指定的 System.String 数组的元素。
         /// </summary>
-        /// <param name="str"></param>
-        /// <param name="objs">实例的数组</param>
-        /// <returns></returns>
+        /// <param name="str">
+        /// </param>
+        /// <param name="objs">
+        /// 实例的数组
+        /// </param>
+        /// <returns>
+        /// </returns>
 
         public static string Concat(this string str, params object[] objs)
         {
@@ -31,7 +41,6 @@ namespace GeneralTool.General.ValueTypeExtensions
             {
                 return str;
             }
-
 
             foreach (object obj in objs)
             {
@@ -43,9 +52,13 @@ namespace GeneralTool.General.ValueTypeExtensions
         /// <summary>
         /// 连接指定的 System.String 数组的元素。
         /// </summary>
-        /// <param name="str"></param>
-        /// <param name="strs">字符串实例的数组</param>
-        /// <returns></returns>
+        /// <param name="str">
+        /// </param>
+        /// <param name="strs">
+        /// 字符串实例的数组
+        /// </param>
+        /// <returns>
+        /// </returns>
         public static string Concat(this string str, params string[] strs)
         {
             if (strs == null || strs.Length == 0)
@@ -59,9 +72,12 @@ namespace GeneralTool.General.ValueTypeExtensions
         /// <summary>
         /// 获取字符串的字节数组
         /// </summary>
-        /// <param name="str"></param>
-        /// <param name="encoding"></param>
-        /// <returns></returns>
+        /// <param name="str">
+        /// </param>
+        /// <param name="encoding">
+        /// </param>
+        /// <returns>
+        /// </returns>
         public static byte[] ToBytes(this string str, Encoding encoding)
         {
             return encoding.GetBytes(str);
@@ -70,11 +86,15 @@ namespace GeneralTool.General.ValueTypeExtensions
         /// <summary>
         /// 以UTF-8格式获取字符串的字节数组
         /// </summary>
-        /// <param name="str"></param>
-        /// <returns></returns>
+        /// <param name="str">
+        /// </param>
+        /// <returns>
+        /// </returns>
         public static byte[] ToBytes(this string str)
         {
             return str.ToBytes(Encoding.UTF8);
         }
+
+        #endregion Public 方法
     }
 }

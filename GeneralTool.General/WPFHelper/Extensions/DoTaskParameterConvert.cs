@@ -8,17 +8,17 @@ using System.Windows.Data;
 namespace GeneralTool.General.WPFHelper.Extensions
 {
     /// <summary>
-    /// 
     /// </summary>
     [ValueConversion(typeof(string), typeof(DoTaskParameterItem))]
     public class DoTaskParameterConvert : IValueConverter
     {
+        #region Public 方法
+
         ///<inheritdoc/>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is DoTaskParameterItem task)
             {
-
                 var builder = new StringBuilder();
                 builder.Append("{\"Url\":\"" + task.Url + "\",\"Paramters\":");
 
@@ -34,17 +34,16 @@ namespace GeneralTool.General.WPFHelper.Extensions
                     builder.Append("{" + string.Join(",", listStr) + "}}");
                 }
                 return builder.ToString();
-
             }
             return value;
         }
-
-
 
         ///<inheritdoc/>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return null;
         }
+
+        #endregion Public 方法
     }
 }

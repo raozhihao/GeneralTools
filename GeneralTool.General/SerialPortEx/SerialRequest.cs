@@ -8,7 +8,39 @@ namespace GeneralTool.General.SerialPortEx
     /// </summary>
     public class SerialRequest
     {
+        #region Private 字段
+
         private List<byte> SendDatas = new List<byte>();
+
+        #endregion Private 字段
+
+        #region Public 构造函数
+
+        /// <summary>
+        /// </summary>
+        /// <param name="packetHead">
+        /// </param>
+        /// <param name="packetEnd">
+        /// </param>
+        public SerialRequest(byte packetHead, byte packetEnd)
+        {
+            Head = packetHead;
+            End = packetEnd;
+            SendDatas.Add(Head);
+        }
+
+        #endregion Public 构造函数
+
+        #region Public 属性
+
+        /// <summary>
+        /// 请求尾
+        /// </summary>
+        public byte End
+        {
+            get;
+            private set;
+        }
 
         /// <summary>
         /// 请求头
@@ -20,13 +52,13 @@ namespace GeneralTool.General.SerialPortEx
         }
 
         /// <summary>
-        /// 请求尾
+        /// 是否在发送中
         /// </summary>
-        public byte End
+        public bool IsSetData
         {
             get;
             private set;
-        }
+        } = false;
 
         /// <summary>
         /// 关键字
@@ -46,33 +78,19 @@ namespace GeneralTool.General.SerialPortEx
             private set;
         }
 
-        /// <summary>
-        /// 是否在发送中
-        /// </summary>
-        public bool IsSetData
-        {
-            get;
-            private set;
-        } = false;
+        #endregion Public 属性
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="packetHead"></param>
-        /// <param name="packetEnd"></param>
-        public SerialRequest(byte packetHead, byte packetEnd)
-        {
-            Head = packetHead;
-            End = packetEnd;
-            SendDatas.Add(Head);
-        }
+        #region Public 方法
 
         /// <summary>
         /// 设置数据
         /// </summary>
-        /// <param name="keyWorld"></param>
-        /// <param name="datas"></param>
-        /// <returns></returns>
+        /// <param name="keyWorld">
+        /// </param>
+        /// <param name="datas">
+        /// </param>
+        /// <returns>
+        /// </returns>
         public virtual bool SetData(byte keyWorld, ICollection<byte> datas)
         {
             if (IsSetData)
@@ -89,6 +107,19 @@ namespace GeneralTool.General.SerialPortEx
             return true;
         }
 
+        /// <summary>
+        /// </summary>
+        /// <returns>
+        /// </returns>
+        public byte[] ToSendDatas()
+        {
+            return SendDatas.ToArray();
+        }
+
+        #endregion Public 方法
+
+        #region Private 方法
+
         private void Parity()
         {
             byte b = 0;
@@ -101,13 +132,6 @@ namespace GeneralTool.General.SerialPortEx
             SendDatas.Add(End);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public byte[] ToSendDatas()
-        {
-            return SendDatas.ToArray();
-        }
+        #endregion Private 方法
     }
 }

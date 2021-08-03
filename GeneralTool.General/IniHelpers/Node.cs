@@ -4,23 +4,79 @@ using System.Reflection;
 namespace GeneralTool.General.IniHelpers
 {
     /// <summary>
-    /// 节点
+    /// 配置项
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class Node<T>
+    public abstract class Category
     {
+        #region Public 构造函数
+
         /// <summary>
-        /// 当前节点的所属
+        /// </summary>
+        /// <param name="sectionName">
+        /// </param>
+        public Category(string sectionName)
+        {
+            this.SectionName = sectionName;
+        }
+
+        #endregion Public 构造函数
+
+        #region Public 属性
+
+        /// <summary>
+        /// 节点名称
         /// </summary>
         public string SectionName { get; set; }
+
+        #endregion Public 属性
+    }
+
+    /// <summary>
+    /// 节点
+    /// </summary>
+    /// <typeparam name="T">
+    /// </typeparam>
+    public class Node<T>
+    {
+        #region Public 构造函数
+
         /// <summary>
-        /// 当前键名称
         /// </summary>
-        public string KeyName { get; set; }
+        /// <param name="sectionName">
+        /// 节点名称
+        /// </param>
+        /// <param name="keyName">
+        /// 键名
+        /// </param>
+        /// <param name="defaultValue">
+        /// 默认值
+        /// </param>
+        public Node(string sectionName, string keyName, T defaultValue)
+        {
+            this.SectionName = sectionName;
+            this.KeyName = keyName;
+            this.DefaultValue = defaultValue;
+        }
+
+        #endregion Public 构造函数
+
+        #region Public 属性
+
         /// <summary>
         /// 当前默认值
         /// </summary>
         public T DefaultValue { get; set; }
+
+        /// <summary>
+        /// 当前键名称
+        /// </summary>
+        public string KeyName { get; set; }
+
+        /// <summary>
+        /// 当前节点的所属
+        /// </summary>
+        public string SectionName { get; set; }
+
         /// <summary>
         /// 当前值
         /// </summary>
@@ -55,10 +111,7 @@ namespace GeneralTool.General.IniHelpers
                                 method.Invoke(obj, new object[] { Convert.ChangeType(arr[i], type.GenericTypeArguments[0]) });
                             }
                         }
-
-
                     }
-
                     else
                     {
                         string assName = type.FullName.Replace("[]", string.Empty);
@@ -77,7 +130,6 @@ namespace GeneralTool.General.IniHelpers
                 {
                     return IniHelper.IniHelperInstance.GetValue<T>(SectionName, KeyName, default);
                 }
-
             }
             set
             {
@@ -92,14 +144,11 @@ namespace GeneralTool.General.IniHelpers
                         len = (int)(type.GetMethod("get_Count").Invoke(value, null));
                         get = type.GetMethod("get_Item", new Type[] { typeof(int) });
                     }
-
                     else if (type.IsArray)
                     {
                         len = (int)(type.GetMethod("get_Length").Invoke(value, null));
                         get = type.GetMethod("GetValue", new Type[] { typeof(int) });
                     }
-
-
 
                     // var set = type.GetMethod("SetValue");
                     object[] objs = new object[len];
@@ -114,51 +163,23 @@ namespace GeneralTool.General.IniHelpers
                 {
                     IniHelper.IniHelperInstance.WriteValue<T>(SectionName, KeyName, value);
                 }
-
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="sectionName">节点名称</param>
-        /// <param name="keyName">键名</param>
-        /// <param name="defaultValue">默认值</param>
-        public Node(string sectionName, string keyName, T defaultValue)
-        {
-            this.SectionName = sectionName;
-            this.KeyName = keyName;
-            this.DefaultValue = defaultValue;
-        }
+        #endregion Public 属性
+
+        #region Public 方法
 
         /// <summary>
         /// 转换
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="value">
+        /// </param>
         public static implicit operator T(Node<T> value)
         {
             return value.Value;
         }
 
-    }
-
-    /// <summary>
-    /// 配置项
-    /// </summary>
-    public abstract class Category
-    {
-        /// <summary>
-        /// 节点名称
-        /// </summary>
-        public string SectionName { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="sectionName"></param>
-        public Category(string sectionName)
-        {
-            this.SectionName = sectionName;
-        }
-
+        #endregion Public 方法
     }
 }

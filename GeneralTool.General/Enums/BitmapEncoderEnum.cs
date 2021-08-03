@@ -6,27 +6,26 @@
     public enum BitmapEncoderEnum
     {
         /// <summary>
-        /// 
         /// </summary>
         Jpeg,
+
         /// <summary>
-        /// 
         /// </summary>
         Png,
+
         /// <summary>
-        /// 
         /// </summary>
         Bmp,
+
         /// <summary>
-        /// 
         /// </summary>
         Tiff,
+
         /// <summary>
-        /// 
         /// </summary>
         Wmp,
+
         /// <summary>
-        /// 
         /// </summary>
         Gif
     }

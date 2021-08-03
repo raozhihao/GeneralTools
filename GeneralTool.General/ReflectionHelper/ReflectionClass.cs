@@ -11,11 +11,38 @@ namespace GeneralTool.General.ReflectionHelper
     /// </summary>
     public class ReflectionClass
     {
+        #region Public 构造函数
 
         /// <summary>
-        /// 获取当前所有可用方法
+        /// 构造函数
         /// </summary>
-        public Dictionary<string, MethodBase> Methods { get; } = new Dictionary<string, MethodBase>();
+        /// <param name="subClassType">
+        /// 实现接口的类型,该类型必须有一个无参构造函数
+        /// </param>
+        /// <exception cref="Exception">
+        /// 此方法有可能引发异常
+        /// </exception>
+        public ReflectionClass(Type subClassType)
+        {
+            this.ActivatorObj = Activator.CreateInstance(subClassType);
+            Init();
+        }
+
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="instance">
+        /// 实际对象
+        /// </param>
+        public ReflectionClass(object instance)
+        {
+            this.ActivatorObj = instance;
+            Init();
+        }
+
+        #endregion Public 构造函数
+
+        #region Public 属性
 
         /// <summary>
         /// 获取实例
@@ -23,54 +50,26 @@ namespace GeneralTool.General.ReflectionHelper
         public object ActivatorObj { get; }
 
         /// <summary>
-        /// 构造函数
+        /// 获取当前所有可用方法
         /// </summary>
-        /// <param name="subClassType">实现接口的类型,该类型必须有一个无参构造函数</param>
-        /// <exception cref="Exception">此方法有可能引发异常</exception>
-        public ReflectionClass(Type subClassType)
-        {
+        public Dictionary<string, MethodBase> Methods { get; } = new Dictionary<string, MethodBase>();
 
-            this.ActivatorObj = Activator.CreateInstance(subClassType);
-            Init();
+        #endregion Public 属性
 
-        }
+        #region Public 方法
 
         /// <summary>
-        /// 构造函数
+        /// 执行方法
         /// </summary>
-        /// <param name="instance">实际对象</param>
-        public ReflectionClass(object instance)
-        {
-            this.ActivatorObj = instance;
-            Init();
-        }
-
-
-        void Init()
-        {
-            if (this.ActivatorObj == null)
-            {
-                throw new Exception("注册类未初始化对象");
-            }
-            //获取接口中的所有方法
-            MethodInfo[] methods = this.ActivatorObj.GetType().GetMethods();
-            foreach (MethodInfo item in methods)
-            {
-                string methodName = item.ToString();
-                if (Methods.ContainsKey(methodName))
-                {
-                    continue;
-                }
-                Methods.Add(methodName, item);
-            }
-        }
-
-        /// <summary>
-        /// 执行方法 
-        /// </summary>
-        /// <param name="methodName">方法名称</param>
-        /// <param name="paramters">方法参数列表</param>
-        /// <returns>返回方法执行完成后所返回的对象</returns>
+        /// <param name="methodName">
+        /// 方法名称
+        /// </param>
+        /// <param name="paramters">
+        /// 方法参数列表
+        /// </param>
+        /// <returns>
+        /// 返回方法执行完成后所返回的对象
+        /// </returns>
         public object Invoke(string methodName, params object[] paramters)
         {
             if (!Methods.ContainsKey(methodName))
@@ -85,8 +84,12 @@ namespace GeneralTool.General.ReflectionHelper
         /// <summary>
         /// 执行方法
         /// </summary>
-        /// <param name="cmd">请求参数</param>
-        /// <returns>返回 ResponseCommand</returns>
+        /// <param name="cmd">
+        /// 请求参数
+        /// </param>
+        /// <returns>
+        /// 返回 ResponseCommand
+        /// </returns>
         public ResponseCommand Invoke(RequestCommand cmd)
         {
             ResponseCommand rc = new ResponseCommand();
@@ -105,5 +108,30 @@ namespace GeneralTool.General.ReflectionHelper
 
             return rc;
         }
+
+        #endregion Public 方法
+
+        #region Private 方法
+
+        private void Init()
+        {
+            if (this.ActivatorObj == null)
+            {
+                throw new Exception("注册类未初始化对象");
+            }
+            //获取接口中的所有方法
+            MethodInfo[] methods = this.ActivatorObj.GetType().GetMethods();
+            foreach (MethodInfo item in methods)
+            {
+                string methodName = item.ToString();
+                if (Methods.ContainsKey(methodName))
+                {
+                    continue;
+                }
+                Methods.Add(methodName, item);
+            }
+        }
+
+        #endregion Private 方法
     }
 }

@@ -9,33 +9,13 @@ namespace GeneralTool.General.Models
     [Serializable]
     public class ServerResponse
     {
-        /// <summary>
-        /// 请求url
-        /// </summary>
-        public string RequestUrl { get; set; }
+        #region Public 属性
 
         /// <summary>
-        /// 结果
-        /// </summary>
-        public object Result { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public RequestStateCode StateCode { get; set; }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public AttachDataType AttachDataType { get; set; }
-
-        /// <summary>
-        /// 
         /// </summary>
         public byte[] AttachDatas { get; set; }
 
         /// <summary>
-        /// 
         /// </summary>
         public int AttachDatasLength
         {
@@ -50,13 +30,31 @@ namespace GeneralTool.General.Models
         }
 
         /// <summary>
-        /// 
+        /// </summary>
+        public AttachDataType AttachDataType { get; set; }
+
+        /// <summary>
         /// </summary>
         public string ErroMsg { get; set; }
 
         /// <summary>
-        /// 
         /// </summary>
         public bool RequestSuccess { get; set; } = true;
+
+        /// <summary>
+        /// 请求url
+        /// </summary>
+        public string RequestUrl { get; set; }
+
+        /// <summary>
+        /// 结果
+        /// </summary>
+        public object Result { get; set; }
+
+        /// <summary>
+        /// </summary>
+        public RequestStateCode StateCode { get; set; }
+
+        #endregion Public 属性
     }
 }

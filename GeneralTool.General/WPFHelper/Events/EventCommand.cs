@@ -6,59 +6,28 @@ namespace GeneralTool.General.WPFHelper.Events
     /// <summary>
     /// 事件命令
     /// </summary>
-    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="T">
+    /// </typeparam>
     public class EventCommand<T> : IEventCommand where T : EventArgs
     {
-        /// <summary>
-        /// 事件处理委托
-        /// </summary>
-        public EventHandler<T> InvokeAction { get; set; }
-
-        /// <summary>
-        /// 事件名称
-        /// </summary>
-        public string EventName { get; set; }
-
-        /// <summary>
-        /// 事件源
-        /// </summary>
-        public object Source { get; private set; }
-
-        /// <summary>
-        /// 指示是否处理事件
-        /// </summary>
-        public Func<T, bool> CanExecuteDelegate { get; set; }
-
-        /// <summary>
-        /// 事件的委托包装
-        /// </summary>
-        public EventHandler ActionEventHandler
-        {
-            get
-            {
-                return new EventHandler((o, s) => { this.InvokeAction?.Invoke(o, (T)s); });
-            }
-        }
-
-        /// <summary>
-        /// 自定义事件参数
-        /// </summary>
-        public object CommandParameter { get; private set; }
-        void IEventCommand.SetParameter(object parameter) => this.CommandParameter = parameter;
-
+        #region Public 构造函数
 
         /// <summary>
         /// 构造函数
         /// </summary>
-        /// <param name="action">事件委托</param>
+        /// <param name="action">
+        /// 事件委托
+        /// </param>
         public EventCommand(EventHandler<T> action)
         {
             this.InvokeAction = action;
-
         }
 
+        #endregion Public 构造函数
+
+        #region Public 事件
+
         /// <summary>
-        /// 
         /// </summary>
         public event EventHandler CanExecuteChanged
         {
@@ -72,29 +41,70 @@ namespace GeneralTool.General.WPFHelper.Events
             }
         }
 
+        #endregion Public 事件
+
+        #region Public 属性
+
         /// <summary>
-        /// 处理函数
+        /// 事件的委托包装
         /// </summary>
-        /// <param name="parameter"></param>
-        public void Execute(object parameter)
+        public EventHandler ActionEventHandler
         {
-            this.InvokeAction?.Invoke(this.Source, (T)parameter);
+            get
+            {
+                return new EventHandler((o, s) => { this.InvokeAction?.Invoke(o, (T)s); });
+            }
         }
+
+        /// <summary>
+        /// 指示是否处理事件
+        /// </summary>
+        public Func<T, bool> CanExecuteDelegate { get; set; }
+
+        /// <summary>
+        /// 自定义事件参数
+        /// </summary>
+        public object CommandParameter { get; private set; }
+
+        /// <summary>
+        /// 事件名称
+        /// </summary>
+        public string EventName { get; set; }
+
+        /// <summary>
+        /// 事件处理委托
+        /// </summary>
+        public EventHandler<T> InvokeAction { get; set; }
+
+        /// <summary>
+        /// 事件源
+        /// </summary>
+        public object Source { get; private set; }
+
+        #endregion Public 属性
+
+        #region Public 方法
 
         /// <summary>
         /// 是否能处理
         /// </summary>
-        /// <param name="parameter"></param>
-        /// <returns></returns>
+        /// <param name="parameter">
+        /// </param>
+        /// <returns>
+        /// </returns>
         public bool CanExecute(object parameter)
         {
             return CanExecuteDelegate?.Invoke((T)parameter) ?? true;
         }
 
-        ///<inheritdoc/>
-        public void SetObject(object d)
+        /// <summary>
+        /// 处理函数
+        /// </summary>
+        /// <param name="parameter">
+        /// </param>
+        public void Execute(object parameter)
         {
-            this.Source = d;
+            this.InvokeAction?.Invoke(this.Source, (T)parameter);
         }
 
         /// <summary>
@@ -136,5 +146,15 @@ namespace GeneralTool.General.WPFHelper.Events
             var handler = Delegate.CreateDelegate(@event.EventHandlerType, action.Target, action.Method);
             @event.AddEventHandler(this.Source, handler);
         }
+
+        ///<inheritdoc/>
+        public void SetObject(object d)
+        {
+            this.Source = d;
+        }
+
+        void IEventCommand.SetParameter(object parameter) => this.CommandParameter = parameter;
+
+        #endregion Public 方法
     }
 }

@@ -8,27 +8,16 @@ namespace GeneralTool.General.LinqExtensions
     /// </summary>
     public static class IEnumerableExtensions
     {
+        #region Public 方法
 
         /// <summary>
-        /// 对IEnumerable进行循环计算
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="ts"></param>
-        /// <param name="action"></param>
-        public static void Foreach<T>(this IEnumerable<T> ts, Action<T> action)
-        {
-            foreach (T item in ts)
-            {
-                action?.Invoke(item);
-            }
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="ts"></param>
-        /// <param name="action"></param>
+        /// <typeparam name="T">
+        /// </typeparam>
+        /// <param name="ts">
+        /// </param>
+        /// <param name="action">
+        /// </param>
         public static void For<T>(this IEnumerable<T> ts, Action<int, T> action)
         {
             int index = 0;
@@ -38,6 +27,23 @@ namespace GeneralTool.General.LinqExtensions
             }
         }
 
+        /// <summary>
+        /// 对IEnumerable进行循环计算
+        /// </summary>
+        /// <typeparam name="T">
+        /// </typeparam>
+        /// <param name="ts">
+        /// </param>
+        /// <param name="action">
+        /// </param>
+        public static void Foreach<T>(this IEnumerable<T> ts, Action<T> action)
+        {
+            foreach (T item in ts)
+            {
+                action?.Invoke(item);
+            }
+        }
 
+        #endregion Public 方法
     }
 }

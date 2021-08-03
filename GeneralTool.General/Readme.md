@@ -1,5 +1,22 @@
 ﻿### GeneralTool.General 部分使用指南
 
+#### WPF 属性通知注册
+> 将要被通知的类继承自GeneralTool.General.WPFHelper.BaseNotifyModel <br>
+> 属性如下
+```
+ private bool controlVisible;
+ public bool ControlVisible { get => this.controlVisible; set => this.RegisterProperty(ref this.controlVisible, value); }
+```
+
+#### WPF Command注册
+```
+public ICommand ButtonCommand
+{
+    get=>new SimpleCommand<object>((sender) => { })
+}
+```
+
+
 #### TaskManager任务管理器
 使用说明
 > 1.创建任务类,继承自BaseTaskInvoke <br>
@@ -61,17 +78,18 @@
 示例代码 XAML 引用命名空间: <br>
 xmlns:a="clr-namespace:GeneralTool.General.WPFHelper;assembly=GeneralTool.General"<br>
 >
-```<Button x:Name="btn"
-                Grid.Row="1"
-                Content="Btn"
-                MouseDown="{a:EventBinding MouseDownMethod,RoutedEvent={x:Static UIElement.MouseDownEvent}}" />
+```
+<Button x:Name="btn"
+        Grid.Row="1"
+        Content="Btn"
+        MouseDown="{a:EventBinding MouseDownMethod,RoutedEvent={x:Static UIElement.MouseDownEvent}}" />
 ```
 示例代码 ViewModel <br>
 ```
  public void MouseDownMethod(object sender, MouseButtonEventArgs eventArgs)
-        {
-            
-        }
+ {
+     
+ }
 ``` 
 
 #### ImageViewControl 图片查看控件
@@ -81,18 +99,18 @@ xmlns:imgView="clr-namespace:GeneralTool.General.WPFHelper.WPFControls;assembly=
 xmlns:a="clr-namespace:GeneralTool.General.WPFHelper;assembly=GeneralTool.General"<br>
 ```
  <imgView:ImageViewControl Grid.Row="1"
-                                      Background="Yellow"
-                                      ImageSource="{Binding ImageSource}"
-                                      CanImageDraw="True"
-                                      SliderStyle="{StaticResource MahApps.Styles.Slider.Flat}"
-                                      ToolExpanderStyle="{StaticResource MahApps.Styles.Expander}"
-                                      ToolCutButtonStyle="{StaticResource CutStyle}"
-                                      MenuOkStyle="{StaticResource MenuOk}"
-                                      MenuCancelStyle="{StaticResource MenuCancel}"
-                                      CutImageDownEvent="{a:EventBinding CutImageOkMethod}"
-                                      CutImageEvent="{a:EventBinding CutRectMethod}"
-                                      ImageMouseMoveEvent="{a:EventBinding ImageMouseMove}"
-                                      CutPanelVisibleChanged="{a:EventBinding CutPanelRectMethod}">
+                           Background="Yellow"
+                           ImageSource="{Binding ImageSource}"
+                           CanImageDraw="True"
+                           SliderStyle="{StaticResource MahApps.Styles.Slider.Flat}"
+                           ToolExpanderStyle="{StaticResource MahApps.Styles.Expander}"
+                           ToolCutButtonStyle="{StaticResource CutStyle}"
+                           MenuOkStyle="{StaticResource MenuOk}"
+                           MenuCancelStyle="{StaticResource MenuCancel}"
+                           CutImageDownEvent="{a:EventBinding CutImageOkMethod}"
+                           CutImageEvent="{a:EventBinding CutRectMethod}"
+                           ImageMouseMoveEvent="{a:EventBinding ImageMouseMove}"
+                           CutPanelVisibleChanged="{a:EventBinding CutPanelRectMethod}">
 
             </imgView:ImageViewControl>
 ```

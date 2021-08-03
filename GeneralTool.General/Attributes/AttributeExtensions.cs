@@ -7,12 +7,17 @@ namespace GeneralTool.General.Attributes
     /// </summary>
     public static class AttributeExtensions
     {
+        #region Public 方法
+
         /// <summary>
         /// 获取对象上的特性
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="value"></param>
-        /// <returns></returns>
+        /// <typeparam name="T">
+        /// </typeparam>
+        /// <param name="value">
+        /// </param>
+        /// <returns>
+        /// </returns>
         public static T GetAttributeByClass<T>(this object value)
         {
             T t = default(T);
@@ -29,5 +34,7 @@ namespace GeneralTool.General.Attributes
 
             return t;
         }
+
+        #endregion Public 方法
     }
 }

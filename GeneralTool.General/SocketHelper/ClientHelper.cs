@@ -10,33 +10,52 @@ namespace GeneralTool.General.SocketHelper
     /// </summary>
     public class ClientHelper
     {
+        #region Private 字段
+
         private readonly ClientSocketBase clientSocket;
         private readonly SerializeHelpers serialize;
+
+        #endregion Private 字段
+
+        #region Public 构造函数
+
         /// <summary>
         /// 构造函数
         /// </summary>
-        /// <param name="host"></param>
-        /// <param name="port"></param>
+        /// <param name="host">
+        /// </param>
+        /// <param name="port">
+        /// </param>
         public ClientHelper(string host = "127.0.0.1", int port = 55155)
         {
             serialize = new SerializeHelpers();
             clientSocket = new ClientSocketBase(host, port);
         }
 
-        /// <summary>
-        /// 开启连接
-        /// </summary>
-        public void Start()
-        {
-            this.clientSocket.Start();
-        }
+        #endregion Public 构造函数
 
+        #region Public 方法
+
+        /// <summary>
+        /// 关闭连接
+        /// </summary>
+        public void Close()
+        {
+            System.Diagnostics.Trace.WriteLine("调用客户端Close");
+            if (clientSocket == null)
+            {
+                return;
+            }
+            clientSocket.Close();
+        }
 
         /// <summary>
         /// 发送命令并获取返回命令
         /// </summary>
-        /// <param name="cmd"></param>
-        /// <returns></returns>
+        /// <param name="cmd">
+        /// </param>
+        /// <returns>
+        /// </returns>
         public ResponseCommand SendCommand(RequestCommand cmd)
         {
             if (!clientSocket.IsConnected)
@@ -51,7 +70,6 @@ namespace GeneralTool.General.SocketHelper
             }
             catch (Exception ex)
             {
-
                 throw new SerializeException("序列化出错", ex);
             }
 
@@ -78,23 +96,17 @@ namespace GeneralTool.General.SocketHelper
                 response.Success = false;
             }
 
-
             return response;
         }
 
-
-
         /// <summary>
-        /// 关闭连接
+        /// 开启连接
         /// </summary>
-        public void Close()
+        public void Start()
         {
-            System.Diagnostics.Trace.WriteLine("调用客户端Close");
-            if (clientSocket == null)
-            {
-                return;
-            }
-            clientSocket.Close();
+            this.clientSocket.Start();
         }
+
+        #endregion Public 方法
     }
 }

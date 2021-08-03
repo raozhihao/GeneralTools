@@ -1,7 +1,6 @@
-<ResourceDictionary
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:wp="clr-namespace:GeneralTool.General.WPFHelper.WPFControls">
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:wp="clr-namespace:GeneralTool.General.WPFHelper.WPFControls">
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/GeneralTool.General;component/Themes/ImageViewControl.xaml" />
         <ResourceDictionary Source="pack://application:,,,/GeneralTool.General;component/Themes/PropertyGridControl.xaml" />
@@ -10,6 +9,6 @@
     <Style TargetType="{x:Type wp:ImageViewControl}"
            BasedOn="{StaticResource ImageViewControl}" />
 
-     <Style TargetType="{x:Type wp:PropertyGridControl}"
+    <Style TargetType="{x:Type wp:PropertyGridControl}"
            BasedOn="{StaticResource PropertyGridControl}" />
 </ResourceDictionary>

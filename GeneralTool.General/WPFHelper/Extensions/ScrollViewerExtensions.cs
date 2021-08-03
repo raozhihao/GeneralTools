@@ -5,10 +5,61 @@ using System.Windows.Controls;
 namespace GeneralTool.General.WPFHelper.Extensions
 {
     /// <summary>
-    /// 
     /// </summary>
     public class ScrollViewerExtensions
     {
+        #region Public 字段
+
+        /// <summary>
+        /// </summary>
+        public static readonly DependencyProperty AlwaysScrollToEndProperty = DependencyProperty.RegisterAttached("AlwaysScrollToEnd", typeof(bool), typeof(ScrollViewerExtensions), new PropertyMetadata(false, new PropertyChangedCallback(ScrollViewerExtensions.AlwaysScrollToEndChanged)));
+
+        #endregion Public 字段
+
+        #region Private 字段
+
+        private static bool _autoScroll;
+
+        #endregion Private 字段
+
+        #region Public 方法
+
+        /// <summary>
+        /// </summary>
+        /// <param name="scroll">
+        /// </param>
+        /// <returns>
+        /// </returns>
+        public static bool GetAlwaysScrollToEnd(ScrollViewer scroll)
+        {
+            bool flag = scroll == null;
+            if (flag)
+            {
+                throw new ArgumentNullException("scroll");
+            }
+            return (bool)scroll.GetValue(ScrollViewerExtensions.AlwaysScrollToEndProperty);
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="scroll">
+        /// </param>
+        /// <param name="alwaysScrollToEnd">
+        /// </param>
+        public static void SetAlwaysScrollToEnd(ScrollViewer scroll, bool alwaysScrollToEnd)
+        {
+            bool flag = scroll == null;
+            if (flag)
+            {
+                throw new ArgumentNullException("scroll");
+            }
+            scroll.SetValue(ScrollViewerExtensions.AlwaysScrollToEndProperty, alwaysScrollToEnd);
+        }
+
+        #endregion Public 方法
+
+        #region Private 方法
+
         private static void AlwaysScrollToEndChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             ScrollViewer scrollViewer = sender as ScrollViewer;
@@ -31,37 +82,6 @@ namespace GeneralTool.General.WPFHelper.Extensions
             throw new InvalidOperationException("附加的Always Scroll To End属性只能应用于Scroll Viewer实例.");
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="scroll"></param>
-        /// <returns></returns>
-        public static bool GetAlwaysScrollToEnd(ScrollViewer scroll)
-        {
-            bool flag = scroll == null;
-            if (flag)
-            {
-                throw new ArgumentNullException("scroll");
-            }
-            return (bool)scroll.GetValue(ScrollViewerExtensions.AlwaysScrollToEndProperty);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="scroll"></param>
-        /// <param name="alwaysScrollToEnd"></param>
-        public static void SetAlwaysScrollToEnd(ScrollViewer scroll, bool alwaysScrollToEnd)
-        {
-            bool flag = scroll == null;
-            if (flag)
-            {
-                throw new ArgumentNullException("scroll");
-            }
-            scroll.SetValue(ScrollViewerExtensions.AlwaysScrollToEndProperty, alwaysScrollToEnd);
-        }
-
-
         private static void ScrollChanged(object sender, ScrollChangedEventArgs e)
         {
             ScrollViewer scrollViewer = sender as ScrollViewer;
@@ -82,12 +102,6 @@ namespace GeneralTool.General.WPFHelper.Extensions
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public static readonly DependencyProperty AlwaysScrollToEndProperty = DependencyProperty.RegisterAttached("AlwaysScrollToEnd", typeof(bool), typeof(ScrollViewerExtensions), new PropertyMetadata(false, new PropertyChangedCallback(ScrollViewerExtensions.AlwaysScrollToEndChanged)));
-
-
-        private static bool _autoScroll;
+        #endregion Private 方法
     }
 }

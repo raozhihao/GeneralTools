@@ -16,7 +16,68 @@ namespace GeneralTool.General.TaskLib
     /// </summary>
     public class TaskManager : ITaskInoke
     {
+        #region Private 字段
+
+        private readonly Dictionary<object, Dictionary<string, DoTaskParameterItem>> currents = new Dictionary<object, Dictionary<string, DoTaskParameterItem>>();
+
+        private readonly ILog log;
+
+        /// <summary>
+        /// 任务函数核参数列表
+        /// </summary>
+        private readonly Dictionary<string, DoTaskParameterItem> TaskParameterItems = new Dictionary<string, DoTaskParameterItem>();
+
         private string erroMsg;
+
+        private BaseTaskInvoke[] taskInokes;
+
+        #endregion Private 字段
+
+        #region Public 构造函数
+
+        /// <summary>
+        /// </summary>
+        /// <param name="jsonConvert">
+        /// Json转换器
+        /// </param>
+        /// <param name="log">
+        /// 日志组件
+        /// </param>
+        /// <param name="station">
+        /// 站点
+        /// </param>
+        public TaskManager(IJsonConvert jsonConvert, ILog log, ServerStationBase station = null)
+        {
+            if (log == null)
+                log = new ConsoleLogInfo();
+            if (jsonConvert == null)
+                jsonConvert = new BaseJsonCovert();
+
+            this.JsonCovert = jsonConvert;
+            this.log = log;
+            this.ServerStation = new Station(jsonConvert, log, station);
+        }
+
+        /// <summary>
+        /// </summary>
+        public TaskManager() : this(null, new ConsoleLogInfo())
+        {
+        }
+
+        #endregion Public 构造函数
+
+        #region Public 属性
+
+        /// <summary>
+        /// 获取所有任务
+        /// </summary>
+        public Dictionary<object, Dictionary<string, DoTaskParameterItem>> Currents
+        {
+            get
+            {
+                return currents;
+            }
+        }
 
         /// <summary>
         /// 错误信息
@@ -30,151 +91,32 @@ namespace GeneralTool.General.TaskLib
         }
 
         /// <summary>
-        /// 服务器站点
-        /// </summary>
-        internal Station ServerStation { get; set; }
-        /// <summary>
         /// 是否被初始化
         /// </summary>
-        private bool IsInit { get; set; } = false;
-        /// <summary>
-        /// 任务函数核参数列表
-        /// </summary>
-        private readonly Dictionary<string, DoTaskParameterItem> TaskParameterItems = new Dictionary<string, DoTaskParameterItem>();
-
-        private readonly ILog log;
+        public bool IsInit { get; set; } = false;
 
         /// <summary>
         /// Json转换器
         /// </summary>
         public IJsonConvert JsonCovert { get; set; }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="jsonConvert">Json转换器</param>
-        /// <param name="log">日志组件</param>
-        /// <param name="station">站点</param>
-        public TaskManager(IJsonConvert jsonConvert, ILog log,ServerStationBase station=null)
-        {
-            if (log == null)
-                log = new ConsoleLogInfo();
-            if (jsonConvert == null)
-                jsonConvert = new BaseJsonCovert();
-
-            this.JsonCovert = jsonConvert;
-            this.log = log;
-            this.ServerStation = new Station(jsonConvert, log,station);
-        }
-
 
         /// <summary>
-        /// 
+        /// 任务集合
         /// </summary>
-        public TaskManager() : this(null, new ConsoleLogInfo())
-        {
+        public ObservableCollection<TaskModel> TaskModels { get; set; } = new ObservableCollection<TaskModel>();
 
-        }
+        #endregion Public 属性
 
-        private BaseTaskInvoke[] taskInokes;
-
-        /// <inheritdoc/>
-        public bool Open(string ip, int port, params BaseTaskInvoke[] target)
-        {
-            try
-            {
-                if (this.IsInit)
-                {
-                    this.ServerStation.Close();
-                }
-                if (!this.IsInit)
-                {
-                    this.taskInokes = target;
-                    target.Foreach(o =>
-                    {
-                        this.ServerStation.AddStationObjectClass(o);
-                    });
-                    this.IsInit = true;
-                }
-                this.ServerStation.Start(ip, port);
-                this.log.Debug($"服务已开启 IP:{ip} PORT:{port}");
-                return true;
-            }
-            catch (Exception ex)
-            {
-                this.erroMsg = "启动中有模块失败" + ex.Message;
-                this.log.Fail(this.erroMsg);
-                return false;
-            }
-        }
-
-        /// <inheritdoc/>
-        public bool OpenWithoutServer(params BaseTaskInvoke[] taskInokes)
-        {
-            try
-            {
-                this.taskInokes = taskInokes;
-                taskInokes.Foreach(o =>
-                {
-                    this.ServerStation.AddStationObjectClass(o);
-                });
-
-                this.log.Debug("已开启");
-                return true;
-            }
-            catch (Exception ex)
-            {
-                this.erroMsg = "启动中有模块失败" + ex.Message;
-                this.log.Fail(this.erroMsg);
-                return false;
-            }
-        }
-
+        #region Internal 属性
 
         /// <summary>
-        /// 执行接口
+        /// 服务器站点
         /// </summary>
-        /// <param name="url"></param>
-        /// <param name="parameterItem"></param>
-        /// <returns></returns>
-        public object DoInterface(string url, DoTaskParameterItem parameterItem)
-        {
-            var method = parameterItem.Method;
-            //获取参数
-            var paramterInfos = method.GetParameters();
-            //创建参数数组
-            var paras = new object[paramterInfos.Length];
-            foreach (var info in paramterInfos)
-            {
-                if (info.IsOut)
-                    continue;
+        internal Station ServerStation { get; set; }
 
-                var valueMsg = parameterItem.GetValue(info.Name);
-                var parameterType = info.ParameterType;
-                //如果是值类型/String类型
-                if (parameterType.IsValueType || parameterType == typeof(string))
-                {
-                    try
-                    {
-                        paras[info.Position] = Convert.ChangeType(valueMsg, parameterType);
-                    }
-                    catch (Exception ex)
-                    {
-                        var message = $"无法将参数 {info.Name} 转换为值 {valueMsg} 错误:{ex.Message}";
-                        this.log.Fail(message);
-                        throw new Exception(message);
-                    }
-                }
-                //如果不是值类型
-                else
-                {
+        #endregion Internal 属性
 
-                    paras[info.Position] = valueMsg;//this.JsonCovert.DeserializeObject(valueMsg, parameterType);
-                }
-            }
-
-            log.Debug($"执行方法 : {url}");
-            return method.Invoke(parameterItem.TaskObj, paras);
-        }
+        #region Public 索引器
 
         /// <inheritdoc/>
         public Dictionary<string, DoTaskParameterItem> this[BaseTaskInvoke obj]
@@ -197,34 +139,73 @@ namespace GeneralTool.General.TaskLib
             }
         }
 
-        private readonly Dictionary<object, Dictionary<string, DoTaskParameterItem>> currents = new Dictionary<object, Dictionary<string, DoTaskParameterItem>>();
+        #endregion Public 索引器
+
+        #region Public 方法
 
         /// <summary>
-        /// 任务集合
+        /// 执行接口
         /// </summary>
-        public ObservableCollection<TaskModel> TaskModels { get; set; } = new ObservableCollection<TaskModel>();
-        /// <summary>
-        /// 获取所有任务
-        /// </summary>
-        public Dictionary<object, Dictionary<string, DoTaskParameterItem>> Currents
+        /// <param name="url">
+        /// </param>
+        /// <param name="parameterItem">
+        /// </param>
+        /// <returns>
+        /// </returns>
+        public object DoInterface(string url, DoTaskParameterItem parameterItem)
         {
-            get
+            var method = parameterItem.Method;
+
+            //获取参数
+            var paramterInfos = method.GetParameters();
+
+            //创建参数数组
+            var paras = new object[paramterInfos.Length];
+            foreach (var info in paramterInfos)
             {
-                return currents;
+                if (info.IsOut)
+                    continue;
+
+                var valueMsg = parameterItem.GetValue(info.Name);
+                var parameterType = info.ParameterType;
+
+                //如果是值类型/String类型
+                if (parameterType.IsValueType || parameterType == typeof(string))
+                {
+                    try
+                    {
+                        paras[info.Position] = Convert.ChangeType(valueMsg, parameterType);
+                    }
+                    catch (Exception ex)
+                    {
+                        var message = $"无法将参数 {info.Name} 转换为值 {valueMsg} 错误:{ex.Message}";
+                        this.log.Fail(message);
+                        throw new Exception(message);
+                    }
+                }
+
+                //如果不是值类型
+                else
+                {
+                    paras[info.Position] = valueMsg;//this.JsonCovert.DeserializeObject(valueMsg, parameterType);
+                }
             }
+
+            log.Debug($"执行方法 : {url}");
+            return method.Invoke(parameterItem.TaskObj, paras);
         }
 
         /// <summary>
         /// 获取接口数据
         /// </summary>
-        /// <returns></returns>
+        /// <returns>
+        /// </returns>
         public Dictionary<string, DoTaskParameterItem> GetInterfaces()
         {
             if (this.TaskParameterItems.Count() != 0)
             {
                 return this.TaskParameterItems;
             }
-
             else
             {
                 foreach (var obj in this.taskInokes)
@@ -304,5 +285,59 @@ namespace GeneralTool.General.TaskLib
                 return this.TaskParameterItems;
             }
         }
+
+        /// <inheritdoc/>
+        public bool Open(string ip, int port, params BaseTaskInvoke[] target)
+        {
+            try
+            {
+                if (this.IsInit)
+                {
+                    this.ServerStation.Close();
+                }
+                if (!this.IsInit)
+                {
+                    this.taskInokes = target;
+                    target.Foreach(o =>
+                    {
+                        this.ServerStation.AddStationObjectClass(o);
+                    });
+                    this.IsInit = true;
+                }
+                this.ServerStation.Start(ip, port);
+                this.log.Debug($"服务已开启 IP:{ip} PORT:{port}");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                this.erroMsg = "启动中有模块失败" + ex.Message;
+                this.log.Fail(this.erroMsg);
+                return false;
+            }
+        }
+
+        /// <inheritdoc/>
+        public bool OpenWithoutServer(params BaseTaskInvoke[] taskInokes)
+        {
+            try
+            {
+                this.taskInokes = taskInokes;
+                taskInokes.Foreach(o =>
+                {
+                    this.ServerStation.AddStationObjectClass(o);
+                });
+
+                this.log.Debug("已开启");
+                return true;
+            }
+            catch (Exception ex)
+            {
+                this.erroMsg = "启动中有模块失败" + ex.Message;
+                this.log.Fail(this.erroMsg);
+                return false;
+            }
+        }
+
+        #endregion Public 方法
     }
 }

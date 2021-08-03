@@ -14,37 +14,63 @@ namespace GeneralTool.General.Logs
     /// </summary>
     public class FileInfoLog : ILog
     {
+        #region Private 字段
+
+        private static readonly object locker = new object();
         private readonly ConcurrentQueue<LogMessageInfo> lockDic = new ConcurrentQueue<LogMessageInfo>();
 
         private readonly string logPathDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs");
 
+        private FileStream currentFileStream = null;
+
+        #endregion Private 字段
+
+        #region Public 构造函数
+
         /// <summary>
-        /// 是否将日志定向到控制台
         /// </summary>
-        public bool ConsoleLogEnable { get; set; } = true;
-        /// <summary>
-        /// 当前日志路径
-        /// </summary>
-        public string CurrentPath { get; protected set; }
-        /// <summary>
-        /// 单个Log最大字节数
-        /// </summary>
-        public long MaxLength { get; set; } = 1024 * 1024 * 3;
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="logName"></param>
+        /// <param name="logName">
+        /// </param>
         public FileInfoLog(string logName)
         {
             this.logPathDir = Directory.CreateDirectory(Path.Combine(logPathDir, logName)).FullName;
         }
 
+        #endregion Public 构造函数
+
+        #region Public 事件
 
         /// <inheritdoc/>
         public event EventHandler<LogMessageInfo> LogEvent;
 
+        #endregion Public 事件
+
+        #region Public 属性
+
+        /// <summary>
+        /// 是否将日志定向到控制台
+        /// </summary>
+        public bool ConsoleLogEnable { get; set; } = true;
+
+        /// <summary>
+        /// 当前日志路径
+        /// </summary>
+        public string CurrentPath { get; protected set; }
+
+        /// <summary>
+        /// 单个Log最大字节数
+        /// </summary>
+        public long MaxLength { get; set; } = 1024 * 1024 * 3;
+
+        #endregion Public 属性
+
+        #region Public 方法
+
         /// <inheritdoc/>
         public void Debug(string msg) => this.Log(msg, LogType.Debug);
+
+        /// <inheritdoc/>
+        public void Error(string msg) => this.Log(msg, LogType.Error);
 
         /// <inheritdoc/>
         public void Fail(string msg) => this.Log(msg, LogType.Fail);
@@ -52,14 +78,6 @@ namespace GeneralTool.General.Logs
         /// <inheritdoc/>
         public void Info(string msg) => this.Log(msg, LogType.Info);
 
-        /// <inheritdoc/>
-        public void Waring(string msg) => this.Log(msg, LogType.Waring);
-
-        /// <inheritdoc/>
-        public void Error(string msg) => this.Log(msg, LogType.Error);
-
-        static readonly object locker = new object();
-        FileStream currentFileStream = null;
         /// <inheritdoc/>
         public void Log(string msg, LogType logType = LogType.Info)
         {
@@ -107,7 +125,6 @@ namespace GeneralTool.General.Logs
                         }
                     }
 
-
                     if (createNew)
                     {
                         this.currentFileStream?.Close();
@@ -116,7 +133,6 @@ namespace GeneralTool.General.Logs
                     }
                     else if (this.currentFileStream == null)
                         this.currentFileStream = new FileStream(fileName, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
-
 
                     msg = $"{DateTime.Now} : {msg}";
                     var info = new LogMessageInfo(msg, logType, fileName);
@@ -131,6 +147,12 @@ namespace GeneralTool.General.Logs
             }
         }
 
+        /// <inheritdoc/>
+        public void Waring(string msg) => this.Log(msg, LogType.Waring);
+
+        #endregion Public 方法
+
+        #region Private 方法
 
         private void WriteLog()
         {
@@ -145,7 +167,8 @@ namespace GeneralTool.General.Logs
                     Trace.WriteLine($"[{result.LogType}] - {DateTime.Now} : {result.Msg}");
                 this.LogEvent?.Invoke(this, result);
             }
-
         }
+
+        #endregion Private 方法
     }
 }

@@ -11,7 +11,42 @@ namespace GeneralTool.General.SerialPortEx
     /// </summary>
     public class SerialControl : SerialPort
     {
+        #region Private 字段
+
         private List<byte> recDatas = new List<byte>();
+
+        #endregion Private 字段
+
+        #region Public 构造函数
+
+        /// <summary>
+        /// </summary>
+        public SerialControl()
+        {
+            base.DataReceived += SerialControl_DataReceived;
+        }
+
+        #endregion Public 构造函数
+
+        #region Public 事件
+
+        /// <summary>
+        /// 返回出错事件
+        /// </summary>
+        public event Action<object[]> ErrorMsg;
+
+        #endregion Public 事件
+
+        #region Public 属性
+
+        /// <summary>
+        /// 尾
+        /// </summary>
+        public byte End
+        {
+            get;
+            set;
+        }
 
         /// <summary>
         /// 头
@@ -22,14 +57,9 @@ namespace GeneralTool.General.SerialPortEx
             set;
         }
 
-        /// <summary>
-        /// 尾
-        /// </summary>
-        public byte End
-        {
-            get;
-            set;
-        }
+        #endregion Public 属性
+
+        #region Private 属性
 
         private SerialRequest CurrentRequest
         {
@@ -43,60 +73,80 @@ namespace GeneralTool.General.SerialPortEx
             set;
         } = new AutoResetEvent(initialState: false);
 
-        /// <summary>
-        /// 返回出错事件
-        /// </summary>
-        public event Action<object[]> ErrorMsg;
+        #endregion Private 属性
+
+        #region Public 方法
 
         /// <summary>
-        /// 
+        /// 关闭
         /// </summary>
-        public SerialControl()
+        public new void Close()
         {
-            base.DataReceived += SerialControl_DataReceived;
+            base.Close();
+            recDatas.Clear();
         }
 
-        private void SerialControl_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        /// <summary>
+        /// 创建请求
+        /// </summary>
+        /// <returns>
+        /// </returns>
+        public SerialRequest CreateRequest()
         {
-            try
-            {
-                byte[] array = new byte[base.BytesToRead];
-                Read(array, 0, array.Length);
-                byte[] array2 = array;
-                foreach (byte b in array2)
-                {
-                    if (recDatas.Count == 0 && CurrentRequest != null && b != CurrentRequest.Head)
-                    {
-                        continue;
-                    }
-
-                    if (recDatas.Count == 1 && CurrentRequest != null && b != CurrentRequest.KeyWorld)
-                    {
-                        recDatas.Clear();
-                        continue;
-                    }
-
-                    recDatas.Add(b);
-                    if (CheckPacketAllReady())
-                    {
-                        RecEvent.Set();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                this.ErrorMsg?.Invoke(new object[1]
-                {
-                    ex
-                });
-                RecEvent.Set();
-            }
+            return new SerialRequest(Head, End);
         }
+
+        /// <summary>
+        /// 开启
+        /// </summary>
+        public new void Open()
+        {
+            if (base.IsOpen)
+            {
+                base.Close();
+            }
+
+            base.Open();
+        }
+
+        /// <summary>
+        /// 发关并返回数据
+        /// </summary>
+        /// <param name="request">
+        /// </param>
+        /// <returns>
+        /// </returns>
+        public SerialResponse Send(SerialRequest request)
+        {
+            if (!request.IsSetData)
+            {
+                throw new Exception("不能发送没有设置数据的消息结构！");
+            }
+
+            recDatas.Clear();
+            byte[] array = request.ToSendDatas();
+            CurrentRequest = request;
+            Write(array, 0, array.Length);
+            RecEvent.WaitOne(base.ReadTimeout);
+            int num = 0;
+            if (recDatas.Count() > 3)
+            {
+                num = recDatas[2];
+            }
+
+            CurrentRequest = null;
+            return new SerialResponse(request, recDatas.ToArray(), (num == 0) ? null : recDatas.GetRange(3, num).ToArray());
+        }
+
+        #endregion Public 方法
+
+        #region Protected 方法
 
         /// <summary>
         /// 检查
         /// </summary>
-        /// <returns></returns>
+        /// <returns>
+        /// </returns>
         protected virtual bool CheckPacketAllReady()
         {
             if (recDatas.Count < 4)
@@ -145,62 +195,47 @@ namespace GeneralTool.General.SerialPortEx
             return false;
         }
 
-        /// <summary>
-        /// 创建请求
-        /// </summary>
-        /// <returns></returns>
-        public SerialRequest CreateRequest()
-        {
-            return new SerialRequest(Head, End);
-        }
+        #endregion Protected 方法
 
-        /// <summary>
-        /// 开启
-        /// </summary>
-        public new void Open()
+        #region Private 方法
+
+        private void SerialControl_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            if (base.IsOpen)
+            try
             {
-                base.Close();
+                byte[] array = new byte[base.BytesToRead];
+                Read(array, 0, array.Length);
+                byte[] array2 = array;
+                foreach (byte b in array2)
+                {
+                    if (recDatas.Count == 0 && CurrentRequest != null && b != CurrentRequest.Head)
+                    {
+                        continue;
+                    }
+
+                    if (recDatas.Count == 1 && CurrentRequest != null && b != CurrentRequest.KeyWorld)
+                    {
+                        recDatas.Clear();
+                        continue;
+                    }
+
+                    recDatas.Add(b);
+                    if (CheckPacketAllReady())
+                    {
+                        RecEvent.Set();
+                    }
+                }
             }
-
-            base.Open();
-        }
-
-        /// <summary>
-        /// 关闭
-        /// </summary>
-        public new void Close()
-        {
-            base.Close();
-            recDatas.Clear();
-        }
-
-        /// <summary>
-        /// 发关并返回数据
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        public SerialResponse Send(SerialRequest request)
-        {
-            if (!request.IsSetData)
+            catch (Exception ex)
             {
-                throw new Exception("不能发送没有设置数据的消息结构！");
+                this.ErrorMsg?.Invoke(new object[1]
+                {
+                    ex
+                });
+                RecEvent.Set();
             }
-
-            recDatas.Clear();
-            byte[] array = request.ToSendDatas();
-            CurrentRequest = request;
-            Write(array, 0, array.Length);
-            RecEvent.WaitOne(base.ReadTimeout);
-            int num = 0;
-            if (recDatas.Count() > 3)
-            {
-                num = recDatas[2];
-            }
-
-            CurrentRequest = null;
-            return new SerialResponse(request, recDatas.ToArray(), (num == 0) ? null : recDatas.GetRange(3, num).ToArray());
         }
+
+        #endregion Private 方法
     }
 }

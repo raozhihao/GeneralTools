@@ -9,10 +9,42 @@ using System.Reflection;
 namespace GeneralTool.General.TaskLib
 {
     /// <summary>
-    /// 
     /// </summary>
     public class Station
     {
+        #region Private 字段
+
+        private readonly ILog log;
+
+        #endregion Private 字段
+
+        #region Public 构造函数
+
+        /// <summary>
+        /// </summary>
+        /// <param name="jsonConvert">
+        /// </param>
+        /// <param name="log">
+        /// </param>
+        /// <param name="serverStation">
+        /// </param>
+        public Station(IJsonConvert jsonConvert = null, ILog log = null, IServerStation serverStation = null)
+        {
+            if (log == null)
+                log = new ConsoleLogInfo();
+            if (jsonConvert == null)
+                jsonConvert = new BaseJsonCovert();
+            if (serverStation == null)
+                serverStation = new ServerStation(jsonConvert, log);
+
+            this.log = log;
+            this.ServerStation = serverStation;
+        }
+
+        #endregion Public 构造函数
+
+        #region Public 属性
+
         /// <summary>
         /// 获取或设置服务站点
         /// </summary>
@@ -22,33 +54,29 @@ namespace GeneralTool.General.TaskLib
             set;
         }
 
+        #endregion Public 属性
 
-        private readonly ILog log;
+        #region Public 方法
 
         /// <summary>
-        /// 
         /// </summary>
-        /// <param name="jsonConvert"></param>
-        /// <param name="log"></param>
-        /// <param name="serverStation"></param>
-        public Station(IJsonConvert jsonConvert = null, ILog log = null,IServerStation serverStation=null)
+        /// <typeparam name="T">
+        /// </typeparam>
+        /// <param name="converter">
+        /// </param>
+        /// <returns>
+        /// </returns>
+        public bool AddParameterConverter<T>(Func<string, object> converter)
         {
-            if (log == null)
-                log = new ConsoleLogInfo();
-            if (jsonConvert == null)
-                jsonConvert = new BaseJsonCovert();
-            if(serverStation==null)
-                serverStation = new ServerStation(jsonConvert, log);
-
-            this.log = log;
-            this.ServerStation = serverStation;
+            return ServerStation.AddTypeConverter<T>(converter);
         }
 
         /// <summary>
-        /// 
         /// </summary>
-        /// <param name="target"></param>
-        /// <returns></returns>
+        /// <param name="target">
+        /// </param>
+        /// <returns>
+        /// </returns>
         public bool AddStationObjectClass(object target)
         {
             RouteAttribute attributeByClass = target.GetAttributeByClass<RouteAttribute>();
@@ -74,33 +102,28 @@ namespace GeneralTool.General.TaskLib
 
             return true;
         }
+
         /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="ip"></param>
-        /// <param name="port"></param>
-        /// <returns></returns>
-        public bool Start(string ip, int port)
-        {
-            return ServerStation.Start(ip, port);
-        }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="converter"></param>
-        /// <returns></returns>
-        public bool AddParameterConverter<T>(Func<string, object> converter)
-        {
-            return ServerStation.AddTypeConverter<T>(converter);
-        }
-        /// <summary>
-        /// 
         /// </summary>
         public void Close()
         {
             ServerStation.Close();
             log.Debug("已关闭服务");
         }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="ip">
+        /// </param>
+        /// <param name="port">
+        /// </param>
+        /// <returns>
+        /// </returns>
+        public bool Start(string ip, int port)
+        {
+            return ServerStation.Start(ip, port);
+        }
+
+        #endregion Public 方法
     }
 }

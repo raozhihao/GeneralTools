@@ -5,6 +5,27 @@
     /// </summary>
     public class SerialResponse
     {
+        #region Public 构造函数
+
+        /// <summary>
+        /// </summary>
+        /// <param name="request">
+        /// </param>
+        /// <param name="datas">
+        /// </param>
+        /// <param name="userDatas">
+        /// </param>
+        public SerialResponse(SerialRequest request, byte[] datas, byte[] userDatas = null)
+        {
+            Request = request;
+            SourceDatas = datas;
+            UserDatas = userDatas;
+        }
+
+        #endregion Public 构造函数
+
+        #region Public 属性
+
         /// <summary>
         /// 请求
         /// </summary>
@@ -32,17 +53,6 @@
             private set;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="request"></param>
-        /// <param name="datas"></param>
-        /// <param name="userDatas"></param>
-        public SerialResponse(SerialRequest request, byte[] datas, byte[] userDatas = null)
-        {
-            Request = request;
-            SourceDatas = datas;
-            UserDatas = userDatas;
-        }
+        #endregion Public 属性
     }
 }

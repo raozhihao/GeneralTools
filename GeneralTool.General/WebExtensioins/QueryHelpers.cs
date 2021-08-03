@@ -8,11 +8,51 @@ namespace GeneralTool.General.WebExtensioins
     /// </summary>
     public static class QueryHelpers
     {
+        #region Public 方法
+
+        /// <summary>
+        /// 获取Url中的QueryString字符串
+        /// </summary>
+        /// <param name="url">
+        /// </param>
+        /// <returns>
+        /// </returns>
+        public static string GetQueryString(this string url)
+        {
+            return url.Substring(url.IndexOf('?') + 1); ;
+        }
+
+        /// <summary>
+        /// 将query的字典转为QueryString
+        /// </summary>
+        /// <param name="queryDictionary">
+        /// </param>
+        /// <returns>
+        /// </returns>
+        public static string ParseDictionaryToQueryString(this Dictionary<string, object> queryDictionary)
+        {
+            if (queryDictionary == null || queryDictionary.Count == 0)
+            {
+                return "";
+            }
+
+            List<string> list = new List<string>();
+            foreach (var item in queryDictionary)
+            {
+                list.Add($"{item.Key}={item.Value.SerializeToJsonString()}");
+            }
+
+            return string.Join("&", list);
+        }
+
         /// <summary>
         /// 将QueryString字符串转为字典
         /// </summary>
-        /// <param name="queryStrings">字符串</param>
-        /// <returns></returns>
+        /// <param name="queryStrings">
+        /// 字符串
+        /// </param>
+        /// <returns>
+        /// </returns>
         public static Dictionary<string, string> ParseQueryToDictionary(this string queryStrings)
         {
             Dictionary<string, string> dic = new Dictionary<string, string>();
@@ -32,45 +72,18 @@ namespace GeneralTool.General.WebExtensioins
         }
 
         /// <summary>
-        /// 将query的字典转为QueryString
-        /// </summary>
-        /// <param name="queryDictionary"></param>
-        /// <returns></returns>
-        public static string ParseDictionaryToQueryString(this Dictionary<string, object> queryDictionary)
-        {
-            if (queryDictionary == null || queryDictionary.Count == 0)
-            {
-                return "";
-            }
-
-            List<string> list = new List<string>();
-            foreach (var item in queryDictionary)
-            {
-                list.Add($"{item.Key}={item.Value.SerializeToJsonString()}");
-            }
-
-            return string.Join("&", list);
-        }
-
-        /// <summary>
         /// 将url地址中的QueryString提取出来
         /// </summary>
-        /// <param name="url"></param>
-        /// <returns></returns>
+        /// <param name="url">
+        /// </param>
+        /// <returns>
+        /// </returns>
         public static Dictionary<string, string> ParseUrlToQueryDictionary(this string url)
         {
             string queryString = url.GetQueryString();
             return queryString.ParseQueryToDictionary();
         }
 
-        /// <summary>
-        /// 获取Url中的QueryString字符串
-        /// </summary>
-        /// <param name="url"></param>
-        /// <returns></returns>
-        public static string GetQueryString(this string url)
-        {
-            return url.Substring(url.IndexOf('?') + 1); ;
-        }
+        #endregion Public 方法
     }
 }

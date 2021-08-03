@@ -13,19 +13,57 @@ namespace GeneralTool.General.Models
     [Serializable]
     public class IP
     {
+        #region Private 字段
+
+        private string ip = "127.0.0.1";
+
+        #endregion Private 字段
+
+        #region Public 构造函数
+
+        /// <summary>
+        /// </summary>
+        /// <param name="ip">
+        /// </param>
+        public IP(string ip)
+        {
+            this.ip = this.changeToIp(ip);
+        }
+
+        #endregion Public 构造函数
+
+        #region Public 方法
+
+        /// <summary>
+        /// </summary>
+        /// <param name="ip">
+        /// </param>
+        public static implicit operator IP(string ip)
+        {
+            return new IP(ip);
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="ip">
+        /// </param>
+        public static implicit operator string(IP ip)
+        {
+            return ip.ip;
+        }
+
+        #endregion Public 方法
+
+        #region Internal 方法
+
         internal string getIp()
         {
             return this.ip;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="ip"></param>
-        public IP(string ip)
-        {
-            this.ip = this.changeToIp(ip);
-        }
+        #endregion Internal 方法
+
+        #region Private 方法
 
         private string changeToIp(string ip)
         {
@@ -65,24 +103,6 @@ namespace GeneralTool.General.Models
             return result;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="ip"></param>
-        public static implicit operator IP(string ip)
-        {
-            return new IP(ip);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="ip"></param>
-        public static implicit operator string(IP ip)
-        {
-            return ip.ip;
-        }
-
-        private string ip = "127.0.0.1";
+        #endregion Private 方法
     }
 }

@@ -8,6 +8,24 @@ namespace GeneralTool.General.Models
     [Serializable]
     public class ProxyErroModel
     {
+        #region Public 构造函数
+
+        /// <summary>
+        /// </summary>
+        /// <param name="requestCommand">
+        /// </param>
+        /// <param name="responseCommand">
+        /// </param>
+        public ProxyErroModel(RequestCommand requestCommand, ResponseCommand responseCommand)
+        {
+            this.RequestCommand = requestCommand;
+            this.ResponseCommand = responseCommand;
+        }
+
+        #endregion Public 构造函数
+
+        #region Public 属性
+
         /// <summary>
         /// 请求命令(包含请求的详细信息)
         /// </summary>
@@ -18,15 +36,6 @@ namespace GeneralTool.General.Models
         /// </summary>
         public ResponseCommand ResponseCommand { get; set; }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="requestCommand"></param>
-        /// <param name="responseCommand"></param>
-        public ProxyErroModel(RequestCommand requestCommand, ResponseCommand responseCommand)
-        {
-            this.RequestCommand = requestCommand;
-            this.ResponseCommand = responseCommand;
-        }
+        #endregion Public 属性
     }
 }
