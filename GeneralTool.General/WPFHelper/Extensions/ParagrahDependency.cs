@@ -270,7 +270,7 @@ namespace GeneralTool.General.WPFHelper.Extensions
         /// </param>
         /// <param name="value">
         /// </param>
-        public static void SetMaxLineCount(DependencyObject obj, object value)
+        public static void SetMaxLineCount(DependencyObject obj, int value)
         {
             obj.SetValue(MaxLineCountProperty, value);
         }

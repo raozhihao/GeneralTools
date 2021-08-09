@@ -1,8 +1,6 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
-    <ResourceDictionary Source="Logs.xaml"
-                        x:Key="Log"/>
-    <sys:String x:Key="Txt1">Test1</sys:String>
-    <sys:String x:Key="Btn">btnTest</sys:String>
+    <sys:String x:Key="SetLog">这是设置的日志</sys:String>
+    <sys:String x:Key="FomartLog">这是格式化的日志 {0},{1}</sys:String>
 </ResourceDictionary>

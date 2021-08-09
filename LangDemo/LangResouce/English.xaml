@@ -1,0 +1,14 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+    <!--引用英文的log语言文件-->
+    <ResourceDictionary x:Key="Logs"
+                        Source="English_Logs.xaml" />
+    <sys:String x:Key="Label">TestLabel</sys:String>
+    <sys:String x:Key="LangHeader">Lang Test</sys:String>
+    <sys:String x:Key="ChooseLangLabel">Choose Lang</sys:String>
+    <sys:String x:Key="OpenNewWindow">Open New Window</sys:String>
+    <sys:String x:Key="ChangeLang">Change Lang</sys:String>
+    <sys:String x:Key="OutLog">Out Log</sys:String>
+    <sys:String x:Key="NewWindow">New Window</sys:String>
+</ResourceDictionary>
