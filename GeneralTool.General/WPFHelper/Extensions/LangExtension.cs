@@ -113,8 +113,14 @@ namespace GeneralTool.General.WPFHelper.Extensions
         }
     }
 
-    public static class BindingStaticClass
+    /// <summary>
+    /// 
+    /// </summary>
+    internal static class BindingStaticClass
     {
-        public static List<Window> BindingLangWindow { get; } = new List<Window>();
+        /// <summary>
+        /// 
+        /// </summary>
+        internal static List<Window> BindingLangWindow { get; } = new List<Window>();
     }
 }

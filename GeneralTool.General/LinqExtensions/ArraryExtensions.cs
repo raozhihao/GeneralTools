@@ -31,26 +31,10 @@ namespace GeneralTool.General.LinqExtensions
         /// <summary>
         /// 查找指定值位置
         /// </summary>
-        /// <typeparam name="T">
-        /// </typeparam>
-        /// <param name="arrary">
-        /// </param>
-        /// </param>
-        /// <returns>
-        /// 如果不存在则返回-1
-        /// </returns>
-        /// <summary>
-        /// 查找指定值位置
-        /// </summary>
-        /// <typeparam name="T">
-        /// </typeparam>
-        /// <param name="arrary">
-        /// </param>
-        /// <param name="item">
-        /// </param>
-        /// <returns>
-        /// 如果不存在则返回-1
-        /// </returns>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="arrary"></param>
+        /// <param name="item"></param>
+        /// <returns></returns>
         public static int FindIndex<T>(this T[] arrary, T item)
         {
             for (int i = 0; i < arrary.Length; i++)
