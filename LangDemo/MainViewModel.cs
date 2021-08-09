@@ -38,6 +38,7 @@ namespace LangDemo
             this.LangList.Add("English");
             this.LangList.Add("日本語");
             LangProvider.LangProviderInstance.AddLangResources(langResources);
+            //加载语言
             this.ChangeLangMethod();
         }
 
