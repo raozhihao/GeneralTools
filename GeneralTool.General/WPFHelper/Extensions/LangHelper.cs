@@ -37,7 +37,7 @@ namespace GeneralTool.General.WPFHelper.Extensions
         private static void LangKeyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var langKey = e.NewValue + "";
-            var propertyName = GetLangBinding(d);
+            var propertyName = GetBindingProperty(d);
             AddLangListener(d, e,langKey,propertyName);
         }
 
@@ -119,29 +119,10 @@ namespace GeneralTool.General.WPFHelper.Extensions
         /// <summary>
         /// 绑定属性
         /// </summary>
-        public static readonly DependencyProperty LangBindingProperty = DependencyProperty.RegisterAttached("LangBinding", typeof(string), typeof(LangHelper), new PropertyMetadata(LangBindingChanged));
+        public static readonly DependencyProperty BindingPropertyProperty = DependencyProperty.RegisterAttached("BindingProperty", typeof(string), typeof(LangHelper), new PropertyMetadata(LangBindingChanged));
 
         private static void LangBindingChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            //if (!string.IsNullOrWhiteSpace(e.NewValue + ""))
-            //{
-            //    var pro = new PropertyLangStruct
-            //    {
-            //        Dependency = d,
-            //        LangKey = GetLangKey(d)
-            //    };
-            //    //获取其默认值
-            //    var propertyName = e.NewValue + "";
-            //    pro.PropertyInfo = d.GetType().GetProperty(propertyName);
-            //    if (pro.PropertyInfo == null)
-            //    {
-            //        return;
-            //    }
-            //    pro.DefaultLabel = pro.GetValue();
-            //    propertyStructs.Add(pro);
-            //    LangProvider.LangProviderInstance.LangChanged += LangProviderInstance_LangChanged;
-            //    LangProvider.LangProviderInstance.LoadLang();
-            //}
 
             var langKey = GetLangKey(d);
             var propertyName = e.NewValue + "";
@@ -154,13 +135,13 @@ namespace GeneralTool.General.WPFHelper.Extensions
         /// </summary>
         /// <param name="dependency"></param>
         /// <param name="value"></param>
-        public static void SetLangBinding(DependencyObject dependency, object value) => dependency.SetValue(LangBindingProperty, value);
+        public static void SetBindingProperty(DependencyObject dependency, object value) => dependency.SetValue(BindingPropertyProperty, value);
         /// <summary>
         /// 
         /// </summary>
         /// <param name="dependency"></param>
         /// <returns></returns>
-        public static string GetLangBinding(DependencyObject dependency) => dependency.GetValue(LangBindingProperty) + "";
+        public static string GetBindingProperty(DependencyObject dependency) => dependency.GetValue(BindingPropertyProperty) + "";
 
         /// <summary>
         /// 绑定 LangExtension 扩展标记附加属性

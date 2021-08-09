@@ -110,6 +110,8 @@
     <Compile Include="Models\SocketLinkObject.cs" />
     <Compile Include="Models\SocketReceiveArgs.cs" />
     <Compile Include="Models\TaskModel.cs" />
+    <Compile Include="WPFHelper\Extensions\LangBindExtension.cs" />
+    <Compile Include="WPFHelper\Extensions\NameDependency.cs" />
     <Compile Include="NetHelper\HttpHelper.cs" />
     <Compile Include="NetHelper\NetException\HttpGetRequestException.cs" />
     <Compile Include="NetHelper\PublicEnum.cs" />

@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeneralTool.General", "Gene
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IocTest", "IocTest\IocTest.csproj", "{74736A88-ECFB-4679-BB04-44234F33D68D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Demo", "Demo", "{19BDC90F-8CD7-49C7-89EF-117C0DA8F8FD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfApp1", "WpfApp1\WpfApp1.csproj", "{836316E9-73C7-4DB8-ACC5-2B39EBA3EBC0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,9 +25,17 @@ Global
 		{74736A88-ECFB-4679-BB04-44234F33D68D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{74736A88-ECFB-4679-BB04-44234F33D68D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{74736A88-ECFB-4679-BB04-44234F33D68D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{836316E9-73C7-4DB8-ACC5-2B39EBA3EBC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{836316E9-73C7-4DB8-ACC5-2B39EBA3EBC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{836316E9-73C7-4DB8-ACC5-2B39EBA3EBC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{836316E9-73C7-4DB8-ACC5-2B39EBA3EBC0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{74736A88-ECFB-4679-BB04-44234F33D68D} = {19BDC90F-8CD7-49C7-89EF-117C0DA8F8FD}
+		{836316E9-73C7-4DB8-ACC5-2B39EBA3EBC0} = {19BDC90F-8CD7-49C7-89EF-117C0DA8F8FD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3218C1B0-9A40-4B8F-A121-0DC0DD6F5AC4}

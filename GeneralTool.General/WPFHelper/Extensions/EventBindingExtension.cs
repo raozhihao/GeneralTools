@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Markup;
 
 namespace GeneralTool.General.WPFHelper.Extensions
@@ -254,8 +255,11 @@ namespace GeneralTool.General.WPFHelper.Extensions
         private object GetDataContext(DependencyObject target)
         {
 
-            return target.GetValue(FrameworkElement.DataContextProperty)
+            var context= target.GetValue(FrameworkElement.DataContextProperty)
                    ?? target.GetValue(FrameworkContentElement.DataContextProperty);
+            if (context is ObjectDataProvider c)
+                context = c.ObjectInstance;
+            return context;
         }
 
         private Delegate GetDummyHandler(Type eventHandlerType)

@@ -48,7 +48,7 @@ namespace GeneralTool.General.WPFHelper
         /// 添加语言包资源
         /// </summary>
         /// <param name="langResourceDic"></param>
-        public void AddLangResources(Dictionary<string, ResourceDictionary> langResourceDic)
+        public virtual void AddLangResources(Dictionary<string, ResourceDictionary> langResourceDic)
         {
             this.langResourceDic = langResourceDic;
         }
@@ -77,13 +77,6 @@ namespace GeneralTool.General.WPFHelper
             if (!re)
                 return;//没有添加过,则返回
 
-            ////已经有了,则与上次的对比下
-            //if (this.currentResource == chooseLangResx)
-            //{
-            //    //一致,则不管,直接返回
-            //    return;
-            //}
-
             //不一致,先清除
             Application.Current.Resources.MergedDictionaries.Remove(this.CurrentResource);
             Application.Current.Resources.MergedDictionaries.Add(chooseLangResx);
@@ -104,18 +97,45 @@ namespace GeneralTool.General.WPFHelper
         /// </summary>
         /// <param name="langKey"></param>
         /// <returns></returns>
-        public string GetLangValue(string langKey)
+        public virtual string GetLangValue(string langKey)
         {
-            if (this.CurrentResource==null)
+            string value = "";
+            if (this.CurrentResource == null)
             {
                 //返回默认的
-                this.DefaultResource.TryGetValue(langKey,out var value);
+                this.DefaultResource.TryGetValue(langKey, out value);
                 return value;
             }
-            var val =this.CurrentResource[langKey]+"";
-            if (string.IsNullOrWhiteSpace(val))
-                this.DefaultResource.TryGetValue(langKey, out  val);
-            return val;
+
+            value = GetValue(langKey, this.CurrentResource);
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                this.DefaultResource.TryGetValue(langKey, out value);
+            }
+            return value;
+        }
+
+        private string GetValue(string key, ResourceDictionary resource)
+        {
+            //获取第一个key
+            key = key.Trim();
+            var index = key.IndexOf('.');
+            string langKey = "";
+            if (index > -1)
+                langKey = key.Substring(0, index).Trim();
+            else
+                langKey = key;
+
+            var value = resource[langKey];
+            if (value is ResourceDictionary r)
+            {
+                //递归处理
+                key = key.Remove(0, index + 1);
+                return GetValue(key, r);
+            }
+            else
+                return value + "";
+
         }
     }
 }

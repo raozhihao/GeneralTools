@@ -42,19 +42,66 @@
 ```
 ##### 1.使用LangKey 与 LangBinding
 
+BindingProperty:表示要绑定到的属性<br>
+LangKey:表示要绑定的语言Key<br>
 xaml,导入命名空间:xmlns:e="clr-namespace:GeneralTool.General.WPFHelper.Extensions;assembly=GeneralTool.General"<br>
+
 ```
  <TextBlock Text="测试2"
-            e:LangHelper.LangBinding="Text"
+            e:LangHelper.BindingProperty="Text"
             e:LangHelper.LangKey="Text2"/>
 ```
 
-##### 1.使用 LangMarkup 和 LangExtension
+##### 2.使用 LangMarkup 和 LangExtension
 
 xaml,导入命名空间:xmlns:e="clr-namespace:GeneralTool.General.WPFHelper.Extensions;assembly=GeneralTool.General"<br>
 ```
  <TextBlock Text="测试2"
             e:LangHelper.LangMarkup="{e:Lang BindingProperty=Text,LangKey=Text2}" />
+```
+
+##### 3.使用 LangBind (推荐使用)
+DefaultText:指定未在语言文件中找到指定key对应的语言化时所使用的默认文本<br>
+LangKey:表示要绑定的语言Key<br>
+xaml,导入命名空间:xmlns:e="clr-namespace:GeneralTool.General.WPFHelper.Extensions;assembly=GeneralTool.General"<br>
+```
+ <TextBlock Text="{e:LangBind LangKey=Txt1,DefaultText=文本}" />
+```
+
+## 其它特性
+### 1.将中文设为默认语言
+> 只需要在添加完语言字典列表后设置 
+```
+//此属性如果设置,则会默认创建出一个中文的资源包(并不存在),且此key应与语言列表中的某项key保持一致
+LangProvider.LangProviderInstance.DefaultLang = "中文";
+```
+
+### 2.子字典
+> 允许字典嵌套,例如在语言字典 en-US 下面有个Logs.xaml字典,如下
+```
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+    <sys:String x:Key="MyLog">这是一串测试Log</sys:String>
+</ResourceDictionary>
+```
+<br>
+
+```
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+    <ResourceDictionary Source="Logs.xaml"
+                        x:Key="Log"/>
+    <sys:String x:Key="Txt1">Test1</sys:String>
+    <sys:String x:Key="Btn">btnTest</sys:String>
+</ResourceDictionary>
+```
+<br>
+
+>界面上可以如下取值
+```
+ <TextBlock Text="{e:LangBind DefaultText=This is Log,LangKey=Log.MyLog}" />
 ```
 
 
