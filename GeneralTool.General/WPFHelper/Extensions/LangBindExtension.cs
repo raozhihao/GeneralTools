@@ -62,9 +62,10 @@ namespace GeneralTool.General.WPFHelper.Extensions
             this.dependencyObject = target.TargetObject as DependencyObject;
             this.dependencyProperty = target.TargetProperty as DependencyProperty;
             if (dependencyProperty == null)
-            {
                 throw new Exception("语言只能绑定在 DependencyProperty 上");
-            }
+
+            if (this.dependencyObject == null)
+                throw new Exception("无法绑定此项,只能在DependencyObject上进行绑定");
 
             //设置默认库
             if (!LangProvider.LangProviderInstance.DefaultResource.ContainsKey(this.LangKey))
@@ -122,7 +123,7 @@ namespace GeneralTool.General.WPFHelper.Extensions
             }
 
             this.dependencyObject.SetValue(this.dependencyProperty, value);
-            this.currentLabel = value ;
+            this.currentLabel = value;
         }
     }
 }
