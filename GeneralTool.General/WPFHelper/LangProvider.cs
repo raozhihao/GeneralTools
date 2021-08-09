@@ -115,6 +115,18 @@ namespace GeneralTool.General.WPFHelper
             return value;
         }
 
+        /// <summary>
+        /// 获取key所对应的语言,并将其格式化
+        /// </summary>
+        /// <param name="key">语言key</param>
+        /// <param name="parmeters">参数列表</param>
+        /// <returns></returns>
+        public virtual string GetLangValueFomart(string key,params object[] parmeters)
+        {
+            var value = this.GetLangValue(key);
+            return string.Format(value, parmeters);
+        }
+
         private string GetValue(string key, ResourceDictionary resource)
         {
             //获取第一个key

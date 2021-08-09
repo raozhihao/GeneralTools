@@ -101,15 +101,18 @@ namespace GeneralTool.General.WPFHelper.Extensions
 
         private void LangProviderInstance_LangChanged(ResourceDictionary resx)
         {
-            object value = null;
-            if (resx == null)
-                value = property.DefaultLabel; //回复默认的
-            else
-                value = resx[property.LangKey]; //获取对应的值
-                                                //赋值
-            property.SetValue(value ?? property.DefaultLabel);
+            //object value = null;
+            //if (resx == null)
+            //    value = property.DefaultLabel; //回复默认的
+            //else
+            //    value = resx[property.LangKey]; //获取对应的值
+            //                                    //赋值
+           
 
-            var live = property.Dependency.Dispatcher.Thread.IsAlive;
+            var value = LangProvider.LangProviderInstance.GetLangValue(this.LangKey);
+            if (string.IsNullOrEmpty(value))
+                value = property.DefaultLabel+"";
+            property.SetValue(value ?? property.DefaultLabel);
         }
     }
 

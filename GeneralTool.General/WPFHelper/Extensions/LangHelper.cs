@@ -100,18 +100,20 @@ namespace GeneralTool.General.WPFHelper.Extensions
             LangProvider.LangProviderInstance.LangChanged += LangProviderInstance_LangChanged;
         }
 
-      
-
         private static void LangProviderInstance_LangChanged(ResourceDictionary resx)
         {
             foreach (var item in propertyStructs)
             {
-                object value = null;
-                if (resx == null)
-                    value = item.DefaultLabel; //回复默认的
-                else
-                    value = resx[item.LangKey]; //获取对应的值
-                                                //赋值
+                //object value = null;
+                //if (resx == null)
+                //    value = item.DefaultLabel; //回复默认的
+                //else
+                //    value = resx[item.LangKey]; //获取对应的值
+                //                                //赋值
+
+                var value = LangProvider.LangProviderInstance.GetLangValue(item.LangKey);
+                if (string.IsNullOrEmpty(value))
+                    value = item.DefaultLabel+"";
                 item.SetValue(value ?? item.DefaultLabel);
             }
         }
@@ -123,7 +125,6 @@ namespace GeneralTool.General.WPFHelper.Extensions
 
         private static void LangBindingChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-
             var langKey = GetLangKey(d);
             var propertyName = e.NewValue + "";
             AddLangListener(d, e, langKey, propertyName);
