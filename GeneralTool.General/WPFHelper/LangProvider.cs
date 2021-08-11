@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
 
 namespace GeneralTool.General.WPFHelper
@@ -51,6 +52,11 @@ namespace GeneralTool.General.WPFHelper
         public virtual void AddLangResources(Dictionary<string, ResourceDictionary> langResourceDic)
         {
             this.langResourceDic = langResourceDic;
+            if (this.langResourceDic == null)
+                throw new Exception("语言集合不可为null");
+
+            if (this.langResourceDic.Count > 0)
+                this.CurrentResource = this.langResourceDic.First().Value;
         }
 
         /// <summary>
@@ -121,7 +127,7 @@ namespace GeneralTool.General.WPFHelper
         /// <param name="key">语言key</param>
         /// <param name="parmeters">参数列表</param>
         /// <returns></returns>
-        public virtual string GetLangValueFomart(string key,params object[] parmeters)
+        public virtual string GetLangValueFomart(string key, params object[] parmeters)
         {
             var value = this.GetLangValue(key);
             return string.Format(value, parmeters);

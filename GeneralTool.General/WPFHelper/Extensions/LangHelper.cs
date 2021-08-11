@@ -1,10 +1,7 @@
 ﻿using GeneralTool.General.Models;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace GeneralTool.General.WPFHelper.Extensions
@@ -38,7 +35,7 @@ namespace GeneralTool.General.WPFHelper.Extensions
         {
             var langKey = e.NewValue + "";
             var propertyName = GetBindingProperty(d);
-            AddLangListener(d, e,langKey,propertyName);
+            AddLangListener(d, e, langKey, propertyName);
         }
 
         private static void AddLangListener(DependencyObject d, DependencyPropertyChangedEventArgs e, string langKey, string propertyName)
@@ -52,7 +49,7 @@ namespace GeneralTool.General.WPFHelper.Extensions
                 var pro = new PropertyLangStruct
                 {
                     Dependency = d,
-                    LangKey =langKey
+                    LangKey = langKey
                 };
 
 
@@ -84,7 +81,7 @@ namespace GeneralTool.General.WPFHelper.Extensions
                     BindingStaticClass.BindingLangWindow.Add(window);
                     window.Loaded += Window_Loaded;
                     window.Closing += Window_Closing;
-                } 
+                }
             }
         }
 
@@ -113,7 +110,7 @@ namespace GeneralTool.General.WPFHelper.Extensions
 
                 var value = LangProvider.LangProviderInstance.GetLangValue(item.LangKey);
                 if (string.IsNullOrEmpty(value))
-                    value = item.DefaultLabel+"";
+                    value = item.DefaultLabel + "";
                 item.SetValue(value ?? item.DefaultLabel);
             }
         }

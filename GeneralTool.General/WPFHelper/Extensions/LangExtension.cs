@@ -50,7 +50,7 @@ namespace GeneralTool.General.WPFHelper.Extensions
 
             //找到其父窗体
             var window = Window.GetWindow(property.Dependency);
-            if (window!=null)
+            if (window != null)
             {
                 //如果有父窗体,则绑定父窗体的显示事件
                 if (BindingStaticClass.BindingLangWindow.Contains(window))
@@ -67,7 +67,7 @@ namespace GeneralTool.General.WPFHelper.Extensions
                 //因为右键菜单会自动关闭,所以常驻
                 return default;
             }
-           
+
 
             return default;
         }
@@ -96,7 +96,7 @@ namespace GeneralTool.General.WPFHelper.Extensions
                 LangProvider.LangProviderInstance.LangChanged -= LangProviderInstance_LangChanged;
                 BindingStaticClass.BindingLangWindow.Remove(sender as Window);
             }
-              
+
         }
 
         private void LangProviderInstance_LangChanged(ResourceDictionary resx)
@@ -107,11 +107,11 @@ namespace GeneralTool.General.WPFHelper.Extensions
             //else
             //    value = resx[property.LangKey]; //获取对应的值
             //                                    //赋值
-           
+
 
             var value = LangProvider.LangProviderInstance.GetLangValue(this.LangKey);
             if (string.IsNullOrEmpty(value))
-                value = property.DefaultLabel+"";
+                value = property.DefaultLabel + "";
             property.SetValue(value ?? property.DefaultLabel);
         }
     }

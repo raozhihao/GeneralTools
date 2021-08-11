@@ -38,8 +38,8 @@ namespace LangDemo
             this.LangList.Add("English");
             this.LangList.Add("日本語");
             LangProvider.LangProviderInstance.AddLangResources(langResources);
-            //加载语言
-            this.ChangeLangMethod();
+            //加载语言,这里不加载的话也是会将第一项加入进去的语言资源作为默认语言
+            //this.ChangeLangMethod();
         }
 
         public ICommand ChangeLangCommand { get => new SimpleCommand(ChangeLangMethod); }

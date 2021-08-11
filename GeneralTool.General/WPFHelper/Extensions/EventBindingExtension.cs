@@ -255,7 +255,7 @@ namespace GeneralTool.General.WPFHelper.Extensions
         private object GetDataContext(DependencyObject target)
         {
 
-            var context= target.GetValue(FrameworkElement.DataContextProperty)
+            var context = target.GetValue(FrameworkElement.DataContextProperty)
                    ?? target.GetValue(FrameworkContentElement.DataContextProperty);
             if (context is ObjectDataProvider c)
                 context = c.ObjectInstance;

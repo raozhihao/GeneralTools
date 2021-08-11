@@ -33,7 +33,7 @@ namespace GeneralTool.General.Models
         /// 设置属性值
         /// </summary>
         /// <param name="value">值</param>
-        public void SetValue(object value)=> this.PropertyInfo.SetValue(this.Dependency, value);
+        public void SetValue(object value) => this.PropertyInfo.SetValue(this.Dependency, value);
 
         /// <summary>
         /// 获取属性值

@@ -1,11 +1,5 @@
-﻿using GeneralTool.General.Models;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web.UI.WebControls;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Markup;
@@ -33,7 +27,7 @@ namespace GeneralTool.General.WPFHelper.Extensions
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public static string GetName(DependencyObject obj) => obj.GetValue(NameProperty)+"";
+        public static string GetName(DependencyObject obj) => obj.GetValue(NameProperty) + "";
     }
 
     /// <summary>
@@ -61,7 +55,7 @@ namespace GeneralTool.General.WPFHelper.Extensions
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
             var target = serviceProvider.GetService(typeof(IProvideValueTarget)) as IProvideValueTarget;
-             obj = target.TargetObject as DependencyObject;
+            obj = target.TargetObject as DependencyObject;
             SetValue();
             return default;
         }
@@ -75,7 +69,7 @@ namespace GeneralTool.General.WPFHelper.Extensions
                     context = provider.ObjectInstance;
 
                 var contextType = context.GetType();
-               
+
                 var property = contextType.GetProperty(this.Name + "");
                 if (property != null)
                 {
@@ -112,5 +106,5 @@ namespace GeneralTool.General.WPFHelper.Extensions
         }
     }
 
-    
+
 }

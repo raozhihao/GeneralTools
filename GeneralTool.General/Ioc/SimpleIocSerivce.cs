@@ -91,7 +91,7 @@ namespace GeneralTool.General.Ioc
         /// </summary>
         /// <param name="type">实例类型</param>
         /// <param name="methodName"></param>
-        public void Inject(Type type,string methodName=null)
+        public void Inject(Type type, string methodName = null)
         {
             var obj = Activator.CreateInstance(type);
             this.Inject(obj, methodName);
@@ -128,7 +128,7 @@ namespace GeneralTool.General.Ioc
         public void Inject(Type intefaceType, object instance, string methodName = null)
         {
             var type = instance.GetType();
-            if (intefaceType!=null)
+            if (intefaceType != null)
             {
                 //判断是否为接口
                 if (!intefaceType.IsInterface)
@@ -150,14 +150,14 @@ namespace GeneralTool.General.Ioc
             else
                 typeDics[type] = defined;
 
-            if (intefaceType!=null)
+            if (intefaceType != null)
             {
                 if (!this.interfaceDics.ContainsKey(intefaceType))
                     this.interfaceDics.Add(intefaceType, defined);
                 else
                     this.interfaceDics[intefaceType] = defined;
             }
-           
+
         }
 
         /// <summary>
@@ -217,5 +217,5 @@ namespace GeneralTool.General.Ioc
         }
     }
 
-    
+
 }

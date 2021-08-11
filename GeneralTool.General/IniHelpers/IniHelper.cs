@@ -13,7 +13,7 @@ namespace GeneralTool.General.IniHelpers
     {
         #region Private 字段
 
-        private static readonly Lazy<IniHelper>  _instance = new Lazy<IniHelper>(() => new IniHelper());
+        private static readonly Lazy<IniHelper> _instance = new Lazy<IniHelper>(() => new IniHelper());
 
         //The path of the file we are operating on.
         private readonly string m_path;
@@ -39,7 +39,7 @@ namespace GeneralTool.General.IniHelpers
 
         #endregion Public 字段
 
-       
+
         #region Public 构造函数
 
 

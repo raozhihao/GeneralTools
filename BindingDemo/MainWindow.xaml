@@ -1,0 +1,41 @@
+﻿<Window x:Class="BindingDemo.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:e="clr-namespace:GeneralTool.General.WPFHelper.Extensions;assembly=GeneralTool.General"
+        xmlns:local="clr-namespace:BindingDemo"
+        mc:Ignorable="d"
+        Title="MainWindow"
+        Height="450"
+        Width="601"
+        x:Name="window">
+    <Window.DataContext>
+        <ObjectDataProvider ObjectType="{x:Type local:MainViewModel}" />
+    </Window.DataContext>
+    <Window.Resources>
+        <local:TestConverter x:Key="Con" />
+    </Window.Resources>
+    <StackPanel x:Name="stack">
+        
+        <!--可以写入简单的代码,但必须要完全限定名称-->
+        <TextBlock Text="{e:Binding ElementName=stack,Path='System.Convert.ToInt32((ActualWidth-2)*2.1)'}" />
+
+        <!--ViewModel中的计算-->
+        <TextBlock Text="{e:Binding Path=A+B/2+Person.Age}"
+                   Background="Red"/>
+
+        <!--ViewModel与xaml混合计算-->
+        <Button Content="change"
+                x:Name="btn"
+                Command="{Binding ChangedCommand}"
+                Width="{e:Binding ElementName=window,Path='Width/2+B'}" />
+
+        <!--单独绑定xaml-->
+        <TextBlock Text="{e:Binding ElementName=window}"
+                   Width="{Binding ElementName=window,Path=Width}" />
+
+        <!--单独绑定ViewModel-->
+        <TextBlock Text="{e:Binding Path=A}" />
+    </StackPanel>
+</Window>
