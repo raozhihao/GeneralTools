@@ -12,6 +12,11 @@ namespace GeneralTool.General.Ioc
         /// 实例
         /// </summary>
         public object Instance { get; set; }
+
+        /// <summary>
+        /// 是否为未调用构造函数的对象
+        /// </summary>
+        public bool IsUninitializedObject { get; set; }
         /// <summary>
         /// 初始化方法
         /// </summary>

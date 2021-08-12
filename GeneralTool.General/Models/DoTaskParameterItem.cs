@@ -1,4 +1,5 @@
-﻿using GeneralTool.General.TaskLib;
+﻿using GeneralTool.General.NetHelper;
+using GeneralTool.General.TaskLib;
 using GeneralTool.General.WPFHelper;
 using System;
 using System.Collections.ObjectModel;
@@ -62,6 +63,11 @@ namespace GeneralTool.General.Models
                 this.RegisterProperty(ref this.parameters, value);
             }
         }
+
+        /// <summary>
+        /// 请求方法
+        /// </summary>
+        public HttpMethod HttpMethod { get; set; }
 
         /// <summary>
         /// 返回类型

@@ -24,7 +24,7 @@ namespace GeneralTool.General.Models
         {
             this.CurrentPath = currentPath;
             this.Message = message;
-            this.logType = logType;
+            this.LogType = logType;
         }
 
         #endregion Public 构造函数
@@ -39,7 +39,7 @@ namespace GeneralTool.General.Models
         /// <summary>
         /// 日志类型
         /// </summary>
-        public LogType logType { get; set; }
+        public LogType LogType { get; set; }
 
         /// <summary>
         /// 消息

@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Runtime.Serialization;
 
 namespace GeneralTool.General.Ioc
 {
     /// <summary>
-    /// 简单Ioc服务,只支持属性注册
+    /// 简单Ioc服务
     /// </summary>
     public class SimpleIocSerivce
     {
@@ -65,6 +66,56 @@ namespace GeneralTool.General.Ioc
                 }
             }
 
+            //调用构造函数
+            foreach (var item in typeDics)
+            {
+                //进行构造函数调用
+                if (item.Value.IsUninitializedObject)
+                {
+                    var type = item.Value.Instance.GetType();
+                    //没有构造函数的,则查找第一个构造函数
+                    var constructors = type.GetConstructors();
+                    if (constructors.Length == 0)
+                    {
+                        throw new Exception($"类型 : {type} 没有公共的构造函数");
+                    }
+
+                    //直接获取第一个
+                    var constructor = constructors[0];
+                    var parameters = constructor.GetParameters();
+
+                    var datas = new object[parameters.Length];
+                    int index = 0;
+                    foreach (var pro in parameters)
+                    {
+                        //查看当前属性的类型是否已注册
+                        if (this.typeDics.ContainsKey(pro.ParameterType))
+                        {
+                            datas[index] = this.typeDics[pro.ParameterType].Instance;
+                        }
+                        else if (pro.ParameterType.IsInterface)
+                        {
+                            //如果是接口,则找到与其一致的
+                            if (this.interfaceDics.ContainsKey(pro.ParameterType))
+                            {
+                                //存在,则进行赋值
+                                datas[index] = this.interfaceDics[pro.ParameterType].Instance;
+                            }
+                            else
+                            {
+                                datas[index] = default;
+                            }
+                        }
+                        else
+                        {
+                            datas[index] = default;
+                        }
+                        index++;
+                    }
+                    constructor.Invoke(item.Value.Instance, datas);
+                }
+            }
+
             //调用函数
             foreach (var item in typeDics)
             {
@@ -80,7 +131,7 @@ namespace GeneralTool.General.Ioc
         /// 注册类型
         /// </summary>
         /// <typeparam name="T">实例类型</typeparam>
-        public void Inject<T>() where T : new()
+        public void Inject<T>() where T : class
         {
             var type = typeof(T);
             this.Inject(type);
@@ -93,18 +144,19 @@ namespace GeneralTool.General.Ioc
         /// <param name="methodName"></param>
         public void Inject(Type type, string methodName = null)
         {
-            var obj = Activator.CreateInstance(type);
-            this.Inject(obj, methodName);
+            var obj = FormatterServices.GetUninitializedObject(type);
+            this.Inject(obj, true, methodName);
         }
 
         /// <summary>
         /// 注册类型
         /// </summary>
         /// <param name="obj">实例</param>
+        /// <param name="isUninitializedObject"></param>
         /// <param name="methodName">需要调用的方法名称</param>
-        public void Inject(object obj, string methodName = null)
+        public void Inject(object obj, bool isUninitializedObject = false, string methodName = null)
         {
-            this.Inject(null, obj, methodName);
+            this.Inject(null, obj, isUninitializedObject, methodName);
         }
 
         /// <summary>
@@ -116,7 +168,7 @@ namespace GeneralTool.General.Ioc
         public void Inject<TInterface>(object instance, string methodName = null) where TInterface : class
         {
             var intefaceType = typeof(TInterface);
-            this.Inject(intefaceType, instance, methodName);
+            this.Inject(intefaceType, instance, false, methodName);
         }
 
         /// <summary>
@@ -124,8 +176,9 @@ namespace GeneralTool.General.Ioc
         /// </summary>
         /// <param name="intefaceType">接口类型</param>
         /// <param name="instance">实例</param>
+        /// <param name="isUninitializedObject"></param>
         /// <param name="methodName">需要调用的方法名称</param>
-        public void Inject(Type intefaceType, object instance, string methodName = null)
+        private void Inject(Type intefaceType, object instance, bool isUninitializedObject, string methodName = null)
         {
             var type = instance.GetType();
             if (intefaceType != null)
@@ -144,7 +197,7 @@ namespace GeneralTool.General.Ioc
             MethodInfo method = null;
             if (!string.IsNullOrWhiteSpace(methodName))
                 method = type.GetMethod(methodName);
-            var defined = new DefinedClass() { Instance = instance, InterfaceType = intefaceType, InitMethod = method, TType = type };
+            var defined = new DefinedClass() { Instance = instance, InterfaceType = intefaceType, InitMethod = method, TType = type, IsUninitializedObject = isUninitializedObject };
             if (!this.typeDics.ContainsKey(type))
                 typeDics.Add(type, defined);
             else
@@ -168,7 +221,8 @@ namespace GeneralTool.General.Ioc
         /// <param name="methodName">调用方法</param>
         public void Inject(Type intefaceType, Type type, string methodName = null)
         {
-            this.Inject(intefaceType, Activator.CreateInstance(type), methodName);
+            var instance = FormatterServices.GetUninitializedObject(type);
+            this.Inject(intefaceType, instance, true, methodName);
 
         }
 
@@ -178,9 +232,9 @@ namespace GeneralTool.General.Ioc
         /// <typeparam name="TInterface">接口类型</typeparam>
         /// <typeparam name="TType">实例类型</typeparam>
         /// <param name="methodName">实例化成功后调用的方法名称</param>
-        public void Inject<TInterface, TType>(string methodName = null) where TType : class, new()
+        public void Inject<TInterface, TType>(string methodName = null) where TType : class
         {
-            this.Inject(typeof(TInterface), typeof(TType));
+            this.Inject(typeof(TInterface), typeof(TType), methodName);
         }
 
         /// <summary>
@@ -188,7 +242,7 @@ namespace GeneralTool.General.Ioc
         /// </summary>
         /// <typeparam name="T">实例类型</typeparam>
         /// <param name="methodName">实例化成功后调用的方法名称</param>
-        public void Inject<T>(string methodName = null) where T : new()
+        public void Inject<T>(string methodName = null) where T : class
         {
             var type = typeof(T);
             this.Inject(type, methodName);

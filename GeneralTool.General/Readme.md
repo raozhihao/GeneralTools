@@ -25,7 +25,9 @@ public ICommand ButtonCommand
 > 1.创建任务类,继承自BaseTaskInvoke <br>
 2.任务类打上Route标记,该标记指定类路径 <br>
 3.对要开放的方法打上Route标记,指定方法路径 <br>
-4.可选的属性WaterMark标记 <br>
+4.在方法上使用Route标记时,可选属性为 HttpMethod,该属性指示外部进行web调用时的方法<br>
+  但只有当在实例化 TaskManager 中传入 HttpServerStation 对象或实现 ServerStationBase(自主处理)时才有用<br>
+5.可选的属性WaterMark标记 <br>
 
 任务类示例:
 > 

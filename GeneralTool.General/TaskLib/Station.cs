@@ -97,7 +97,7 @@ namespace GeneralTool.General.TaskLib
            {
                var route = m.GetCustomAttribute<RouteAttribute>();
 
-               ServerStation.AddRoute(rootPath + route.Url, target, m);
+               ServerStation.AddRoute(rootPath + route.Url, target, m, route.Method);
            });
 
             return true;

@@ -17,6 +17,7 @@ namespace GeneralTool.General.WPFHelper
         {
 
         }
+
         private static readonly Lazy<LangProvider> langProvider = new Lazy<LangProvider>(() => new LangProvider());
 
         /// <summary>

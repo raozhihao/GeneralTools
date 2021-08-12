@@ -19,7 +19,7 @@
     <StackPanel x:Name="stack">
         
         <!--可以写入简单的代码,但必须要完全限定名称-->
-        <TextBlock Text="{e:Binding ElementName=stack,Path='System.Convert.ToInt32((ActualWidth-2)*2.1)'}" />
+        <TextBlock Text="{e:Binding ElementName=window,Path='System.Convert.ToInt32((ActualWidth-2)*2.1/(ActualHeight==0?1:ActualHeight))'}" />
 
         <!--ViewModel中的计算-->
         <TextBlock Text="{e:Binding Path=A+B/2+Person.Age}"
@@ -36,6 +36,6 @@
                    Width="{Binding ElementName=window,Path=Width}" />
 
         <!--单独绑定ViewModel-->
-        <TextBlock Text="{e:Binding Path=A}" />
+        <TextBlock Text="{e:Binding Path=A/2}" />
     </StackPanel>
 </Window>

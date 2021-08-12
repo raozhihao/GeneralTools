@@ -3,7 +3,6 @@ using GeneralTool.General.Interfaces;
 using GeneralTool.General.Logs;
 using GeneralTool.General.Models;
 using System;
-using System.Reflection;
 
 namespace GeneralTool.General.TaskLib
 {
@@ -91,74 +90,7 @@ namespace GeneralTool.General.TaskLib
                     serverResponse.ErroMsg = ex.Message;
                     return;
                 }
-                try
-                {
-                    serverResponse.RequestUrl = serverRequest.Url;
-                    if (!this.RequestRoute.ContainsKey(serverRequest.Url))
-                    {
-                        serverResponse.StateCode = RequestStateCode.UrlError;
-                        serverResponse.RequestSuccess = false;
-                        serverResponse.ErroMsg = "未找到对应的接口";
-                    }
-                    else
-                    {
-                        RequestAddressItem requestAddressItem = this.RequestRoute[serverRequest.Url];
-                        MethodInfo method = requestAddressItem.Target.GetType().GetMethod("GetServerErroMsg");
-                        try
-                        {
-                            ParameterInfo[] parameters = requestAddressItem.MethodInfo.GetParameters();
-                            object[] array = new object[parameters.Length];
-                            foreach (ParameterInfo parameterInfo in parameters)
-                            {
-                                string value = serverRequest.GetValue(parameterInfo.Name);
-                                if (parameterInfo.ParameterType.IsValueType || parameterInfo.ParameterType.FullName.Equals(typeof(string).FullName))
-                                {
-                                    if (parameterInfo.ParameterType.IsEnum)
-                                        array[parameterInfo.Position] = Enum.Parse(parameterInfo.ParameterType, value);
-                                    else
-                                        array[parameterInfo.Position] = Convert.ChangeType(value, parameterInfo.ParameterType);
-                                }
-                                else if (this.ParamterConverters.ContainsKey(parameterInfo.ParameterType.FullName))
-                                {
-                                    array[parameterInfo.Position] = this.ParamterConverters[parameterInfo.ParameterType.FullName].Converter(value);
-                                }
-                                else
-                                {
-                                    array[parameterInfo.Position] = _jsonCovert.DeserializeObject(value, parameterInfo.ParameterType);
-                                }
-                            }
-                            try
-                            {
-                                serverResponse.Result = requestAddressItem.MethodInfo.Invoke(requestAddressItem.Target, array);
-                                if (method != null)
-                                {
-                                    serverResponse.ErroMsg = string.Concat(method.Invoke(requestAddressItem.Target, null));
-                                }
-                            }
-                            catch (Exception ex2)
-                            {
-                                log.Fail($"客户端调用服务方法执行发生错误:{ex2.Message}");
-                                serverResponse.StateCode = RequestStateCode.ServerOptionError;
-                                serverResponse.RequestSuccess = false;
-                                serverResponse.ErroMsg = ex2.Message;
-                            }
-                        }
-                        catch (Exception ex3)
-                        {
-                            log.Fail($"客户端调用服务方法参数转换发生错误:{ex3.Message}");
-                            serverResponse.StateCode = RequestStateCode.ParamterTypeError;
-                            serverResponse.RequestSuccess = false;
-                            serverResponse.ErroMsg = ex3.Message;
-                        }
-                    }
-                }
-                catch (Exception ex4)
-                {
-                    log.Fail($"客户端调用服务方法发生错误:{ex4.Message}");
-                    serverResponse.StateCode = RequestStateCode.RequestMsgError;
-                    serverResponse.RequestSuccess = false;
-                    serverResponse.ErroMsg = ex4.Message;
-                }
+                serverResponse = this.GetServerResponse(serverRequest);
             }
             catch (Exception ex5)
             {

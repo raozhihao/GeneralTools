@@ -261,7 +261,8 @@ namespace GeneralTool.General.TaskLib
                                 Method = m,
                                 TaskObj = obj,
                                 Explanation = route.Explanation,
-                                ResultType = m.ReturnType
+                                ResultType = m.ReturnType,
+                                HttpMethod = route.Method
                             };
 
                             if (this.TaskParameterItems.ContainsKey(key))

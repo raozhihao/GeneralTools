@@ -28,7 +28,7 @@
      // dic.Add("中文", new ResourceDictionary() { Source = new Uri($"pack://application:,,,/LangTest;component/Chinese.xaml") });
      LangProvider.LangProviderInstance.AddLangResources(dic);
      //此属性如果设置,则会默认创建出一个中文的资源包(并不存在),且此key应与语言列表中的某项key保持一致
-     LangProvider.LangProviderInstance.DefaultLang = "中文";
+     //LangProvider.LangProviderInstance.DefaultLang = "中文";
  }
 
  private void ChangeLangMethod()

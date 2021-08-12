@@ -65,6 +65,19 @@
     <Compile Include="Attributes\WaterMarkAttribute.cs" />
     <Compile Include="DataSetExtensions\DataRowEqualityComparer.cs" />
     <Compile Include="DataSetExtensions\DataTableExtensions.cs" />
+    <Compile Include="DbHelper\BaseConStrBuilder.cs" />
+    <Compile Include="DbHelper\DataPropertyAttribute.cs" />
+    <Compile Include="DbHelper\DataTableAttribute.cs" />
+    <Compile Include="DbHelper\DbContext.cs" />
+    <Compile Include="DbHelper\DbManager.cs" />
+    <Compile Include="DbHelper\DbProviderGlobal.cs" />
+    <Compile Include="DbHelper\IDbManager.cs" />
+    <Compile Include="DbHelper\ISqlConnectionString.cs" />
+    <Compile Include="DbHelper\OracleConStrBuilder.cs" />
+    <Compile Include="DbHelper\ParameterHelper.cs" />
+    <Compile Include="DbHelper\PostgreSqlConStrBuilder.cs" />
+    <Compile Include="DbHelper\SqliteConStrBuilder.cs" />
+    <Compile Include="DbHelper\SqlServerConStrBuilder.cs" />
     <Compile Include="Enums\AttachDataType.cs" />
     <Compile Include="Enums\BitmapEncoderEnum.cs" />
     <Compile Include="Enums\LogType.cs" />
@@ -91,6 +104,7 @@
     <Compile Include="IPCHelper\IPCServerHelper.cs" />
     <Compile Include="LinqExtensions\ArraryExtensions.cs" />
     <Compile Include="LinqExtensions\IEnumerableExtensions.cs" />
+    <Compile Include="LinqExtensions\StringExtensions.cs" />
     <Compile Include="Logs\ConsoleLogInfo.cs" />
     <Compile Include="Logs\FileInfoLog.cs" />
     <Compile Include="Models\DoTaskParameterItem.cs" />
@@ -111,6 +125,9 @@
     <Compile Include="Models\SocketLinkObject.cs" />
     <Compile Include="Models\SocketReceiveArgs.cs" />
     <Compile Include="Models\TaskModel.cs" />
+    <Compile Include="TaskLib\HttpServerStation.cs" />
+    <Compile Include="TaskLib\RequestInfo.cs" />
+    <Compile Include="WPFHelper\AsyncObservableCollection.cs" />
     <Compile Include="WPFHelper\Extensions\BindingExtension.cs" />
     <Compile Include="WPFHelper\Extensions\LangBindExtension.cs" />
     <Compile Include="WPFHelper\Extensions\NameDependency.cs" />
@@ -223,6 +240,8 @@
     <Resource Include="iconttf\iconfont.ttf" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="DbHelper.md" />
+    <None Include="HttpServerStation.md" />
     <None Include="LangProvider.md" />
     <None Include="Readme.md" />
   </ItemGroup>

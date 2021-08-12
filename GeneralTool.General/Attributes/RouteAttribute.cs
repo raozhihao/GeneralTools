@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GeneralTool.General.NetHelper;
+using System;
 
 namespace GeneralTool.General.Attributes
 {
@@ -15,15 +16,18 @@ namespace GeneralTool.General.Attributes
         /// </param>
         /// <param name="explanation">
         /// </param>
-        public RouteAttribute(string url, string explanation = "")
+        /// <param name="method"></param>
+        public RouteAttribute(string url, string explanation = "", HttpMethod method = HttpMethod.GET)
         {
             Url = url;
             Explanation = explanation;
+            this.Method = method;
         }
 
         #endregion Public 构造函数
 
         #region Public 属性
+
 
         /// <summary>
         /// 提示信息
@@ -42,6 +46,11 @@ namespace GeneralTool.General.Attributes
             get;
             set;
         }
+
+        /// <summary>
+        /// 请示的Http方法
+        /// </summary>
+        public HttpMethod Method { get; set; }
 
         #endregion Public 属性
     }

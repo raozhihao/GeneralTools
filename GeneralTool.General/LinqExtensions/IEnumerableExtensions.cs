@@ -44,6 +44,27 @@ namespace GeneralTool.General.LinqExtensions
             }
         }
 
+        /// <summary>
+        /// 将集合转换为另一个类型的集合
+        /// </summary>
+        /// <typeparam name="Tout">转换后的类型</typeparam>
+        /// <typeparam name="Tin">集合类型</typeparam>
+        /// <param name="enumables">要转换的集合</param>
+        /// <param name="converter">转换器</param>
+        /// <returns></returns>
+        public static IEnumerable<Tout> ConvertAll<Tin, Tout>(this IEnumerable<Tin> enumables, Converter<Tin, Tout> converter = null)
+        {
+            foreach (var item in enumables)
+            {
+                if (converter != null)
+                {
+                    yield return converter(item);
+                }
+                else
+                    yield return (Tout)Convert.ChangeType(item, typeof(Tout));
+            }
+        }
+
         #endregion Public 方法
     }
 }

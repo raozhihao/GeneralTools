@@ -11,17 +11,14 @@ namespace GeneralTool.General.TaskLib
         #region Public 方法
 
         /// <summary>
-        /// 设置路由
+        /// 添加路由
         /// </summary>
-        /// <param name="url">
-        /// </param>
-        /// <param name="target">
-        /// </param>
-        /// <param name="m">
-        /// </param>
-        /// <returns>
-        /// </returns>
-        bool AddRoute(string url, object target, MethodInfo m);
+        /// <param name="url">方法url</param>
+        /// <param name="target">执行对象</param>
+        /// <param name="m">执行方法</param>
+        /// <param name="method">http请求方法</param>
+        /// <returns></returns>
+        bool AddRoute(string url, object target, MethodInfo m, NetHelper.HttpMethod method);
         /// <summary>
         /// 
         /// </summary>

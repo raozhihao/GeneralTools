@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GeneralTool.General.NetHelper;
+using System;
 using System.Reflection;
 
 namespace GeneralTool.General.Models
@@ -23,6 +24,11 @@ namespace GeneralTool.General.Models
         /// <summary>
         /// </summary>
         public string Url { get; set; }
+
+        /// <summary>
+        /// 请求方法
+        /// </summary>
+        public HttpMethod HttpMethod { get; set; }
 
         #endregion Public 属性
     }
