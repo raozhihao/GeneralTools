@@ -19,7 +19,7 @@ namespace GeneralTool.General.TaskLib
 
         private Thread _listenningThread = null;
         private bool disposedValue = false;
-        private ILog log;
+        private readonly ILog log;
 
         #endregion Private 字段
 
@@ -120,8 +120,10 @@ namespace GeneralTool.General.TaskLib
                 }
                 this._socket.Listen(this.ClientNum);
                 this._socket.SetSocketKeepAlive();
-                this._listenningThread = new Thread(new ThreadStart(this.ListenningLink));
-                this._listenningThread.IsBackground = true;
+                this._listenningThread = new Thread(new ThreadStart(this.ListenningLink))
+                {
+                    IsBackground = true
+                };
                 this._listenningThread.Start();
                 this._isOpen = true;
             }
@@ -229,8 +231,10 @@ namespace GeneralTool.General.TaskLib
             bool flag = !this._linkPool.Keys.Contains(client.RemoteEndPoint.ToString()) && base.IsOpen;
             if (flag)
             {
-                Thread thread = new Thread(new ParameterizedThreadStart(this.CommunicationToClient));
-                thread.IsBackground = true;
+                Thread thread = new Thread(new ParameterizedThreadStart(this.CommunicationToClient))
+                {
+                    IsBackground = true
+                };
                 thread.Start(client);
                 this._linkPool.Add(client.RemoteEndPoint.ToString(), new SocketLinkObject(client, thread));
             }

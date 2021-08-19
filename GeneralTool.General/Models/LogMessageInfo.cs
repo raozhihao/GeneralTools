@@ -19,7 +19,7 @@ namespace GeneralTool.General.Models
         /// </param>
         /// <param name="path">
         /// </param>
-        public LogMessageInfo(string msg, LogType logType, string path)
+        public LogMessageInfo(string msg, LogType logType, string path="")
         {
             this.Msg = msg;
             this.LogType = logType;

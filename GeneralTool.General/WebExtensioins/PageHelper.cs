@@ -113,7 +113,7 @@ namespace GeneralTool.General.WebExtensioins
                 {
                     //没有达到,查看缺少多少
                     var sum = pageCount - (right + left - 1);
-                    right = right + sum;
+                    right += sum;
                 }
             }
             else
@@ -128,7 +128,7 @@ namespace GeneralTool.General.WebExtensioins
                     var tmpLeft = pageCount - sum;
                     if (left - tmpLeft > 0)
                     {
-                        left = left - tmpLeft;
+                        left -= tmpLeft;
                     }
                     else
                     {

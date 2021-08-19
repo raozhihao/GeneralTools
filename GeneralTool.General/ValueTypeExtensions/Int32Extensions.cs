@@ -16,7 +16,7 @@ namespace GeneralTool.General.ValueTypeExtensions
         /// </param>
         /// <returns>
         /// </returns>
-        public static byte[] splitIntToByts(this int value)
+        public static byte[] SplitIntToByts(this int value)
         {
             return new byte[] { (byte)(value >> 8), (byte)(((UInt16)value) << 8 >> 8) };
         }

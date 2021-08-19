@@ -147,8 +147,10 @@ namespace GeneralTool.General.WPFHelper.UIEditorConverts
 
             gridContent.Children.Add(expande);
 
-            var newGrid = new Grid();
-            newGrid.Name = "ngrid_" + Row;
+            var newGrid = new Grid
+            {
+                Name = "ngrid_" + Row
+            };
             expande.Content = newGrid;
             newGrid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(0, GridUnitType.Auto) });
             newGrid.ColumnDefinitions.Add(new ColumnDefinition());

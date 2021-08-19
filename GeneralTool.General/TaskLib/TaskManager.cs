@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
+using GeneralTool.General.ExceptionHelper;
 
 namespace GeneralTool.General.TaskLib
 {
@@ -62,6 +63,7 @@ namespace GeneralTool.General.TaskLib
         /// </summary>
         public TaskManager() : this(null, new ConsoleLogInfo())
         {
+           
         }
 
         #endregion Public 构造函数
@@ -93,7 +95,12 @@ namespace GeneralTool.General.TaskLib
         /// <summary>
         /// 是否被初始化
         /// </summary>
-        public bool IsInit { get; set; } = false;
+        public bool IsInterfacesInit { get; set; } = false;
+
+        /// <summary>
+        /// socket是否已初始化
+        /// </summary>
+        public bool IsSocketInit { get; set; }
 
         /// <summary>
         /// Json转换器
@@ -262,8 +269,15 @@ namespace GeneralTool.General.TaskLib
                                 TaskObj = obj,
                                 Explanation = route.Explanation,
                                 ResultType = m.ReturnType,
-                                HttpMethod = route.Method
+                                HttpMethod = route.Method,
+                                ReturnString=route.ReturnString
                             };
+
+                            if (string.IsNullOrWhiteSpace(route.ReturnString))
+                            {
+                                //如果没有的话,则直接用type
+                                item.ReturnString = item.ResultType.Name;
+                            }
 
                             if (this.TaskParameterItems.ContainsKey(key))
                             {
@@ -290,27 +304,24 @@ namespace GeneralTool.General.TaskLib
         /// <inheritdoc/>
         public bool Open(string ip, int port, params BaseTaskInvoke[] target)
         {
+            if (!this.OpenWithoutServer(target))
+                return false;
+
             try
             {
-                if (this.IsInit)
+                if (this.IsSocketInit)
                 {
                     this.ServerStation.Close();
                 }
-                if (!this.IsInit)
-                {
-                    this.taskInokes = target;
-                    target.Foreach(o =>
-                    {
-                        this.ServerStation.AddStationObjectClass(o);
-                    });
-                    this.IsInit = true;
-                }
+              
                 this.ServerStation.Start(ip, port);
                 this.log.Debug($"服务已开启 IP:{ip} PORT:{port}");
+                this.IsSocketInit = true;
                 return true;
             }
             catch (Exception ex)
             {
+                this.IsSocketInit = false;
                 this.erroMsg = "启动中有模块失败" + ex.Message;
                 this.log.Fail(this.erroMsg);
                 return false;
@@ -322,19 +333,22 @@ namespace GeneralTool.General.TaskLib
         {
             try
             {
-                this.taskInokes = taskInokes;
-                taskInokes.Foreach(o =>
+                if (!this.IsInterfacesInit)
                 {
-                    this.ServerStation.AddStationObjectClass(o);
-                });
-
-                this.log.Debug("已开启");
+                    this.taskInokes = taskInokes;
+                    taskInokes.Foreach(o =>
+                    {
+                        this.ServerStation.AddStationObjectClass(o);
+                    });
+                    this.IsInterfacesInit = true;
+                }
                 return true;
             }
             catch (Exception ex)
             {
-                this.erroMsg = "启动中有模块失败" + ex.Message;
+                this.erroMsg = "开启接口列表失败:" + ex.GetInnerExceptionMessage();
                 this.log.Fail(this.erroMsg);
+                this.IsInterfacesInit = false;
                 return false;
             }
         }

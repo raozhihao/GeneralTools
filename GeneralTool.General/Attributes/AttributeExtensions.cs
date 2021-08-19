@@ -20,7 +20,7 @@ namespace GeneralTool.General.Attributes
         /// </returns>
         public static T GetAttributeByClass<T>(this object value)
         {
-            T t = default(T);
+            T t = default;
             object[] customAttributes = value.GetType().GetCustomAttributes(inherit: false);
 
             customAttributes.Foreach(a =>

@@ -45,8 +45,7 @@ namespace GeneralTool.General.WPFHelper.Extensions
 
         private static void OnDialogResultChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            Window window = d as Window;
-            if (window == null)
+            if (!(d is Window window))
                 return;
             if (e.NewValue != null)
             {

@@ -306,7 +306,7 @@ namespace GeneralTool.General.WPFHelper.Extensions
         /// <summary>
         /// 保存每次已经处理的传入数据
         /// </summary>
-        private List<object> valueList = new List<object>();
+        private readonly List<object> valueList = new List<object>();
         /// <inheritdoc />
         public virtual object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {

@@ -10,7 +10,7 @@ namespace GeneralTool.General.SerialPortEx
     {
         #region Private 字段
 
-        private List<byte> SendDatas = new List<byte>();
+        private readonly List<byte> SendDatas = new List<byte>();
 
         #endregion Private 字段
 

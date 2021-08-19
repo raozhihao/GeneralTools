@@ -60,6 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\AttributeExtensions.cs" />
+    <Compile Include="Attributes\InjectTypeAttribute.cs" />
     <Compile Include="Attributes\RouteAttribute.cs" />
     <Compile Include="Attributes\UIEditorAttribute.cs" />
     <Compile Include="Attributes\WaterMarkAttribute.cs" />
@@ -113,7 +114,6 @@
     <Compile Include="Models\ImageMouseEventArgs.cs" />
     <Compile Include="Models\ImageScaleEventArgs.cs" />
     <Compile Include="Models\IP.cs" />
-    <Compile Include="Models\LogMessage.cs" />
     <Compile Include="Models\LogMessageInfo.cs" />
     <Compile Include="Models\ParameterItem.cs" />
     <Compile Include="Models\ParamterConvertItem.cs" />
@@ -240,10 +240,10 @@
     <Resource Include="iconttf\iconfont.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="DbHelper.md" />
-    <None Include="HttpServerStation.md" />
-    <None Include="LangProvider.md" />
-    <None Include="Readme.md" />
+    <None Include="Docs\DbHelper.md" />
+    <None Include="Docs\HttpServerStation.md" />
+    <None Include="Docs\LangProvider.md" />
+    <None Include="Docs\Readme.md" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

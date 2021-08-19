@@ -52,7 +52,6 @@ namespace GeneralTool.General.TaskLib
         /// <returns></returns>
         public override bool Start(string ip, int port)
         {
-
             httpListener = new HttpListener();
             //监听的路径
             httpListener.Prefixes.Add($"http://{ip}:{port}/");
@@ -60,7 +59,7 @@ namespace GeneralTool.General.TaskLib
             httpListener.AuthenticationSchemes = AuthenticationSchemes.Anonymous;
             //开始监听
             httpListener.Start();
-            Log.Log("开始监听...");
+            Log.Debug("开始监听...");
             httpListener.BeginGetContext(BeginCall, httpListener);
             return true;
         }
@@ -74,8 +73,11 @@ namespace GeneralTool.General.TaskLib
             }
             catch (Exception ex)
             {
-                Log.Log("Get context erro:" + ex.Message);
-                throw;
+                if (httpListener.IsListening)
+                {
+                    Log.Debug("Get context erro:" + ex.Message);
+                }
+                return;
             }
 
 
@@ -83,7 +85,7 @@ namespace GeneralTool.General.TaskLib
 
             //取得请求的对象
             HttpListenerRequest request = context.Request;
-            Log.Log($"{request.HttpMethod} ,{request.RawUrl} ,{request.ProtocolVersion}");
+            Log.Debug($"{request.HttpMethod} ,{request.RawUrl} ,{request.ProtocolVersion}");
             var reader = new StreamReader(request.InputStream);
             string msg = string.Empty;
             try
@@ -93,7 +95,7 @@ namespace GeneralTool.General.TaskLib
             catch (Exception ex)
             {
                 Log.Error($"请求读取失败 ：{ex.GetInnerExceptionMessage()}");
-                throw;
+                return;
             }
 
             try
@@ -122,6 +124,7 @@ namespace GeneralTool.General.TaskLib
             if (!this.RequestRoute.ContainsKey(url))
             {
                 //不存在,返回
+                this.Log.Error($"不存在所请示的 [url] - [{url}]");
                 return;
             }
 
@@ -142,14 +145,17 @@ namespace GeneralTool.General.TaskLib
                 //判断请求方法是否正确
                 var item = this.RequestRoute[url];
                 if (item.HttpMethod.ToString().ToLower() != context.Request.HttpMethod.ToLower())
+                {
+                    this.Log.Error($"远程请示的Http Metod与接口不一致,请示的 url : {url} ,请示的Http Method : {context.Request.HttpMethod}");
                     return;
+                }
 
                 var info = new RequestInfo(cmd, response, item);
                 this.HandlerRequestMethod(info);
                 return;
             }
 
-            Log.Log($"Request:{msg}");
+            Log.Debug($"Request:{msg}");
 
             // 设置回应头部内容，长度，编码
             response.ContentEncoding = Encoding.UTF8;

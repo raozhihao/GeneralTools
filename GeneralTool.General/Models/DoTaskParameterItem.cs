@@ -21,10 +21,17 @@ namespace GeneralTool.General.Models
         private ObservableCollection<ParameterItem> parameters = new ObservableCollection<ParameterItem>();
         private string socketArgs = "";
         private string url;
+        private string returnString="";
 
         #endregion Private 字段
 
         #region Public 属性
+
+
+        /// <summary>
+        /// 返回字符串
+        /// </summary>
+        public string ReturnString { get => this.returnString; set => this.RegisterProperty(ref this.returnString, value); }
 
         /// <summary>
         /// 提示信息
@@ -85,7 +92,9 @@ namespace GeneralTool.General.Models
         {
             get
             {
-                return this.GetArgs();
+                if (string.IsNullOrWhiteSpace(this.socketArgs))
+                    return this.GetArgs();
+                return this.socketArgs;
             }
             set
             {

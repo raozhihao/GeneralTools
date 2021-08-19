@@ -12,6 +12,7 @@ namespace GeneralTool.General.Models
 
         private DoTaskParameterItem parameterItem;
         private string url;
+        private string returnString;
 
         #endregion Private 字段
 
@@ -26,6 +27,7 @@ namespace GeneralTool.General.Models
         /// Url
         /// </summary>
         public string Url { get => this.url; set => this.RegisterProperty(ref this.url, value); }
+
 
         #endregion Public 属性
     }

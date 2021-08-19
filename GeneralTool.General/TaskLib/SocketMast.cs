@@ -441,11 +441,7 @@ namespace GeneralTool.General.TaskLib
         /// </param>
         public void OnCloseLinkEvent(Socket sock)
         {
-            ClsedLink closeLinkEvent = this.CloseLinkEvent;
-            if (closeLinkEvent != null)
-            {
-                closeLinkEvent(sock);
-            }
+            this.CloseLinkEvent?.Invoke(sock);
         }
 
         /// <summary>
@@ -459,20 +455,12 @@ namespace GeneralTool.General.TaskLib
             {
                 lock (this)
                 {
-                    RecDataFrom recDataEvent = this.RecDataEvent;
-                    if (recDataEvent != null)
-                    {
-                        recDataEvent(obj);
-                    }
+                    this.RecDataEvent?.Invoke(obj);
                 }
             }
             else
             {
-                RecDataFrom recDataEvent2 = this.RecDataEvent;
-                if (recDataEvent2 != null)
-                {
-                    recDataEvent2(obj);
-                }
+                this.RecDataEvent?.Invoke(obj);
             }
         }
 

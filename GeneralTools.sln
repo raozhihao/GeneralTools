@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BindingDemo", "BindingDemo\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IOCTest", "IOCTest\IOCTest.csproj", "{9C17E1D2-F263-4346-9827-15BBEE950A6C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InjectClass", "InjectClass\InjectClass.csproj", "{4792264C-385A-4722-B351-8C1B573EC973}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{9C17E1D2-F263-4346-9827-15BBEE950A6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9C17E1D2-F263-4346-9827-15BBEE950A6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9C17E1D2-F263-4346-9827-15BBEE950A6C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4792264C-385A-4722-B351-8C1B573EC973}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4792264C-385A-4722-B351-8C1B573EC973}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4792264C-385A-4722-B351-8C1B573EC973}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4792264C-385A-4722-B351-8C1B573EC973}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -43,6 +49,7 @@ Global
 		{0FDC2B88-6125-450A-9022-240E4CA5F348} = {19BDC90F-8CD7-49C7-89EF-117C0DA8F8FD}
 		{49B6D7F9-5326-4173-9B40-37F2F32FDAAE} = {19BDC90F-8CD7-49C7-89EF-117C0DA8F8FD}
 		{9C17E1D2-F263-4346-9827-15BBEE950A6C} = {19BDC90F-8CD7-49C7-89EF-117C0DA8F8FD}
+		{4792264C-385A-4722-B351-8C1B573EC973} = {19BDC90F-8CD7-49C7-89EF-117C0DA8F8FD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3218C1B0-9A40-4B8F-A121-0DC0DD6F5AC4}

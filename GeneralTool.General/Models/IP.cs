@@ -15,7 +15,7 @@ namespace GeneralTool.General.Models
     {
         #region Private 字段
 
-        private string ip = "127.0.0.1";
+        private readonly string ip = "127.0.0.1";
 
         #endregion Private 字段
 
@@ -27,7 +27,7 @@ namespace GeneralTool.General.Models
         /// </param>
         public IP(string ip)
         {
-            this.ip = this.changeToIp(ip);
+            this.ip = this.ChangeToIp(ip);
         }
 
         #endregion Public 构造函数
@@ -56,7 +56,7 @@ namespace GeneralTool.General.Models
 
         #region Internal 方法
 
-        internal string getIp()
+        internal string GetIp()
         {
             return this.ip;
         }
@@ -65,7 +65,7 @@ namespace GeneralTool.General.Models
 
         #region Private 方法
 
-        private string changeToIp(string ip)
+        private string ChangeToIp(string ip)
         {
             List<string> list = ip.Split(new char[]
             {

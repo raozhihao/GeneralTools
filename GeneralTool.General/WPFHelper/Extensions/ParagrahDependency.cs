@@ -346,18 +346,21 @@ namespace GeneralTool.General.WPFHelper.Extensions
             }
         }
 
+        private static readonly object Locker = new object();
         private static void Dp_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             paragraph.Dispatcher.BeginInvoke(new Action(() =>
             {
-                var list = sender as ObservableCollection<LogMessageInfo>;
-
-                if (list.Count > GetMaxCount(paragraph))
+                lock (Locker)
                 {
-                    list.Clear();
-                    paragraph.Inlines.Clear();
+                    var list = sender as ObservableCollection<LogMessageInfo>;
+                    if (list.Count > GetMaxCount(paragraph))
+                    {
+                        list.Clear();
+                        paragraph.Inlines.Clear();
+                    }
+                    AddItems(e.NewItems, e.Action); 
                 }
-                AddItems(e.NewItems, e.Action);
             }));
         }
 

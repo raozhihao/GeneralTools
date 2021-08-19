@@ -13,7 +13,7 @@ namespace GeneralTool.General.SerialPortEx
     {
         #region Private 字段
 
-        private List<byte> recDatas = new List<byte>();
+        private readonly List<byte> recDatas = new List<byte>();
 
         #endregion Private 字段
 
@@ -33,7 +33,7 @@ namespace GeneralTool.General.SerialPortEx
         /// <summary>
         /// 返回出错事件
         /// </summary>
-        public event Action<object[]> ErrorMsg;
+        public event Action<Exception> ErrorMsg;
 
         #endregion Public 事件
 
@@ -209,9 +209,7 @@ namespace GeneralTool.General.SerialPortEx
                 foreach (byte b in array2)
                 {
                     if (recDatas.Count == 0 && CurrentRequest != null && b != CurrentRequest.Head)
-                    {
                         continue;
-                    }
 
                     if (recDatas.Count == 1 && CurrentRequest != null && b != CurrentRequest.KeyWorld)
                     {
@@ -220,18 +218,14 @@ namespace GeneralTool.General.SerialPortEx
                     }
 
                     recDatas.Add(b);
+                    //如果检测通过
                     if (CheckPacketAllReady())
-                    {
                         RecEvent.Set();
-                    }
                 }
             }
             catch (Exception ex)
             {
-                this.ErrorMsg?.Invoke(new object[1]
-                {
-                    ex
-                });
+                this.ErrorMsg?.Invoke(ex);
                 RecEvent.Set();
             }
         }

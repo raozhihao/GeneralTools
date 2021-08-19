@@ -28,7 +28,7 @@ namespace GeneralTool.General.Attributes
 
         #region Public 属性
 
-
+        public string ReturnString { get; set; }
         /// <summary>
         /// 提示信息
         /// </summary>
@@ -46,6 +46,7 @@ namespace GeneralTool.General.Attributes
             get;
             set;
         }
+
 
         /// <summary>
         /// 请示的Http方法

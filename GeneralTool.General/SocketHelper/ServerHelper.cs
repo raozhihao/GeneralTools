@@ -13,8 +13,8 @@ namespace GeneralTool.General.SocketHelper.Server
 
         private readonly System.Collections.Concurrent.ConcurrentDictionary<string, ReflectionClass> caches;
         private bool disposedValue;
-        private SerializeHelpers serialize = new SerializeHelpers();
-        private ServerSocketBase socketBase;
+        private readonly SerializeHelpers serialize = new SerializeHelpers();
+        private readonly ServerSocketBase socketBase;
 
         #endregion Private 字段
 
