@@ -359,7 +359,7 @@ namespace GeneralTool.General.WPFHelper.Extensions
                         list.Clear();
                         paragraph.Inlines.Clear();
                     }
-                    AddItems(e.NewItems, e.Action); 
+                    AddItems(e.NewItems, e.Action);
                 }
             }));
         }

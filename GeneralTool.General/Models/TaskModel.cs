@@ -12,7 +12,6 @@ namespace GeneralTool.General.Models
 
         private DoTaskParameterItem parameterItem;
         private string url;
-        private string returnString;
 
         #endregion Private 字段
 

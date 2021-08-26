@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{9C17E1D2-F263-4346-9827-15BBEE950A6C}</ProjectGuid>
+    <ProjectGuid>{45C41B3A-2B88-47E9-8598-CE92A73F889C}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>IOCTest</RootNamespace>
-    <AssemblyName>IOCTest</AssemblyName>
+    <RootNamespace>SubConsole</RootNamespace>
+    <AssemblyName>SubConsole</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -33,7 +33,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -46,21 +45,9 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Student.cs" />
-    <Compile Include="TestClass.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\GeneralTool.General\GeneralTool.General.csproj">
-      <Project>{41796e7d-0ac1-4330-bf92-0c3878aa58b3}</Project>
-      <Name>GeneralTool.General</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\InjectClass\InjectClass.csproj">
-      <Project>{4792264c-385a-4722-b351-8c1b573ec973}</Project>
-      <Name>InjectClass</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

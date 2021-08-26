@@ -28,6 +28,9 @@ namespace GeneralTool.General.Attributes
 
         #region Public 属性
 
+        /// <summary>
+        /// 自定义返回字符串
+        /// </summary>
         public string ReturnString { get; set; }
         /// <summary>
         /// 提示信息

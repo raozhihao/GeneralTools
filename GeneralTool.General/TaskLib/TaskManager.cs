@@ -1,4 +1,5 @@
 ﻿using GeneralTool.General.Attributes;
+using GeneralTool.General.ExceptionHelper;
 using GeneralTool.General.Interfaces;
 using GeneralTool.General.LinqExtensions;
 using GeneralTool.General.Logs;
@@ -8,7 +9,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
-using GeneralTool.General.ExceptionHelper;
 
 namespace GeneralTool.General.TaskLib
 {
@@ -63,7 +63,7 @@ namespace GeneralTool.General.TaskLib
         /// </summary>
         public TaskManager() : this(null, new ConsoleLogInfo())
         {
-           
+
         }
 
         #endregion Public 构造函数
@@ -270,7 +270,7 @@ namespace GeneralTool.General.TaskLib
                                 Explanation = route.Explanation,
                                 ResultType = m.ReturnType,
                                 HttpMethod = route.Method,
-                                ReturnString=route.ReturnString
+                                ReturnString = route.ReturnString
                             };
 
                             if (string.IsNullOrWhiteSpace(route.ReturnString))
@@ -313,7 +313,7 @@ namespace GeneralTool.General.TaskLib
                 {
                     this.ServerStation.Close();
                 }
-              
+
                 this.ServerStation.Start(ip, port);
                 this.log.Debug($"服务已开启 IP:{ip} PORT:{port}");
                 this.IsSocketInit = true;

@@ -128,16 +128,16 @@ namespace GeneralTool.General.Ioc
         /// </summary>
         /// <param name="assembly">程序集</param>
         /// <param name="checkInjectTypeAttr">是否检查类型上有 InjectType 特性</param>
-        public void Inject(Assembly assembly, bool checkInjectTypeAttr = false)=> this.Inject(checkInjectTypeAttr, assembly.ExportedTypes.ToArray());
+        public void Inject(Assembly assembly, bool checkInjectTypeAttr = false) => this.Inject(checkInjectTypeAttr, assembly.ExportedTypes.ToArray());
 
         /// <summary>
         /// 注册指定的类型集合
         /// </summary>
         /// <param name="types">类型集合</param>
         /// <param name="checkInjectTypeAttr">是否检查类型上有 InjectType 特性</param>
-        public void Inject(bool checkInjectTypeAttr,params Type[] types )
+        public void Inject(bool checkInjectTypeAttr, params Type[] types)
         {
-            if (types==null)
+            if (types == null)
                 return;
 
             foreach (var type in types)

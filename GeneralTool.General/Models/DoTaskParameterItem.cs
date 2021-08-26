@@ -21,7 +21,7 @@ namespace GeneralTool.General.Models
         private ObservableCollection<ParameterItem> parameters = new ObservableCollection<ParameterItem>();
         private string socketArgs = "";
         private string url;
-        private string returnString="";
+        private string returnString = "";
 
         #endregion Private 字段
 

@@ -47,7 +47,7 @@ namespace IOCTest
         public BaseClass()
         {
             if (this.Log == null)
-                this.Log =new DefaultLog();
+                this.Log = new DefaultLog();
         }
     }
 

@@ -59,11 +59,19 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Adb\AdbHelper.cs" />
     <Compile Include="Attributes\AttributeExtensions.cs" />
     <Compile Include="Attributes\InjectTypeAttribute.cs" />
     <Compile Include="Attributes\RouteAttribute.cs" />
     <Compile Include="Attributes\UIEditorAttribute.cs" />
     <Compile Include="Attributes\WaterMarkAttribute.cs" />
+    <Compile Include="AuboSixAxisMechanicalArm\JointStatusArgs.cs" />
+    <Compile Include="AuboSixAxisMechanicalArm\WayPointsArgs.cs" />
+    <Compile Include="AuboSixAxisMechanicalArm\MechanicalArm.cs" />
+    <Compile Include="AuboSixAxisMechanicalArm\MetaData.cs" />
+    <Compile Include="AuboSixAxisMechanicalArm\RobotAdepter.cs" />
+    <Compile Include="AuboSixAxisMechanicalArm\RobotEventHandler.cs" />
+    <Compile Include="AuboSixAxisMechanicalArm\Util.cs" />
     <Compile Include="DataSetExtensions\DataRowEqualityComparer.cs" />
     <Compile Include="DataSetExtensions\DataTableExtensions.cs" />
     <Compile Include="DbHelper\BaseConStrBuilder.cs" />
@@ -81,6 +89,7 @@
     <Compile Include="DbHelper\SqlServerConStrBuilder.cs" />
     <Compile Include="Enums\AttachDataType.cs" />
     <Compile Include="Enums\BitmapEncoderEnum.cs" />
+    <Compile Include="Enums\EnumExtension.cs" />
     <Compile Include="Enums\LogType.cs" />
     <Compile Include="Enums\RecEncodingType.cs" />
     <Compile Include="Enums\RequestStateCode.cs" />
@@ -125,6 +134,10 @@
     <Compile Include="Models\SocketLinkObject.cs" />
     <Compile Include="Models\SocketReceiveArgs.cs" />
     <Compile Include="Models\TaskModel.cs" />
+    <Compile Include="ObjectPool.cs" />
+    <Compile Include="ProcessHelpers\ProcessEngine.cs" />
+    <Compile Include="RandomEx.cs" />
+    <Compile Include="SerialPortEx\OnlineStateEventArgs.cs" />
     <Compile Include="TaskLib\HttpServerStation.cs" />
     <Compile Include="TaskLib\RequestInfo.cs" />
     <Compile Include="WPFHelper\AsyncObservableCollection.cs" />
@@ -208,6 +221,7 @@
     <Compile Include="WPFHelper\UIEditorConverts\StringObjectEditorConvert.cs" />
     <Compile Include="WPFHelper\UIEditorConverts\UIEditorHelper.cs" />
     <Compile Include="WPFHelper\UIEditorConverts\StringEditorConvert.cs" />
+    <Compile Include="WindowManager.cs" />
     <Compile Include="WPFHelper\WPFControls\ImageViewControl.cs" />
     <Compile Include="WPFHelper\WPFControls\PropertyGridControl.cs" />
   </ItemGroup>
@@ -234,6 +248,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Window\" />
     <Folder Include="XmlExtensions\" />
   </ItemGroup>
   <ItemGroup>
