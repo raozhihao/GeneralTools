@@ -193,7 +193,7 @@ namespace GeneralTool.General.SerialPortEx
             int num = 0;
             if (recDatas.Count() > 3)
                 num = recDatas[2];
-
+            
             CurrentRequest = null;
             return new SerialResponse(request, recDatas.ToArray(), (num == 0) ? null : recDatas.GetRange(3, num).ToArray());
         }

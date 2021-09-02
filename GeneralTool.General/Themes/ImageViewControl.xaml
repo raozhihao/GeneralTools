@@ -14,7 +14,6 @@
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="auto" />
                             <ColumnDefinition />
-                            <ColumnDefinition Width="auto" />
                         </Grid.ColumnDefinitions>
                         <Slider Orientation="Vertical"
                                 x:Name="Slider"
@@ -25,8 +24,8 @@
                                 Visibility="{TemplateBinding SliderVisibility}" />
                         <!--menu-->
                         <StackPanel Panel.ZIndex="999"
+                                    Grid.ColumnSpan="2"
                                     Margin="0 10 10 0"
-                                    Grid.Column="2"
                                     Visibility="{TemplateBinding ToolExpanderVisibility}"
                                     HorizontalAlignment="Right">
                             <Expander x:Name="ToolExpander"
@@ -55,8 +54,8 @@
                                     <ScrollViewer x:Name="ImageScroll"
                                                   VerticalScrollBarVisibility="Auto"
                                                   HorizontalScrollBarVisibility="Auto"
-                                                  Width="782"
-                                                  Height="520">
+                                                  Width="{Binding ElementName=ImageBox,Path=ActualWidth}"
+                                                  Height="{Binding ElementName=ImageBox,Path=ActualHeight}">
                                         <Canvas  x:Name="ImageCanvas">
                                             <Canvas.RenderTransform>
                                                 <TransformGroup>

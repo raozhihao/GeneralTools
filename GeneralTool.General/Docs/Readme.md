@@ -1,143 +1,118 @@
-﻿### nuget
-> Install-Package GeneralTool.General
-> 
-### GeneralTool.General 部分使用指南
+﻿> nuget地址   Install-Package GeneralTool.General
 
-#### WPF 属性通知注册
-> 将要被通知的类继承自GeneralTool.General.WPFHelper.BaseNotifyModel <br>
-> 属性如下
-```
- private bool controlVisible;
- public bool ControlVisible { get => this.controlVisible; set => this.RegisterProperty(ref this.controlVisible, value); }
-```
+##### 支持功能
+1.AdbHelper <br>
+ > 命名空间:GeneralTool.General.Adb <br>
+ > 可使用此类访问adb功能,发送命令格式,例如 adb shell getprop ro.product.brand 
 
-#### WPF Command注册
-```
-public ICommand ButtonCommand
-{
-    get=>new SimpleCommand<object>((sender) => { })
-}
-```
+2.AttributeExtensions <br>
+> 命名空间 GeneralTool.General.Attributes
+> 扩展方法,可获取任意类型上的自定义特性
 
+3.RobotAdepter <br>
+> 命名空间: GeneralTool.General.AuboSixAxisMechanicalArm
+> 本类主要是用于 敖博六轴机械臂 的控制库
 
-#### TaskManager任务管理器
-使用说明
-> 1.创建任务类,继承自BaseTaskInvoke <br>
-2.任务类打上Route标记,该标记指定类路径 <br>
-3.对要开放的方法打上Route标记,指定方法路径 <br>
-4.在方法上使用Route标记时,可选属性为 HttpMethod,该属性指示外部进行web调用时的方法<br>
-  但只有当在实例化 TaskManager 中传入 HttpServerStation 对象或实现 ServerStationBase(自主处理)时才有用<br>
-5.可选的属性WaterMark标记 <br>
+4.DataTableExtensions <br>
+> 命名空间: GeneralTool.General.DataSetExtensions
+> 本类主要用于 DataTable 的各类扩展方法
 
-任务类示例:
-> 
-	[Route(nameof(TestLib2) + "/", "测试2")]
-    public class TestLib2 : BaseTaskInvoke
-    {
-        [Route(nameof(TestHello), "测试SayHello")]
-        public string TestHello([WaterMark("名字")] string name, [WaterMark("年龄")] double age = 18)
-        {
-            return $"Hello {name} , your age is {age}";
-        }
+5.DbManager <br>
+> 命名空间: GeneralTool.General.DbHelper
+> 本类主要用于 通用底层的数据库访问类,不用自己管理数据库的连接,其中为短连接
 
-        [Route(nameof(ErrorLog), "错误日志测试")]
-        public void ErrorLog()
-        {
-            try
-            {
-                this.Log.Error("Test Error");
-                throw new NotImplementedException();
-            }
-            catch (Exception ex)
-            {
-                //异常信息交给 this.erroMsg 后外部通过socket调用能够获取此信息
-                this.erroMsg = ex.Message;
-                this.Log.Error(this.erroMsg);
-                throw;
-            }
-        }
+6.EnumExtension <br>
+> 命名空间: GeneralTool.General.Enums
+> 本类为枚举的扩展类,用于获取指定枚举类型上的特性
 
-        [Route(nameof(WaringLog), "警告日志测试")]
-        public void WaringLog()
-        {
-            this.Log.Waring("警告测试");
-        }
-    }
+7.ExceptionExtensions <br>
+> 命名空间: GeneralTool.General.ExceptionHelper
+> 本类为异常的扩展类,可以获取所有内部的异常消息
 
+8.IniHelper <br>
+> 命名空间: GeneralTool.General.IniHelpers
+> 本类为读写Ini配置文件的帮助类,可配合Node类型进行使用
 
-> 5.使用 <br>
-```
-  		  //实例化任务对象
-            var taskManager = new TaskManager();
-            //开启Socket接口
-            taskManager.Open("127.0.0.1", 8899, new TestLib2());
-            //加载获取所有任务
-            taskManager.GetInterfaces();
-            //获取所有任务对象
-            var taskModels = taskManager.TaskModels;
-```
+9.SimpleIocSerivce <br>
+> 命名空间: GeneralTool.General.Ioc
+> 本类为IOC容器,使用方式与autofac等差不多,但不同于autofac的是
+> 后者对于构造函数的调用时,属性仍未注入,但前者在调用构造函数时,属性已经成功注入
+> 前者的逻辑为先初始化属性后调用构造函数,与后者刚好相反
+> 所以在有继承关系的类型注入时,可能会达不到预期
 
+10.PathExtensions <br>
+> 命名空间: GeneralTool.General.IOExtensions
+> 本类为string的扩展方法,主要是将多个字符串组合成一个新的路径
 
-#### 事件扩展标记
-使用说明:可以将事件重定向到ViewModel层中 <br>
-示例代码 XAML 引用命名空间: <br>
-xmlns:a="clr-namespace:GeneralTool.General.WPFHelper;assembly=GeneralTool.General"<br>
->
-```
-<Button x:Name="btn"
-        Grid.Row="1"
-        Content="Btn"
-        MouseDown="{a:EventBinding MouseDownMethod,RoutedEvent={x:Static UIElement.MouseDownEvent}}" />
-```
-示例代码 ViewModel <br>
-```
- public void MouseDownMethod(object sender, MouseButtonEventArgs eventArgs)
- {
-     
- }
-``` 
+11.IPCClientHelper 与 IPCServerHelper <br>
+> 命名空间: GeneralTool.General.IPCHelper
+> 用于IPC管道通信
 
-#### ImageViewControl 图片查看控件
-使用说明:可以对加载的图片进行缩放,平移,在图片上添加右键菜单,截取区域等 <br>
-示例代码 XAML 引用命名空间: <br>
-xmlns:imgView="clr-namespace:GeneralTool.General.WPFHelper.WPFControls;assembly=GeneralTool.General" <br>
-xmlns:a="clr-namespace:GeneralTool.General.WPFHelper;assembly=GeneralTool.General"<br>
-```
- <imgView:ImageViewControl Grid.Row="1"
-                           Background="Yellow"
-                           ImageSource="{Binding ImageSource}"
-                           CanImageDraw="True"
-                           SliderStyle="{StaticResource MahApps.Styles.Slider.Flat}"
-                           ToolExpanderStyle="{StaticResource MahApps.Styles.Expander}"
-                           ToolCutButtonStyle="{StaticResource CutStyle}"
-                           MenuOkStyle="{StaticResource MenuOk}"
-                           MenuCancelStyle="{StaticResource MenuCancel}"
-                           CutImageDownEvent="{a:EventBinding CutImageOkMethod}"
-                           CutImageEvent="{a:EventBinding CutRectMethod}"
-                           ImageMouseMoveEvent="{a:EventBinding ImageMouseMove}"
-                           CutPanelVisibleChanged="{a:EventBinding CutPanelRectMethod}">
+12.ArraryExtensions, IEnumerableExtensions, StringExtensions <br>
+> 命名空间: GeneralTool.General.LinqExtensions
+> 主要是三类扩展方法
 
-            </imgView:ImageViewControl>
-```
+13.ConsoleLogInfo, FileInfoLog <br>
+> 命名空间: GeneralTool.General.Logs
+> 前者只在调试窗口打印日志,后者会记录到本地文件中
 
-#### PropertyGridControl 属性编辑器
-使用说明:类Winform的PropertyGrid控件,目前只支持解析 字符串,数值,枚举类型,Brush类型也可以,但是纯字符串的 <br>
-如果需要解析其它复杂类型,请修改源码 ObjectExpandeUIEditor 或在自定义类型上打上[UIEditor(typeof(ObjectExpandeUIEditor))]标记,此标记为最基础的解析类,会将打上此标记的类型中的所有属性解析出来
-<br>
-示例代码 XAML 引用命名空间: <br>
- xmlns:wpf="clr-namespace:GeneralTool.General.WPFHelper.WPFControls;assembly=GeneralTool.General"<br>
- ```
-  <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="auto" />
-        </Grid.RowDefinitions>
-        <wpf:PropertyGridControl SelectedObject="{Binding ElementName=btn}" />
-        <Button Content="Test"
-                x:Name="btn" 
-                Grid.Row="1"/>
-    </Grid>
- ```
+14.HttpHelper <br>
+> 命名空间: GeneralTool.General.NetHelper
+> 发送Http Get Post命令并获取返回
+
+15.ProcessEngine, ProcessHelper <br>
+> 命名空间: GeneralTool.General.ProcessHelpers
+> 前者为长连接的Process任务,但只支持子进程一对一的返回,后者为短连接的Process任务
+
+16.SerialControl <br>
+> 命名空间: GeneralTool.General.SerialPortEx
+> SerialPort的扩展类
+
+17.TaskManager <br>
+> 命名空间: GeneralTool.General.TaskLib
+> 具体参阅 TaskManager.md
+
+18.ByteExtensions, EnumExtensions, Int32Extensions, StringExtensions <br>
+> 命名空间: GeneralTool.General.ValueTypeExtensions
+> 各种类型的扩展方法
+
+19.PageHelper, QueryHelpers <br>
+> 命名空间: GeneralTool.General.WebExtensioins
+> 用于http中计算分页和参数的扩展方法
+
+20.WaitDialogHelper <br>
+> 命名空间: GeneralTool.General.WinForm
+> 用于在Winform中加载等待框
+
+21.WPFHelper <br>
+> 在GeneralTool.General.WPFHelper 有各种关于WPF的扩展类及帮助类,转换类等
+
+22.ObjectPool <br>
+> 命名空间: GeneralTool.General
+> 简单管理的对象池类
+
+22.RandomEx <br>
+> 命名空间: GeneralTool.General
+> 随机数获取扩展类
+
+23.SerializeExtensions <br>
+> 命名空间: GeneralTool.General
+> 对象的序列化及反序列化扩展
+
+24.SerializeHelpers <br>
+> 命名空间: GeneralTool.General
+> 将.net对象序列化成二进制或反序列化,只支持.net对象之间的序列化(不用额外添加Serialize特性)
+
+25.WindowManager <br>
+> 命名空间: GeneralTool.General
+> 可以管理Winform/Wpf所有打开窗体的状态,及获取/关闭最后一个活跃窗体
 
 
 
+
+
+
+
+
+
+ 

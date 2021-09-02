@@ -60,6 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Adb\AdbHelper.cs" />
+    <Compile Include="Adb\AdbKey.cs" />
     <Compile Include="Attributes\AttributeExtensions.cs" />
     <Compile Include="Attributes\InjectTypeAttribute.cs" />
     <Compile Include="Attributes\RouteAttribute.cs" />
@@ -113,6 +114,7 @@
     <Compile Include="IPCHelper\IPCClientHelper.cs" />
     <Compile Include="IPCHelper\IPCServerHelper.cs" />
     <Compile Include="LinqExtensions\ArraryExtensions.cs" />
+    <Compile Include="LinqExtensions\DictionaryExtensions.cs" />
     <Compile Include="LinqExtensions\IEnumerableExtensions.cs" />
     <Compile Include="LinqExtensions\StringExtensions.cs" />
     <Compile Include="Logs\ConsoleLogInfo.cs" />
@@ -255,10 +257,15 @@
     <Resource Include="iconttf\iconfont.ttf" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Docs\PropertyGridControl.md" />
+    <None Include="Docs\ImageViewControl.md" />
+    <None Include="Docs\Readme.md" />
+    <None Include="Docs\TaskManager.md" />
+    <None Include="Docs\Basic.md" />
     <None Include="Docs\DbHelper.md" />
     <None Include="Docs\HttpServerStation.md" />
     <None Include="Docs\LangProvider.md" />
-    <None Include="Docs\Readme.md" />
+    <None Include="Docs\EventBinding.md" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

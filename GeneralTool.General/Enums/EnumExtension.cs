@@ -18,6 +18,8 @@ namespace GeneralTool.General.Enums
         public static OutType GetEnumCustomAttributeInfo<OutType, EnumAttributeType>(this Enum @enum, string property) where EnumAttributeType : Attribute
         {
             var en = @enum.GetEnumCustomAttribute<EnumAttributeType>();
+            if (en == null)
+                return default;
             var p = en.GetType().GetProperty(property);
             if (p == null)
                 return default;

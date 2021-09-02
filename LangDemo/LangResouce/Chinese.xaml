@@ -1,8 +1,0 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
-    <!--引用中文的log语言文件-->
-    <ResourceDictionary x:Key="Logs"
-                        Source="Chinese_Logs.xaml" />
-    <sys:String x:Key="Label">测试文本</sys:String>
-</ResourceDictionary>

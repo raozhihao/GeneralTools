@@ -15,7 +15,13 @@ namespace GeneralTool.General.Adb
         /// 构造函数初始化
         /// </summary>
         /// <param name="adbExePath">adb.exe文件路径</param>
-        public AdbHelper(string adbExePath) => this.adbPath = adbExePath;
+        public AdbHelper(string adbExePath="")
+        {
+            if (string.IsNullOrWhiteSpace(adbExePath))
+                adbExePath = "adb";//尝试使用环境变量中的adb
+               
+            this.adbPath = adbExePath;
+        }
 
         /// <summary>
         /// 发送命令
@@ -25,9 +31,8 @@ namespace GeneralTool.General.Adb
         public string Command(string args)
         {
             if (args.StartsWith("adb "))
-            {
                 args = args.Substring(3);
-            }
+
             if (args.Trim() == "shell")
                 return "非正确的命令";
 
@@ -52,7 +57,7 @@ namespace GeneralTool.General.Adb
             var result = cmd.StandardOutput.ReadToEnd();
             cmd.Close();
             cmd.Dispose();
-            return result.TrimEnd(new char[] { '\r', '\n' });
+            return result.TrimEnd('\r', '\n');
         }
 
         /// <summary>
@@ -102,6 +107,13 @@ namespace GeneralTool.General.Adb
                 return Convert.ToInt32(result.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries)[1]);
             }
         }
+
+        /// <summary>
+        /// 发送按键命令
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public string CommandKey(AdbKey key) => this.Command($"adb shell input keyevent {(int)key}");
 
         /// <summary>
         /// 解锁/点亮手机屏幕

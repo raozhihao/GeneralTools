@@ -49,7 +49,6 @@ namespace GeneralTool.General.ProcessHelpers
                 RedirectStandardError = true,
                 RedirectStandardInput = true,
             };
-
             process.EnableRaisingEvents = true;
             process.Exited += Process_Exited;
             process.OutputDataReceived += Process_OutputDataReceived;

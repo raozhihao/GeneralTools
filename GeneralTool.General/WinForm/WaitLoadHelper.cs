@@ -28,6 +28,7 @@ namespace GeneralTool.General.WinForm
         /// </summary>
         public WaitDialogHelper()
         {
+            dialog = new DialogFrm();
         }
 
         #endregion Public 构造函数
@@ -210,7 +211,7 @@ namespace GeneralTool.General.WinForm
         {
             IsClosed = false;
             this.parentFrm = parentFrm;
-            dialog = new DialogFrm();
+            
             maskPanel = new MaskPanel(parentFrm, alpha);
 
             parentFrm.LocationChanged += ParentFrm_LocationChanged;
@@ -223,6 +224,7 @@ namespace GeneralTool.General.WinForm
             //dialog.Show(parentFrm);
             //CenterToParent();
 
+            dialog.Caption = caption;
             await Task.Run(() =>
              {
                  parentFrm.BeginInvoke(new Action(() =>
@@ -237,7 +239,6 @@ namespace GeneralTool.General.WinForm
                      }
                  }));
              });
-            dialog.Caption = caption;
             CenterToParent();
         }
 
