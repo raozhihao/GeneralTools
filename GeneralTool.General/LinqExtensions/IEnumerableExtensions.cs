@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace GeneralTool.General.LinqExtensions
 {
@@ -65,6 +66,24 @@ namespace GeneralTool.General.LinqExtensions
             }
         }
 
+        /// <summary>
+        /// 随机获取集合中的一项数据
+        /// </summary>
+        /// <typeparam name="T">要操作的集合类型</typeparam>
+        /// <param name="enumables">要操作的集合</param>
+        /// <param name="startIndex">开始下标</param>
+        /// <returns></returns>
+        public static T RandomTout<T>(this IEnumerable<T> enumables, int startIndex = 0)
+        {
+            if (enumables.Count() == 0)
+                return default;
+
+            if (startIndex + 1 == enumables.Count() || startIndex == 0)
+                return enumables.ElementAtOrDefault(startIndex);
+
+            var index = RandomEx.Next(startIndex, enumables.Count());
+            return enumables.ElementAtOrDefault(index);
+        }
         #endregion Public 方法
     }
 }

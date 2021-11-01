@@ -224,6 +224,7 @@ namespace GeneralTool.General.TaskLib
                         continue;
                     }
 
+                    taskModel.LangKey = classRoute.LangKey;
                     taskModel.Explanation = classRoute.Explanation;
                     var rootPath = classRoute.Url;
 
@@ -267,10 +268,11 @@ namespace GeneralTool.General.TaskLib
                                 Url = rootPath + route.Url,
                                 Method = m,
                                 TaskObj = obj,
+                                LangKey = route.LangKey,
                                 Explanation = route.Explanation,
                                 ResultType = m.ReturnType,
                                 HttpMethod = route.Method,
-                                ReturnString = route.ReturnString
+                                ReturnString = route.ReturnString,
                             };
 
                             if (string.IsNullOrWhiteSpace(route.ReturnString))
@@ -278,6 +280,7 @@ namespace GeneralTool.General.TaskLib
                                 //如果没有的话,则直接用type
                                 item.ReturnString = item.ResultType.Name;
                             }
+                            item.InitLangKey();
 
                             if (this.TaskParameterItems.ContainsKey(key))
                             {
@@ -294,6 +297,7 @@ namespace GeneralTool.General.TaskLib
                         }
                     });
                     this.currents.Add(obj, tmpDics);
+                    taskModel.InitLangKey();
                     this.TaskModels.Add(taskModel);
                 }
 

@@ -87,6 +87,26 @@ namespace GeneralTool.General.LinqExtensions
             return arrary;
         }
 
+
+        /// <summary>
+        /// 随机获取集合中的一项数据
+        /// </summary>
+        /// <typeparam name="T">要操作的集合类型</typeparam>
+        /// <param name="enumables">要操作的集合</param>
+        /// <param name="startIndex">开始下标</param>
+        /// <returns></returns>
+        public static T RandomTout<T>(this T[] enumables, int startIndex = 0)
+        {
+            if (enumables.Length == 0)
+                return default;
+
+            if (startIndex + 1 == enumables.Length || startIndex == 0)
+                return enumables[startIndex];
+
+            var index = RandomEx.Next(startIndex, enumables.Length);
+            return enumables[index];
+        }
+
         #endregion Public 方法
     }
 }

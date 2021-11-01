@@ -69,9 +69,14 @@
                                             <StackPanel x:Name="CutPanel"
                                                         Orientation="Vertical"
                                                         Panel.ZIndex="997"
-                                                        Visibility="Collapsed">
+                                                        Visibility="Collapsed"
+                                                        ToolTip="{TemplateBinding CutPanelToolTip}">
                                                 <StackPanel.RenderTransform>
-                                                    <TranslateTransform x:Name="cutTrans" />
+                                                    <TransformGroup>
+                                                        <ScaleTransform ScaleX="{TemplateBinding ImageScale}"
+                                                                        ScaleY="{TemplateBinding ImageScale}" />
+                                                        <TranslateTransform x:Name="cutTrans" />
+                                                    </TransformGroup>
                                                 </StackPanel.RenderTransform>
                                                 <Rectangle Stroke="Red"
                                                            StrokeThickness="0"

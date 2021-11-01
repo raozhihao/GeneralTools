@@ -183,7 +183,7 @@ namespace GeneralTool.General.SerialPortEx
                 this.isRequest = false;
                 return new SerialResponse(request, recDatas.ToArray(), null);
             }
-                
+
             byte[] array = request.ToSendDatas();
             CurrentRequest = request;
             Write(array, 0, array.Length);
@@ -193,7 +193,7 @@ namespace GeneralTool.General.SerialPortEx
             int num = 0;
             if (recDatas.Count() > 3)
                 num = recDatas[2];
-            
+
             CurrentRequest = null;
             return new SerialResponse(request, recDatas.ToArray(), (num == 0) ? null : recDatas.GetRange(3, num).ToArray());
         }

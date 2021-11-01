@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace GeneralTool.General.LinqExtensions
 {
@@ -19,7 +15,7 @@ namespace GeneralTool.General.LinqExtensions
         /// <param name="keyValues"></param>
         /// <param name="key"></param>
         /// <param name="value"></param>
-        public static void AddOrUpdate<TKey, TValue>(this Dictionary<TKey,TValue> keyValues,TKey key,TValue value)
+        public static void AddOrUpdate<TKey, TValue>(this Dictionary<TKey, TValue> keyValues, TKey key, TValue value)
         {
             if (keyValues.ContainsKey(key))
                 keyValues[key] = value;
@@ -35,7 +31,7 @@ namespace GeneralTool.General.LinqExtensions
         /// <param name="keyValues"></param>
         /// <param name="key"></param>
         /// <returns></returns>
-        public static TValue GetValueOrDefault<TKey,TValue>(this Dictionary<TKey, TValue> keyValues, TKey key)
+        public static TValue GetValueOrDefault<TKey, TValue>(this Dictionary<TKey, TValue> keyValues, TKey key)
         {
             if (keyValues.ContainsKey(key))
                 return keyValues[key];
@@ -51,7 +47,7 @@ namespace GeneralTool.General.LinqExtensions
         /// <param name="keyValues"></param>
         /// <param name="key"></param>
         /// <returns></returns>
-        public static KeyValuePair<TKey,TValue> GetKeyValuePairOrDefault<TKey,TValue>(this Dictionary<TKey, TValue> keyValues, TKey key)
+        public static KeyValuePair<TKey, TValue> GetKeyValuePairOrDefault<TKey, TValue>(this Dictionary<TKey, TValue> keyValues, TKey key)
         {
             if (keyValues.ContainsKey(key))
                 return new KeyValuePair<TKey, TValue>(key, keyValues[key]);

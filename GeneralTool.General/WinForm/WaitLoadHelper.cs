@@ -211,7 +211,7 @@ namespace GeneralTool.General.WinForm
         {
             IsClosed = false;
             this.parentFrm = parentFrm;
-            
+
             maskPanel = new MaskPanel(parentFrm, alpha);
 
             parentFrm.LocationChanged += ParentFrm_LocationChanged;

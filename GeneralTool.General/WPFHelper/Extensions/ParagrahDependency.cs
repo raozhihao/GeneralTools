@@ -297,13 +297,13 @@ namespace GeneralTool.General.WPFHelper.Extensions
 
         #region Private 方法
 
-        private static void AddItems(System.Collections.IList items, NotifyCollectionChangedAction action)
+        private static void AddItems(System.Collections.IList addItems, NotifyCollectionChangedAction action)
         {
-            if (items == null)
+            if (addItems == null)
                 return;
-            for (int index = 0; index < items.Count; index++)
+            for (int index = 0; index < addItems.Count; index++)
             {
-                var msg = (LogMessageInfo)items[index];
+                var msg = (LogMessageInfo)addItems[index];
                 var run = new Run(msg.Msg + Environment.NewLine);
                 Brush brush = null;
                 var visible = false;
@@ -354,7 +354,7 @@ namespace GeneralTool.General.WPFHelper.Extensions
                 lock (Locker)
                 {
                     var list = sender as ObservableCollection<LogMessageInfo>;
-                    if (list.Count > GetMaxCount(paragraph))
+                    if (paragraph.Inlines.Count > GetMaxCount(paragraph))
                     {
                         list.Clear();
                         paragraph.Inlines.Clear();

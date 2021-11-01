@@ -15,6 +15,44 @@ namespace GeneralTool.General.Models
     [Serializable]
     public class DoTaskParameterItem : BaseNotifyModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        public DoTaskParameterItem()
+        {
+
+        }
+
+
+        /// <summary>
+        /// 初始化语言库
+        /// </summary>
+        public void InitLangKey()
+        {
+            if (string.IsNullOrWhiteSpace(this.LangKey))
+                return;
+            //设置默认库
+            if (!LangProvider.LangProviderInstance.DefaultResource.ContainsKey(this.LangKey))
+            {
+                LangProvider.LangProviderInstance.DefaultResource.Add(this.LangKey, this.defaultText);
+            }
+
+            LangProviderInstance_LangChanged(LangProvider.LangProviderInstance.CurrentResource);
+            LangProvider.LangProviderInstance.LangChanged += LangProviderInstance_LangChanged;
+        }
+
+        private void LangProviderInstance_LangChanged(System.Windows.ResourceDictionary obj)
+        {
+            if (string.IsNullOrWhiteSpace(this.LangKey))
+                return;
+
+            var value = LangProvider.LangProviderInstance.GetLangValue(this.LangKey);
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return;
+            }
+            this.Explanation = value;
+        }
         #region Private 字段
 
         private string explanation;
@@ -22,6 +60,7 @@ namespace GeneralTool.General.Models
         private string socketArgs = "";
         private string url;
         private string returnString = "";
+        private string defaultText;
 
         #endregion Private 字段
 
@@ -39,9 +78,25 @@ namespace GeneralTool.General.Models
         public string Explanation
         {
             get => this.explanation;
-            set => this.RegisterProperty(ref this.explanation, value);
+            set
+            {
+                if (string.IsNullOrWhiteSpace(defaultText))
+                {
+                    this.defaultText = value;
+                }
+                this.RegisterProperty(ref this.explanation, value);
+            }
         }
 
+        private string langKey;
+        /// <summary>
+        /// 语言Key
+        /// </summary>
+        public string LangKey
+        {
+            get => this.langKey;
+            set => this.RegisterProperty(ref this.langKey, value);
+        }
         /// <summary>
         /// 方法对象
         /// </summary>

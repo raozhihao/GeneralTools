@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GeneralTool.General.ExceptionHelper;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
@@ -14,6 +15,10 @@ namespace GeneralTool.General.ProcessHelpers
 
         private static AutoResetEvent reciveEvent = new AutoResetEvent(false);
         private static List<string> reciveList = new List<string>();
+        /// <summary>
+        /// 接收消息事件
+        /// </summary>
+        public static event Action<string> ReciveEvent;
         /// <summary>
         /// 启动
         /// </summary>
@@ -53,13 +58,17 @@ namespace GeneralTool.General.ProcessHelpers
                 process.Start();
                 process.BeginOutputReadLine();
                 process.BeginErrorReadLine();
-                reciveEvent.WaitOne(timeOut);
+                var re = reciveEvent.WaitOne(timeOut);
 
-                return string.Join(Environment.NewLine, reciveList);
+                //超时停止,不再接收
+                process.Exited -= Process_Exited;
+                process.OutputDataReceived -= Process_OutputDataReceived;
+                process.ErrorDataReceived -= Process_ErrorDataReceived;
+
             }
             catch (Exception ex)
             {
-                throw ex;
+                reciveList.Add(ex.GetInnerExceptionMessage());
             }
             finally
             {
@@ -70,16 +79,29 @@ namespace GeneralTool.General.ProcessHelpers
 
                 process.Dispose();
             }
+            return string.Join(Environment.NewLine, reciveList);
         }
 
         private static void Process_ErrorDataReceived(object sender, DataReceivedEventArgs e)
         {
-            reciveList.Add(e.Data);
+            if (sender is Process p)
+            {
+
+                reciveList.Add(e.Data);
+                ReciveEvent?.Invoke(e.Data);
+
+            }
         }
 
         private static void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
-            reciveList.Add(e.Data);
+            if (sender is Process p)
+            {
+
+                reciveList.Add(e.Data);
+                ReciveEvent?.Invoke(e.Data);
+
+            }
         }
 
         private static void Process_Exited(object sender, EventArgs e)

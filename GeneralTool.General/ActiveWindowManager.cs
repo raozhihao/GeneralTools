@@ -9,14 +9,14 @@ namespace GeneralTool.General
     /// <summary>
     /// 窗体管理
     /// </summary>
-    public class WindowManager<T> where T : class
+    public class ActiveWindowManager<T> where T : class
     {
-        private static Lazy<WindowManager<T>> manager = new Lazy<WindowManager<T>>(() => new WindowManager<T>());
+        private static Lazy<ActiveWindowManager<T>> manager = new Lazy<ActiveWindowManager<T>>(() => new ActiveWindowManager<T>());
 
         /// <summary>
         /// 管理类实例
         /// </summary>
-        public static WindowManager<T> Manager
+        public static ActiveWindowManager<T> Manager
         {
             get
             {
@@ -24,7 +24,7 @@ namespace GeneralTool.General
             }
         }
 
-        private WindowManager()
+        private ActiveWindowManager()
         {
 
         }
@@ -33,6 +33,22 @@ namespace GeneralTool.General
         /// 存储所有加入的激活窗体
         /// </summary>
         private List<WindowEx<T>> lastWindows = new List<WindowEx<T>>();
+
+        /// <summary>
+        /// 获取所有当前存活的窗体
+        /// </summary>
+        public List<T> WindowIces
+        {
+            get
+            {
+                var list = new List<T>();
+                foreach (var item in this.lastWindows)
+                {
+                    list.Add(item.Item);
+                }
+                return list;
+            }
+        }
 
         /// <summary>
         /// 将窗体添加到管理中

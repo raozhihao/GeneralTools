@@ -20,7 +20,11 @@ namespace GeneralTool.General.Models
         /// <summary>
         /// 任务
         /// </summary>
-        public DoTaskParameterItem DoTaskParameterItem { get => this.parameterItem; set => this.RegisterProperty(ref this.parameterItem, value); }
+        public DoTaskParameterItem DoTaskParameterItem
+        {
+            get => this.parameterItem;
+            set => this.RegisterProperty(ref this.parameterItem, value);
+        }
 
         /// <summary>
         /// Url
@@ -36,6 +40,39 @@ namespace GeneralTool.General.Models
     /// </summary>
     public class TaskModel : BaseNotifyModel
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        public TaskModel()
+        {
+        }
+
+        /// <summary>
+        /// 初始化语言库
+        /// </summary>
+        public void InitLangKey()
+        {
+            if (string.IsNullOrWhiteSpace(this.LangKey))
+                return;
+            //设置默认库
+            if (!LangProvider.LangProviderInstance.DefaultResource.ContainsKey(this.LangKey))
+            {
+                LangProvider.LangProviderInstance.DefaultResource.Add(this.LangKey, this.defaultText);
+            }
+
+            LangProviderInstance_LangChanged(LangProvider.LangProviderInstance.CurrentResource);
+            LangProvider.LangProviderInstance.LangChanged += LangProviderInstance_LangChanged;
+        }
+        private void LangProviderInstance_LangChanged(System.Windows.ResourceDictionary obj)
+        {
+            if (string.IsNullOrWhiteSpace(this.LangKey))
+                return;
+
+            var value = LangProvider.LangProviderInstance.GetLangValue(this.LangKey);
+
+            this.Explanation = string.IsNullOrWhiteSpace(value) ? this.defaultText : value;
+        }
+
         #region Private 字段
 
         private ObservableCollection<DoTaskModel> doTaskModels = new ObservableCollection<DoTaskModel>();
@@ -45,6 +82,8 @@ namespace GeneralTool.General.Models
         private int selectedIndex = 0;
 
         private DoTaskModel selectedItem;
+        private string langKey;
+        private string defaultText;
 
         #endregion Private 字段
 
@@ -58,7 +97,27 @@ namespace GeneralTool.General.Models
         /// <summary>
         /// 任务类注解
         /// </summary>
-        public string Explanation { get => this.explanation; set => this.RegisterProperty(ref this.explanation, value); }
+        public string Explanation
+        {
+            get => this.explanation;
+            set
+            {
+                if (string.IsNullOrWhiteSpace(defaultText))
+                {
+                    this.defaultText = value;
+                }
+                this.RegisterProperty(ref this.explanation, value);
+            }
+        }
+
+        /// <summary>
+        /// 语言Key
+        /// </summary>
+        public string LangKey
+        {
+            get => this.langKey;
+            set => this.RegisterProperty(ref this.langKey, value);
+        }
 
         /// <summary>
         /// 集合中是否有元素

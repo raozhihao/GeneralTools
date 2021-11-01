@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows;
 using System.Windows.Media.Imaging;
 
 namespace GeneralTool.General.Models
@@ -43,6 +44,11 @@ namespace GeneralTool.General.Models
         /// 是否成功
         /// </summary>
         public bool Sucess { get; set; }
+
+        /// <summary>
+        /// 位置信息
+        /// </summary>
+        public Int32Rect Int32Rect { get; set; }
 
         #endregion Public 属性
     }

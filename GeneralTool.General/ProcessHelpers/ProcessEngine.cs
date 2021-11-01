@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GeneralTool.General.ExceptionHelper;
+using System;
 using System.Diagnostics;
 using System.Threading;
 
@@ -100,9 +101,19 @@ namespace GeneralTool.General.ProcessHelpers
         /// </summary>
         public void Close()
         {
-            this.process?.Close();
-            this.process?.Dispose();
-            this.process = null;
+            try
+            {
+                if (this.process.HasExited)
+                    this.process.Close();
+                else
+                    this.process.Kill();
+
+                this.process.Dispose();
+            }
+            catch (Exception ex)
+            {
+                this.ErroMsg=ex.GetInnerExceptionMessage();
+            }
         }
 
         private void Process_ErrorDataReceived(object sender, DataReceivedEventArgs e)

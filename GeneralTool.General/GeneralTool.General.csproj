@@ -90,6 +90,7 @@
     <Compile Include="DbHelper\SqlServerConStrBuilder.cs" />
     <Compile Include="Enums\AttachDataType.cs" />
     <Compile Include="Enums\BitmapEncoderEnum.cs" />
+    <Compile Include="Enums\DeviceState.cs" />
     <Compile Include="Enums\EnumExtension.cs" />
     <Compile Include="Enums\LogType.cs" />
     <Compile Include="Enums\RecEncodingType.cs" />
@@ -119,6 +120,8 @@
     <Compile Include="LinqExtensions\StringExtensions.cs" />
     <Compile Include="Logs\ConsoleLogInfo.cs" />
     <Compile Include="Logs\FileInfoLog.cs" />
+    <Compile Include="Models\AdbDeviceData.cs" />
+    <Compile Include="Models\Cords.cs" />
     <Compile Include="Models\DoTaskParameterItem.cs" />
     <Compile Include="Models\ImageCutRectEventArgs.cs" />
     <Compile Include="Models\ImageEventArgs.cs" />
@@ -138,8 +141,11 @@
     <Compile Include="Models\TaskModel.cs" />
     <Compile Include="ObjectPool.cs" />
     <Compile Include="ProcessHelpers\ProcessEngine.cs" />
+    <Compile Include="ProcessHelpers\ProcessServer.cs" />
     <Compile Include="RandomEx.cs" />
     <Compile Include="SerialPortEx\OnlineStateEventArgs.cs" />
+    <Compile Include="TaskExtensions\TaskRetry.cs" />
+    <Compile Include="TaskExtensions\ThreadExtensions.cs" />
     <Compile Include="TaskLib\HttpServerStation.cs" />
     <Compile Include="TaskLib\RequestInfo.cs" />
     <Compile Include="WPFHelper\AsyncObservableCollection.cs" />
@@ -223,7 +229,8 @@
     <Compile Include="WPFHelper\UIEditorConverts\StringObjectEditorConvert.cs" />
     <Compile Include="WPFHelper\UIEditorConverts\UIEditorHelper.cs" />
     <Compile Include="WPFHelper\UIEditorConverts\StringEditorConvert.cs" />
-    <Compile Include="WindowManager.cs" />
+    <Compile Include="ActiveWindowManager.cs" />
+    <Compile Include="WPFHelper\WindowHelper.cs" />
     <Compile Include="WPFHelper\WPFControls\ImageViewControl.cs" />
     <Compile Include="WPFHelper\WPFControls\PropertyGridControl.cs" />
   </ItemGroup>

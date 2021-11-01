@@ -1,0 +1,61 @@
+﻿<Window x:Class="ImageTest.Window1"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ImageTest"
+        mc:Ignorable="d"
+        Title="Window1"
+        Height="450"
+        Width="800">
+    <Grid Background="Black"
+          x:Name="canvas"
+          ClipToBounds="True">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+        <Menu>
+            <MenuItem Header="Load"
+                      Click="MenuItem_Click_1" />
+
+            <MenuItem Header="DrawRect"
+                      Command="{Binding DrawRectCommand}" />
+
+            <MenuItem Header="Get"
+                      Click="MenuItem_Click" />
+
+            <MenuItem Header="Cancel"
+                      Click="Cancel_Click" />
+        </Menu>
+        <local:PictureView CanDrawRect="True"
+                           x:Name="pv"
+                           Grid.Row="1"
+                           DrawRectAutoEndInit="True"
+                           ScaleMaxValue="25"
+                           StartDrawRect="{Binding StartDrawRect,Mode=TwoWay}">
+            <local:PictureView.RectContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="AddShape"/>
+                    <MenuItem Header="Cancel" />
+                </ContextMenu>
+            </local:PictureView.RectContextMenu>
+
+            <local:PictureView.ImageContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="AddShape"
+                              Click="AddShape" />
+                </ContextMenu>
+            </local:PictureView.ImageContextMenu>
+
+        </local:PictureView>
+
+        <StackPanel Grid.Row="2"
+                    Background="White">
+            <TextBlock x:Name="rectTxt"
+                       Text="aaa" />
+        </StackPanel>
+
+    </Grid>
+</Window>

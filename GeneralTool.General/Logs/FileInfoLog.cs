@@ -164,7 +164,7 @@ namespace GeneralTool.General.Logs
                 this.currentFileStream.Flush();
 
                 if (this.ConsoleLogEnable)
-                    Trace.WriteLine($"[{result.LogType}] - {DateTime.Now} : {result.Msg}");
+                    Trace.WriteLine($"[{result.LogType}] - {result.Msg}");
                 this.LogEvent?.Invoke(this, result);
             }
         }
