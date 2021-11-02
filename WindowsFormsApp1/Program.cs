@@ -1,4 +1,5 @@
 ﻿using GeneralTool.General.Adb;
+using GeneralTool.General.Enums;
 using System;
 using System.Windows.Forms;
 
@@ -12,7 +13,7 @@ namespace WindowsFormsApp1
         [STAThread]
         static void Main()
         {
-            //testc();
+            testc();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());
@@ -20,15 +21,11 @@ namespace WindowsFormsApp1
 
         private static void testc()
         {
-            var adb = new AdbHelper(@"C:\Code\Ruizi\AndroidAgingTest\App_Debug\adb\adb.exe");
+            var reslut = 1.ToEnum<AdbDeviceState>();
+            var result = "Host".ToEnum<AdbDeviceState>();
 
-            var elementResult = adb.FindElemeteForText("设置");
-            var elementsResult = adb.FindElementsCords("//node");
 
-            var element = elementResult.ResultItem;
-            var clickResult= adb.Click(element.X, element.Y);
 
-          
         }
     }
 }

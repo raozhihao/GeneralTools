@@ -390,6 +390,7 @@ namespace ImageTest
 
         private void UIElement_OnMouseUp(object sender, MouseButtonEventArgs e)
         {
+            this.ImageUpEvent?.Invoke(sender, e.GetPosition(this.Image));
             ClearStatus(e);
             if (this.DrawRectAutoEndInit)
                 this.StartDrawRect = false;

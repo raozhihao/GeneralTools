@@ -48,5 +48,21 @@ namespace GeneralTool.General.Enums
             return en;
         }
 
+        /// <summary>
+        /// 将基础数值或string类型转为指定的枚举类型
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="code">传入的值必须是基础数值类型,例如Int32</param>
+        /// <returns></returns>
+        public static T ToEnum<T>(this object code) where T : struct
+        {
+            if (code is string codeStr)
+            {
+                Enum.TryParse<T>(codeStr, true, out var result);
+                return result;
+            }
+            return (T)Enum.ToObject(typeof(T), code);
+        }
+
     }
 }

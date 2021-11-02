@@ -125,6 +125,15 @@ namespace ImageTest
         [Description("确定截图成功后触发事件"), Category("自定义事件")]
         public event EventHandler<Point> ImageDownEvent;
 
+
+
+
+        /// <summary>
+        /// 在图片上点击弹起时
+        /// </summary>
+        [Description("确定截图成功后触发事件"), Category("自定义事件")]
+        public event EventHandler<Point> ImageUpEvent;
+
         /// <summary>
         /// 鼠标在画面上移动事件
         /// </summary>

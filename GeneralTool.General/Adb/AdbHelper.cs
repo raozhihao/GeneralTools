@@ -63,6 +63,7 @@ namespace GeneralTool.General.Adb
                     StandardOutputEncoding = Encoding.UTF8,
                     StandardErrorEncoding = Encoding.UTF8,
                 };
+                cmd.OutputDataReceived += Cmd_OutputDataReceived;
                 cmd.EnableRaisingEvents = true;
                 cmd.StartInfo = startInfo;
                 cmd.Start();
@@ -76,6 +77,11 @@ namespace GeneralTool.General.Adb
             {
                 return ex.GetInnerExceptionMessage();
             }
+        }
+
+        private void Cmd_OutputDataReceived(object sender, DataReceivedEventArgs e)
+        {
+            Console.WriteLine(e.Data);
         }
 
         /// <summary>
@@ -616,7 +622,7 @@ namespace GeneralTool.General.Adb
         }
 
         /// <summary>
-        /// 
+        /// 获取当前屏幕
         /// </summary>
         /// <param name="deviceSerail"></param>
         /// <returns></returns>
@@ -641,6 +647,33 @@ namespace GeneralTool.General.Adb
             catch (Exception ex)
             {
                 result.LastErroMsg = ex.GetInnerExceptionMessage();
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// 滑动
+        /// </summary>
+        /// <param name="x1"></param>
+        /// <param name="y1"></param>
+        /// <param name="x2"></param>
+        /// <param name="y2"></param>
+        /// <param name="deviceSerial"></param>
+        /// <returns></returns>
+        public Result<string> Swipe(int x1, int y1, int x2, int y2, string deviceSerial = "")
+        {
+            var result = new Result<string>() { ResultBool = false };
+            try
+            {
+                deviceSerial = this.LoadSerial(deviceSerial);
+                this.Command($"adb shell  input swipe {x1} {y1} {x2} {y2}");
+                result.ResultBool = true;
+                return result;
+            }
+            catch (Exception ex)
+            {
+                result.LastErroMsg = ex.GetInnerExceptionMessage();
+                result.ResultItem = ex.GetInnerExceptionMessage();
                 return result;
             }
         }
