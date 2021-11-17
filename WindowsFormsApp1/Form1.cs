@@ -13,7 +13,7 @@ namespace WindowsFormsApp1
         }
 
         AdbHelper adb = new AdbHelper(@"C:\Code\Self\SamsungMobileFileTest\bin\Debug\adb\adb.exe");
-        private async void button1_Click(object sender, EventArgs e)
+        private  void button1_Click(object sender, EventArgs e)
         {
             var path = @"C:\Code\Self\SamsungMobileFileTest\bin\Debug\adb\adb.exe";
             GeneralTool.General.ProcessHelpers.ProcessHelper.Run(path, " shell input keyevent 3 ");

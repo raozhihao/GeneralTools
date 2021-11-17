@@ -13,8 +13,8 @@ namespace GeneralTool.General.ProcessHelpers
     {
         #region Public 方法
 
-        private static AutoResetEvent reciveEvent = new AutoResetEvent(false);
-        private static List<string> reciveList = new List<string>();
+        private static readonly AutoResetEvent reciveEvent = new AutoResetEvent(false);
+        private static readonly List<string> reciveList = new List<string>();
         /// <summary>
         /// 接收消息事件
         /// </summary>

@@ -10,9 +10,9 @@ namespace GeneralTool.General
     {
         private bool isDisposed;
 
-        private ConcurrentBag<T> Objects = new ConcurrentBag<T>();
+        private readonly ConcurrentBag<T> Objects = new ConcurrentBag<T>();
 
-        private int maxCount;
+        private readonly int maxCount;
 
         /// <summary>
         /// 构造器

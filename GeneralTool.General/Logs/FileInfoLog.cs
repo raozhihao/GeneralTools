@@ -51,6 +51,10 @@ namespace GeneralTool.General.Logs
         /// 是否将日志定向到控制台
         /// </summary>
         public bool ConsoleLogEnable { get; set; } = true;
+        /// <summary>
+        /// 是否将日志类型写入日志
+        /// </summary>
+        public bool InputLogType { get; set; } = true;
 
         /// <summary>
         /// 当前日志路径
@@ -159,12 +163,16 @@ namespace GeneralTool.General.Logs
             var re = this.lockDic.TryDequeue(out var result);
             if (re)
             {
+                if (this.InputLogType)
+                {
+                    result.Msg = $"[{result.LogType}] - {result.Msg}";
+                }
                 var data = Encoding.UTF8.GetBytes(result.Msg + Environment.NewLine);
                 this.currentFileStream.Write(data, 0, data.Length);
                 this.currentFileStream.Flush();
 
                 if (this.ConsoleLogEnable)
-                    Trace.WriteLine($"[{result.LogType}] - {result.Msg}");
+                    Trace.WriteLine(result.Msg);
                 this.LogEvent?.Invoke(this, result);
             }
         }

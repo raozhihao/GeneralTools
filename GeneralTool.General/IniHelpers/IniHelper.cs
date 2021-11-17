@@ -13,7 +13,7 @@ namespace GeneralTool.General.IniHelpers
     {
         #region Private 字段
 
-        private static readonly Lazy<IniHelper> _instance = new Lazy<IniHelper>(() => new IniHelper());
+        private static readonly Lazy<IniHelper> _instance;
 
         //The path of the file we are operating on.
         private readonly string m_path;
@@ -33,15 +33,22 @@ namespace GeneralTool.General.IniHelpers
         public const int MaxSectionSize = 32767; // 32 KB
 
         /// <summary>
-        /// Ini对象
+        /// Ini对象,使用默认的保存位置
         /// </summary>
-        public static IniHelper IniHelperInstance = _instance.Value;
+        public static readonly IniHelper IniHelperInstance;
+
+       
 
         #endregion Public 字段
 
 
         #region Public 构造函数
 
+        static IniHelper()
+        {
+            _instance = new Lazy<IniHelper>(() => new IniHelper());
+            IniHelperInstance = _instance.Value;
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="IniHelper"/> class.
@@ -62,11 +69,9 @@ namespace GeneralTool.General.IniHelpers
 
         /// <summary>
         /// </summary>
-        public IniHelper()
+        public IniHelper() : this(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Configs\\default.ini"))
         {
-            var path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Configs\\default.ini");
-            System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(path));
-            m_path = System.IO.Path.GetFullPath(path);
+
         }
 
         #endregion Public 构造函数
@@ -90,6 +95,16 @@ namespace GeneralTool.General.IniHelpers
         #endregion Public 属性
 
         #region Public 方法
+
+        /// <summary>
+        /// 获取新的Ini对象
+        /// </summary>
+        /// <param name="savePath">Ini配置文件需要保存到的路径</param>
+        /// <returns></returns>
+        public static IniHelper GetInstace(string savePath)
+        {
+            return new IniHelper(savePath);
+        }
 
         /// <summary>
         /// Deletes the specified key from the specified section.

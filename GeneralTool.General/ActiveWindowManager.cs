@@ -11,7 +11,7 @@ namespace GeneralTool.General
     /// </summary>
     public class ActiveWindowManager<T> where T : class
     {
-        private static Lazy<ActiveWindowManager<T>> manager = new Lazy<ActiveWindowManager<T>>(() => new ActiveWindowManager<T>());
+        private static readonly Lazy<ActiveWindowManager<T>> manager = new Lazy<ActiveWindowManager<T>>(() => new ActiveWindowManager<T>());
 
         /// <summary>
         /// 管理类实例
@@ -32,7 +32,7 @@ namespace GeneralTool.General
         /// <summary>
         /// 存储所有加入的激活窗体
         /// </summary>
-        private List<WindowEx<T>> lastWindows = new List<WindowEx<T>>();
+        private readonly List<WindowEx<T>> lastWindows = new List<WindowEx<T>>();
 
         /// <summary>
         /// 获取所有当前存活的窗体

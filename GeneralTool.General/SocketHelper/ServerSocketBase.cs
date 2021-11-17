@@ -4,11 +4,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
+using System.Threading.Tasks;
+using GeneralTool.General.ExceptionHelper;
+using System.Diagnostics;
 
 namespace GeneralTool.General.SocketHelper
 {
     /// <summary>
-    /// Socket基础库
+    /// Socket服务端
     /// </summary>
     public class ServerSocketBase
     {
@@ -67,7 +71,12 @@ namespace GeneralTool.General.SocketHelper
         /// <summary>
         /// 客户端接收消息事件
         /// </summary>
-        public event Action<SocketReceiveArgs> RecevieEvent;
+        public event EventHandler<SocketPackage> RecevieEvent;
+
+        /// <summary>
+        /// 错误信息接收事件
+        /// </summary>
+        public event EventHandler<SocketClientErroArgs> ErroEvent;
 
         #endregion Public 事件
 
@@ -175,42 +184,72 @@ namespace GeneralTool.General.SocketHelper
                 System.Diagnostics.Trace.WriteLine($"客户端 {key} 已重新连接");
             }
 
+
+            var common = new SocketCommon();
             List<byte> list = new List<byte>();
             while (true)
             {
                 if (!clientSocket.IsClientConnected())
                 {
-                    System.Diagnostics.Trace.WriteLine($"客户端 {key} 已下线");
-                    clients.TryRemove(key, out _);
-                    clientSocket.Close();
-                    clientSocket.Dispose();
-                    this.ClientDisconnectedEvent?.Invoke(clientSocket);
+                    CloseClient(clientSocket);
+
                     break;
                 }
 
-                byte[] buffer = new byte[4096];
-                list.Clear();
-                if (!clientSocket.Connected)
+
+                var watch = new Stopwatch();
+                watch.Start();
+                //先读取一个头部
+                var package = new SocketPackage();
+                try
                 {
-                    break;
-                }
-                while (clientSocket.Available > 0)
-                {
-                    int len = clientSocket.Receive(buffer, 0, buffer.Length, SocketFlags.None);
-                    list.AddRange(buffer.Take(len));
-                    if (len < buffer.Length)
+                    Trace.WriteLine($"{DateTime.Now} : 准备接收 - {key}");
+
+                    var len = common.ReadHeadSize(clientSocket);
+                    if (len <= 0)
                     {
+                        throw new Exception("数据长度不对,收到的数据长度为:" + len + "," + common.ErroException);
+                    }
+
+                    Trace.WriteLine($"{DateTime.Now} : 接收到长度数据   Recevier size : {len}");
+                    //读取剩下数据
+                    package = common.Read(clientSocket, len);
+                    Trace.WriteLine($"{DateTime.Now} : 接收完成");
+                    if (package.IsError)
+                    {
+                        this.ErroEvent?.Invoke(this, new SocketClientErroArgs(package.ErroMsg, clientSocket));
+                        CloseClient(clientSocket);
                         break;
                     }
                 }
-
-                if (list.Count > 0)
+                catch (Exception ex)
                 {
-                    this.RecevieEvent?.Invoke(new SocketReceiveArgs(clientSocket, list));
+                    //出现问题,关闭连接
+                    Trace.WriteLine(ex.GetInnerExceptionMessage());
+
+                    this.ErroEvent?.Invoke(this, new SocketClientErroArgs(package.ErroMsg, clientSocket));
+                    CloseClient(clientSocket);
+                    break;
                 }
+
+                this.RecevieEvent?.Invoke(clientSocket,package);
+
+                Trace.WriteLine($"{DateTime.Now} : 发送事件");
                 System.Threading.Thread.Sleep(10);
             }
         }
+
+        private void CloseClient(Socket clientSocket)
+        {
+            var key = clientSocket.RemoteEndPoint.ToString();
+            System.Diagnostics.Trace.WriteLine($"客户端 {key} 已下线");
+            clients.TryRemove(key, out _);
+            clientSocket.Close();
+            clientSocket.Dispose();
+            this.ClientDisconnectedEvent?.Invoke(clientSocket);
+        }
+
+
 
         #endregion Private 方法
     }

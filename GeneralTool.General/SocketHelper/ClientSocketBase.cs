@@ -16,6 +16,7 @@ namespace GeneralTool.General.SocketHelper
         private readonly Socket clientSocket;
         private readonly string host;
         private readonly int port;
+        private readonly SocketCommon common = new SocketCommon();
 
         #endregion Private 字段
 
@@ -82,10 +83,20 @@ namespace GeneralTool.General.SocketHelper
         public List<byte> Send(byte[] buffer)
         {
             this.ErroMsg = "";
-            clientSocket.Send(buffer);
-            var list = GetResponseCommand();
+            var len= common.Send(this.clientSocket, buffer);
+            if (len!=buffer.Length)
+            {
+                throw common.ErroException;
+            }
 
-            return list;
+            var headSize = common.ReadHeadSize(this.clientSocket);
+            if (headSize<=0)
+            {
+                throw common.ErroException;
+            }
+            var package = common.Read(this.clientSocket, headSize);
+
+            return package.Buffer;
         }
 
         /// <summary>
@@ -108,34 +119,6 @@ namespace GeneralTool.General.SocketHelper
 
         #endregion Public 方法
 
-        #region Private 方法
-
-        private List<byte> GetResponseCommand()
-        {
-            byte[] buffer = new byte[4096];
-
-            List<byte> list = new List<byte>();
-
-            while (this.clientSocket.Available > 0)
-            {
-                if (!this.clientSocket.IsClientConnected())
-                {
-                    this.IsConnected = false;
-                    list.Clear();
-                    this.ErroMsg = "服务器已失去连接";
-                    throw new Exception(this.ErroMsg);
-                }
-                int len = clientSocket.Receive(buffer);
-                list.AddRange(buffer.Take(len));
-                if (len < buffer.Length)
-                {
-                    break;
-                }
-            }
-
-            return list;
-        }
-
-        #endregion Private 方法
+      
     }
 }

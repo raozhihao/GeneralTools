@@ -21,6 +21,17 @@ namespace GeneralTool.General.Ioc
         /// </summary>
         public static SimpleIocSerivce SimpleIocSerivceInstance { get; }
 
+        /// <summary>
+        /// 获取当前所有的已注入对象,请先执行Start
+        /// </summary>
+        public IEnumerable<object> Instaces
+        {
+            get
+            {
+                return from i in this.typeDics select i.Value;
+            }
+        }
+
         static SimpleIocSerivce()
         {
             serivce = new Lazy<SimpleIocSerivce>(() => new SimpleIocSerivce());

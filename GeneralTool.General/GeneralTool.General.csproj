@@ -36,6 +36,12 @@
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>GeneralToolSnk.pfx</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.JScript" />
     <Reference Include="PresentationCore" />
@@ -144,6 +150,8 @@
     <Compile Include="ProcessHelpers\ProcessServer.cs" />
     <Compile Include="RandomEx.cs" />
     <Compile Include="SerialPortEx\OnlineStateEventArgs.cs" />
+    <Compile Include="SocketHelper\SocketPackage.cs" />
+    <Compile Include="SocketHelper\ServerSocketBase.cs" />
     <Compile Include="TaskExtensions\TaskRetry.cs" />
     <Compile Include="TaskExtensions\ThreadExtensions.cs" />
     <Compile Include="TaskLib\HttpServerStation.cs" />
@@ -175,7 +183,6 @@
     <Compile Include="SocketHelper\ServerHelper.cs" />
     <Compile Include="ExceptionHelper\SocketConnectException.cs" />
     <Compile Include="SocketHelper\SocketExtensions.cs" />
-    <Compile Include="SocketHelper\ServerSocketBase.cs" />
     <Compile Include="SocketHelper\TempeleteBuilder.cs" />
     <Compile Include="TaskExtensions\DelegateExtensions.cs" />
     <Compile Include="TaskLib\BaseJsonCovert.cs" />
@@ -273,6 +280,7 @@
     <None Include="Docs\HttpServerStation.md" />
     <None Include="Docs\LangProvider.md" />
     <None Include="Docs\EventBinding.md" />
+    <None Include="GeneralToolSnk.pfx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

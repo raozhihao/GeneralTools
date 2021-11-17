@@ -1098,8 +1098,9 @@ namespace GeneralTool.General.WPFHelper.WPFControls
 
         private void CutRectButton_Click(object sender, RoutedEventArgs e)
         {
+            var rect = this.GetChooseRect();
             this.CutPanel.Visibility = Visibility.Collapsed;
-            var handler = new ImageCutRectEventArgs(this.GetChooseRect(), true);
+            var handler = new ImageCutRectEventArgs(rect, true);
             this.CutImageEvent?.Invoke(sender, handler);
             if (handler.HandleToNext)
             {
@@ -1115,7 +1116,7 @@ namespace GeneralTool.General.WPFHelper.WPFControls
                 {
                     msg = ex.Message;
                 }
-                this.CutImageDownEvent?.Invoke(sender, new ImageEventArgs(source, sucess, msg));
+                this.CutImageDownEvent?.Invoke(sender, new ImageEventArgs(source, sucess, msg) {  Int32Rect=rect});
             }
 
             this.CutRectButton.IsChecked = false;

@@ -1,6 +1,9 @@
 ﻿using GeneralTool.General.ExceptionHelper;
 using GeneralTool.General.NetHelper.NetException;
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -78,13 +81,14 @@ namespace GeneralTool.General.NetHelper
         /// </param>
         /// <param name="contentType">
         /// </param>
+        /// <param name="headers"></param>
         /// <returns>
         /// 返回响应字符串
         /// </returns>
         /// <exception cref="HttpCreateRequestException"/>
         /// <exception cref="HttpGetResponseException"/>
         /// <exception cref="HttpWriteStremException"/>
-        public string Http(string url, string queryString, HttpMethod method, string userAgent = "ozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36", string accept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3", string acceptEncoding = "gzip, deflate, br", string contentType = "application/x-www-form-urlencoded")
+        public string Http(string url, string queryString, HttpMethod method, string userAgent = "ozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36", string accept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3", string acceptEncoding = "gzip, deflate, br", string contentType = "application/x-www-form-urlencoded",Dictionary<string,string> headers=null)
         {
             if (string.IsNullOrWhiteSpace(url))
             {
@@ -108,6 +112,14 @@ namespace GeneralTool.General.NetHelper
             request.Headers.Add("Accept-Encoding", acceptEncoding);
 
             request.ContentType = contentType;
+
+            if (headers!=null)
+            {
+                foreach (var item in headers)
+                {
+                    request.Headers.Add(item.Key, item.Value);
+                }
+            }
             request.CookieContainer = CookieContainer;
 
             if (!string.IsNullOrWhiteSpace(queryString))

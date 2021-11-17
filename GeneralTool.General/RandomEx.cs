@@ -7,7 +7,7 @@ namespace GeneralTool.General
     /// </summary>
     public static class RandomEx
     {
-        private static Random _global = new Random();
+        private static readonly Random _global = new Random();
 
         [ThreadStatic]
         private static Random _local;

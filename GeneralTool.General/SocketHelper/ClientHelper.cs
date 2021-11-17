@@ -87,13 +87,18 @@ namespace GeneralTool.General.SocketHelper
 
             try
             {
-                response = serialize.Desrialize<ResponseCommand>(bytes);
+                response = serialize.Desrialize<ResponseCommand>(buffer.ToArray());
                 response.Success = true;
             }
             catch (Exception ex)
             {
                 response.Messages = "反序列化出错:" + ex.Message;
                 response.Success = false;
+            }
+            finally
+            {
+                buffer = null;
+                bytes = null;
             }
 
             return response;

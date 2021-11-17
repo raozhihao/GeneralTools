@@ -1,8 +1,9 @@
 ﻿using GeneralTool.General.Models;
 using GeneralTool.General.ReflectionHelper;
 using System;
+using System.Net.Sockets;
 
-namespace GeneralTool.General.SocketHelper.Server
+namespace GeneralTool.General.SocketHelper
 {
     /// <summary>
     /// 服务帮助类
@@ -170,10 +171,10 @@ namespace GeneralTool.General.SocketHelper.Server
 
         #region Private 方法
 
-        private void SocketBase_RecevieAction(SocketReceiveArgs obj)
+        private void SocketBase_RecevieAction(object sender,SocketPackage package)
         {
-            var list = obj.Buffer;
-            var clientSocket = obj.ClinetSocket;
+            var list = package.Buffer;
+            var clientSocket = sender as Socket;
             RequestCommand cmd = null;
             try
             {
@@ -188,7 +189,8 @@ namespace GeneralTool.General.SocketHelper.Server
                     ResultObject = ex
                 };
                 byte[] bytes = serialize.Serialize(reponseCmd);
-                obj.TrySend(bytes);
+                 new SocketCommon().Send(clientSocket, bytes);
+                //package.TrySend(bytes);
                 return;
             }
 
@@ -201,7 +203,7 @@ namespace GeneralTool.General.SocketHelper.Server
                     Success = false
                 };
                 byte[] bytes = serialize.Serialize(reponseCmd);
-                obj.TrySend(bytes);
+                new SocketCommon().Send(clientSocket, bytes);
                 return;
             }
             else
@@ -210,7 +212,7 @@ namespace GeneralTool.General.SocketHelper.Server
                 try
                 {
                     byte[] bytes = serialize.Serialize(reponseCmd);
-                    obj.TrySend(bytes);
+                    new SocketCommon().Send(clientSocket, bytes);
                 }
                 catch (Exception ex)
                 {
@@ -218,7 +220,7 @@ namespace GeneralTool.General.SocketHelper.Server
                     reponseCmd.Messages = "反序列化出现错误";
                     reponseCmd.ResultObject = ex;
                     byte[] bytes = serialize.Serialize(reponseCmd);
-                    obj.TrySend(bytes);
+                    new SocketCommon().Send(clientSocket, bytes);
                 }
             }
         }

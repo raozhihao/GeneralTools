@@ -29,6 +29,9 @@ namespace GeneralTool.General.Models
             set;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public Dictionary<string, string> Attributes
         {
             get;

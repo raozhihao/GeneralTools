@@ -25,9 +25,9 @@ namespace GeneralTool.General.Attributes
 
             customAttributes.Foreach(a =>
             {
-                if (a is T)
+                if (a is T t1)
                 {
-                    t = (T)a;
+                    t = t1;
                     return;
                 }
             });

@@ -63,7 +63,6 @@ namespace GeneralTool.General.Adb
                     StandardOutputEncoding = Encoding.UTF8,
                     StandardErrorEncoding = Encoding.UTF8,
                 };
-                cmd.OutputDataReceived += Cmd_OutputDataReceived;
                 cmd.EnableRaisingEvents = true;
                 cmd.StartInfo = startInfo;
                 cmd.Start();
@@ -79,10 +78,6 @@ namespace GeneralTool.General.Adb
             }
         }
 
-        private void Cmd_OutputDataReceived(object sender, DataReceivedEventArgs e)
-        {
-            Console.WriteLine(e.Data);
-        }
 
         /// <summary>
         /// 关闭所有adb连接
