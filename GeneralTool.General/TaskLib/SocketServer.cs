@@ -1,13 +1,15 @@
-﻿using GeneralTool.General.Interfaces;
-using GeneralTool.General.Logs;
-using GeneralTool.General.Models;
-using GeneralTool.General.SocketHelper;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+
+using GeneralTool.General.ExceptionHelper;
+using GeneralTool.General.Interfaces;
+using GeneralTool.General.Logs;
+using GeneralTool.General.Models;
+using GeneralTool.General.SocketHelper;
 
 namespace GeneralTool.General.TaskLib
 {
@@ -214,7 +216,7 @@ namespace GeneralTool.General.TaskLib
             }
             catch (Exception ex)
             {
-                log.Error($"向客户端 [{client.RemoteEndPoint}] 发送消息失败:{ex.Message}");
+                log.Error($"向客户端 [{client.RemoteEndPoint}] 发送消息失败:{ex.GetInnerExceptionMessage()}");
             }
         }
 
@@ -323,16 +325,11 @@ namespace GeneralTool.General.TaskLib
                         socket.Receive(array, base.DataPageLength, SocketFlags.None);
                         list.AddRange(array);
                     }
-                    //bool isCheckLink = base.IsCheckLink;
-                    //if (isCheckLink)
-                    //{
-                    //    bool flag4 = socket.Poll(10, SelectMode.SelectRead);
-                    //    if (flag4)
-                    //    {
-                    //        break;
-                    //    }
-                    //}
-                    this.DealMsg(list.ToArray(), socket);
+                    if (list.Count > 0)
+                    {
+                        this.DealMsg(list.ToArray(), socket);
+                    }
+
                 }
                 throw new Exception("连接已被断开!");
             }
@@ -355,7 +352,14 @@ namespace GeneralTool.General.TaskLib
                     bool flag = this.RecLinkSocket != null;
                     if (flag)
                     {
-                        this.RecLinkSocket(socket);
+                        try
+                        {
+                            this.RecLinkSocket(socket);
+                        }
+                        catch (Exception ex)
+                        {
+                            log.Error("处理接收数据错误:" + ex);
+                        }
                     }
                     this.AddClientSocket(socket);
                 }
@@ -365,7 +369,7 @@ namespace GeneralTool.General.TaskLib
             }
             catch (Exception ex)
             {
-                log.Error($"监听客户端连接出现错误:{ex.Message}");
+                log.Error($"监听客户端连接出现错误:{ex}");
             }
         }
 

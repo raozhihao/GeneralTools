@@ -1,8 +1,10 @@
-﻿using GeneralTool.General.Enums;
+﻿using System;
+
+using GeneralTool.General.Enums;
+using GeneralTool.General.ExceptionHelper;
 using GeneralTool.General.Interfaces;
 using GeneralTool.General.Logs;
 using GeneralTool.General.Models;
-using System;
 
 namespace GeneralTool.General.TaskLib
 {
@@ -84,10 +86,10 @@ namespace GeneralTool.General.TaskLib
                 }
                 catch (Exception ex)
                 {
-                    this.log.Fail($"客户端调用参数不正确:{ex.Message}");
+                    this.log.Fail($"反序列化失败:{ex}");
                     serverResponse.StateCode = RequestStateCode.UrlError;
                     serverResponse.RequestSuccess = false;
-                    serverResponse.ErroMsg = ex.Message;
+                    serverResponse.ErroMsg = ex.GetInnerExceptionMessage();
                     return;
                 }
                 serverResponse = this.GetServerResponse(serverRequest);
@@ -97,7 +99,7 @@ namespace GeneralTool.General.TaskLib
                 log.Fail($"客户端调用服务方法发生未知错误:{ex5.Message}");
                 serverResponse.StateCode = RequestStateCode.UnknowError;
                 serverResponse.RequestSuccess = false;
-                serverResponse.ErroMsg = ex5.Message;
+                serverResponse.ErroMsg = ex5.GetInnerExceptionMessage();
             }
             finally
             {

@@ -1,8 +1,8 @@
-﻿using GeneralTool.General.ExceptionHelper;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Sockets;
+
+using GeneralTool.General.ExceptionHelper;
 
 namespace GeneralTool.General.SocketHelper
 {
@@ -83,14 +83,14 @@ namespace GeneralTool.General.SocketHelper
         public List<byte> Send(byte[] buffer)
         {
             this.ErroMsg = "";
-            var len= common.Send(this.clientSocket, buffer);
-            if (len!=buffer.Length)
+            var len = common.Send(this.clientSocket, buffer);
+            if (len != buffer.Length)
             {
                 throw common.ErroException;
             }
 
             var headSize = common.ReadHeadSize(this.clientSocket);
-            if (headSize<=0)
+            if (headSize <= 0)
             {
                 throw common.ErroException;
             }
@@ -119,6 +119,6 @@ namespace GeneralTool.General.SocketHelper
 
         #endregion Public 方法
 
-      
+
     }
 }

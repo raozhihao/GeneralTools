@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+
 using GeneralTool.General.ExceptionHelper;
 
 namespace GeneralTool.General.ProcessHelpers
@@ -28,7 +29,7 @@ namespace GeneralTool.General.ProcessHelpers
         /// </summary>
         /// <param name="exePath">应用程序路径</param>
         /// <param name="args">参数</param>
-        public  void Run(string exePath, string args = "")
+        public void Run(string exePath, string args = "")
         {
             var process = new Process();
             var startInfo = new ProcessStartInfo()
@@ -81,7 +82,7 @@ namespace GeneralTool.General.ProcessHelpers
             }
         }
 
-        private void ErroReceived(object sender,string e)
+        private void ErroReceived(object sender, string e)
         {
             this.ErrorHandler?.Invoke(sender, e);
         }

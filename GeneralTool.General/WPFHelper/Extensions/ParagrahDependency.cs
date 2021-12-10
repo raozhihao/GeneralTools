@@ -1,10 +1,11 @@
-﻿using GeneralTool.General.Models;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
+
+using GeneralTool.General.Models;
 
 namespace GeneralTool.General.WPFHelper.Extensions
 {

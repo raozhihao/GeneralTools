@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Server
 {
@@ -11,7 +7,7 @@ namespace Server
         public void Startup()
         {
             var server = new GeneralTool.General.SocketHelper.ServerHelper();
-            var re= server.RegisterClass<ClassLibrary.ISocketClass>(new ClassLibrary.SocketClass());
+            var re = server.RegisterClass<ClassLibrary.ISocketClass>(new ClassLibrary.SocketClass());
             if (!re)
             {
                 Console.WriteLine("Register error");

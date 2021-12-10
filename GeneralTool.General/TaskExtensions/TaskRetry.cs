@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Threading;
 
 namespace GeneralTool.General.TaskExtensions
@@ -32,8 +28,8 @@ namespace GeneralTool.General.TaskExtensions
                 {
                     return index + 1;
                 }
-            } while (index++<reCount);
-          
+            } while (index++ < reCount);
+
             return index;
         }
 
@@ -62,7 +58,7 @@ namespace GeneralTool.General.TaskExtensions
                 index++;
 
             } while (DateTime.Now - now <= timeOut);
-            
+
             return index;
         }
     }

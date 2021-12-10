@@ -1,13 +1,10 @@
-﻿using GeneralTool.General.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
+
 using GeneralTool.General.ExceptionHelper;
-using System.Diagnostics;
 
 namespace GeneralTool.General.SocketHelper
 {
@@ -138,7 +135,7 @@ namespace GeneralTool.General.SocketHelper
                     }
                     catch (Exception ex)
                     {
-                        System.Diagnostics.Trace.WriteLine(ex.Message);
+                        System.Diagnostics.Trace.WriteLine(ex.GetInnerExceptionMessage());
                     }
                 }
                 serverSocket = null;
@@ -163,7 +160,7 @@ namespace GeneralTool.General.SocketHelper
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Trace.WriteLine($"客户端连接发生异常 : {ex.Message}");
+                System.Diagnostics.Trace.WriteLine($"客户端连接发生异常 : {ex.GetInnerExceptionMessage()}");
                 return;
             }
 
@@ -232,7 +229,7 @@ namespace GeneralTool.General.SocketHelper
                     break;
                 }
 
-                this.RecevieEvent?.Invoke(clientSocket,package);
+                this.RecevieEvent?.Invoke(clientSocket, package);
 
                 Trace.WriteLine($"{DateTime.Now} : 发送事件");
                 System.Threading.Thread.Sleep(10);

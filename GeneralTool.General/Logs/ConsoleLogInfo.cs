@@ -1,8 +1,9 @@
-﻿using GeneralTool.General.Enums;
+﻿using System;
+using System.Diagnostics;
+
+using GeneralTool.General.Enums;
 using GeneralTool.General.Interfaces;
 using GeneralTool.General.Models;
-using System;
-using System.Diagnostics;
 
 namespace GeneralTool.General.Logs
 {

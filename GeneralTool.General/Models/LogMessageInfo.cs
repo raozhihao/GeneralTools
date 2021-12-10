@@ -1,5 +1,6 @@
-﻿using GeneralTool.General.Enums;
-using System;
+﻿using System;
+
+using GeneralTool.General.Enums;
 
 namespace GeneralTool.General.Models
 {

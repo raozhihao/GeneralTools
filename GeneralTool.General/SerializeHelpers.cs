@@ -1,5 +1,4 @@
-﻿using GeneralTool.General.ValueTypeExtensions;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
@@ -7,6 +6,9 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+
+using GeneralTool.General.ExceptionHelper;
+using GeneralTool.General.ValueTypeExtensions;
 
 namespace GeneralTool.General
 {
@@ -181,7 +183,7 @@ namespace GeneralTool.General
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Trace.WriteLine(ex.Message);
+                System.Diagnostics.Trace.WriteLine(ex.GetInnerExceptionMessage());
             }
             return obj;
         }
@@ -213,7 +215,7 @@ namespace GeneralTool.General
                     }
                     catch (Exception ex)
                     {
-                        System.Diagnostics.Trace.WriteLine(ex.Message);
+                        System.Diagnostics.Trace.WriteLine(ex.GetInnerExceptionMessage());
                     }
                 }
             }
@@ -265,7 +267,7 @@ namespace GeneralTool.General
                     }
                     catch (Exception ex)
                     {
-                        System.Diagnostics.Trace.WriteLine(ex.Message);
+                        System.Diagnostics.Trace.WriteLine(ex.GetInnerExceptionMessage());
                     }
                 }
             }
@@ -307,7 +309,7 @@ namespace GeneralTool.General
                             }
                             catch (Exception ex)
                             {
-                                System.Diagnostics.Trace.WriteLine(ex.Message);
+                                System.Diagnostics.Trace.WriteLine(ex.GetInnerExceptionMessage());
                             }
                         }
                         else
@@ -327,7 +329,7 @@ namespace GeneralTool.General
                                 }
                                 catch (Exception ex)
                                 {
-                                    System.Diagnostics.Trace.WriteLine(ex.Message);
+                                    System.Diagnostics.Trace.WriteLine(ex.GetInnerExceptionMessage());
                                 }
                             }
                             addMethod.Invoke(obj, paraObj);
@@ -583,7 +585,7 @@ namespace GeneralTool.General
                                 }
                                 catch (Exception ex)
                                 {
-                                    System.Diagnostics.Trace.WriteLine(ex.Message);
+                                    System.Diagnostics.Trace.WriteLine(ex.GetInnerExceptionMessage());
                                 }
                                 datas.AddRange(BitConverter.GetBytes(argData.Length));//获取长度
                                 datas.AddRange(argData);//获取序列化后的内容
@@ -617,7 +619,7 @@ namespace GeneralTool.General
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Trace.WriteLine(ex.Message);
+                System.Diagnostics.Trace.WriteLine(ex.GetInnerExceptionMessage());
             }
             return byts;
         }

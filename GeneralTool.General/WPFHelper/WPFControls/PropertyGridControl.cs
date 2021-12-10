@@ -1,7 +1,8 @@
-﻿using GeneralTool.General.Attributes;
-using GeneralTool.General.WPFHelper.UIEditorConverts;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
+
+using GeneralTool.General.Attributes;
+using GeneralTool.General.WPFHelper.UIEditorConverts;
 
 namespace GeneralTool.General.WPFHelper.WPFControls
 {

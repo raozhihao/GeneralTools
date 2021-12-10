@@ -4,106 +4,86 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+
 using GeneralTool.General.SocketHelper;
+using GeneralTool.General.SocketLib;
+using GeneralTool.General.SocketLib.Models;
+using GeneralTool.General.SocketLib.Packages;
+using GeneralTool.General;
+using GeneralTool.General.Logs;
+using System.Drawing;
 
 namespace Server
 {
     class Program
     {
+        static SocketServer<FixedHeadRecevieState> server;
+        static int loopNum = 1;
+        static FileInfoLog log = new FileInfoLog("Server");
+        public int ur { get; set; }
         static void Main(string[] args)
         {
-            new ServerProxy().Startup();
-           // Test();
-            //var server = new ServerSocketBase("192.168.12.102", 8899);
-            //server.ClientConnetedEvent += Server_ClientConnetedEvent;
-            //server.ClientDisconnectedEvent += Server_ClientDisconnectedEvent;
-            //server.RecevieEvent += Server_RecevieEvent;
+            var picPath = @"C:\Users\raozh\Pictures\Camera\1.bmp";
+
+
+            //var server = new ServerHelper();
+            //var re= server.RegisterClass<ClassLibrary.ISocketClass>(new ClassLibrary.SocketClass());
             //server.Start();
 
-            Console.WriteLine("Server start...");
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+
+            server = SimpleServerBuilder.CreateFixedCommandPack(log);
+            server.ReceiveEvent += Server_ReceiveEvent;
+            server.ClientConnctedEvent += Server_ClientConnctedEvent;
+            server.ErrorEvent += Server_ErrorEvent;
+            server.DisconnectEvent += Server_DisconnectEvent;
+            server.Startup(22155);
+            Console.WriteLine("Server Startup");
             Console.ReadKey();
+            server.Dispose();
         }
 
 
-        public static int SendBytes( byte[] buffer)
+        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            var lenSize = buffer.Length;
-            var sum = 0;//保存已发送字节总数
-            var lenTmp = lenSize;
-            try
-            {
-                var bufTmp = new byte[lenSize];
-                //将数据拷贝进去
-                Array.Copy(buffer, 0, bufTmp, sum, lenTmp);
-                while (true)
-                {
-
-                    //当前已发送字节数
-                    var len = GeneralTool.General.RandomEx.Next(1,lenSize);
-
-                    sum += len;
-                    if (len == 0)
-                    {
-                        //没有发送成功
-                        return sum;
-                    }
-
-                    //如果当前已发送总字节数比原定的要少
-                    if (sum < lenSize)
-                    {
-                        Trace.WriteLine("Send  数据字节数未发够,继续发送");
-                        //发送的数据不够,继续发送,例如需要发送10个字节,但上几次总共就发了5个,则还剩下5个未发
-                        //则从下标为5的地方再拷贝原始数据到tmp中发送
-
-                        var tmpCount = lenSize - sum;//未发送完成的
-                        bufTmp = new byte[tmpCount];//剩下未发送完的
-                        Array.Copy(buffer, sum, bufTmp, 0, tmpCount);
-                    }
-                    else if (sum == lenSize)
-                    {
-                        //一致,则退出
-                        break;
-                    }
-                }
-
-                return sum;
-            }
-            catch (Exception ex)
-            {
-                return sum;
-            }
+            log.Error(e.ExceptionObject + "");
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(e.ExceptionObject);
         }
-        private static void Test()
+
+        private static void Server_DisconnectEvent(object sender, SocketErrorArg e)
         {
-            var buffer = new byte[100];
-            for (byte i = 0; i < 100; i++)
-            {
-                buffer[i] = i;
-            }
-
-            var tmpBuffer = new byte[100];
-            SendBytes(buffer);
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+            Console.WriteLine($"Client {e.Client.RemoteEndPoint} Disconnect");
         }
 
-        private static void Server_RecevieEvent(object sender,SocketPackage obj)
+        private static void Server_ErrorEvent(object sender, SocketErrorArg e)
         {
-            var package = obj;
-            var len = package.PackageLen;
-            var buffer = package.Buffer;
-            File.WriteAllBytes("1", buffer.ToArray());
-          
-            Console.WriteLine("Recevier ok");
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"Client {e.Client.RemoteEndPoint} Error : {e.Exception?.Message}");
         }
 
-        private static void Server_ClientDisconnectedEvent(System.Net.Sockets.Socket obj)
+        private static void Server_ClientConnctedEvent(object sender, SocketArg e)
         {
-            Console.WriteLine($"Client disconnected");
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.WriteLine($"Client {e.Client.RemoteEndPoint} Connect");
         }
 
-        private static void Server_ClientConnetedEvent(System.Net.Sockets.Socket obj)
+        private static void Server_ReceiveEvent(object sender, ReceiveArg e)
         {
-            Console.WriteLine($"Client connected");
+            if (loopNum % 30 == 0)
+                Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"Receive : {Encoding.UTF8.GetString(e.PackBuffer.ToArray())}");
+            var msg = $"Server send : {Guid.NewGuid()}   ---   {loopNum++}";
+            var sendMsg = Encoding.UTF8.GetBytes(msg);
+            server.Send(sendMsg, e.Client);
+            Console.WriteLine($"Send.. {msg}");
         }
+    }
+
+    public class TaskResult
+    {
+        public int MyProperty { get; set; }
     }
 }

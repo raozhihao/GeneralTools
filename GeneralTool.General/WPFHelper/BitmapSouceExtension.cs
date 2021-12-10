@@ -1,9 +1,11 @@
-﻿using GeneralTool.General.Enums;
-using System;
+﻿using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+
+using GeneralTool.General.Enums;
+using GeneralTool.General.ExceptionHelper;
 
 namespace GeneralTool.General.WPFHelper
 {
@@ -63,7 +65,7 @@ namespace GeneralTool.General.WPFHelper
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Trace.WriteLine(ex.Message);
+                System.Diagnostics.Trace.WriteLine(ex.GetInnerExceptionMessage());
                 return false;
             }
         }

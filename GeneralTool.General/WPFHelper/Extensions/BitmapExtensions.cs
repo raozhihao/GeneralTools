@@ -3,6 +3,8 @@ using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using System.Windows.Media.Imaging;
 
+using GeneralTool.General.ExceptionHelper;
+
 namespace GeneralTool.General.WPFHelper.Extensions
 {
     /// <summary>
@@ -92,7 +94,7 @@ namespace GeneralTool.General.WPFHelper.Extensions
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Trace.WriteLine($"图片复制到内存失败:{ex.Message}");
+                System.Diagnostics.Trace.WriteLine($"图片复制到内存失败:{ex.GetInnerExceptionMessage()}");
             }
             finally
             {
@@ -124,7 +126,7 @@ namespace GeneralTool.General.WPFHelper.Extensions
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Trace.WriteLine(ex.Message);
+                System.Diagnostics.Trace.WriteLine(ex.GetInnerExceptionMessage());
             }
         }
 

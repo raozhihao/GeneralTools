@@ -1,9 +1,10 @@
-﻿using GeneralTool.General.Models;
-using System;
+﻿using System;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Windows.Data;
+
+using GeneralTool.General.Models;
 
 namespace GeneralTool.General.WPFHelper.Extensions
 {

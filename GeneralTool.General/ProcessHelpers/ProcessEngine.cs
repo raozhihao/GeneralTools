@@ -1,7 +1,8 @@
-﻿using GeneralTool.General.ExceptionHelper;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Threading;
+
+using GeneralTool.General.ExceptionHelper;
 
 namespace GeneralTool.General.ProcessHelpers
 {
@@ -66,7 +67,7 @@ namespace GeneralTool.General.ProcessHelpers
             }
             catch (Exception ex)
             {
-                this.ErroMsg = "启动程序出现错误:" + ex.Message;
+                this.ErroMsg = "启动程序出现错误:" + ex.GetInnerExceptionMessage();
                 return false;
             }
         }
@@ -112,7 +113,7 @@ namespace GeneralTool.General.ProcessHelpers
             }
             catch (Exception ex)
             {
-                this.ErroMsg=ex.GetInnerExceptionMessage();
+                this.ErroMsg = ex.GetInnerExceptionMessage();
             }
         }
 

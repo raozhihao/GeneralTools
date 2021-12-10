@@ -5,6 +5,8 @@ using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Ipc;
 using System.Runtime.Serialization.Formatters;
 
+using GeneralTool.General.ExceptionHelper;
+
 namespace GeneralTool.General.IPCHelper
 {
     /// <summary>
@@ -111,7 +113,8 @@ namespace GeneralTool.General.IPCHelper
                     //指定信道的端口
                     ["portName"] = PortName,
                     ["name"] = "ipc",
-                    ["authorizedGroup"] = "Everyone"
+                    ["authorizedGroup"] = "Everyone",
+                    ["typeFilterLevel"] = TypeFilterLevel.Full
                 };
 
                 channel = new IpcChannel(properties, clientProvider, serverProvider);
@@ -128,7 +131,7 @@ namespace GeneralTool.General.IPCHelper
             }
             catch (Exception ex)
             {
-                ErroMsg = ex.Message;
+                ErroMsg = ex.GetInnerExceptionMessage();
                 IsRegisted = false;
                 return false;
             }
@@ -153,7 +156,7 @@ namespace GeneralTool.General.IPCHelper
             }
             catch (Exception ex)
             {
-                ErroMsg = ex.Message;
+                ErroMsg = ex.GetInnerExceptionMessage();
                 IsRegisted = false;
                 return false;
             }

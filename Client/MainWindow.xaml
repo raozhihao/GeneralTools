@@ -29,6 +29,14 @@
                       Click="Large_Click" />
             <MenuItem Header="Test"
                       Click="MenuItem_Click" />
+            <MenuItem Header="Ipc"
+                      Click="Ipc_click" />
+
+            <MenuItem Header="Socket"
+                      Click="Socket_Click" />
+
+            <MenuItem Header="Send"
+                      Click="Send2_Click" />
         </Menu>
 
         <RichTextBox Grid.Row="1">

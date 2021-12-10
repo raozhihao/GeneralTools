@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Net.Sockets;
-using GeneralTool.General.ExceptionHelper;
 
 namespace GeneralTool.General.SocketHelper
 {
@@ -59,7 +58,7 @@ namespace GeneralTool.General.SocketHelper
             }
 
             var headLen = BitConverter.ToInt32(headBuffer, 0);
-           
+
             Trace.WriteLine($"{DateTime.Now} : 接收到长度数据   Recevier size : {len}");
             return headLen;
         }

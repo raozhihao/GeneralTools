@@ -1,9 +1,10 @@
-﻿using GeneralTool.General.Adb;
-using GeneralTool.General.Enums;
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace WindowsFormsApp1
+namespace ClientFrm
 {
     static class Program
     {
@@ -13,19 +14,9 @@ namespace WindowsFormsApp1
         [STAThread]
         static void Main()
         {
-            testc();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());
-        }
-
-        private static void testc()
-        {
-            var reslut = 1.ToEnum<AdbDeviceState>();
-            var result = "Host".ToEnum<AdbDeviceState>();
-
-
-
         }
     }
 }

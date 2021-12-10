@@ -1,7 +1,13 @@
-﻿using GeneralTool.General.ExceptionHelper;
-using GeneralTool.General.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Threading;
+
+using GeneralTool.General.ExceptionHelper;
+using GeneralTool.General.Models;
+using GeneralTool.General.SocketLib;
+using GeneralTool.General.SocketLib.Models;
 
 namespace GeneralTool.General.SocketHelper
 {
@@ -12,8 +18,12 @@ namespace GeneralTool.General.SocketHelper
     {
         #region Private 字段
 
-        private readonly ClientSocketBase clientSocket;
+        private readonly SocketClient<FixedHeadRecevieState> clientSocket;
         private readonly SerializeHelpers serialize;
+        private readonly string host;
+        private readonly int port;
+        private readonly AutoResetEvent autoReset = new AutoResetEvent(false);
+        private readonly ResponseCommand response = new ResponseCommand();
 
         #endregion Private 字段
 
@@ -29,7 +39,36 @@ namespace GeneralTool.General.SocketHelper
         public ClientHelper(string host = "127.0.0.1", int port = 55155)
         {
             serialize = new SerializeHelpers();
-            clientSocket = new ClientSocketBase(host, port);
+            clientSocket = SimpleClientBuilder.CreateFixedCommandSubPack(null);
+            clientSocket.DisconnectEvent += ClientSocket_DisconnectEvent;
+            clientSocket.ErrorEvent += ClientSocket_ErrorEvent;
+            clientSocket.ReceiveEvent += ClientSocket_ReceiveEvent;
+            this.host = host;
+            this.port = port;
+        }
+
+        private void ClientSocket_ReceiveEvent(object sender, ReceiveArg e)
+        {
+            var buffer = e.PackBuffer.ToArray();
+            this.response.Success = true;
+            this.response.ResultObject = this.serialize.Desrialize<ResponseCommand>(buffer);
+            this.autoReset.Set();
+        }
+
+        private void ClientSocket_ErrorEvent(object sender, SocketErrorArg e)
+        {
+            this.response.Success = false;
+            this.response.ResultObject = null;
+            this.response.Messages = e.Exception.GetInnerExceptionMessage();
+            this.autoReset.Set();
+        }
+
+        private void ClientSocket_DisconnectEvent(object sender, SocketErrorArg e)
+        {
+            this.response.Success = false;
+            this.response.ResultObject = null;
+            this.response.Messages = e.Exception?.GetInnerExceptionMessage();
+            this.autoReset.Set();
         }
 
         #endregion Public 构造函数
@@ -60,7 +99,14 @@ namespace GeneralTool.General.SocketHelper
         {
             if (!clientSocket.IsConnected)
             {
-                Start();
+                try
+                {
+                    Start();
+                }
+                catch (Exception ex)
+                {
+                    return new ResponseCommand(false, ex.GetInnerExceptionMessage(), null);
+                }
             }
 
             byte[] bytes;
@@ -73,33 +119,27 @@ namespace GeneralTool.General.SocketHelper
                 throw new SerializeException("序列化出错", ex);
             }
 
-            ResponseCommand response = new ResponseCommand();
+            
             List<byte> buffer = new List<byte>();
             try
             {
-                buffer = clientSocket.Send(bytes);
+                var re = clientSocket.Send(bytes,clientSocket.Socket);
+                if (!re)
+                {
+                    response.Messages = "发送远程数据不成功";
+                    response.Success = false;
+                    return response;
+                }
             }
             catch (Exception ex)
             {
-                response.Messages = ex.Message;
+                response.Messages = ex.GetInnerExceptionMessage();
                 response.Success = false;
             }
 
-            try
-            {
-                response = serialize.Desrialize<ResponseCommand>(buffer.ToArray());
-                response.Success = true;
-            }
-            catch (Exception ex)
-            {
-                response.Messages = "反序列化出错:" + ex.Message;
-                response.Success = false;
-            }
-            finally
-            {
-                buffer = null;
-                bytes = null;
-            }
+            this.autoReset.WaitOne();
+            bytes = null;
+
 
             return response;
         }
@@ -109,7 +149,8 @@ namespace GeneralTool.General.SocketHelper
         /// </summary>
         public void Start()
         {
-            this.clientSocket.Start();
+            this.clientSocket.Startup(IPAddress.Parse(this.host),this.port);
+            this.autoReset.Reset();
         }
 
         #endregion Public 方法

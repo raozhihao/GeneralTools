@@ -1,8 +1,10 @@
-﻿using GeneralTool.General.WPFHelper;
-using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Windows;
 using System.Windows.Media.Imaging;
+
+using GeneralTool.General.WPFHelper;
+
+using Microsoft.Win32;
 
 namespace ImageTest
 {

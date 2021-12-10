@@ -2,6 +2,8 @@
 using System.Diagnostics;
 using System.IO;
 
+using GeneralTool.General.ExceptionHelper;
+
 namespace GeneralTool.General.IPCHelper
 {
     /// <summary>
@@ -86,7 +88,7 @@ namespace GeneralTool.General.IPCHelper
             }
             catch (Exception ex)
             {
-                ErroMsg = ex.Message;
+                ErroMsg = ex.GetInnerExceptionMessage();
             }
         }
 
@@ -114,7 +116,7 @@ namespace GeneralTool.General.IPCHelper
             }
             catch (Exception ex)
             {
-                ErroMsg = ex.Message;
+                ErroMsg = ex.GetInnerExceptionMessage();
                 IsConnected = false;
                 return null;
             }
@@ -201,7 +203,7 @@ namespace GeneralTool.General.IPCHelper
             }
             catch (Exception ex)
             {
-                ErroMsg = ex.Message;
+                ErroMsg = ex.GetInnerExceptionMessage();
                 return false;
             }
 

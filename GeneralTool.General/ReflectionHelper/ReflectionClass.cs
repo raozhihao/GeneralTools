@@ -1,8 +1,9 @@
-﻿using GeneralTool.General.ExceptionHelper;
-using GeneralTool.General.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+
+using GeneralTool.General.ExceptionHelper;
+using GeneralTool.General.Models;
 
 namespace GeneralTool.General.ReflectionHelper
 {
@@ -123,6 +124,10 @@ namespace GeneralTool.General.ReflectionHelper
             MethodInfo[] methods = this.ActivatorObj.GetType().GetMethods();
             foreach (MethodInfo item in methods)
             {
+                if (item.IsSpecialName)
+                {
+                    continue;
+                }
                 string methodName = item.ToString();
                 if (Methods.ContainsKey(methodName))
                 {

@@ -1,8 +1,9 @@
-﻿using GeneralTool.General.Models;
-using System;
+﻿using System;
 using System.IO;
 using System.Net;
 using System.Text;
+
+using GeneralTool.General.Models;
 
 namespace GeneralTool.General.TaskLib
 {

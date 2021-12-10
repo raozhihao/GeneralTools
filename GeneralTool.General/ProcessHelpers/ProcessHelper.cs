@@ -1,8 +1,9 @@
-﻿using GeneralTool.General.ExceptionHelper;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
+
+using GeneralTool.General.ExceptionHelper;
 
 namespace GeneralTool.General.ProcessHelpers
 {

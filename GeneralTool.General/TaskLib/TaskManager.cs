@@ -1,14 +1,15 @@
-﻿using GeneralTool.General.Attributes;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Reflection;
+
+using GeneralTool.General.Attributes;
 using GeneralTool.General.ExceptionHelper;
 using GeneralTool.General.Interfaces;
 using GeneralTool.General.LinqExtensions;
 using GeneralTool.General.Logs;
 using GeneralTool.General.Models;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Reflection;
 
 namespace GeneralTool.General.TaskLib
 {
@@ -185,7 +186,7 @@ namespace GeneralTool.General.TaskLib
                     }
                     catch (Exception ex)
                     {
-                        var message = $"无法将参数 {info.Name} 转换为值 {valueMsg} 错误:{ex.Message}";
+                        var message = $"无法将参数 {info.Name} 转换为值 {valueMsg} 错误:{ex.GetInnerExceptionMessage()}";
                         this.log.Fail(message);
                         throw new Exception(message);
                     }
@@ -326,7 +327,7 @@ namespace GeneralTool.General.TaskLib
             catch (Exception ex)
             {
                 this.IsSocketInit = false;
-                this.erroMsg = "启动中有模块失败" + ex.Message;
+                this.erroMsg = "启动中有模块失败" + ex.GetInnerExceptionMessage();
                 this.log.Fail(this.erroMsg);
                 return false;
             }

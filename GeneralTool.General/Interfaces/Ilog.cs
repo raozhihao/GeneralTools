@@ -1,6 +1,7 @@
-﻿using GeneralTool.General.Enums;
+﻿using System;
+
+using GeneralTool.General.Enums;
 using GeneralTool.General.Models;
-using System;
 
 namespace GeneralTool.General.Interfaces
 {

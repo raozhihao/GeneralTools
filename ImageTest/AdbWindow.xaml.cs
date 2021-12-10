@@ -1,19 +1,8 @@
-﻿using GeneralTool.General.Adb;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
+﻿using System;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+
+using GeneralTool.General.Adb;
 
 namespace ImageTest
 {
@@ -33,7 +22,7 @@ namespace ImageTest
             this.pic.ImageUpEvent += Pic_ImageUpEvent;
         }
 
-     
+
         private void Pic_ImageUpEvent(object sender, Point e)
         {
             this.adb.Swipe((int)this.mouseDownPoint.X, (int)this.mouseDownPoint.Y, (int)e.X, (int)e.Y);
@@ -43,7 +32,6 @@ namespace ImageTest
         {
             this.mouseDownTime = DateTime.Now;
             this.mouseDownPoint = e;
-
         }
 
         private void AdbWindow_Loaded(object sender, RoutedEventArgs e)
@@ -54,7 +42,7 @@ namespace ImageTest
         void LoadImage()
         {
             new Thread(LoopLoad) { IsBackground = true }.Start();
-           
+
         }
 
         private void LoopLoad()
@@ -67,13 +55,14 @@ namespace ImageTest
                     var result = this.adb.GetScreen();
                     if (result.ResultBool)
                     {
-                        this.Dispatcher.Invoke(new Action(() => {
+                        this.Dispatcher.Invoke(new Action(() =>
+                        {
                             this.pic.ImageSource = GeneralTool.General.WPFHelper.Extensions.BitmapExtensions.ToBitmapImage((System.Drawing.Bitmap)result.ResultItem);
                         }));
 
                     }
                 }
-              
+
             }
         }
     }

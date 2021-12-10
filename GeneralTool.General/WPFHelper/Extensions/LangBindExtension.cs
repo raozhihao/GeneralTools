@@ -61,7 +61,7 @@ namespace GeneralTool.General.WPFHelper.Extensions
                 throw new Exception("语言只能绑定在 DependencyProperty 上");
 
             if (this.dependencyObject == null)
-                throw new Exception("无法绑定此项,只能在DependencyObject上进行绑定");
+                return null;
 
             //设置默认库
             if (!LangProvider.LangProviderInstance.DefaultResource.ContainsKey(this.LangKey))

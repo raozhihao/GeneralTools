@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace GeneralTool.General.Models
 {
@@ -44,7 +40,7 @@ namespace GeneralTool.General.Models
         /// <param name="cx"></param>
         /// <param name="cy"></param>
         /// <param name="attr"></param>
-        public Element(int cx, int cy,Dictionary<string,string> attr)
+        public Element(int cx, int cy, Dictionary<string, string> attr)
         {
             this.X = cx;
             this.Y = cy;

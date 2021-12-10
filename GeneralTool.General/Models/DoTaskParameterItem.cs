@@ -1,11 +1,12 @@
-﻿using GeneralTool.General.NetHelper;
-using GeneralTool.General.TaskLib;
-using GeneralTool.General.WPFHelper;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+
+using GeneralTool.General.NetHelper;
+using GeneralTool.General.TaskLib;
+using GeneralTool.General.WPFHelper;
 
 namespace GeneralTool.General.Models
 {

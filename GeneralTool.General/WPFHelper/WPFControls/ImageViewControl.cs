@@ -1,5 +1,4 @@
-﻿using GeneralTool.General.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows;
@@ -10,6 +9,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+
+using GeneralTool.General.ExceptionHelper;
+using GeneralTool.General.Models;
 
 namespace GeneralTool.General.WPFHelper.WPFControls
 {
@@ -987,7 +989,7 @@ namespace GeneralTool.General.WPFHelper.WPFControls
                 }
                 catch (Exception ex)
                 {
-                    System.Diagnostics.Trace.WriteLine($"重新设置截取框大小出错:{ex.Message}");
+                    System.Diagnostics.Trace.WriteLine($"重新设置截取框大小出错:{ex.GetInnerExceptionMessage()}");
                 }
                 if (CutPanel.Visibility == Visibility.Visible)
                     this.CutPanelVisibleChanged?.Invoke(sender, new ImageCutRectEventArgs(this.GetChooseRect()));
@@ -1102,11 +1104,11 @@ namespace GeneralTool.General.WPFHelper.WPFControls
             this.CutPanel.Visibility = Visibility.Collapsed;
             var handler = new ImageCutRectEventArgs(rect, true);
             this.CutImageEvent?.Invoke(sender, handler);
+            BitmapSource source = null;
+            var sucess = false;
+            var msg = "";
             if (handler.HandleToNext)
             {
-                var sucess = false;
-                var msg = "";
-                BitmapSource source = null;
                 try
                 {
                     source = this.GetChooseRectImageSouce();
@@ -1114,16 +1116,24 @@ namespace GeneralTool.General.WPFHelper.WPFControls
                 }
                 catch (Exception ex)
                 {
-                    msg = ex.Message;
+                    msg = ex.GetInnerExceptionMessage();
                 }
-                this.CutImageDownEvent?.Invoke(sender, new ImageEventArgs(source, sucess, msg) {  Int32Rect=rect});
+
             }
 
             this.CutRectButton.IsChecked = false;
             this.isDrag = false;
             this.ClearRectangle();
+            if (handler.HandleToNext)
+            {
+                this.CutImageDownEvent?.Invoke(sender, new ImageEventArgs(source, sucess, msg) { Int32Rect = rect });
+            }
         }
 
+        /// <summary>
+        /// 取消按钮
+        /// </summary>
+        public event EventHandler CutMenuCancelEvent;
         private void CutTempCancelClick(object sender, RoutedEventArgs e)
         {
             foreach (UIElement item in this.stackTools.Children)
@@ -1136,6 +1146,7 @@ namespace GeneralTool.General.WPFHelper.WPFControls
 
             this.isDrag = false;
             this.ClearRectangle();
+            this.CutMenuCancelEvent?.Invoke(sender, e);
         }
 
         /// <summary>

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GeneralTool.General.Enums
+﻿namespace GeneralTool.General.Enums
 {
     /// <summary>
     /// Adb设备状态

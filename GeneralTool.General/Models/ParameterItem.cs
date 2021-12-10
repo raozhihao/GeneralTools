@@ -1,5 +1,6 @@
-﻿using GeneralTool.General.WPFHelper;
-using System;
+﻿using System;
+
+using GeneralTool.General.WPFHelper;
 
 namespace GeneralTool.General.Models
 {

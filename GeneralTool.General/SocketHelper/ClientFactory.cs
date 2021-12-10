@@ -1,11 +1,12 @@
-﻿using Microsoft.CSharp;
-using System;
+﻿using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+
+using Microsoft.CSharp;
 
 namespace GeneralTool.General.SocketHelper
 {
@@ -87,7 +88,6 @@ namespace GeneralTool.General.SocketHelper
             options.ReferencedAssemblies.Add("System.Data.dll");
             options.ReferencedAssemblies.Add("System.Core.dll");
             options.ReferencedAssemblies.Add("System.Data.DataSetExtensions.dll");
-            options.ReferencedAssemblies.Add("System.Net.Http.dll");
             options.ReferencedAssemblies.Add("System.Xml.Linq.dll");
             options.ReferencedAssemblies.Add(Path.Combine(startPath, "GeneralTool.General.dll"));
 
@@ -112,10 +112,26 @@ namespace GeneralTool.General.SocketHelper
             }
         }
 
+        //private static IEnumerable<string> GetMethodStrs(Type type)
+        //{
+        //    //区分出属性,方法,事件
+        //   // var eventBuilder = GetEventStrs(type.GetEvents());
+          
+        //    var methodBuilder = GetMethodStrs(type.GetMethods());
+        //    return methodBuilder;
+        //}
+
+   
+
         private static IEnumerable<string> GetMethodStrs(MethodInfo[] methods)
         {
             foreach (MethodInfo method in methods)
             {
+                if (method.IsSpecialName)
+                {
+                    //特殊的不预处理
+                    continue;
+                }
                 StringBuilder builder = new StringBuilder();
                 builder.Append("public ");
                 string methodName = method.Name;

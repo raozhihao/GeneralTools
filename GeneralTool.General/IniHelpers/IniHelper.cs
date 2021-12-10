@@ -37,7 +37,7 @@ namespace GeneralTool.General.IniHelpers
         /// </summary>
         public static readonly IniHelper IniHelperInstance;
 
-       
+
 
         #endregion Public 字段
 

@@ -1,10 +1,11 @@
-﻿using GeneralTool.General.ExceptionHelper;
-using GeneralTool.General.Interfaces;
-using GeneralTool.General.Models;
-using System;
+﻿using System;
 using System.IO;
 using System.Net;
 using System.Text;
+
+using GeneralTool.General.ExceptionHelper;
+using GeneralTool.General.Interfaces;
+using GeneralTool.General.Models;
 
 namespace GeneralTool.General.TaskLib
 {
@@ -75,7 +76,7 @@ namespace GeneralTool.General.TaskLib
             {
                 if (httpListener.IsListening)
                 {
-                    Log.Debug("Get context erro:" + ex.Message);
+                    Log.Debug("Get context erro:" + ex.GetInnerExceptionMessage());
                 }
                 return;
             }
@@ -105,7 +106,7 @@ namespace GeneralTool.General.TaskLib
             }
             catch (Exception ex)
             {
-                Log.Log(ex.Message);
+                Log.Log(ex.GetInnerExceptionMessage());
             }
         }
         private void ExcuteRequest(HttpListenerContext context, string msg)
@@ -134,7 +135,7 @@ namespace GeneralTool.General.TaskLib
             {
                 var key = parameters.GetKey(i);
                 var value = parameters[i];
-                cmd.Paramters.Add(key, value);
+                cmd.Parameters.Add(key, value);
             }
 
             cmd.Url = url;
@@ -181,7 +182,7 @@ namespace GeneralTool.General.TaskLib
         /// </summary>
         protected virtual void HandlerRequestMethod(RequestInfo requestInfo)
         {
-            this.HandlerRequest(this, requestInfo);
+            this.HandlerRequest?.Invoke(this, requestInfo);
         }
 
         private void WriteResponse(HttpListenerResponse response, string responseString)

@@ -18,6 +18,7 @@ using System.Windows.Shapes;
 using GeneralTool.General.SocketHelper;
 using Microsoft.Win32;
 
+
 namespace Client
 {
     /// <summary>
@@ -209,5 +210,26 @@ namespace Client
             var client = GeneralTool.General.SocketHelper.ClientFactory<ClassLibrary.ISocketClass>.GetClientObj();
             client.Log("I am client");
         }
+
+        private void Ipc_click(object sender, RoutedEventArgs e)
+        {
+            new IPCClient().StartUp();
+        }
+
+        private void Socket_Click(object sender, RoutedEventArgs e)
+        {
+            var s = ClientFactory<ClassLibrary.ISocketClass>.GetClientObj();
+            s.EventTest += S_EventTest;
+            s.Log("Socket");
+            
+        }
+
+        private void S_EventTest()
+        {
+            
+        }
+
+        
+       
     }
 }

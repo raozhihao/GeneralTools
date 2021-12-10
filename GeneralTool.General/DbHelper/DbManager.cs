@@ -6,6 +6,8 @@ using System.Data.Common;
 using System.Linq;
 using System.Reflection;
 
+using GeneralTool.General.ExceptionHelper;
+
 namespace GeneralTool.General.DbHelper
 {
     /// <summary>
@@ -207,7 +209,7 @@ namespace GeneralTool.General.DbHelper
             }
             catch (Exception ex)
             {
-                ErroMsg = ex.Message;
+                ErroMsg = ex.GetInnerExceptionMessage();
                 return false;
             }
             finally
@@ -234,7 +236,7 @@ namespace GeneralTool.General.DbHelper
             }
             catch (Exception exc)
             {
-                ErroMsg = exc.Message;
+                ErroMsg = exc.GetInnerExceptionMessage();
                 TransctionRollBack();
                 return false;
             }
@@ -263,7 +265,7 @@ namespace GeneralTool.General.DbHelper
             }
             catch (Exception ex)
             {
-                ErroMsg = ex.Message;
+                ErroMsg = ex.GetInnerExceptionMessage();
 
                 return false;
             }
@@ -292,7 +294,7 @@ namespace GeneralTool.General.DbHelper
             }
             catch (Exception exc)
             {
-                ErroMsg = exc.Message;
+                ErroMsg = exc.GetInnerExceptionMessage();
                 TransctionRollBack();
                 return false;
             }
@@ -382,7 +384,7 @@ namespace GeneralTool.General.DbHelper
             }
             catch (Exception ex)
             {
-                ErroMsg = ex.Message;
+                ErroMsg = ex.GetInnerExceptionMessage();
                 return false;
             }
             finally
@@ -430,7 +432,7 @@ namespace GeneralTool.General.DbHelper
             catch (Exception ex)
             {
                 result = false;
-                this.ErroMsg = ex.Message;
+                this.ErroMsg = ex.GetInnerExceptionMessage();
                 this.TransctionRollBack();
             }
             finally
@@ -479,7 +481,7 @@ namespace GeneralTool.General.DbHelper
             }
             catch (Exception ex)
             {
-                ErroMsg = ex.Message;
+                ErroMsg = ex.GetInnerExceptionMessage();
                 return false;
             }
             finally
@@ -517,7 +519,7 @@ namespace GeneralTool.General.DbHelper
             catch (Exception ex)
             {
                 result = false;
-                this.ErroMsg = ex.Message;
+                this.ErroMsg = ex.GetInnerExceptionMessage();
                 this.TransctionRollBack();
             }
             return result;
@@ -569,7 +571,7 @@ namespace GeneralTool.General.DbHelper
             }
             catch (Exception ex)
             {
-                ErroMsg = ex.Message;
+                ErroMsg = ex.GetInnerExceptionMessage();
                 values = null;
             }
             return values;
@@ -602,7 +604,7 @@ namespace GeneralTool.General.DbHelper
             }
             catch (Exception ex)
             {
-                ErroMsg = ex.Message;
+                ErroMsg = ex.GetInnerExceptionMessage();
             }
             finally
             {
@@ -798,7 +800,7 @@ namespace GeneralTool.General.DbHelper
             }
             catch (Exception ex)
             {
-                this.ErroMsg = ex.Message;
+                this.ErroMsg = ex.GetInnerExceptionMessage();
                 return null;
             }
             finally

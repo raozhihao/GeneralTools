@@ -1,8 +1,9 @@
-﻿using GeneralTool.General.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
+
+using GeneralTool.General.Models;
 
 namespace GeneralTool.General.WPFHelper.Extensions
 {

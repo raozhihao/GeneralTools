@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>GeneralTool.General</RootNamespace>
     <AssemblyName>GeneralTool.General</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -129,6 +129,8 @@
     <Compile Include="Models\AdbDeviceData.cs" />
     <Compile Include="Models\Cords.cs" />
     <Compile Include="Models\DoTaskParameterItem.cs" />
+    <Compile Include="Models\GenExecuteType.cs" />
+    <Compile Include="Models\GenRequestRoute.cs" />
     <Compile Include="Models\ImageCutRectEventArgs.cs" />
     <Compile Include="Models\ImageEventArgs.cs" />
     <Compile Include="Models\ImageMouseEventArgs.cs" />
@@ -152,8 +154,26 @@
     <Compile Include="SerialPortEx\OnlineStateEventArgs.cs" />
     <Compile Include="SocketHelper\SocketPackage.cs" />
     <Compile Include="SocketHelper\ServerSocketBase.cs" />
+    <Compile Include="SocketLib\BaseSocket.cs" />
+    <Compile Include="SocketLib\ClientBuilder.cs" />
+    <Compile Include="SocketLib\Interfaces\IPackage.cs" />
+    <Compile Include="SocketLib\Models\FixedHeadRecevieState.cs" />
+    <Compile Include="SocketLib\Models\ReceiveArg.cs" />
+    <Compile Include="SocketLib\Models\ReceiveState.cs" />
+    <Compile Include="SocketLib\Models\SocketArg.cs" />
+    <Compile Include="SocketLib\Models\SocketErrorArg.cs" />
+    <Compile Include="SocketLib\Packages\CommandLinePackage.cs" />
+    <Compile Include="SocketLib\Packages\CustomCommandPackage.cs" />
+    <Compile Include="SocketLib\Packages\FixedHeadPackage.cs" />
+    <Compile Include="SocketLib\Packages\NoPackage.cs" />
+    <Compile Include="SocketLib\ServerBuilder.cs" />
+    <Compile Include="SocketLib\SocketClient.cs" />
+    <Compile Include="SocketLib\SocketCommon.cs" />
+    <Compile Include="SocketLib\SocketExtensions.cs" />
+    <Compile Include="SocketLib\SocketServer.cs" />
     <Compile Include="TaskExtensions\TaskRetry.cs" />
     <Compile Include="TaskExtensions\ThreadExtensions.cs" />
+    <Compile Include="TaskLib\GenServerStation.cs" />
     <Compile Include="TaskLib\HttpServerStation.cs" />
     <Compile Include="TaskLib\RequestInfo.cs" />
     <Compile Include="WPFHelper\AsyncObservableCollection.cs" />

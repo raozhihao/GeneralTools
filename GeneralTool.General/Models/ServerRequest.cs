@@ -14,7 +14,8 @@ namespace GeneralTool.General.Models
         /// <summary>
         /// 参数列表
         /// </summary>
-        public Dictionary<string, string> Paramters = new Dictionary<string, string>();
+        public Dictionary<string, string> Parameters { get; set; }=
+        new Dictionary<string, string>();
 
         #endregion Public 字段
 
@@ -38,7 +39,7 @@ namespace GeneralTool.General.Models
         /// </returns>
         public string GetValue(string key)
         {
-            return this.Paramters[key];
+            return this.Parameters[key];
         }
 
         /// <summary>
@@ -52,7 +53,7 @@ namespace GeneralTool.General.Models
         /// </returns>
         public T GetValue<T>(string key)
         {
-            return (T)((object)Convert.ChangeType(this.Paramters[key], typeof(T)));
+            return (T)((object)Convert.ChangeType(this.Parameters[key], typeof(T)));
         }
 
         #endregion Public 方法

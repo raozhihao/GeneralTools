@@ -1,6 +1,7 @@
-﻿using GeneralTool.General.NetHelper;
-using System;
+﻿using System;
 using System.Reflection;
+
+using GeneralTool.General.NetHelper;
 
 namespace GeneralTool.General.Models
 {

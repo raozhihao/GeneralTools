@@ -1,11 +1,13 @@
-﻿using GeneralTool.General.Enums;
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
+
+using GeneralTool.General.Enums;
 using GeneralTool.General.Interfaces;
 using GeneralTool.General.Logs;
 using GeneralTool.General.Models;
 using GeneralTool.General.NetHelper;
-using System;
-using System.Collections.Generic;
-using System.Reflection;
+using GeneralTool.General.ExceptionHelper;
 
 namespace GeneralTool.General.TaskLib
 {
@@ -43,12 +45,12 @@ namespace GeneralTool.General.TaskLib
         /// <summary>
         /// 当前请求的参数转换器集合
         /// </summary>
-        protected Dictionary<string, ParamterConvertItem> ParamterConverters { get; set; } = new Dictionary<string, ParamterConvertItem>();
+        public Dictionary<string, ParamterConvertItem> ParamterConverters { get; set; } = new Dictionary<string, ParamterConvertItem>();
 
         /// <summary>
         /// 当前请求的路由集合
         /// </summary>
-        protected Dictionary<string, RequestAddressItem> RequestRoute { get; set; } = new Dictionary<string, RequestAddressItem>();
+        public Dictionary<string, RequestAddressItem> RequestRoute { get; set; } = new Dictionary<string, RequestAddressItem>();
 
         #endregion Protected 属性
 
@@ -152,35 +154,35 @@ namespace GeneralTool.General.TaskLib
                             }
                             catch (Exception ex2)
                             {
-                                this.Log.Fail($"客户端调用服务方法执行发生错误:{ex2.Message}");
+                                this.Log.Fail($"客户端调用服务方法执行发生错误:{ex2}");
                                 serverResponse.StateCode = RequestStateCode.ServerOptionError;
                                 serverResponse.RequestSuccess = false;
-                                serverResponse.ErroMsg = ex2.Message;
+                                serverResponse.ErroMsg = ex2.GetInnerExceptionMessage();
                             }
                         }
                         catch (Exception ex3)
                         {
-                            this.Log.Fail($"客户端调用服务方法参数转换发生错误:{ex3.Message}");
+                            this.Log.Fail($"客户端调用服务方法参数转换发生错误:{ex3}");
                             serverResponse.StateCode = RequestStateCode.ParamterTypeError;
                             serverResponse.RequestSuccess = false;
-                            serverResponse.ErroMsg = ex3.Message;
+                            serverResponse.ErroMsg = ex3.GetInnerExceptionMessage();
                         }
                     }
                 }
                 catch (Exception ex4)
                 {
-                    this.Log.Fail($"客户端调用服务方法发生错误:{ex4.Message}");
+                    this.Log.Fail($"客户端调用服务方法发生错误:{ex4}");
                     serverResponse.StateCode = RequestStateCode.RequestMsgError;
                     serverResponse.RequestSuccess = false;
-                    serverResponse.ErroMsg = ex4.Message;
+                    serverResponse.ErroMsg = ex4.GetInnerExceptionMessage();
                 }
             }
             catch (Exception ex5)
             {
-                this.Log.Fail($"客户端调用服务方法发生未知错误:{ex5.Message}");
+                this.Log.Fail($"客户端调用服务方法发生未知错误:{ex5}");
                 serverResponse.StateCode = RequestStateCode.UnknowError;
                 serverResponse.RequestSuccess = false;
-                serverResponse.ErroMsg = ex5.Message;
+                serverResponse.ErroMsg = ex5.GetInnerExceptionMessage();
             }
             return serverResponse;
         }

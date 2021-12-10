@@ -1,11 +1,12 @@
-﻿using GeneralTool.General.Enums;
-using GeneralTool.General.Interfaces;
-using GeneralTool.General.Models;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+
+using GeneralTool.General.Enums;
+using GeneralTool.General.Interfaces;
+using GeneralTool.General.Models;
 
 namespace GeneralTool.General.Logs
 {
@@ -138,7 +139,7 @@ namespace GeneralTool.General.Logs
                     else if (this.currentFileStream == null)
                         this.currentFileStream = new FileStream(fileName, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
 
-                    msg = $"{DateTime.Now} : {msg}";
+                    msg = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff} : {msg}";
                     var info = new LogMessageInfo(msg, logType, fileName);
                     this.lockDic.Enqueue(info);
                     WriteLog();

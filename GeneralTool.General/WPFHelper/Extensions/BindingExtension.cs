@@ -1,5 +1,4 @@
-﻿using Microsoft.CSharp;
-using System;
+﻿using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,6 +11,10 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Markup;
+
+using GeneralTool.General.ExceptionHelper;
+
+using Microsoft.CSharp;
 
 namespace GeneralTool.General.WPFHelper.Extensions
 {
@@ -468,7 +471,7 @@ namespace GeneralTool.General.WPFHelper.Extensions
             {
                 //这里是因为在设计时 sExpression 会没有转换成功,而导致出现异常,直接抛 Exception 会在设计时不会显示
                 //但运行时如果错误还是会抛的
-                throw new Exception(e.Message);
+                throw new Exception(e.GetInnerExceptionMessage());
             }
         }
 

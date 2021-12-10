@@ -1,11 +1,14 @@
-﻿using GeneralTool.General.Interfaces;
-using GeneralTool.General.Logs;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+
+using GeneralTool.General.ExceptionHelper;
+using GeneralTool.General.Interfaces;
+using GeneralTool.General.Logs;
+
 using static GeneralTool.General.TaskLib.SocketServer;
 
 namespace GeneralTool.General.TaskLib
@@ -86,7 +89,7 @@ namespace GeneralTool.General.TaskLib
             }
             catch (Exception ex)
             {
-                this.Log.Fail("关闭客户端连接出现问题:" + ex.Message);
+                this.Log.Fail("关闭客户端连接出现问题:" + ex.GetInnerExceptionMessage());
             }
         }
 
@@ -127,7 +130,7 @@ namespace GeneralTool.General.TaskLib
             }
             catch (Exception ex)
             {
-                Log.Fail("连接服务端失败:" + ex.Message);
+                Log.Fail("连接服务端失败:" + ex.GetInnerExceptionMessage());
                 throw ex;
             }
         }
@@ -231,7 +234,7 @@ namespace GeneralTool.General.TaskLib
                 }
                 catch (Exception ex2)
                 {
-                    Log.Fail("接收消息出错:" + ex2.Message);
+                    Log.Fail("接收消息出错:" + ex2.GetInnerExceptionMessage());
                     return;
                 }
                 this.DealMsg(list.ToArray(), this._socket);

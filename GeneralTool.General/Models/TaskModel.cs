@@ -1,5 +1,6 @@
-﻿using GeneralTool.General.WPFHelper;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
+
+using GeneralTool.General.WPFHelper;
 
 namespace GeneralTool.General.Models
 {

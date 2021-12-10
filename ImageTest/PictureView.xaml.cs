@@ -103,7 +103,7 @@ namespace ImageTest
             this.CurrentWheelPoint = e.GetPosition(sender as IInputElement);
 
             var point = panelMouseDown;
-            if (this.panelMouseDown.X<0||this.panelMouseDown.X>this.Image.Width)
+            if (this.panelMouseDown.X < 0 || this.panelMouseDown.X > this.Image.Width)
             {
                 point.X = double.PositiveInfinity;
             }

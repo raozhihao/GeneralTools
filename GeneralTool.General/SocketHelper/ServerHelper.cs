@@ -1,7 +1,15 @@
-﻿using GeneralTool.General.Models;
-using GeneralTool.General.ReflectionHelper;
-using System;
+﻿using System;
 using System.Net.Sockets;
+
+using GeneralTool.General.Models;
+using GeneralTool.General.ReflectionHelper;
+
+
+using GeneralTool.General.SocketLib;
+using GeneralTool.General.SocketLib.Models;
+using System.Net;
+using System.Linq;
+using GeneralTool.General.ExceptionHelper;
 
 namespace GeneralTool.General.SocketHelper
 {
@@ -15,8 +23,10 @@ namespace GeneralTool.General.SocketHelper
         private readonly System.Collections.Concurrent.ConcurrentDictionary<string, ReflectionClass> caches;
         private bool disposedValue;
         private readonly SerializeHelpers serialize = new SerializeHelpers();
-        private readonly ServerSocketBase socketBase;
+        private readonly SocketServer<FixedHeadRecevieState> socketBase;
 
+        private readonly string host;
+        private readonly int port;
         #endregion Private 字段
 
         #region Public 构造函数
@@ -32,9 +42,11 @@ namespace GeneralTool.General.SocketHelper
         /// </param>
         public ServerHelper(string host = "127.0.0.1", int port = 55155)
         {
+            this.host = host;
+            this.port = port;
             caches = new System.Collections.Concurrent.ConcurrentDictionary<string, ReflectionClass>();
-            this.socketBase = new ServerSocketBase(host, port);
-            this.socketBase.RecevieEvent += this.SocketBase_RecevieAction;
+            this.socketBase = SimpleServerBuilder.CreateFixedCommandPack(null);
+            this.socketBase.ReceiveEvent += this.SocketBase_RecevieAction;
         }
 
         #endregion Public 构造函数
@@ -124,14 +136,12 @@ namespace GeneralTool.General.SocketHelper
         /// <summary>
         /// 开启侦听(在调用此方法之前,请先调用 <see cref="RegisterClass{ TCallType}"/> 或 <see cref="RegisterClass(object)"/>)
         /// </summary>
-        /// <param name="backListenCount">
         /// 挂起连接队列的最大长度。
-        /// </param>
         /// <returns>
         /// </returns>
-        public bool Start(int backListenCount = 10)
+        public bool Start()
         {
-            this.socketBase.Start(backListenCount);
+            this.socketBase.Startup(IPAddress.Parse(this.host), this.port);
             return true;
         }
 
@@ -153,11 +163,11 @@ namespace GeneralTool.General.SocketHelper
                     // TODO: 释放托管状态(托管对象)
                     try
                     {
-                        this.socketBase.Dispose();
+                        this.socketBase.Close();
                     }
                     catch (Exception ex)
                     {
-                        System.Diagnostics.Trace.WriteLine(ex.Message);
+                        System.Diagnostics.Trace.WriteLine(ex.GetInnerExceptionMessage());
                     }
                 }
 
@@ -171,10 +181,10 @@ namespace GeneralTool.General.SocketHelper
 
         #region Private 方法
 
-        private void SocketBase_RecevieAction(object sender,SocketPackage package)
+        private void SocketBase_RecevieAction(object sender, ReceiveArg package)
         {
-            var list = package.Buffer;
-            var clientSocket = sender as Socket;
+            var list = package.PackBuffer;
+            var clientSocket = package.Client as Socket;
             RequestCommand cmd = null;
             try
             {
@@ -189,7 +199,7 @@ namespace GeneralTool.General.SocketHelper
                     ResultObject = ex
                 };
                 byte[] bytes = serialize.Serialize(reponseCmd);
-                 new SocketCommon().Send(clientSocket, bytes);
+                new SocketCommon().Send(clientSocket, bytes);
                 //package.TrySend(bytes);
                 return;
             }

@@ -1,7 +1,8 @@
-﻿using GeneralTool.General.NetHelper;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+
+using GeneralTool.General.NetHelper;
 
 namespace GeneralTool.General.Attributes
 {

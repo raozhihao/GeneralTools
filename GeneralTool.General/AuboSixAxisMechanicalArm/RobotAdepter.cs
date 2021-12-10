@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+
 using static GeneralTool.General.AuboSixAxisMechanicalArm.MetaData;
 
 namespace GeneralTool.General.AuboSixAxisMechanicalArm

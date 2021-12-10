@@ -1,8 +1,9 @@
-﻿using GeneralTool.General.Interfaces;
-using GeneralTool.General.WPFHelper.Extensions;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Windows.Controls;
 using System.Windows.Data;
+
+using GeneralTool.General.Interfaces;
+using GeneralTool.General.WPFHelper.Extensions;
 
 namespace GeneralTool.General.WPFHelper.UIEditorConverts
 {

@@ -1,6 +1,7 @@
-﻿using GeneralTool.General.Models;
+﻿using System.Collections.Generic;
+
+using GeneralTool.General.Models;
 using GeneralTool.General.TaskLib;
-using System.Collections.Generic;
 
 namespace GeneralTool.General.Interfaces
 {
