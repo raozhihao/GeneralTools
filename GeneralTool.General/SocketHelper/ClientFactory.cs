@@ -116,12 +116,12 @@ namespace GeneralTool.General.SocketHelper
         //{
         //    //区分出属性,方法,事件
         //   // var eventBuilder = GetEventStrs(type.GetEvents());
-          
+
         //    var methodBuilder = GetMethodStrs(type.GetMethods());
         //    return methodBuilder;
         //}
 
-   
+
 
         private static IEnumerable<string> GetMethodStrs(MethodInfo[] methods)
         {

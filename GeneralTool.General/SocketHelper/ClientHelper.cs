@@ -119,11 +119,11 @@ namespace GeneralTool.General.SocketHelper
                 throw new SerializeException("序列化出错", ex);
             }
 
-            
+
             List<byte> buffer = new List<byte>();
             try
             {
-                var re = clientSocket.Send(bytes,clientSocket.Socket);
+                var re = clientSocket.Send(bytes, clientSocket.Socket);
                 if (!re)
                 {
                     response.Messages = "发送远程数据不成功";
@@ -149,7 +149,7 @@ namespace GeneralTool.General.SocketHelper
         /// </summary>
         public void Start()
         {
-            this.clientSocket.Startup(IPAddress.Parse(this.host),this.port);
+            this.clientSocket.Startup(IPAddress.Parse(this.host), this.port);
             this.autoReset.Reset();
         }
 

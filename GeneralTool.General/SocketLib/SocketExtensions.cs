@@ -21,7 +21,7 @@ namespace GeneralTool.General.SocketLib
         /// </returns>
         public static bool IsClientConnected(this Socket socket)
         {
-            if (!socket.Connected)
+            if (socket == null || !socket.Connected)
                 return false;
 
             IPGlobalProperties ipProperties = IPGlobalProperties.GetIPGlobalProperties();

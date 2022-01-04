@@ -202,7 +202,6 @@
     <Compile Include="Models\ResponseCommand.cs" />
     <Compile Include="SocketHelper\ServerHelper.cs" />
     <Compile Include="ExceptionHelper\SocketConnectException.cs" />
-    <Compile Include="SocketHelper\SocketExtensions.cs" />
     <Compile Include="SocketHelper\TempeleteBuilder.cs" />
     <Compile Include="TaskExtensions\DelegateExtensions.cs" />
     <Compile Include="TaskLib\BaseJsonCovert.cs" />
@@ -249,6 +248,7 @@
     <Compile Include="WPFHelper\Extensions\BitmapExtensions.cs" />
     <Compile Include="WPFHelper\Extensions\ValueConverter.cs" />
     <Compile Include="WPFHelper\LangProvider.cs" />
+    <Compile Include="WPFHelper\MessageManager.cs" />
     <Compile Include="WPFHelper\SimpleCommand.cs" />
     <Compile Include="WPFHelper\UIEditorConverts\BooleanEditorConvert.cs" />
     <Compile Include="WPFHelper\UIEditorConverts\EnumEditorConvert.cs" />
@@ -259,7 +259,9 @@
     <Compile Include="ActiveWindowManager.cs" />
     <Compile Include="WPFHelper\WindowHelper.cs" />
     <Compile Include="WPFHelper\WPFControls\ImageViewControl.cs" />
+    <Compile Include="WPFHelper\WPFControls\LogParargraph.cs" />
     <Compile Include="WPFHelper\WPFControls\PropertyGridControl.cs" />
+    <Compile Include="WPFHelper\WpfWindowManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Themes\BaseStyle.xaml">

@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net.Sockets;
 
+using GeneralTool.General.SocketLib;
+
 namespace GeneralTool.General.SocketHelper
 {
     /// <summary>

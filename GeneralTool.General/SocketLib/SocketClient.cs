@@ -51,5 +51,47 @@ namespace GeneralTool.General.SocketLib
 
             this.IsConnected = true;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="buffer"></param>
+        /// <returns></returns>
+        public bool Send(byte[] buffer)
+        {
+            return base.Send(buffer, this.Socket);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <returns></returns>
+        public bool Send(string msg)
+        {
+            return base.Send(msg, this.Socket);
+        }
+
+
+        /// <summary>
+        /// 关闭连接
+        /// </summary>
+        public override void Close()
+        {
+            this.Log.Debug($"关闭 {this} 的连接");
+            this.IsConnected = false;
+            if (this.Socket == null) return;
+            try
+            {
+                this.Socket.Close();
+                this.Socket.Dispose();
+
+                this.CurrentSockets.Clear();
+            }
+            catch
+            {
+
+            }
+        }
     }
 }

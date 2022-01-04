@@ -58,7 +58,7 @@ namespace GeneralTool.General.WPFHelper
             try
             {
                 encoder.Frames.Add(BitmapFrame.Create(source));
-                FileStream file = new FileStream(path, FileMode.Create);
+                FileStream file = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite);
                 encoder.Save(file);
                 file.Close();
                 return true;

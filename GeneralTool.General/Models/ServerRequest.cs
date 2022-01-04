@@ -14,7 +14,7 @@ namespace GeneralTool.General.Models
         /// <summary>
         /// 参数列表
         /// </summary>
-        public Dictionary<string, string> Parameters { get; set; }=
+        public Dictionary<string, string> Parameters { get; set; } =
         new Dictionary<string, string>();
 
         #endregion Public 字段

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Sockets;
 
 using GeneralTool.General.ExceptionHelper;
+using GeneralTool.General.SocketLib;
 
 namespace GeneralTool.General.SocketHelper
 {

@@ -1,19 +1,19 @@
 ﻿
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Collections.Concurrent;
 
 using GeneralTool.General.Interfaces;
 using GeneralTool.General.Logs;
 using GeneralTool.General.SocketLib.Interfaces;
 using GeneralTool.General.SocketLib.Models;
 using GeneralTool.General.SocketLib.Packages;
-using System.Diagnostics;
 
 namespace GeneralTool.General.SocketLib
 {
@@ -21,7 +21,7 @@ namespace GeneralTool.General.SocketLib
     /// 
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public abstract class BaseSocket<T>:IDisposable where T : ReceiveState, new()
+    public abstract class BaseSocket<T> : IDisposable where T : ReceiveState, new()
     {
         private bool disposedValue;
 
@@ -38,7 +38,7 @@ namespace GeneralTool.General.SocketLib
         /// <summary>
         /// 是否连接
         /// </summary>
-        public abstract bool IsConnected { get;protected set; }
+        public abstract bool IsConnected { get; protected set; }
 
         /// <summary>
         /// 客户端消息接收事件
@@ -78,7 +78,7 @@ namespace GeneralTool.General.SocketLib
         /// 
         /// </summary>
         /// <param name="log"></param>
-        public BaseSocket(ILog log=null)
+        public BaseSocket(ILog log = null)
         {
             if (log == null)
                 log = new ConsoleLogInfo();
@@ -125,7 +125,7 @@ namespace GeneralTool.General.SocketLib
 
         private void ReceiveCallBack(IAsyncResult ar)
         {
-            
+
             var state = ar.AsyncState as T;
             var client = state.WorkSocket;
             int read = 0;
@@ -263,11 +263,11 @@ namespace GeneralTool.General.SocketLib
                     return;
                 this.CurrentSockets.TryRemove(client.RemoteEndPoint.ToString(), out _);
                 this.Log.Debug($"关闭 {client.RemoteEndPoint} 的连接");
-               
+
                 this.DisconnectEvent?.Invoke(this, new SocketErrorArg(client, ex));
                 client.Close();
                 client.Dispose();
-                
+
                 client = null;
             }
             catch
