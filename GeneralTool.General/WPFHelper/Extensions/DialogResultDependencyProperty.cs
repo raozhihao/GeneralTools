@@ -48,9 +48,7 @@ namespace GeneralTool.General.WPFHelper.Extensions
             if (!(d is Window window))
                 return;
             if (e.NewValue != null)
-            {
                 window.DialogResult = (bool?)e.NewValue;
-            }
         }
 
         #endregion Private 方法

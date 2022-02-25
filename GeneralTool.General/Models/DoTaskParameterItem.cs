@@ -208,6 +208,17 @@ namespace GeneralTool.General.Models
             return Paramters.Where(p => p.ParameterName.Equals(key)).FirstOrDefault().Value;
         }
 
+        /// <summary>
+        /// 重新加载参数
+        /// </summary>
+        public void ReloadParameters()
+        {
+            var parameters = this.Method.GetParameters();
+            foreach (var item in parameters)
+            {
+                this.Paramters[item.Position].Value = item.DefaultValue;
+            }
+        }
         #endregion Public 方法
 
         #region Private 方法

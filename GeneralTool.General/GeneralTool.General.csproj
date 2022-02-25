@@ -79,6 +79,7 @@
     <Compile Include="AuboSixAxisMechanicalArm\RobotAdepter.cs" />
     <Compile Include="AuboSixAxisMechanicalArm\RobotEventHandler.cs" />
     <Compile Include="AuboSixAxisMechanicalArm\Util.cs" />
+    <Compile Include="ConvertExtensions.cs" />
     <Compile Include="DataSetExtensions\DataRowEqualityComparer.cs" />
     <Compile Include="DataSetExtensions\DataTableExtensions.cs" />
     <Compile Include="DbHelper\BaseConStrBuilder.cs" />

@@ -30,7 +30,7 @@ namespace GeneralTool.General.IniHelpers
         /// file. This value is the maximum allowed by the win32 functions
         /// GetPrivateProfileSectionNames() or GetPrivateProfileString().
         /// </remarks>
-        public const int MaxSectionSize = 32767; // 32 KB
+        public static int MaxSectionSize { get; set; }= 32767; // 32 KB
 
         /// <summary>
         /// Ini对象,使用默认的保存位置
@@ -333,7 +333,7 @@ namespace GeneralTool.General.IniHelpers
                                                             null,
                                                             null,
                                                             ptr,
-                                                            IniHelper.MaxSectionSize,
+                                                            (uint)IniHelper.MaxSectionSize,
                                                             m_path);
 
                 retval = ConvertNullSeperatedStringToStringArray(ptr, len);
@@ -362,13 +362,13 @@ namespace GeneralTool.General.IniHelpers
             int len;
 
             //Allocate a buffer for the returned section names.
-            IntPtr ptr = Marshal.AllocCoTaskMem(IniHelper.MaxSectionSize);
+            IntPtr ptr = Marshal.AllocCoTaskMem((int)IniHelper.MaxSectionSize);
 
             try
             {
                 //Get the section names into the buffer.
                 len = NativeMethods.GetPrivateProfileSectionNames(ptr,
-                    IniHelper.MaxSectionSize, m_path);
+                    (uint)IniHelper.MaxSectionSize, m_path);
 
                 retval = ConvertNullSeperatedStringToStringArray(ptr, len);
             }
@@ -447,14 +447,14 @@ namespace GeneralTool.General.IniHelpers
                 throw new ArgumentNullException("sectionName");
 
             //Allocate a buffer for the returned section names.
-            IntPtr ptr = Marshal.AllocCoTaskMem(IniHelper.MaxSectionSize);
+            IntPtr ptr = Marshal.AllocCoTaskMem((int)IniHelper.MaxSectionSize);
 
             try
             {
                 //Get the section key/value pairs into the buffer.
                 int len = NativeMethods.GetPrivateProfileSection(sectionName,
                                                                  ptr,
-                                                                 IniHelper.MaxSectionSize,
+                                                                 (uint)IniHelper.MaxSectionSize,
                                                                  m_path);
 
                 keyValuePairs = ConvertNullSeperatedStringToStringArray(ptr, len);
@@ -517,14 +517,13 @@ namespace GeneralTool.General.IniHelpers
                 throw new ArgumentNullException("keyName");
 
             StringBuilder retval = new StringBuilder(IniHelper.MaxSectionSize);
-
             NativeMethods.GetPrivateProfileString(sectionName,
                                                   keyName,
                                                   defaultValue,
                                                   retval,
                                                   IniHelper.MaxSectionSize,
                                                   m_path);
-
+            
             return retval.ToString();
         }
 

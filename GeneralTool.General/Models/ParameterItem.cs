@@ -18,6 +18,7 @@ namespace GeneralTool.General.Models
         private object value = "";
 
         private string waterMark;
+        private int index;
 
         #endregion Private 字段
 
@@ -101,6 +102,15 @@ namespace GeneralTool.General.Models
         {
             get => this.waterMark;
             set => this.RegisterProperty(ref this.waterMark, value);
+        }
+
+        /// <summary>
+        /// 坐标
+        /// </summary>
+        public int Index
+        {
+            get => index;
+            set => this.RegisterProperty(ref this.index,value);
         }
 
         #endregion Public 属性

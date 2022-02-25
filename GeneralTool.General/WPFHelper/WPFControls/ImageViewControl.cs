@@ -68,10 +68,37 @@ namespace GeneralTool.General.WPFHelper.WPFControls
         public static readonly DependencyProperty CutPanelToolTipProperty = DependencyProperty.Register(nameof(CutPanelToolTip), typeof(object), typeof(ImageViewControl), new PropertyMetadata(null));
 
         /// <summary>
+        /// 截取框的最大尺寸
+        /// </summary>
+        public static readonly DependencyProperty CutPanelMaxSizeProperty = DependencyProperty.Register(nameof(CutPanelMaxSize), typeof(Size), typeof(ImageViewControl), new PropertyMetadata(Size.Empty));
+
+        /// <summary>
+        /// 截取框的最小尺寸
+        /// </summary>
+        public static readonly DependencyProperty CutPanelMinSizeProperty = DependencyProperty.Register(nameof(CutPanelMinSize), typeof(Size), typeof(ImageViewControl), new PropertyMetadata(new Size(0, 0)));
+
+        /// <summary>
         /// 双击截取框时是否通知图片
         /// </summary>
         public static readonly DependencyProperty DoubleClickRaiseImageProperty = DependencyProperty.Register(nameof(DoubleClickRaiseImage), typeof(bool), typeof(ImageViewControl), new PropertyMetadata(true));
 
+        /// <summary>
+        /// 截取框的最小尺寸
+        /// </summary>
+        public Size CutPanelMinSize
+        {
+            get => (Size)this.GetValue(CutPanelMinSizeProperty);
+            set => this.SetValue(CutPanelMinSizeProperty, value);
+        }
+
+        /// <summary>
+        /// 截取框的最大尺寸
+        /// </summary>
+        public Size CutPanelMaxSize
+        {
+            get => (Size)this.GetValue(CutPanelMaxSizeProperty);
+            set => this.SetValue(CutPanelMaxSizeProperty, value);
+        }
         /// <summary>
         /// 双击截取框时是否通知图片
         /// </summary>
@@ -392,9 +419,13 @@ namespace GeneralTool.General.WPFHelper.WPFControls
                     return null;
                 return (ImageSource)source;
             }
-
             set
             {
+                //初始化最大尺寸
+                if (value != null && this.CutPanelMaxSize.IsEmpty)
+                {
+                    this.CutPanelMaxSize = new Size(value.Width, value.Height);
+                }
                 this.SetValue(ImageSourceProperty, value);
             }
         }
@@ -715,6 +746,8 @@ namespace GeneralTool.General.WPFHelper.WPFControls
             //将其取整
             var width = Math.Ceiling(this.CutRectangle.Width * this.w);
             var height = Math.Ceiling(this.CutRectangle.Height * this.h);
+            //var width = Math.Ceiling(this.CutRectangle.Width);
+            //var height = Math.Ceiling(this.CutRectangle.Height);
 
             var rect = new Int32Rect((int)x, (int)y, (int)width, (int)height);
             return rect;
@@ -809,6 +842,10 @@ namespace GeneralTool.General.WPFHelper.WPFControls
             this.SetButtons();
 
             this.InitStyles();
+            if (this.ImageSource != null && this.CutPanelMaxSize.IsEmpty)
+            {
+                this.CutPanelMaxSize = new Size(this.ImageSource.Width, this.ImageSource.Height);
+            }
         }
 
         private void Img_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -1242,8 +1279,21 @@ namespace GeneralTool.General.WPFHelper.WPFControls
             var scale = 1 / this.Slider.Value;
             this.CutRectangle.StrokeThickness = scale;
             this.StackMenu.RenderTransform = new ScaleTransform(scale * 2, scale * 2);
-            this.CutRectangle.Width = width;
-            this.CutRectangle.Height = height;
+
+
+            var minSize = this.CutPanelMinSize;
+            var maxSize = this.CutPanelMaxSize;
+            //转换完后的宽高
+            width *= this.w;
+            height *= this.h;
+
+            width = width < minSize.Width ? minSize.Width : width;
+            width = width > maxSize.Width ? maxSize.Width : width;
+            height = height < minSize.Height ? minSize.Height : height;
+            height = height > maxSize.Height ? maxSize.Height : height;
+
+            this.CutRectangle.Width = width / this.w;
+            this.CutRectangle.Height = height / this.h;
             StartLeft = this.Img.TranslatePoint(StartLeft, ImageCanvas);
             Canvas.SetLeft(this.CutPanel, StartLeft.X);
             Canvas.SetTop(this.CutPanel, StartLeft.Y);
@@ -1429,19 +1479,56 @@ namespace GeneralTool.General.WPFHelper.WPFControls
             if (this.CutPanel.Visibility == Visibility.Collapsed)
                 return;
 
+            var width = this.CutRectangle.Width;
+            var height = this.CutRectangle.Height;
             //查看宽度是否足够
-            if (this.CutRectangle.Width > this.Img.ActualWidth)
+            if (width > this.Img.ActualWidth)
             {
                 //不够,则减成足够的宽度先
-                this.CutRectangle.Width = this.Img.ActualWidth;
+                width = this.Img.ActualWidth;
             }
 
             //查看高度是否足够
-            if (this.CutRectangle.Height > this.Img.ActualHeight)
+            if (height > this.Img.ActualHeight)
             {
                 //不够,则减成足够的高度先
-                this.CutRectangle.Height = this.Img.ActualHeight;
+                height = this.Img.ActualHeight;
             }
+
+            var minSize = this.CutPanelMinSize;
+            var maxSize = this.CutPanelMaxSize;
+
+            //能够接受的在图像上的宽高值
+            var minWidth = minSize.Width / this.w;
+            var minHeight = minSize.Height / this.h;
+            var maxWidth = maxSize.Width / this.w;
+            var maxHeight = maxSize.Height / this.h;
+
+            //转换完后的宽高,当前的宽高只是控件本身的宽高,转为对应图片的像素宽高
+            var wTmp = width * this.w;
+            var hTmp = height * this.h;
+
+            if (wTmp < minSize.Width)
+            {
+                //当前转换后的像素宽小于定义宽
+                width = minWidth;
+            }
+
+            if (wTmp>maxSize.Width)
+            {
+                width = maxWidth;
+            }
+
+            if (hTmp<minSize.Height)
+            {
+                height = minHeight;
+            }
+
+            if (hTmp > maxSize.Height)
+                height = maxHeight;
+
+            this.CutRectangle.Width = width;
+            this.CutRectangle.Height = height;
 
             //查看当前框在图片中的左上角坐标
             var topLeft = this.CutRectangle.TranslatePoint(new Point(), this.Img);

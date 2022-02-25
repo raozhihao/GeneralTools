@@ -82,6 +82,8 @@ namespace GeneralTool.General.TaskLib
             }
         }
 
+
+
         /// <summary>
         /// 错误信息
         /// </summary>
@@ -244,7 +246,8 @@ namespace GeneralTool.General.TaskLib
                                 var it = new ParameterItem()
                                 {
                                     ParameterName = p.Name,
-                                    ParameterType = p.ParameterType
+                                    ParameterType = p.ParameterType,
+                                    Index = p.Position
                                 };
                                 if (p.HasDefaultValue)
                                 {
