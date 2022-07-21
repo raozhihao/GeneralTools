@@ -79,7 +79,10 @@ namespace GeneralTool.General.TaskLib
                                 string value = serverRequest.GetValue(parameterInfo.Name);
                                 if (parameterInfo.ParameterType.IsValueType || parameterInfo.ParameterType.FullName.Equals(typeof(string).FullName))
                                 {
-                                    array[parameterInfo.Position] = Convert.ChangeType(value, parameterInfo.ParameterType);
+                                    if (parameterInfo.ParameterType.IsEnum)
+                                        array[parameterInfo.Position] = Enum.Parse(parameterInfo.ParameterType, value);
+                                    else
+                                        array[parameterInfo.Position] = Convert.ChangeType(value, parameterInfo.ParameterType);
                                 }
                                 else if (this.ParamterConverters.ContainsKey(parameterInfo.ParameterType.FullName))
                                 {

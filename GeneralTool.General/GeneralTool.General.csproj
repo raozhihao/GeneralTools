@@ -25,6 +25,7 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Debug\GeneralTool.General.xml</DocumentationFile>
     <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -33,6 +34,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
@@ -55,6 +57,7 @@
   <ItemGroup>
     <Compile Include="Attributes\AttributeExtensions.cs" />
     <Compile Include="Attributes\RouteAttribute.cs" />
+    <Compile Include="Attributes\UIEditorAttribute.cs" />
     <Compile Include="Attributes\WaterMarkAttribute.cs" />
     <Compile Include="DataSetExtensions\DataRowEqualityComparer.cs" />
     <Compile Include="DataSetExtensions\DataTableExtensions.cs" />
@@ -75,6 +78,7 @@
     <Compile Include="Interfaces\IJsonConvert.cs" />
     <Compile Include="Interfaces\Ilog.cs" />
     <Compile Include="Interfaces\ITaskInoke.cs" />
+    <Compile Include="Interfaces\IUIEditorConvert.cs" />
     <Compile Include="IOExtensions\PathExtensions.cs" />
     <Compile Include="IPCHelper\IPCClientHelper.cs" />
     <Compile Include="IPCHelper\IPCServerHelper.cs" />
@@ -83,7 +87,10 @@
     <Compile Include="Logs\ConsoleLogInfo.cs" />
     <Compile Include="Logs\FileInfoLog.cs" />
     <Compile Include="Models\DoTaskParameterItem.cs" />
+    <Compile Include="Models\ImageCutRectEventArgs.cs" />
     <Compile Include="Models\ImageEventArgs.cs" />
+    <Compile Include="Models\ImageMouseEventArgs.cs" />
+    <Compile Include="Models\ImageScaleEventArgs.cs" />
     <Compile Include="Models\IP.cs" />
     <Compile Include="Models\LogMessage.cs" />
     <Compile Include="Models\LogMessageInfo.cs" />
@@ -94,6 +101,8 @@
     <Compile Include="Models\ServerRequest.cs" />
     <Compile Include="Models\ServerResponse.cs" />
     <Compile Include="Models\SocketLinkObject.cs" />
+    <Compile Include="Models\SocketReceiveArgs.cs" />
+    <Compile Include="Models\TaskModel.cs" />
     <Compile Include="NetHelper\HttpHelper.cs" />
     <Compile Include="NetHelper\NetException\HttpGetRequestException.cs" />
     <Compile Include="NetHelper\PublicEnum.cs" />
@@ -109,6 +118,7 @@
     <Compile Include="SocketHelper\ClientFactory.cs" />
     <Compile Include="SocketHelper\ClientHelper.cs" />
     <Compile Include="SocketHelper\ClientProxy.cs" />
+    <Compile Include="SocketHelper\ClientSocketBase.cs" />
     <Compile Include="SocketHelper\ProxyTemple.cs" />
     <Compile Include="ReflectionHelper\ReflectionClass.cs" />
     <Compile Include="Models\RequestCommand.cs" />
@@ -116,6 +126,7 @@
     <Compile Include="SocketHelper\ServerHelper.cs" />
     <Compile Include="ExceptionHelper\SocketConnectException.cs" />
     <Compile Include="SocketHelper\SocketExtensions.cs" />
+    <Compile Include="SocketHelper\ServerSocketBase.cs" />
     <Compile Include="SocketHelper\TempeleteBuilder.cs" />
     <Compile Include="TaskExtensions\DelegateExtensions.cs" />
     <Compile Include="TaskLib\BaseJsonCovert.cs" />
@@ -127,6 +138,7 @@
     <Compile Include="TaskLib\SocketMast.cs" />
     <Compile Include="TaskLib\SocketServer.cs" />
     <Compile Include="TaskLib\Station.cs" />
+    <Compile Include="Models\DefaultFontStyle.cs" />
     <Compile Include="ValueTypeExtensions\ByteExtensions.cs" />
     <Compile Include="ValueTypeExtensions\EnumExtensions.cs" />
     <Compile Include="ValueTypeExtensions\Int32Extensions.cs" />
@@ -141,19 +153,30 @@
       <DependentUpon>WaitView.xaml</DependentUpon>
     </Compile>
     <Compile Include="WPFHelper\DialogHelper\WaitViewModel.cs" />
+    <Compile Include="WPFHelper\EventBindingExtension.cs" />
     <Compile Include="WPFHelper\Events\EventCommand.cs" />
     <Compile Include="WPFHelper\Events\EventCommandBind.cs" />
     <Compile Include="WPFHelper\Events\EventHost.cs" />
     <Compile Include="WPFHelper\Events\EventHostCollection.cs" />
     <Compile Include="WPFHelper\Events\EventHosts.cs" />
     <Compile Include="WPFHelper\Events\IMyEventCommand.cs" />
+    <Compile Include="WPFHelper\Extensions\CoverterEx.cs" />
     <Compile Include="WPFHelper\Extensions\DataGridScrollHelper.cs" />
     <Compile Include="WPFHelper\Extensions\DialogResultDependencyProperty.cs" />
     <Compile Include="WPFHelper\Extensions\DoTaskParameterConvert.cs" />
+    <Compile Include="WPFHelper\Extensions\ParagrahDependency.cs" />
     <Compile Include="WPFHelper\Extensions\ScrollViewerExtensions.cs" />
+    <Compile Include="WPFHelper\Extensions\BitmapExtensions.cs" />
+    <Compile Include="WPFHelper\Extensions\ValueConverter.cs" />
     <Compile Include="WPFHelper\SimpleCommand.cs" />
+    <Compile Include="WPFHelper\UIEditorConverts\BooleanEditorConvert.cs" />
+    <Compile Include="WPFHelper\UIEditorConverts\EnumEditorConvert.cs" />
+    <Compile Include="WPFHelper\UIEditorConverts\ObjectExpandeUIEditor.cs" />
+    <Compile Include="WPFHelper\UIEditorConverts\StringObjectEditorConvert.cs" />
+    <Compile Include="WPFHelper\UIEditorConverts\UIEditorHelper.cs" />
+    <Compile Include="WPFHelper\UIEditorConverts\StringEditorConvert.cs" />
     <Compile Include="WPFHelper\WPFControls\ImageViewControl.cs" />
-    <Compile Include="WPFHelper\WPFControls\NoBorderWindow\NoBorderWindowExtenstion.cs" />
+    <Compile Include="WPFHelper\WPFControls\PropertyGridControl.cs" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Themes\BaseStyle.xaml">
@@ -168,11 +191,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WPFHelper\DialogHelper\WaitView.xaml">
-      <Generator>MSBuild:Compile</Generator>
+    <Page Include="Themes\PropertyGridControl.xaml">
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="WPFHelper\WPFControls\NoBorderWindow\WindowResources.xaml">
+    <Page Include="WPFHelper\DialogHelper\WaitView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

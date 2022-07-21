@@ -7,7 +7,7 @@ namespace GeneralTool.General.Models
     /// Log日志消息
     /// </summary>
     [Serializable]
-    public struct LogMessageInfo
+    public class LogMessageInfo : EventArgs
     {
         /// <summary>
         /// 日志消息

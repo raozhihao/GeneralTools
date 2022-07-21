@@ -27,7 +27,7 @@ namespace GeneralTool.General
         /// <returns></returns>
         public static string SerializeToJsonString(this object obj)
         {
-            var serialize = new System.Web.Script.Serialization.JavaScriptSerializer();
+            var serialize = new System.Web.Script.Serialization.JavaScriptSerializer() { MaxJsonLength = int.MaxValue, RecursionLimit = int.MaxValue };
             return serialize.Serialize(obj);
         }
 
@@ -38,7 +38,7 @@ namespace GeneralTool.General
         /// <returns></returns>
         public static T DeserializeJsonToObject<T>(this string jsonStr)
         {
-            var serialize = new System.Web.Script.Serialization.JavaScriptSerializer();
+            var serialize = new System.Web.Script.Serialization.JavaScriptSerializer() { MaxJsonLength = int.MaxValue, RecursionLimit = int.MaxValue };
             return serialize.Deserialize<T>(jsonStr);
         }
 
@@ -50,7 +50,7 @@ namespace GeneralTool.General
         /// <returns></returns>
         public static object DeserializeJsonToObject(this string jsonStr, Type type)
         {
-            var serialize = new System.Web.Script.Serialization.JavaScriptSerializer();
+            var serialize = new System.Web.Script.Serialization.JavaScriptSerializer() { MaxJsonLength = int.MaxValue, RecursionLimit = int.MaxValue };
             return serialize.Deserialize(jsonStr, type);
         }
         /// <summary>

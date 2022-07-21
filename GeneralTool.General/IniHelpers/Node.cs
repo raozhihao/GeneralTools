@@ -141,4 +141,24 @@ namespace GeneralTool.General.IniHelpers
         }
 
     }
+
+    /// <summary>
+    /// 配置项
+    /// </summary>
+    public abstract class Category
+    {
+        /// <summary>
+        /// 节点名称
+        /// </summary>
+        public string SectionName { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sectionName"></param>
+        public Category(string sectionName)
+        {
+            this.SectionName = sectionName;
+        }
+
+    }
 }

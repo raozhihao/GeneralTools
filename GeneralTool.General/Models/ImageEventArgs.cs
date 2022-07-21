@@ -1,11 +1,12 @@
-﻿using System.Windows.Media.Imaging;
+﻿using System;
+using System.Windows.Media.Imaging;
 
 namespace GeneralTool.General.Models
 {
     /// <summary>
     /// 图像事件参数
     /// </summary>
-    public class ImageEventArgs
+    public class ImageEventArgs : EventArgs
     {
         /// <summary>
         /// 图像

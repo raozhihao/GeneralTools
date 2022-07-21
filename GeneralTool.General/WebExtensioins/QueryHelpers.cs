@@ -13,7 +13,7 @@ namespace GeneralTool.General.WebExtensioins
         /// </summary>
         /// <param name="queryStrings">字符串</param>
         /// <returns></returns>
-        public static IReadOnlyDictionary<string, string> ParseQueryToDictionary(this string queryStrings)
+        public static Dictionary<string, string> ParseQueryToDictionary(this string queryStrings)
         {
             Dictionary<string, string> dic = new Dictionary<string, string>();
             var split = queryStrings.Split(new char[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
@@ -36,7 +36,7 @@ namespace GeneralTool.General.WebExtensioins
         /// </summary>
         /// <param name="queryDictionary"></param>
         /// <returns></returns>
-        public static string ParseDictionaryToQueryString(this IReadOnlyDictionary<string, object> queryDictionary)
+        public static string ParseDictionaryToQueryString(this Dictionary<string, object> queryDictionary)
         {
             if (queryDictionary == null || queryDictionary.Count == 0)
             {
@@ -57,7 +57,7 @@ namespace GeneralTool.General.WebExtensioins
         /// </summary>
         /// <param name="url"></param>
         /// <returns></returns>
-        public static IReadOnlyDictionary<string, string> ParseUrlToQueryDictionary(this string url)
+        public static Dictionary<string, string> ParseUrlToQueryDictionary(this string url)
         {
             string queryString = url.GetQueryString();
             return queryString.ParseQueryToDictionary();

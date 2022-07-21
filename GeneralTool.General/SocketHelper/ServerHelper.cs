@@ -1,10 +1,6 @@
 ﻿using GeneralTool.General.Models;
 using GeneralTool.General.ReflectionHelper;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Sockets;
 
 namespace GeneralTool.General.SocketHelper.Server
 {
@@ -13,11 +9,9 @@ namespace GeneralTool.General.SocketHelper.Server
     /// </summary>
     public class ServerHelper : IDisposable
     {
-        private Socket serverSocket;
+        private ServerSocketBase socketBase;
         private readonly System.Collections.Concurrent.ConcurrentDictionary<string, ReflectionClass> caches;
-        private readonly System.Collections.Concurrent.ConcurrentDictionary<string, System.Net.Sockets.Socket> clients;
-        private readonly SerializeHelpers serialize = new SerializeHelpers();
-
+        private SerializeHelpers serialize = new SerializeHelpers();
 
         private bool disposedValue;
 
@@ -29,11 +23,61 @@ namespace GeneralTool.General.SocketHelper.Server
         public ServerHelper(string host = "127.0.0.1", int port = 55155)
         {
             caches = new System.Collections.Concurrent.ConcurrentDictionary<string, ReflectionClass>();
-            clients = new System.Collections.Concurrent.ConcurrentDictionary<string, System.Net.Sockets.Socket>();
-            serverSocket = new System.Net.Sockets.Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            serverSocket.Bind(new IPEndPoint(IPAddress.Parse(host), port));
-            serverSocket.Blocking = true;
+            this.socketBase = new ServerSocketBase(host, port);
+            this.socketBase.RecevieEvent += this.SocketBase_RecevieAction;
+        }
 
+        private void SocketBase_RecevieAction(SocketReceiveArgs obj)
+        {
+            var list = obj.Buffer;
+            var clientSocket = obj.ClinetSocket;
+            RequestCommand cmd = null;
+            try
+            {
+                cmd = serialize.Desrialize<RequestCommand>(list.ToArray());
+            }
+            catch (Exception ex)
+            {
+                ResponseCommand reponseCmd = new ResponseCommand
+                {
+                    Success = false,
+                    Messages = "反序列化出现错误",
+                    ResultObject = ex
+                };
+                byte[] bytes = serialize.Serialize(reponseCmd);
+                obj.TrySend(bytes);
+                return;
+            }
+
+            bool re = caches.TryGetValue(cmd.ClassName, out ReflectionClass value);
+            if (!re)
+            {
+                ResponseCommand reponseCmd = new ResponseCommand
+                {
+                    Messages = "服务端未注册该接口的实现类",
+                    Success = false
+                };
+                byte[] bytes = serialize.Serialize(reponseCmd);
+                obj.TrySend(bytes);
+                return;
+            }
+            else
+            {
+                ResponseCommand reponseCmd = value.Invoke(cmd);
+                try
+                {
+                    byte[] bytes = serialize.Serialize(reponseCmd);
+                    obj.TrySend(bytes);
+                }
+                catch (Exception ex)
+                {
+                    reponseCmd.Success = false;
+                    reponseCmd.Messages = "反序列化出现错误";
+                    reponseCmd.ResultObject = ex;
+                    byte[] bytes = serialize.Serialize(reponseCmd);
+                    obj.TrySend(bytes);
+                }
+            }
         }
 
 
@@ -92,127 +136,12 @@ namespace GeneralTool.General.SocketHelper.Server
         /// <returns></returns>
         public bool Start(int backListenCount = 10)
         {
-            serverSocket.Listen(backListenCount);
-            serverSocket.BeginAccept(AcceptMethod, serverSocket);
-            serverSocket.SetSocketKeepAlive();
+            this.socketBase.Start(backListenCount);
             return true;
         }
 
 
-        private void AcceptMethod(IAsyncResult ar)
-        {
-            Socket socket = ar.AsyncState as System.Net.Sockets.Socket;
 
-            System.Net.Sockets.Socket clientSocket = null;
-            try
-            {
-                clientSocket = socket.EndAccept(ar);
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Trace.WriteLine($"客户端连接发生异常 : {ex.Message}");
-                return;
-            }
-
-            socket.BeginAccept(AcceptMethod, socket);
-
-            string key = clientSocket.RemoteEndPoint.ToString();
-
-            if (!clients.ContainsKey(key))
-            {
-                clients.TryAdd(key, clientSocket);
-                System.Diagnostics.Trace.WriteLine($"新的客户端 {key} 已连接");
-            }
-            else
-            {
-                clients[key] = clientSocket;
-                System.Diagnostics.Trace.WriteLine($"客户端 {key} 已重新连接");
-            }
-
-
-            List<byte> list = new List<byte>();
-            while (true)
-            {
-                if (!clientSocket.IsClientConnected())
-                {
-                    System.Diagnostics.Trace.WriteLine($"客户端 {key} 已下线");
-                    clients.TryRemove(key, out _);
-                    clientSocket.Close();
-                    clientSocket.Dispose();
-                    break;
-                }
-
-                byte[] buffer = new byte[1024];
-                list.Clear();
-                if (!clientSocket.Connected)
-                {
-                    break;
-                }
-                while (clientSocket.Available > 0)
-                {
-                    int len = clientSocket.Receive(buffer, 0, buffer.Length, SocketFlags.None);
-                    list.AddRange(buffer.Take(len));
-                    if (len < buffer.Length)
-                    {
-                        break;
-                    }
-                }
-
-                if (list.Count > 0)
-                {
-                    RequestCommand cmd = null;
-                    try
-                    {
-                        cmd = serialize.Desrialize<RequestCommand>(list.ToArray());
-                    }
-                    catch (Exception ex)
-                    {
-                        ResponseCommand reponseCmd = new ResponseCommand
-                        {
-                            Success = false,
-                            Messages = "反序列化出现错误",
-                            ResultObject = ex
-                        };
-                        byte[] bytes = serialize.Serialize(reponseCmd);
-                        clientSocket.Send(bytes, 0);
-                        continue;
-                    }
-
-                    bool re = caches.TryGetValue(cmd.ClassName, out ReflectionClass value);
-                    if (!re)
-                    {
-                        ResponseCommand reponseCmd = new ResponseCommand
-                        {
-                            Messages = "服务端未注册该接口的实现类",
-                            Success = false
-                        };
-                        byte[] bytes = serialize.Serialize(reponseCmd);
-                        clientSocket.Send(bytes);
-                        continue;
-                    }
-                    else
-                    {
-                        ResponseCommand reponseCmd = value.Invoke(cmd);
-                        try
-                        {
-                            byte[] bytes = serialize.Serialize(reponseCmd);
-                            clientSocket.Send(bytes, 0);
-                        }
-                        catch (Exception ex)
-                        {
-                            reponseCmd.Success = false;
-                            reponseCmd.Messages = "反序列化出现错误";
-                            reponseCmd.ResultObject = ex;
-                            byte[] bytes = serialize.Serialize(reponseCmd);
-                            clientSocket.Send(bytes, 0);
-                        }
-                    }
-                }
-                System.Threading.Thread.Sleep(500);
-
-            }
-
-        }
 
         /// <summary>
         /// 释放
@@ -227,15 +156,7 @@ namespace GeneralTool.General.SocketHelper.Server
                     // TODO: 释放托管状态(托管对象)
                     try
                     {
-                        foreach (KeyValuePair<string, Socket> item in clients)
-                        {
-                            item.Value.Close();
-                            item.Value.Dispose();
-                        }
-
-                        clients.Clear();
-                        serverSocket.Close();
-                        serverSocket.Dispose();
+                        this.socketBase.Dispose();
 
                     }
                     catch (Exception ex)
@@ -243,7 +164,7 @@ namespace GeneralTool.General.SocketHelper.Server
                         System.Diagnostics.Trace.WriteLine(ex.Message);
                     }
                 }
-                serverSocket = null;
+
                 // TODO: 释放未托管的资源(未托管的对象)并替代终结器
                 // TODO: 将大型字段设置为 null
                 disposedValue = true;

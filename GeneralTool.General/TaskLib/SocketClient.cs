@@ -132,13 +132,11 @@ namespace GeneralTool.General.TaskLib
                     this._socket.ReceiveBufferSize = base.ReciveBuffSize;
                 }
                 this._socket.Connect(remoteEP);
-                RecLink linkEvent = this.LinkEvent;
-                if (linkEvent != null)
+                this.LinkEvent?.Invoke(this._socket);
+                this._recMsgThread = new Thread(new ThreadStart(this.RecMsg))
                 {
-                    linkEvent(this._socket);
-                }
-                this._recMsgThread = new Thread(new ThreadStart(this.RecMsg));
-                this._recMsgThread.IsBackground = true;
+                    IsBackground = true
+                };
                 this._recMsgThread.Start();
                 this._isOpen = true;
             }
@@ -199,7 +197,7 @@ namespace GeneralTool.General.TaskLib
                         }
                     }
                 }
-                catch (ThreadAbortException ex)
+                catch (ThreadAbortException)
                 {
                     return;
                 }

@@ -2,8 +2,6 @@
 using GeneralTool.General.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net.Sockets;
 
 namespace GeneralTool.General.SocketHelper
 {
@@ -12,10 +10,8 @@ namespace GeneralTool.General.SocketHelper
     /// </summary>
     public class ClientHelper
     {
-        private readonly System.Net.Sockets.Socket clientSocket;
+        private readonly ClientSocketBase clientSocket;
         private readonly SerializeHelpers serialize;
-        private readonly string host;
-        private readonly int port;
         /// <summary>
         /// 构造函数
         /// </summary>
@@ -23,11 +19,8 @@ namespace GeneralTool.General.SocketHelper
         /// <param name="port"></param>
         public ClientHelper(string host = "127.0.0.1", int port = 55155)
         {
-            this.host = host;
-            this.port = port;
-
             serialize = new SerializeHelpers();
-            clientSocket = new System.Net.Sockets.Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            clientSocket = new ClientSocketBase(host, port);
         }
 
         /// <summary>
@@ -35,16 +28,7 @@ namespace GeneralTool.General.SocketHelper
         /// </summary>
         public void Start()
         {
-
-            try
-            {
-                clientSocket.Connect(host, port);
-                clientSocket.Blocking = true;
-            }
-            catch (Exception ex)
-            {
-                throw new SocketConnectException($"服务端连接失败 {host}:{port}", ex);
-            }
+            this.clientSocket.Start();
         }
 
 
@@ -55,7 +39,7 @@ namespace GeneralTool.General.SocketHelper
         /// <returns></returns>
         public ResponseCommand SendCommand(RequestCommand cmd)
         {
-            if (!clientSocket.Connected)
+            if (!clientSocket.IsConnected)
             {
                 Start();
             }
@@ -71,54 +55,34 @@ namespace GeneralTool.General.SocketHelper
                 throw new SerializeException("序列化出错", ex);
             }
 
-            clientSocket.Send(bytes);
-            ResponseCommand result = GetResponseCommand();
-            return result;
+            ResponseCommand response = new ResponseCommand();
+            List<byte> buffer = new List<byte>();
+            try
+            {
+                buffer = clientSocket.Send(bytes);
+            }
+            catch (Exception ex)
+            {
+                response.Messages = ex.Message;
+                response.Success = false;
+            }
+
+            try
+            {
+                response = serialize.Desrialize<ResponseCommand>(bytes);
+                response.Success = true;
+            }
+            catch (Exception ex)
+            {
+                response.Messages = "反序列化出错:" + ex.Message;
+                response.Success = false;
+            }
+
+
+            return response;
         }
 
-        private ResponseCommand GetResponseCommand()
-        {
-            byte[] buffer = new byte[1024];
 
-            List<byte> list = new List<byte>();
-
-            while (true)
-            {
-
-                int len = clientSocket.Receive(buffer);
-                list.AddRange(buffer.Take(len));
-                if (len < buffer.Length)
-                {
-                    break;
-                }
-            }
-
-            if (list.Count > 0)
-            {
-                byte[] bytes = list.ToArray();
-
-                if (bytes.Length == 0)
-                {
-                    return GetResponseCommand();
-                }
-                try
-                {
-                    ResponseCommand reCmd = serialize.Desrialize<ResponseCommand>(bytes);
-                    return reCmd;
-                }
-                catch (Exception ex)
-                {
-
-                    throw new DesrializeException("反序列化出错", ex);
-                }
-
-            }
-            else
-            {
-                return new ResponseCommand() { Success = true };
-            }
-
-        }
 
         /// <summary>
         /// 关闭连接
@@ -131,7 +95,6 @@ namespace GeneralTool.General.SocketHelper
                 return;
             }
             clientSocket.Close();
-            clientSocket.Dispose();
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using GeneralTool.General;
 using GeneralTool.General.DataSetExtensions;
-using GeneralTool.General.ProcessHelpers;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -18,10 +17,11 @@ namespace ConsoleAppTest
         [STAThread]
         private static void Main(string[] args)
         {
+            new SocketTest().Test();
             //// TestPostWcf();
             //TestTableConvert();
 
-            ProcessHelper.Run(@"C:\Demo\DemoProject\MaterialWpf\bin\Debug\MaterialWpf.exe", out var result);
+            //ProcessHelper.Run(@"C:\Demo\DemoProject\MaterialWpf\bin\Debug\MaterialWpf.exe", out var result);
 
             Console.WriteLine("完成");
             Console.ReadKey();

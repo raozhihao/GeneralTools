@@ -14,10 +14,13 @@ namespace GeneralTool.General.Logs
     /// </summary>
     public class FileInfoLog : ILog
     {
-        private ConcurrentQueue<LogMessageInfo> lockDic = new ConcurrentQueue<LogMessageInfo>();
+        private readonly ConcurrentQueue<LogMessageInfo> lockDic = new ConcurrentQueue<LogMessageInfo>();
 
         private readonly string logPathDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs");
 
+        /// <summary>
+        /// 是否将日志定向到控制台
+        /// </summary>
         public bool ConsoleLogEnable { get; set; } = true;
         /// <summary>
         /// 当前日志路径
@@ -60,8 +63,6 @@ namespace GeneralTool.General.Logs
         /// <inheritdoc/>
         public void Log(string msg, LogType logType = LogType.Info)
         {
-            if (this.ConsoleLogEnable)
-                Trace.WriteLine(msg);
             try
             {
                 lock (locker)
@@ -139,6 +140,9 @@ namespace GeneralTool.General.Logs
                 var data = Encoding.UTF8.GetBytes(result.Msg + Environment.NewLine);
                 this.currentFileStream.Write(data, 0, data.Length);
                 this.currentFileStream.Flush();
+
+                if (this.ConsoleLogEnable)
+                    Trace.WriteLine($"[{result.LogType}] - {DateTime.Now} : {result.Msg}");
                 this.LogEvent?.Invoke(this, result);
             }
 

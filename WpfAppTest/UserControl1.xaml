@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:UI="clr-namespace:GeneralTool.General.WPFHelper.WPFControls;assembly=GeneralTool.General"
+             xmlns:g="clr-namespace:GeneralTool.General.Models;assembly=GeneralTool.General"
              xmlns:local="clr-namespace:WpfAppTest"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
@@ -30,9 +31,9 @@
         <Style x:Key="But"
                TargetType="Button">
             <Setter Property="FontFamily"
-                    Value="/GeneralTool.General;component/iconttf/#iconfont" />
+                    Value="{StaticResource Generial.DefaultFontFaimly}" />
             <Setter Property="Content"
-                    Value="&#xe663;" />
+                    Value="{x:Static g:DefaultFontStyle.Ok}" />
             <Setter Property="FontSize"
                     Value="16" />
             <Setter Property="Margin"
@@ -42,7 +43,7 @@
             <Setter Property="Height"
                     Value=" 25" />
         </Style>
-        <Style x:Key="ToolCutButtonStyle"
+        <Style x:Key="ToolCutButtonStyle" 
                TargetType="ContentControl">
             <Setter Property="Visibility"
                     Value="Visible" />
@@ -87,7 +88,8 @@
                                      SliderVisibility="Visible"
                                      CutButtonVisibility="Visible"
                                      Width="{Binding ElementName=canvas,Path=ActualWidth}"
-                                     Height="{Binding ElementName=canvas,Path=ActualHeight}">
+                                     Height="{Binding ElementName=canvas,Path=ActualHeight}"
+                                     >
                     <UI:ImageViewControl.ToolButtons>
                         <UI:ToolButtonCollection x:Name="Tools">
                             <ToggleButton x:Name="btnCutHead1"

@@ -5,24 +5,33 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfAppTest"
         xmlns:wpf="clr-namespace:GeneralTool.General.WPFHelper.Events;assembly=GeneralTool.General"
+        xmlns:a="clr-namespace:GeneralTool.General.WPFHelper;assembly=GeneralTool.General"
+        xmlns:w="clr-namespace:GeneralTool.General.WPFHelper.WPFControls;assembly=GeneralTool.General"
+        xmlns:viewmodels="clr-namespace:WpfAppTest.VIewModels"
+        d:DataContext="{d:DesignInstance Type=viewmodels:MainViewModel}"
         mc:Ignorable="d"
         Title="MainWindow"
         Height="450"
         Width="800"
         x:Name="window">
 
-    <wpf:EventHosts.EventCommands>
+    <!--<wpf:EventHosts.EventCommands>
         <wpf:EventHostCollection>
             <wpf:EventHost Command="{Binding LoadCommand}"
                            CommandParameter="{Binding ElementName=window,Path=Width}"
                            EventName="Loaded" />
 
         </wpf:EventHostCollection>
-    </wpf:EventHosts.EventCommands>
+    </wpf:EventHosts.EventCommands>-->
 
-    <DockPanel>
-
-        <wpf:EventHosts.EventCommands>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+        <!--<wpf:EventHosts.EventCommands>
             <wpf:EventHostCollection>
                 <wpf:EventHost Command="{Binding MoveCommand}"
                                CommandParameter="{Binding ElementName=window,Path=Width}"
@@ -36,6 +45,36 @@
         <TextBlock Text="{Binding ResultText}"
                    DockPanel.Dock="Bottom"
                    wpf:EventCommandBind.Command="{Binding TextClickCommand}"
-                   wpf:EventCommandBind.EventName="MouseDown" />
-    </DockPanel>
+                   wpf:EventCommandBind.EventName="MouseDown" />-->
+
+        <!--<Button Content="{Binding ResultText}"
+                DockPanel.Dock="Bottom"
+                HorizontalAlignment="Center" VerticalAlignment="Center"
+                Background="NavajoWhite"
+                MouseDown="{a:EventBinding MouseDownMethod,RoutedEvent={x:Static UIElement.MouseDownEvent}}"
+                />-->
+
+        <w:PropertyGridControl x:Name="pro"
+                               SelectedObject="{Binding SelectedObject,Mode=TwoWay}" 
+                               Sort="{Binding Sort}"
+                               Header="{Binding Header}"/>
+
+        <!--<TextBox Text="{Binding Code,Mode=TwoWay,Converter={x:Static local:StringConvert.StringToObjectConverter}}"
+                 Height="30"
+                 BorderThickness="1"
+                 BorderBrush="Black" 
+                 VerticalContentAlignment="Center"/>-->
+        <Button x:Name="btn"
+                Grid.Row="1"
+                Content="Btn"
+                MouseDown="{a:EventBinding MouseDownMethod,RoutedEvent={x:Static UIElement.MouseDownEvent}}" />
+
+        <ToggleButton Grid.Row="2"
+                      Content="Sort"
+                      IsChecked="{Binding Sort}" />
+
+        <!--<local:UserControl2 DataContext="{Binding User1ViewModel}" Cli="{a:EventBinding ClickE}" />-->
+        <!--<w:ImageViewControl ImageSource="C:\360极速浏览器下载\1.jpeg" CutPanelVisibleChanged="{a:Action CutPanelVisibleMethod}" CanImageDraw="True"/>-->
+
+    </Grid>
 </Window>

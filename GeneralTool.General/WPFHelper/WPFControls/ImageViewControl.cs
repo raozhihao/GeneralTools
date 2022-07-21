@@ -349,6 +349,22 @@ namespace GeneralTool.General.WPFHelper.WPFControls
         }
 
         /// <summary>
+        /// 当前图片框的显示宽度
+        /// </summary>
+        public double? ImageActualWidth
+        {
+            get => this.Img?.ActualWidth;
+        }
+
+        /// <summary>
+        /// 当前图片框的显示高度
+        /// </summary>
+        public double? ImageActualHeight
+        {
+            get => this.Img?.ActualHeight;
+        }
+
+        /// <summary>
         /// 缩放条的显示状态
         /// </summary>
         public static readonly DependencyProperty SliderVisibilityProperty = DependencyProperty.Register(nameof(SliderVisibility), typeof(Visibility), typeof(ImageViewControl), new FrameworkPropertyMetadata(Visibility.Visible));
@@ -483,7 +499,12 @@ namespace GeneralTool.General.WPFHelper.WPFControls
         /// <summary>
         /// 当前图像源
         /// </summary>
-        public static readonly DependencyProperty ImageSourceProperty = DependencyProperty.Register(nameof(ImageSource), typeof(ImageSource), typeof(ImageViewControl));
+        public static readonly DependencyProperty ImageSourceProperty = DependencyProperty.Register(nameof(ImageSource), typeof(ImageSource), typeof(ImageViewControl),new PropertyMetadata(ImageSourceChanged));
+
+        private static void ImageSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+        }
+
         /// <summary>
         /// 当前图像源
         /// </summary>
@@ -494,7 +515,7 @@ namespace GeneralTool.General.WPFHelper.WPFControls
             {
                 if (this.Img == null)
                     return null;
-                var source = this.Img.GetValue(ImageSourceProperty);
+                var source = this.GetValue(ImageSourceProperty);
                 if (source == null)
                     return null;
                 return (ImageSource)source;
@@ -513,13 +534,13 @@ namespace GeneralTool.General.WPFHelper.WPFControls
         /// 鼠标在画面上移动事件
         /// </summary>
         [Description("鼠标在画面上移动事件"), Category("自定义事件")]
-        public event Action<Point> ImageMouseMoveEvent;
+        public event Action<ImageMouseEventArgs> ImageMouseMoveEvent;
 
         /// <summary>
         /// 确定截图成功后触发事件
         /// </summary>
         [Description("确定截图成功后触发事件"), Category("自定义事件")]
-        public event EventHandler<Int32Rect> CutImageEvent;
+        public event EventHandler<ImageCutRectEventArgs> CutImageEvent;
 
         /// <summary>
         /// 确定截图成功后触发事件
@@ -531,13 +552,13 @@ namespace GeneralTool.General.WPFHelper.WPFControls
         /// 在图像进行缩放时触发事件
         /// </summary>
         [Description("在图像进行缩放时触发事件"), Category("自定义事件")]
-        public event EventHandler<double> MouseWheelScaleEvent;
+        public event EventHandler<ImageScaleEventArgs> MouseWheelScaleEvent;
 
         /// <summary>
         /// 在图像进行缩放时触发事件
         /// </summary>
         [Description("在截图框状态更改时触发事件"), Category("自定义事件")]
-        public event EventHandler<Int32Rect> CutPanelVisibleChanged;
+        public event EventHandler<ImageCutRectEventArgs> CutPanelVisibleChanged;
 
         #endregion
 
@@ -912,7 +933,7 @@ namespace GeneralTool.General.WPFHelper.WPFControls
 
             this.tt.X = -(actualPoint.X * (this.Slider.Value - 1)) + this.currentWheelPoint.X - actualPoint.X;
             this.tt.Y = -(actualPoint.Y * (this.Slider.Value - 1)) + this.currentWheelPoint.Y - actualPoint.Y;
-            this.MouseWheelScaleEvent?.Invoke(this.Img, this.Slider.Value);
+            this.MouseWheelScaleEvent?.Invoke(this.Img, new ImageScaleEventArgs(this.Slider.Value));
         }
 
 
@@ -1173,7 +1194,7 @@ namespace GeneralTool.General.WPFHelper.WPFControls
             //判断当前截图框的位置
             ResizeCutPanel(e);
             if (this.CutRectangle.Visibility == Visibility.Visible)
-                this.CutPanelVisibleChanged?.Invoke(sender, this.GetChooseRect());
+                this.CutPanelVisibleChanged?.Invoke(sender, new ImageCutRectEventArgs(this.GetChooseRect()));
             this.isDrag = false;
             this.Cursor = null;
             this.dragPoint = new Point();
@@ -1272,7 +1293,7 @@ namespace GeneralTool.General.WPFHelper.WPFControls
                     System.Diagnostics.Trace.WriteLine($"重新设置截取框大小出错:{ex.Message}");
                 }
                 if (CutPanel.Visibility == Visibility.Visible)
-                    this.CutPanelVisibleChanged?.Invoke(sender, this.GetChooseRect());
+                    this.CutPanelVisibleChanged?.Invoke(sender, new ImageCutRectEventArgs(this.GetChooseRect()));
             }
             else
             {
@@ -1308,9 +1329,8 @@ namespace GeneralTool.General.WPFHelper.WPFControls
         }
         private void Img_MouseMove(object sender, MouseEventArgs e)
         {
-
             var point = this.GetCurrentPixelPoint(e);
-            this.ImageMouseMoveEvent?.Invoke(point);
+            this.ImageMouseMoveEvent?.Invoke(new ImageMouseEventArgs(e.MouseDevice, e.Timestamp, e.StylusDevice, point));
 
             // this.Canvas_MouseMove(this.Img, e);
             // this.lbPosition.Text = point.X + Environment.NewLine + point.Y;
@@ -1335,22 +1355,25 @@ namespace GeneralTool.General.WPFHelper.WPFControls
         private void CutRectButton_Click(object sender, RoutedEventArgs e)
         {
             this.CutPanel.Visibility = Visibility.Collapsed;
-            this.CutImageEvent?.Invoke(sender, this.GetChooseRect());
-
-            var sucess = false;
-            var msg = "";
-            BitmapSource source = null;
-            try
+            var handler = new ImageCutRectEventArgs(this.GetChooseRect(), true);
+            this.CutImageEvent?.Invoke(sender, handler);
+            if (handler.HandleToNext)
             {
-                source = this.GetChooseRectImageSouce();
-                sucess = true;
-            }
-            catch (Exception ex)
-            {
-                msg = ex.Message;
+                var sucess = false;
+                var msg = "";
+                BitmapSource source = null;
+                try
+                {
+                    source = this.GetChooseRectImageSouce();
+                    sucess = true;
+                }
+                catch (Exception ex)
+                {
+                    msg = ex.Message;
+                }
+                this.CutImageDownEvent?.Invoke(sender, new ImageEventArgs(source, sucess, msg));
             }
 
-            this.CutImageDownEvent?.Invoke(sender, new ImageEventArgs(source, sucess, msg));
 
             this.CutRectButton.IsChecked = false;
             this.isDrag = false;

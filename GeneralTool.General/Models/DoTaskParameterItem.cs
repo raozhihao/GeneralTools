@@ -1,8 +1,10 @@
 ﻿using GeneralTool.General.TaskLib;
+using GeneralTool.General.WPFHelper;
 using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 
 namespace GeneralTool.General.Models
 {
@@ -10,15 +12,16 @@ namespace GeneralTool.General.Models
     /// 任务项目
     /// </summary>
     [Serializable]
-    public class DoTaskParameterItem
+    public class DoTaskParameterItem : BaseNotifyModel
     {
+        private string url;
         /// <summary>
         /// 路由地址
         /// </summary>
         public string Url
         {
-            get;
-            set;
+            get => this.url;
+            set => this.RegisterProperty(ref this.url, value);
         }
 
         /// <summary>
@@ -30,14 +33,68 @@ namespace GeneralTool.General.Models
             set;
         }
 
+        private ObservableCollection<ParameterItem> parameters = new ObservableCollection<ParameterItem>();
         /// <summary>
         /// 参数列表
         /// </summary>
-        public List<ParameterItem> Paramters
+        public ObservableCollection<ParameterItem> Paramters
         {
-            get;
-            set;
-        } = new List<ParameterItem>();
+            get => this.parameters;
+            set
+            {
+                if (value != null)
+                {
+                    foreach (var item in value)
+                    {
+                        item.ValueChanged -= this.Item_ValueChanged;
+                        item.ValueChanged += this.Item_ValueChanged;
+                    }
+                }
+                this.RegisterProperty(ref this.parameters, value);
+            }
+        }
+
+        private void Item_ValueChanged()
+        {
+            this.SocketArgs = GetArgs();
+        }
+
+        private string socketArgs = "";
+
+        /// <summary>
+        /// 获取Socket调用时的参数示例
+        /// </summary>
+        public string SocketArgs
+        {
+            get
+            {
+
+                return this.GetArgs();
+            }
+            set
+            {
+                this.RegisterProperty(ref this.socketArgs, value);
+            }
+        }
+
+        private string GetArgs()
+        {
+            var builder = new StringBuilder();
+            builder.Append("{\"Url\":\"" + this.Url + "\",\"Paramters\":");
+
+            var list = this.Paramters;
+            if (list.Count == 0)
+                builder.Append("null}");
+            else
+            {
+                var listStr = list.Select(p =>
+                {
+                    return string.Format("\"{0}\":\"{1}\"", p.ParameterName, p.Value);
+                });
+                builder.Append("{" + string.Join(",", listStr) + "}}");
+            }
+            return builder.ToString();
+        }
 
         /// <summary>
         /// 任务执行对象
@@ -48,13 +105,14 @@ namespace GeneralTool.General.Models
             set;
         }
 
+        private string explanation;
         /// <summary>
         /// 提示信息
         /// </summary>
         public string Explanation
         {
-            get;
-            set;
+            get => this.explanation;
+            set => this.RegisterProperty(ref this.explanation, value);
         }
 
         /// <summary>

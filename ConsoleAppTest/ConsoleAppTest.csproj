@@ -51,6 +51,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SerialPortTest.cs" />
+    <Compile Include="SocketTest.cs" />
     <Compile Include="TestEnumerator.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -18,15 +18,37 @@ namespace GeneralTool.General.WPFHelper.Events
         {
             EventCommandsProerty = DependencyProperty.RegisterAttached("EventCommands", typeof(EventHostCollection), typeof(EventHosts), new FrameworkPropertyMetadata(EventCommandsChanged));
         }
+
+        private static DependencyObject dependencyObject;
         private static void EventCommandsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (e.NewValue == null)
+            if (e.NewValue == null || e.OldValue != null)
                 return;
 
-            if (!(e.NewValue is EventHostCollection eve))
+            if (e.NewValue is EventHostCollection eve)
+            {
+                dependencyObject = d;
+                // AddEventHost(d, eve);
+                eve.Changed += Eve_Changed;
+            }
+        }
+
+        private static void Eve_Changed(object sender, EventArgs e)
+        {
+            var eve = sender as EventHost;
+
+            if (eve.Command == null)
                 return;
 
-            AddEventHost(d, eve);
+
+            if (eve.Command is IEventCommand cmd)
+            {
+                cmd.SetObject(dependencyObject);
+                cmd.EventName = eve.EventName;
+                cmd.SetParameter(eve.CommandParameter);
+                eve.RegisterEvent(dependencyObject);
+            }
+
 
         }
 
@@ -56,18 +78,19 @@ namespace GeneralTool.General.WPFHelper.Events
         /// <returns></returns>
         public static EventHostCollection GetEventCommands(Visual element)
         {
-            if (element == null)
-            {
-                throw new ArgumentNullException("element");
-            }
+            //if (element == null)
+            //{
+            //    throw new ArgumentNullException("element");
+            //}
 
-            var hosts = (EventHostCollection)element.GetValue(EventCommandsProerty);
-            if (hosts == null)
-            {
-                hosts = new EventHostCollection();
-                hosts.SetValue(EventCommandsProerty, hosts);
-            }
+            //var hosts = (ObservableCollection<EventHost>)element.GetValue(EventCommandsProerty);
+            //if (hosts == null)
+            //{
+            //    hosts = new ObservableCollection<EventHost>();
+            //    hosts.SetValue(EventCommandsProerty, hosts);
+            //}
 
+            var hosts = element.GetValue(EventCommandsProerty) as EventHostCollection;
             return hosts;
         }
 
@@ -87,9 +110,8 @@ namespace GeneralTool.General.WPFHelper.Events
             if (hosts == null)
             {
                 hosts = new EventHostCollection();
-                hosts.SetValue(EventCommandsProerty, hosts);
             }
-
+            element.SetValue(EventCommandsProerty, hosts);
         }
     }
 }

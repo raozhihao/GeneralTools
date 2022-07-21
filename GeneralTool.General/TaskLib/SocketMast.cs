@@ -472,7 +472,7 @@ namespace GeneralTool.General.TaskLib
         protected Socket _socket = null;
 
         // Token: 0x04000017 RID: 23
-        private bool _isAutoSize = false;
+        private bool _isAutoSize = true;
 
         // Token: 0x04000018 RID: 24
         private string _ip = string.Empty;
@@ -502,7 +502,7 @@ namespace GeneralTool.General.TaskLib
         /// <summary>
         /// 是否接收所有消息
         /// </summary>
-        public bool IsReciverForAll = false;
+        public bool IsReciverForAll = true;
 
         /// <summary>
         /// 

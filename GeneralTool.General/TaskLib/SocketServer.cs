@@ -17,6 +17,10 @@ namespace GeneralTool.General.TaskLib
     public class SocketServer : SocketMast, IDisposable
     {
         private ILog log;
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="log"></param>
         public SocketServer(ILog log)
         {
             if (log == null)
@@ -69,6 +73,7 @@ namespace GeneralTool.General.TaskLib
             catch (Exception ex)
             {
                 log.Fail($"开启sokcet服务失败:{ex}");
+                throw ex;
             }
         }
 
@@ -166,7 +171,7 @@ namespace GeneralTool.General.TaskLib
                             list.AddRange(array.Take(num));
                             Array.Clear(array, 0, array.Length);
 
-                            if (num < array.Length || socket.Available <= 0)
+                            if (num <= array.Length && socket.Available == 0)
                             {
                                 break;
                             }
@@ -178,15 +183,15 @@ namespace GeneralTool.General.TaskLib
                         socket.Receive(array, base.DataPageLength, SocketFlags.None);
                         list.AddRange(array);
                     }
-                    bool isCheckLink = base.IsCheckLink;
-                    if (isCheckLink)
-                    {
-                        bool flag4 = socket.Poll(10, SelectMode.SelectRead);
-                        if (flag4)
-                        {
-                            break;
-                        }
-                    }
+                    //bool isCheckLink = base.IsCheckLink;
+                    //if (isCheckLink)
+                    //{
+                    //    bool flag4 = socket.Poll(10, SelectMode.SelectRead);
+                    //    if (flag4)
+                    //    {
+                    //        break;
+                    //    }
+                    //}
                     this.DealMsg(list.ToArray(), socket);
                 }
                 throw new Exception("连接已被断开!");

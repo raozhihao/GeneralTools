@@ -29,6 +29,10 @@ namespace GeneralTool.General.Models
         }
 
         /// <summary>
+        /// 值更改事件
+        /// </summary>
+        public event Action ValueChanged;
+        /// <summary>
         /// 值
         /// </summary>
         public object Value
@@ -39,8 +43,8 @@ namespace GeneralTool.General.Models
             }
             set
             {
-                this.value = value;
                 this.RegisterProperty(ref this.value, value);
+                this.ValueChanged?.Invoke();
             }
         }
 
@@ -56,11 +60,20 @@ namespace GeneralTool.General.Models
 
         private Type parameterType;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="parameterName"></param>
+        /// <param name="value"></param>
         public ParameterItem(string parameterName, object value)
         {
             this.ParameterName = parameterName;
             this.Value = value;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
         public ParameterItem()
         {
 

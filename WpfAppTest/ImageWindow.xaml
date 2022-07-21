@@ -56,40 +56,48 @@
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="7*" />
             <RowDefinition Height="auto" />
-            <RowDefinition />
-            <RowDefinition Height="auto" />
+            <RowDefinition Height="3*" />
         </Grid.RowDefinitions>
-        <Menu>
-            <MenuItem Header="加载图片"
-                      Click="MenuItem_Click" />
-            <MenuItem Header="开始裁剪"
-                      Click="ClipRect" />
-            <MenuItem Header="绘制矩形"
-                      Click="DrawRect_Click" />
-            <MenuItem Header="清除矩形"
-                      Click="ClearRect_Click" />
-            <MenuItem Header="绘制点"
-                      Click="DrawPoint" />
-            <MenuItem Header="清除所有"
-                      Click="Clear_click" />
-            <MenuItem Header="截图"
-                      x:Name="ClipMenu"
-                      Click="ClipImage" />
-        </Menu>
-        <Canvas Grid.Row="1" x:Name="canvas">
-          
+        <Grid Grid.Row="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+            <Menu>
+                <MenuItem Header="加载图片"
+                          Click="MenuItem_Click" />
+                <MenuItem Header="开始裁剪"
+                          Click="ClipRect" />
+                <MenuItem Header="绘制矩形"
+                          Click="DrawRect_Click" />
+                <MenuItem Header="清除矩形"
+                          Click="ClearRect_Click" />
+                <MenuItem Header="绘制点"
+                          Click="DrawPoint" />
+                <MenuItem Header="清除所有"
+                          Click="Clear_click" />
+                <MenuItem Header="截图"
+                          x:Name="ClipMenu"
+                          Click="ClipImage" />
+                
+                 <MenuItem Header="测试轮播同图"
+                          x:Name="LoopButton"
+                          Click="LoopImage" />
+            </Menu>
+
             <Grid Grid.Row="1"
-                  x:Name="can">
+                  x:Name="can"
+                  Background="Red">
                 <UI:ImageViewControl x:Name="ImageControl"
                                      ImageMaxScaleValue="30"
                                      ImageScale="3"
-                                     Background="Black"
+                                     Background="IndianRed"
                                      ToolExpanderVisibility="Visible"
                                      SliderVisibility="Visible"
-                                     CutButtonVisibility="Visible"
-                                     Width="{Binding ElementName=canvas,Path=ActualWidth}"
-                                     Height="{Binding ElementName=canvas,Path=ActualHeight}">
+                                     CutButtonVisibility="Visible">
                     <UI:ImageViewControl.ToolButtons>
                         <UI:ToolButtonCollection>
                             <ToggleButton Content="bbc"
@@ -97,20 +105,22 @@
                                           Click="Button_Click" />
                         </UI:ToolButtonCollection>
                     </UI:ImageViewControl.ToolButtons>
-                   
+
                 </UI:ImageViewControl>
             </Grid>
-        </Canvas>
-        
-        <StatusBar Grid.Row="2">
-            <TextBlock x:Name="PosText"
-                       Text="0,0" />
-            <TextBlock x:Name="CutRect"
-                       Margin="10 0"
-                       Text="2560,2048" />
-            <TextBlock x:Name="SetPosText"
-                       Margin="10 0" />
-            
-        </StatusBar>
+
+            <StatusBar Grid.Row="2">
+                <TextBlock x:Name="PosText"
+                           Text="0,0" />
+                <TextBlock x:Name="CutRect"
+                           Margin="10 0"
+                           Text="2560,2048" />
+                <TextBlock x:Name="SetPosText"
+                           Margin="10 0" />
+
+            </StatusBar>
+        </Grid>
+
+        <GridSplitter Grid.Row="1"  Height="2" HorizontalAlignment="Stretch" Background="Red"/>
     </Grid>
 </Window>

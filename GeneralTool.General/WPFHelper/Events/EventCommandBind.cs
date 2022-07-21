@@ -41,8 +41,34 @@ namespace GeneralTool.General.WPFHelper.Events
                 throw new ArgumentNullException($"事件名称 {eventName} 不存在元素 {d} 中,请检查");
 
             var handler = Delegate.CreateDelegate(@event.EventHandlerType, action.Target, action.Method);
-            @event.AddEventHandler(d, handler);
+            //if (d is ButtonBase b)
+            //{
+            //    var routeEvent = GetRouteEvent(b, eventName);
+            //    b.AddHandler(routeEvent, handler, true);
+            //}
+            //else
+            //{
 
+            //    @event.AddEventHandler(d, handler);
+            //}
+            var routeEvent = GetRouteEvent(d, eventName);
+            if (routeEvent != null)
+                d.AddHandler(routeEvent, handler, true);
+            else
+                @event.AddEventHandler(d, handler);
+
+        }
+
+        private static RoutedEvent GetRouteEvent(UIElement b, string eventName)
+        {
+            eventName += "Event";
+
+            var property = typeof(UIElement).GetField(eventName);
+            if (property != null)
+            {
+                return (RoutedEvent)property.GetValue(b);
+            }
+            return null;
         }
 
 

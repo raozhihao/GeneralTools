@@ -5,6 +5,7 @@ using GeneralTool.General.Logs;
 using GeneralTool.General.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
 
@@ -64,7 +65,6 @@ namespace GeneralTool.General.TaskLib
             this.ServerStation = new Station(jsonConvert, log);
         }
 
-        public event Action<string> TaskEvent;
 
         /// <summary>
         /// 
@@ -158,8 +158,9 @@ namespace GeneralTool.General.TaskLib
                     }
                     catch (Exception ex)
                     {
-                        this.log.Fail($"无法将参数 {info.Name} 转换为值 {valueMsg} 错误:{ex.Message}");
-                        return null;
+                        var message = $"无法将参数 {info.Name} 转换为值 {valueMsg} 错误:{ex.Message}";
+                        this.log.Fail(message);
+                        throw new Exception(message);
                     }
                 }
                 //如果不是值类型
@@ -198,6 +199,10 @@ namespace GeneralTool.General.TaskLib
         private readonly Dictionary<object, Dictionary<string, DoTaskParameterItem>> currents = new Dictionary<object, Dictionary<string, DoTaskParameterItem>>();
 
         /// <summary>
+        /// 任务集合
+        /// </summary>
+        public ObservableCollection<TaskModel> TaskModels { get; set; } = new ObservableCollection<TaskModel>();
+        /// <summary>
         /// 获取所有任务
         /// </summary>
         public Dictionary<object, Dictionary<string, DoTaskParameterItem>> Currents
@@ -223,21 +228,26 @@ namespace GeneralTool.General.TaskLib
             {
                 foreach (var obj in this.taskInokes)
                 {
+                    TaskModel taskModel = new TaskModel();
                     var classRoute = obj.GetAttributeByClass<RouteAttribute>();
                     if (classRoute == null)
                     {
                         continue;
                     }
+
+                    taskModel.Explanation = classRoute.Explanation;
                     var rootPath = classRoute.Url;
+
                     var tmpDics = new Dictionary<string, DoTaskParameterItem>();
                     var methods = obj.GetType().GetMethods().OrderBy(m => m.Name);
                     methods.Foreach(m =>
                     {
+                        var doModel = new DoTaskModel();
                         var attributes = m.GetCustomAttributes().Where(a => a is RouteAttribute);
                         if (attributes.Count() > 0)
                         {
                             var route = attributes.First() as RouteAttribute;
-                            var paramters = new List<ParameterItem>();
+                            var paramters = new ObservableCollection<ParameterItem>();
                             m.GetParameters().Foreach(p =>
                             {
                                 var it = new ParameterItem()
@@ -264,7 +274,7 @@ namespace GeneralTool.General.TaskLib
                             var item = new DoTaskParameterItem()
                             {
                                 //转换类型
-                                Paramters = paramters.ToList(),
+                                Paramters = paramters,
                                 Url = rootPath + route.Url,
                                 Method = m,
                                 TaskObj = obj,
@@ -280,10 +290,14 @@ namespace GeneralTool.General.TaskLib
                             {
                                 this.TaskParameterItems.Add(key, item);
                                 tmpDics.Add(key, item);
+                                doModel.DoTaskParameterItem = item;
+                                doModel.Url = key;
+                                taskModel.DoTaskModels.Add(doModel);
                             }
                         }
                     });
                     this.currents.Add(obj, tmpDics);
+                    this.TaskModels.Add(taskModel);
                 }
 
                 return this.TaskParameterItems;

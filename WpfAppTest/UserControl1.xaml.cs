@@ -17,12 +17,10 @@ namespace WpfAppTest
         public UserControl1()
         {
             InitializeComponent();
-            this.ImageControl.ImageMouseMoveEvent += ImageControl_ImageMouseMoveEvent;
             //this.ImageControl.SaveCutImageEvent += ImageControl_SaveCutImageEvent;
             var source = this.ImageControl.ImageSource;
             this.ImageControl.ImageSource = new BitmapImage(new Uri(@"C:\Users\raozh\Pictures\Saved Pictures\carmera.bmp"));
             this.ImageControl.CutImageDownEvent += this.ImageControl_CutImageDownEvent;
-            this.ImageControl.CutPanelVisibleChanged += this.ImageControl_CutPanelVisibleChanged;
             this.ImageControl.SizeChanged += this.ImageControl_SizeChanged;
             this.Loaded += this.ImageWindow_Loaded;
         }
@@ -139,6 +137,11 @@ namespace WpfAppTest
             clip = true;
             (sender as MenuItem).IsEnabled = false;
             this.ImageControl.SendMouseCutRectStart();
+        }
+
+        private void ImageControl_ImageDownEvent(object sender, GeneralTool.General.Models.ImageEventArgs e)
+        {
+
         }
     }
 }

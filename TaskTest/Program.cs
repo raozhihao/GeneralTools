@@ -11,8 +11,9 @@ namespace TaskTest
     {
         static void Main(string[] args)
         {
+            new SocketClientTest().Test();
             // TestManager();
-            TestLog();
+            //TestLog();
             Console.ReadKey();
         }
 
