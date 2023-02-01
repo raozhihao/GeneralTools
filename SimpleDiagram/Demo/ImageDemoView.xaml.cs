@@ -46,7 +46,7 @@ namespace SimpleDiagram.Demo
             {
                 this.ImgControl.CanMoveImage = false;
                 this.startPoint = this.ImgControl.TranslateToCanvasPoint(this.ImgControl.CurrentMouseDownPixelPoint);
-                if (this.RectRadio.IsChecked.Value || this.HeartRadio.IsChecked.Value)
+                if (this.RectRadio.IsChecked.Value || this.HeartRadio.IsChecked.Value )
                 {
 
                     this.tmpPath = new Path()
@@ -56,6 +56,19 @@ namespace SimpleDiagram.Demo
                     };
                     //矩形绘制
                     var geo = new RectangleGeometry();
+                    tmpPath.Data = geo;
+
+                    this.ImgControl.AddElement(tmpPath);
+                }
+                else if (this.LineRadio.IsChecked.Value)
+                {
+                    this.tmpPath = new Path()
+                    {
+                        Stroke = Brushes.Red,
+                        StrokeThickness = 1 / this.ImgControl.ImageScale,
+                    };
+                    //矩形绘制
+                    var geo = new LineGeometry(startPoint,startPoint);
                     tmpPath.Data = geo;
 
                     this.ImgControl.AddElement(tmpPath);
@@ -103,11 +116,17 @@ namespace SimpleDiagram.Demo
             var currPoint = obj.CanvasPoint;
             if (this.isDraw && obj.RightButton == MouseButtonState.Pressed)
             {
-                if (this.RectRadio.IsChecked.Value || this.HeartRadio.IsChecked.Value)
+                if (this.RectRadio.IsChecked.Value || this.HeartRadio.IsChecked.Value )
                 {
                     if (this.tmpPath.Data is RectangleGeometry g)
                     {
                         g.Rect = new Rect(this.startPoint, currPoint);
+                    }
+                }else if (this.LineRadio.IsChecked.Value)
+                {
+                    if (this.tmpPath.Data is LineGeometry l)
+                    {
+                        l.EndPoint = currPoint;
                     }
                 }
                 else if (this.tmpPath.Data is PathGeometry g)
@@ -126,6 +145,7 @@ namespace SimpleDiagram.Demo
         private void ImgControl_MouseUp(object sender, MouseButtonEventArgs e)
         {
 
+            this.ImgControl.RemoveElement(this.tmpPath);
             if (this.isDraw)
             {
                 this.isDraw = false;
@@ -137,6 +157,17 @@ namespace SimpleDiagram.Demo
                     pointShape.Path.Fill = Brushes.Red;
                     this.ImgControl.AddCustomeShape(pointShape);
                     this.PointRadio.IsChecked = false;
+                }else if (this.LineRadio.IsChecked.Value)
+                {
+                    if (this.tmpPath.Data is LineGeometry l)
+                    {
+                        var start = this.ImgControl.TranslateToPixelPoint(l.StartPoint);
+                        var end = this.ImgControl.TranslateToPixelPoint(l.EndPoint);
+                        var lineShape = new LineShape(this.ImgControl, start, end);
+                        lineShape.Path.Stroke = Brushes.Red;
+                        lineShape.Path.StrokeThickness = 1;
+                        this.ImgControl.AddCustomeShape(lineShape);
+                    }
                 }
                 else if (this.RectRadio.IsChecked.Value || this.HeartRadio.IsChecked.Value)
                 {
@@ -166,7 +197,6 @@ namespace SimpleDiagram.Demo
                     }
 
 
-                    this.ImgControl.RemoveElement(this.tmpPath);
                     this.RectRadio.IsChecked = false;
                 }
                 else if (this.PolygonRadio.IsChecked.Value)

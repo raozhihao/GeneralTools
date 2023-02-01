@@ -253,6 +253,10 @@ namespace SimpleDiagram.Blocks
             }
         }
 
+        /// <summary>
+        /// 设置动作块在界面上的显示内容
+        /// </summary>
+        public abstract void SetShow();
         public abstract BaseBlockViewModel BlockViewModel { get; set; }
         #endregion
     }

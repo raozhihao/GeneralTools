@@ -25,6 +25,7 @@ namespace GeneralTool.General.WPFHelper.WPFControls.Shapes
         {
             this.centerPoint = centerPoint;
             this.Raidus = radius;
+            this.PixelPoints.Add(centerPoint);
         }
 
 
@@ -53,9 +54,8 @@ namespace GeneralTool.General.WPFHelper.WPFControls.Shapes
         /// <inheritdoc/>
         public override void CreateShape()
         {
-            this.ImageView.RemoveElement(this.Path);
-            this.PixelPoints.Clear();
-            this.PixelPoints.Add(this.centerPoint);
+            if (this.PixelPoints.Count > 0)
+                this.centerPoint = this.PixelPoints[0];
             //转换坐标
             var centerPoint = this.ImageView.TranslateToCanvasPoint(this.centerPoint);
             //生成

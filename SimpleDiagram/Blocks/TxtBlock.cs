@@ -8,10 +8,13 @@ namespace SimpleDiagram.Blocks
     {
         public override BaseBlockViewModel BlockViewModel { get; set; } = new TxtBlockViewModel();
 
-        private string txt;
         public override WindowResult OpenWindow()
         {
-            var window = new TxtWindow(txt)
+            if (!(this.BlockViewModel is TxtBlockViewModel t))
+            {
+                return WindowResult.False;
+            }
+            var window = new TxtWindow(t.Txt?.Txt)
             {
                 Owner = this.MainWindow
             };
@@ -19,7 +22,7 @@ namespace SimpleDiagram.Blocks
             var re = window.ShowDialog();
             if (re.Value)
             {
-                if (this.BlockViewModel is TxtBlockViewModel t)
+
                 {
                     t.Txt = new TxtModel()
                     {
@@ -27,7 +30,6 @@ namespace SimpleDiagram.Blocks
                         BlockId = t.BlockId,
                         ScriptId = this.LayoutId
                     };
-                    this.txt = window.ResultTxt;
                 }
                 this.SetContent();
             }
@@ -47,6 +49,11 @@ namespace SimpleDiagram.Blocks
         protected override void OnDispose()
         {
 
+        }
+
+        public override void SetShow()
+        {
+            this.SetContent();
         }
     }
 }

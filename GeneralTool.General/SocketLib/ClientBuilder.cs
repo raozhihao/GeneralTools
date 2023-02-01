@@ -70,7 +70,7 @@ namespace GeneralTool.General.SocketLib
         {
             var server = new SocketClient<FixedHeadRecevieState>(log)
             {
-                Package = new Func<Interfaces.IPackage<FixedHeadRecevieState>>(() => new FixedHeadPackag())
+                Package = new Func<Interfaces.IPackage<FixedHeadRecevieState>>(() => new FixedHeadPackage())
             };
             return server;
         }

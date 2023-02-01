@@ -24,6 +24,11 @@ namespace SimpleDiagram.Blocks
             return WindowResult.None;
         }
 
+        public override void SetShow()
+        {
+            
+        }
+
         protected override void OnDispose()
         {
 

@@ -335,7 +335,14 @@ namespace GeneralTool.General.WPFHelper.WPFControls.Shapes
         /// <param name="canvasPoints"></param>
         public abstract void UpdateShape(List<Point> canvasPoints);
 
-
+        /// <summary>
+        /// 重新绘制图形(根据现有属性)
+        /// </summary>
+        public virtual void ReDrawShape()
+        {
+            this.ImageView.RemoveCustomeShape(this);
+            this.CreateShape();
+        }
 
         /// <summary>
         /// 

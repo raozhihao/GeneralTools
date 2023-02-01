@@ -2,6 +2,8 @@
 using System.Windows;
 using System.Windows.Media;
 
+using GeneralTool.General.WPFHelper.DiagramDesigner.Controls;
+
 namespace GeneralTool.General.WPFHelper.DiagramDesigner.Models
 {
     /// <summary>
@@ -74,5 +76,10 @@ namespace GeneralTool.General.WPFHelper.DiagramDesigner.Models
         /// 
         /// </summary>
         public bool IsStart { get; set; }
+
+        /// <summary>
+        /// 被拖动的对象
+        /// </summary>
+        public BlockItem DragItem { get; internal set; }
     }
 }

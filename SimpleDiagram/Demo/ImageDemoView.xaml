@@ -29,6 +29,10 @@
                          Checked="PointRadio_Checked" />
 
             <RadioButton GroupName="Draw"
+                         Content="线" 
+                         x:Name="LineRadio"/>
+            
+            <RadioButton GroupName="Draw"
                          x:Name="RectRadio"
                          Content="矩形" />
 
@@ -50,8 +54,9 @@
 
         <g:ImageViewControl x:Name="ImgControl"
                             Grid.Row="1"
-                            SourcePath="C:\Users\raozh\Pictures\2.bmp"
+                            SourcePath="C:\Users\raozh\Pictures\1.png"
                             CanImageDraw="True"
+                            ToolExpanderVisibility="Collapsed"
                             ImageMouseMoveEvent="ImgControl_ImageMouseMoveEvent"/>
 
        

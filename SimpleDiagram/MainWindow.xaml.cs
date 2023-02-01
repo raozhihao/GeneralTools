@@ -92,5 +92,42 @@ namespace SimpleDiagram
                 this.tokenSource.Canceld = true;
         }
 
+        private void dc_CopyEvent(object sender, GeneralTool.General.WPFHelper.DiagramDesigner.Models.BlockCopyArgs e)
+        {
+            if (e.DragItem.DragItem != null && e.DestBlock != null)
+            {
+                e.Handle = true;
+                var source = e.DragItem.DragItem as BaseBlock;
+                var sink = e.DestBlock as BaseBlock;
+                sink.BlockViewModel = this.Copy(source.BlockViewModel);
+                sink.BlockViewModel.BlockId = sink.ID.ToString();
+            }
+        }
+
+        /// <summary>
+        /// 复制对象
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        public T Copy<T>(T item)
+        {
+            if (item == null) return default;
+
+            var type = item.GetType();
+            var properties = type.GetProperties();
+            var copyObj = Activator.CreateInstance(type);
+            for (int i = 0; i < properties.Length; i++)
+            {
+                var property = properties[i];
+                if (property.GetMethod != null && property.SetMethod != null)
+                {
+                    var value = property.GetMethod.Invoke(item, null);
+                    property.SetValue(copyObj, value, null);
+                }
+            }
+
+            return (T)copyObj;
+        }
     }
 }

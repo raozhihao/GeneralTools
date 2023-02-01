@@ -40,7 +40,7 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>GeneralToolSnk.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>GeneralToolSnk.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.JScript" />
@@ -168,7 +168,7 @@
     <Compile Include="SocketLib\Models\SocketErrorArg.cs" />
     <Compile Include="SocketLib\Packages\CommandLinePackage.cs" />
     <Compile Include="SocketLib\Packages\CustomCommandPackage.cs" />
-    <Compile Include="SocketLib\Packages\FixedHeadPackage.cs" />
+    <Compile Include="SocketLib\Packages\FixedHeadPackag.cs" />
     <Compile Include="SocketLib\Packages\NoPackage.cs" />
     <Compile Include="SocketLib\ServerBuilder.cs" />
     <Compile Include="SocketLib\SocketClient.cs" />
@@ -200,6 +200,7 @@
     <Compile Include="WPFHelper\DiagramDesigner\Controls\DesignerCanvas.cs" />
     <Compile Include="WPFHelper\DiagramDesigner\Controls\ZoomBox.cs" />
     <Compile Include="WPFHelper\DiagramDesigner\Models\ArraryInfo.cs" />
+    <Compile Include="WPFHelper\DiagramDesigner\Models\BlockCopyArgs.cs" />
     <Compile Include="WPFHelper\DiagramDesigner\Models\BlockItemDo.cs" />
     <Compile Include="WPFHelper\DiagramDesigner\Models\ConnectionDo.cs" />
     <Compile Include="WPFHelper\DiagramDesigner\Models\Direction.cs" />
@@ -301,6 +302,7 @@
     <Compile Include="WPFHelper\WPFControls\LogParargraph.cs" />
     <Compile Include="WPFHelper\WPFControls\PropertyGridControl.cs" />
     <Compile Include="WPFHelper\WPFControls\Shapes\BaseShape.cs" />
+    <Compile Include="WPFHelper\WPFControls\Shapes\LineShape.cs" />
     <Compile Include="WPFHelper\WPFControls\Shapes\PointShape.cs" />
     <Compile Include="WPFHelper\WPFControls\Shapes\PolygonShape.cs" />
     <Compile Include="WPFHelper\WPFControls\Shapes\RectShape.cs" />
@@ -365,11 +367,11 @@
     <None Include="Docs\HttpServerStation.md" />
     <None Include="Docs\LangProvider.md" />
     <None Include="Docs\EventBinding.md" />
-    <None Include="GeneralToolSnk.pfx" />
     <Compile Include="WPFHelper\DiagramDesigner\Common\PathExecute.SourceBottom.cs" />
     <Compile Include="WPFHelper\DiagramDesigner\Common\PathExecute.SourceLeft.cs" />
     <Compile Include="WPFHelper\DiagramDesigner\Common\PathExecute.SourceRight.cs" />
     <Compile Include="WPFHelper\DiagramDesigner\Common\PathExecute.SourceTop.cs" />
+    <None Include="GeneralToolSnk.snk" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

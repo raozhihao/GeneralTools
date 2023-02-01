@@ -17,7 +17,7 @@ namespace GeneralTool.General.TaskLib
         /// </summary>
         /// <param name="jsonConvert"></param>
         /// <param name="log"></param>
-        public FixedHeadSocketStation(IJsonConvert jsonConvert, ILog log) : base(jsonConvert, log, new Func<IPackage<FixedHeadRecevieState>>(() => new FixedHeadPackag()))
+        public FixedHeadSocketStation(IJsonConvert jsonConvert, ILog log) : base(jsonConvert, log, new Func<IPackage<FixedHeadRecevieState>>(() => new FixedHeadPackage()))
         {
 
         }

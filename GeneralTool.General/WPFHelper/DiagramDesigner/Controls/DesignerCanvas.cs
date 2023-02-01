@@ -42,6 +42,7 @@ namespace GeneralTool.General.WPFHelper.DiagramDesigner.Controls
         public List<BlockItem> Removes { get; private set; } = new List<BlockItem>();
 
         private DragObject currentObj;
+
         private void HandleKeyDownEvent(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.C && (Keyboard.Modifiers & (ModifierKeys.Control)) == (ModifierKeys.Control))
@@ -50,6 +51,7 @@ namespace GeneralTool.General.WPFHelper.DiagramDesigner.Controls
                 if (block != null)
                 {
                     this.currentObj = block.GetDragObject();
+                    this.currentObj.DragItem = block;
                     this.currentObj.IsDoubleClickAdd = true;
                 }
             }
@@ -469,6 +471,13 @@ namespace GeneralTool.General.WPFHelper.DiagramDesigner.Controls
             this.Children.Add(connection);
         }
 
+
+        /// <summary>
+        /// 复制时事件
+        /// </summary>
+        public event EventHandler<BlockCopyArgs> CopyEvent;
+
+
         /// <summary>
         /// 
         /// </summary>
@@ -629,6 +638,15 @@ namespace GeneralTool.General.WPFHelper.DiagramDesigner.Controls
                 }
             }
 
+            if (this.CopyEvent != null)
+            {
+                var copyValue = new BlockCopyArgs() { DragItem = dragObject,DestBlock=block };
+                this.CopyEvent(this, copyValue);
+                if (copyValue.Handle)
+                {
+                    return;
+                }
+            }
             block.OnDragToCanvas(connection);
         }
 

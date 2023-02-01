@@ -40,7 +40,7 @@ namespace GeneralTool.General.WPFHelper.WPFControls.Shapes
             {
                 DashStyle = new DashStyle()
                 {
-                    Dashes = new DoubleCollection() { 0, 3 },
+                    Dashes = new DoubleCollection() { 0, 2 },
                     Offset = 1
                 }
             };

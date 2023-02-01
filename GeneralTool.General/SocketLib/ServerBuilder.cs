@@ -69,7 +69,7 @@ namespace GeneralTool.General.SocketLib
         {
             var server = new SocketServer<FixedHeadRecevieState>(log)
             {
-                Package = new Func<IPackage<FixedHeadRecevieState>>(() => new FixedHeadPackag())
+                Package = new Func<IPackage<FixedHeadRecevieState>>(() => new FixedHeadPackage())
             };
             return server;
         }

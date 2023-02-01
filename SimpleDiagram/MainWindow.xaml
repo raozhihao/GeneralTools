@@ -130,6 +130,7 @@
                                                   Focusable="true"
                                                   FocusVisualStyle="{x:Null}"
                                                   IsEnabled="{Binding CanvasEnable}"
+                                                  CopyEvent="dc_CopyEvent"
                                                   DragEndArrary="{Binding ElementName=AutoCheckBox,Path=IsChecked}">
 
                                 </c:DesignerCanvas>
