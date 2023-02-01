@@ -301,6 +301,7 @@
     <Compile Include="WPFHelper\WPFControls\LogParargraph.cs" />
     <Compile Include="WPFHelper\WPFControls\PropertyGridControl.cs" />
     <Compile Include="WPFHelper\WPFControls\Shapes\BaseShape.cs" />
+    <Compile Include="WPFHelper\WPFControls\Shapes\LineShape.cs" />
     <Compile Include="WPFHelper\WPFControls\Shapes\PointShape.cs" />
     <Compile Include="WPFHelper\WPFControls\Shapes\PolygonShape.cs" />
     <Compile Include="WPFHelper\WPFControls\Shapes\RectShape.cs" />

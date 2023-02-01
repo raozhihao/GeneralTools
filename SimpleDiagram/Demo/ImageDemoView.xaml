@@ -29,6 +29,10 @@
                          Checked="PointRadio_Checked" />
 
             <RadioButton GroupName="Draw"
+                         Content="线" 
+                         x:Name="LineRadio"/>
+            
+            <RadioButton GroupName="Draw"
                          x:Name="RectRadio"
                          Content="矩形" />
 
