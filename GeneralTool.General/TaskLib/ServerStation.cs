@@ -8,7 +8,10 @@ using GeneralTool.General.Models;
 
 namespace GeneralTool.General.TaskLib
 {
-    internal class ServerStation : ServerStationBase
+    /// <summary>
+    /// 
+    /// </summary>
+    public class ServerStation : ServerStationBase
     {
         #region Private 字段
 
@@ -19,7 +22,11 @@ namespace GeneralTool.General.TaskLib
         #endregion Private 字段
 
         #region Public 构造函数
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="jsonConvert"></param>
+        /// <param name="log"></param>
         public ServerStation(IJsonConvert jsonConvert = null, ILog log = null) : base(log)
         {
             if (log == null)
@@ -36,14 +43,19 @@ namespace GeneralTool.General.TaskLib
         #endregion Public 构造函数
 
         #region Public 属性
-
+        /// <summary>
+        /// 
+        /// </summary>
         public SocketServer SocketServer { get; set; }
 
         #endregion Public 属性
 
         #region Public 方法
 
-        // Token: 0x06000011 RID: 17 RVA: 0x00002778 File Offset: 0x00000978
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public override bool Close()
         {
             this.SocketServer.Close();
@@ -51,7 +63,12 @@ namespace GeneralTool.General.TaskLib
             return true;
         }
 
-        // Token: 0x06000010 RID: 16 RVA: 0x00002708 File Offset: 0x00000908
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ip"></param>
+        /// <param name="port"></param>
+        /// <returns></returns>
         public override bool Start(string ip, int port)
         {
             this.SocketServer.IsDelMsgAsyn = false;
@@ -68,7 +85,10 @@ namespace GeneralTool.General.TaskLib
 
         #region Private 方法
 
-        // Token: 0x0600000C RID: 12 RVA: 0x00002278 File Offset: 0x00000478
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
         private void SocketServer_RecDataEvent(RecDataObject obj)
         {
             ServerResponse serverResponse = new ServerResponse

@@ -46,7 +46,9 @@ namespace GeneralTool.General.SocketLib
         public override void Startup(IPAddress address, int port)
         {
             this.Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
             this.Socket.Connect(new IPEndPoint(address, port));
+
             this.BeginReceive(this.Socket);
 
             this.IsConnected = true;

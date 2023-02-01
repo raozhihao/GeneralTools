@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
@@ -7,6 +8,7 @@ using System.Windows.Controls;
 
 using GeneralTool.General.Attributes;
 using GeneralTool.General.Interfaces;
+using GeneralTool.General.WPFHelper.WPFControls;
 
 namespace GeneralTool.General.WPFHelper.UIEditorConverts
 {
@@ -29,6 +31,7 @@ namespace GeneralTool.General.WPFHelper.UIEditorConverts
 
             //添加行
             gridParent.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(0, GridUnitType.Auto) });
+
             var editorAttribute = UIEditorHelper.GetCusomAttr<UIEditorAttribute>(propertyInfo);
             if (editorAttribute == null)
             {
@@ -130,9 +133,13 @@ namespace GeneralTool.General.WPFHelper.UIEditorConverts
         /// <inheritdoc/>
         public void ConvertTo(Grid gridParent, object instance, PropertyInfo propertyInfo, bool? sort, ref int Row, string header = null)
         {
+            if (instance == null) return;
             var instanceType = instance.GetType();
-            var gridContent = new Grid() { Margin = new Thickness(5, 0, 0, 0) };
-            gridContent.Name = "Grid_" + Row;
+            var gridContent = new Grid
+            {
+                Margin = new Thickness(5, 0, 0, 0),
+                Name = "Grid_" + Row
+            };
             Grid.SetRow(gridContent, Row++);
             Grid.SetColumnSpan(gridContent, 2);
 
@@ -141,6 +148,13 @@ namespace GeneralTool.General.WPFHelper.UIEditorConverts
             gridContent.DataContext = instance;
             gridContent.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(0, GridUnitType.Auto) });
 
+            if (PropertyGridControl.AttributesDic.TryGetValue(instance.GetType().FullName, out var attrValue))
+            {
+                if (attrValue is DescriptionAttribute a)
+                {
+                    header = a.Description;
+                }
+            }
             var expande = new Expander() { Header = header ?? instanceType.Name, IsExpanded = true };
 
             Grid.SetColumnSpan(expande, 2);
@@ -163,7 +177,15 @@ namespace GeneralTool.General.WPFHelper.UIEditorConverts
              {
                  var categoryAttr = p.GetCustomAttribute<System.ComponentModel.CategoryAttribute>();
                  if (categoryAttr == null)
+                 {
+                     if (PropertyGridControl.AttributesDic.ContainsKey(p.PropertyType.FullName))
+                     {
+                         if (PropertyGridControl.AttributesDic[p.PropertyType.FullName] is System.ComponentModel.CategoryAttribute c)
+                             return c;
+                     }
                      return new System.ComponentModel.CategoryAttribute("其它");
+                 }
+
                  return categoryAttr;
              });
             if (sort != null)
@@ -173,6 +195,7 @@ namespace GeneralTool.General.WPFHelper.UIEditorConverts
             foreach (var item in groups)
             {
                 string headerName = item.Key.Category;
+
                 //在其下再增加一个Expande
 
                 newGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(0, GridUnitType.Auto) });
@@ -195,6 +218,7 @@ namespace GeneralTool.General.WPFHelper.UIEditorConverts
                 foreach (var pro in newItem)
                 {
                     var editor = new ExpandeUIEditor();
+
                     editor.ConvertTo(gridExpander, pro.GetValue(instance), pro, sort, ref newRow);
                 }
             }

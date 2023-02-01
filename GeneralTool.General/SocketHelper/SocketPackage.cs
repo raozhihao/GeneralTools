@@ -72,8 +72,11 @@ namespace GeneralTool.General.SocketHelper
         /// <returns></returns>
         public SocketPackage Read(Socket clientSocket, int size)
         {
-            var package = new SocketPackage() { IsError = false };
-            package.PackageLen = size;
+            var package = new SocketPackage
+            {
+                IsError = false,
+                PackageLen = size
+            };
 
             //计算需要多大的缓冲区才好
             var bufferSize = size > BufferSize ? BufferSize : size;

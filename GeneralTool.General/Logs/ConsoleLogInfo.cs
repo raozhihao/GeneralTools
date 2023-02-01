@@ -35,6 +35,7 @@ namespace GeneralTool.General.Logs
         /// <inheritdoc/>
         public void Log(string msg, LogType logType = LogType.Info)
         {
+            msg = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff} : {msg}";
             Trace.WriteLine(msg);
             //System.Diagnostics.Trace.WriteLine($"ConsoleLog: {msg} ,LogType: {logType}");
             this.LogEvent?.Invoke(this, new LogMessageInfo(msg, logType, ""));

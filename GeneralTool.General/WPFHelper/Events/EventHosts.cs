@@ -88,22 +88,6 @@ namespace GeneralTool.General.WPFHelper.Events
 
         #region Private 方法
 
-        private static void AddEventHost(DependencyObject d, EventHostCollection eves)
-        {
-            foreach (var eve in eves)
-            {
-                if (eve.Command == null)
-                    return;
-
-                if (eve.Command is IEventCommand cmd)
-                {
-                    cmd.SetObject(d);
-                    cmd.EventName = eve.EventName;
-                    cmd.SetParameter(eve.CommandParameter);
-                    eve.RegisterEvent(d);
-                }
-            }
-        }
 
         private static void Eve_Changed(object sender, EventArgs e)
         {

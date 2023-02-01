@@ -110,7 +110,7 @@ namespace GeneralTool.General.Models
         public int Index
         {
             get => index;
-            set => this.RegisterProperty(ref this.index,value);
+            set => this.RegisterProperty(ref this.index, value);
         }
 
         #endregion Public 属性

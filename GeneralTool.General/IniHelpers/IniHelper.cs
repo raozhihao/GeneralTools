@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
 
+
 namespace GeneralTool.General.IniHelpers
 {
     /// <summary>
@@ -30,7 +31,7 @@ namespace GeneralTool.General.IniHelpers
         /// file. This value is the maximum allowed by the win32 functions
         /// GetPrivateProfileSectionNames() or GetPrivateProfileString().
         /// </remarks>
-        public static int MaxSectionSize { get; set; }= 32767; // 32 KB
+        public static int MaxSectionSize { get; set; } = 32767; // 32 KB
 
         /// <summary>
         /// Ini对象,使用默认的保存位置
@@ -516,16 +517,61 @@ namespace GeneralTool.General.IniHelpers
             if (keyName == null)
                 throw new ArgumentNullException("keyName");
 
-            StringBuilder retval = new StringBuilder(IniHelper.MaxSectionSize);
-            NativeMethods.GetPrivateProfileString(sectionName,
+            var builder = new StringBuilder(MaxSectionSize);
+
+            var result = NativeMethods.GetPrivateProfileString(sectionName,
                                                   keyName,
                                                   defaultValue,
-                                                  retval,
+                                                  builder,
                                                   IniHelper.MaxSectionSize,
                                                   m_path);
-            
-            return retval.ToString();
+
+
+            return builder.ToString();
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sectionName"></param>
+        /// <param name="keyName"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public string GetString2(string sectionName,
+                              string keyName)
+        {
+            if (sectionName == null)
+                throw new ArgumentNullException("sectionName");
+
+            if (keyName == null)
+                throw new ArgumentNullException("keyName");
+
+
+            //Allocate a buffer for the returned section names.
+            IntPtr ptr = Marshal.AllocCoTaskMem(IniHelper.MaxSectionSize);
+
+            try
+            {
+                //Get the section names into the buffer.
+                var len = NativeMethods.GetPrivateProfileString(sectionName,
+                                                             keyName,
+                                                             "",
+                                                             ptr,
+                                                             (uint)IniHelper.MaxSectionSize,
+                                                            m_path);
+
+                string buff = Marshal.PtrToStringAuto(ptr, len - 1);
+
+            }
+            finally
+            {
+                //Free the buffer
+                Marshal.FreeCoTaskMem(ptr);
+            }
+
+            return "";
+        }
+
 
         /// <summary>
         /// 获取值

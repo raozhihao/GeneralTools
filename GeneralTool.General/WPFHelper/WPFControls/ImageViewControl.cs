@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -10,8 +9,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
+using GeneralTool.General.Enums;
 using GeneralTool.General.ExceptionHelper;
 using GeneralTool.General.Models;
+using GeneralTool.General.WPFHelper.WPFControls.Shapes;
 
 namespace GeneralTool.General.WPFHelper.WPFControls
 {
@@ -29,7 +30,11 @@ namespace GeneralTool.General.WPFHelper.WPFControls
         /// <summary>
         /// 矩形
         /// </summary>
-        Rectangle
+        Rectangle,
+        /// <summary>
+        /// 
+        /// </summary>
+        Line
     }
 
     /// <summary>
@@ -56,486 +61,9 @@ namespace GeneralTool.General.WPFHelper.WPFControls
     [StyleTypedProperty(Property = nameof(ToolCutButtonStyle), StyleTargetType = typeof(ToggleButton))]
     [StyleTypedProperty(Property = nameof(MenuOkStyle), StyleTargetType = typeof(Button))]
     [StyleTypedProperty(Property = nameof(MenuCancelStyle), StyleTargetType = typeof(Button))]
-    public class ImageViewControl : Control
+    public partial class ImageViewControl : Control
     {
-        #region Public 字段
 
-        private DrawType drawType = DrawType.None;
-
-        /// <summary>
-        /// 截图框Tooltip
-        /// </summary>
-        public static readonly DependencyProperty CutPanelToolTipProperty = DependencyProperty.Register(nameof(CutPanelToolTip), typeof(object), typeof(ImageViewControl), new PropertyMetadata(null));
-
-        /// <summary>
-        /// 截取框的最大尺寸
-        /// </summary>
-        public static readonly DependencyProperty CutPanelMaxSizeProperty = DependencyProperty.Register(nameof(CutPanelMaxSize), typeof(Size), typeof(ImageViewControl), new PropertyMetadata(Size.Empty));
-
-        /// <summary>
-        /// 截取框的最小尺寸
-        /// </summary>
-        public static readonly DependencyProperty CutPanelMinSizeProperty = DependencyProperty.Register(nameof(CutPanelMinSize), typeof(Size), typeof(ImageViewControl), new PropertyMetadata(new Size(0, 0)));
-
-        /// <summary>
-        /// 双击截取框时是否通知图片
-        /// </summary>
-        public static readonly DependencyProperty DoubleClickRaiseImageProperty = DependencyProperty.Register(nameof(DoubleClickRaiseImage), typeof(bool), typeof(ImageViewControl), new PropertyMetadata(true));
-
-        /// <summary>
-        /// 截取框的最小尺寸
-        /// </summary>
-        public Size CutPanelMinSize
-        {
-            get => (Size)this.GetValue(CutPanelMinSizeProperty);
-            set => this.SetValue(CutPanelMinSizeProperty, value);
-        }
-
-        /// <summary>
-        /// 截取框的最大尺寸
-        /// </summary>
-        public Size CutPanelMaxSize
-        {
-            get => (Size)this.GetValue(CutPanelMaxSizeProperty);
-            set => this.SetValue(CutPanelMaxSizeProperty, value);
-        }
-        /// <summary>
-        /// 双击截取框时是否通知图片
-        /// </summary>
-        public bool DoubleClickRaiseImage
-        {
-            get => (bool)this.GetValue(DoubleClickRaiseImageProperty);
-            set => this.SetValue(DoubleClickRaiseImageProperty, value);
-        }
-
-        /// <summary>
-        /// 向图像控件中增加右键菜单,需要使用 ContextItemCollection
-        /// </summary>
-        public static readonly DependencyProperty ContextMenus = DependencyProperty.RegisterAttached("ContextMenus", typeof(ContextMenu), typeof(ImageViewControl), new FrameworkPropertyMetadata(MenuItemsChanged));
-
-        /// <summary>
-        /// 右侧工具条截图按钮显示状态
-        /// </summary>
-        public static readonly DependencyProperty CutButtonVisibilityProperty = DependencyProperty.Register(nameof(CutButtonVisibility), typeof(Visibility), typeof(ImageViewControl), new FrameworkPropertyMetadata(Visibility.Visible));
-
-        /// <summary>
-        /// 最大缩放倍数
-        /// </summary>
-        public static readonly DependencyProperty ImageMaxScaleValueProperty = DependencyProperty.Register(nameof(ImageMaxScaleValue), typeof(double), typeof(ImageViewControl), new FrameworkPropertyMetadata(25.0));
-
-        /// <summary>
-        /// 当前缩放倍数
-        /// </summary>
-        public static readonly DependencyProperty ImageScaleProperty = DependencyProperty.Register(nameof(ImageScale), typeof(double), typeof(ImageViewControl), new PropertyMetadata(1.0, ValueChanged));
-
-        /// <summary>
-        /// 当前图像源
-        /// </summary>
-        public static readonly DependencyProperty ImageSourceProperty = DependencyProperty.Register(nameof(ImageSource), typeof(ImageSource), typeof(ImageViewControl), new PropertyMetadata(ImageSourceChanged));
-
-        /// <summary>
-        /// 右侧工具条是否展开
-        /// </summary>
-        public static readonly DependencyProperty IsToolExpanderExpandedProperty = DependencyProperty.Register(nameof(IsToolExpanderExpanded), typeof(bool), typeof(ImageViewControl), new FrameworkPropertyMetadata(true));
-
-        /// <summary>
-        /// 取消截图按钮样式
-        /// </summary>
-        public static readonly DependencyProperty MenuCancelStyleProperty = DependencyProperty.Register(nameof(MenuCancelStyle), typeof(Style), typeof(ImageViewControl));
-
-        /// <summary>
-        /// 确定截图按钮样式
-        /// </summary>
-        public static readonly DependencyProperty MenuOkStyleProperty = DependencyProperty.Register(nameof(MenuOkStyle), typeof(Style), typeof(ImageViewControl));
-
-        /// <summary>
-        /// 左侧滚动条样式
-        /// </summary>
-        public static readonly DependencyProperty SliderStyleProperty = DependencyProperty.Register(nameof(SliderStyle), typeof(Style), typeof(ImageViewControl));
-
-        /// <summary>
-        /// 缩放条的显示状态
-        /// </summary>
-        public static readonly DependencyProperty SliderVisibilityProperty = DependencyProperty.Register(nameof(SliderVisibility), typeof(Visibility), typeof(ImageViewControl), new FrameworkPropertyMetadata(Visibility.Visible));
-
-        /// <summary>
-        /// 向工具条按钮中附加一组自定义控件,需要使用 ToolButtonCollection
-        /// </summary>
-        public static readonly DependencyProperty ToolButtons = DependencyProperty.RegisterAttached("ToolButtons", typeof(ToolButtonCollection), typeof(ImageViewControl), new FrameworkPropertyMetadata(ToolButtonsChanged));
-
-        /// <summary>
-        /// 右侧工具条截图按钮样式
-        /// </summary>
-        public static readonly DependencyProperty ToolCutButtonStyleProperty = DependencyProperty.Register(nameof(ToolCutButtonStyle), typeof(Style), typeof(ImageViewControl));
-
-        /// <summary>
-        /// 右侧工具条样式
-        /// </summary>
-        public static readonly DependencyProperty ToolExpanderStyleProperty = DependencyProperty.Register(nameof(ToolExpanderStyle), typeof(Style), typeof(ImageViewControl), new FrameworkPropertyMetadata(default(Style), FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange));
-
-        /// <summary>
-        /// 右侧工具条显示状态
-        /// </summary>
-        public static readonly DependencyProperty ToolExpanderVisibilityProperty = DependencyProperty.Register(nameof(ToolExpanderVisibility), typeof(Visibility), typeof(ImageViewControl), new FrameworkPropertyMetadata(Visibility.Visible));
-
-        #endregion Public 字段
-
-        #region Private 字段
-
-        /// <summary>
-        /// 当前鼠标在滚动的时候的坐标
-        /// </summary>
-        private Point currentWheelPoint;
-
-        /// <summary>
-        /// 当前按下的坐标
-        /// </summary>
-        private Point curretnMouseDownPoint;
-
-        private bool cuting;
-
-        private StackPanel CutPanel;
-
-        private Rectangle CutRectangle;
-
-        private ToggleButton CutRectButton;
-
-        private TranslateTransform cutTrans;
-
-        private Point dragPoint;
-
-        private Grid GridBox;
-
-        /// <summary>
-        /// 定义变幻组合对象
-        /// </summary>
-        private TransformGroup group;
-
-        /// <summary>
-        /// 当前图片的缩放h比例
-        /// </summary>
-        private double h;
-
-        private double height = 0;
-
-        private Grid ImageBox;
-
-        private Canvas ImageCanvas;
-
-        private ScrollViewer ImageScroll;
-
-        private Viewbox ImageViewBox;
-
-        private Image Img;
-
-        /// <summary>
-        /// 是否处于拖动状态
-        /// </summary>
-        private bool isDrag = false;
-
-        private bool IsImageMouseDown = false;
-
-        private Button MenuCancel;
-
-        private Button MenuOk;
-
-        private ScaleTransform scaleTrans;
-
-        private Slider Slider;
-
-        private StackPanel StackMenu;
-
-        private StackPanel stackTools;
-
-        //截图起始坐标
-        private Point StartPoint;
-
-        private IEnumerable<UIElement> toolButtons;
-
-        private Expander ToolExpander;
-
-        private ContextMenu toolMenus;
-
-        /// <summary>
-        /// 定义移动对象
-        /// </summary>
-        private TranslateTransform tt;
-
-        /// <summary>
-        /// 当前图片的缩放w比例
-        /// </summary>
-        private double w;
-
-        //截图的长宽
-        private double width = 0;
-
-        #endregion Private 字段
-
-        #region Public 构造函数
-
-        static ImageViewControl() => DefaultStyleKeyProperty.OverrideMetadata(typeof(ImageViewControl), new FrameworkPropertyMetadata(typeof(ImageViewControl)));
-
-        #endregion Public 构造函数
-
-        #region Public 事件
-
-        /// <summary>
-        /// 确定截图成功后触发事件
-        /// </summary>
-        [Description("确定截图成功后触发事件"), Category("自定义事件")]
-        public event EventHandler<ImageEventArgs> CutImageDownEvent;
-
-        /// <summary>
-        /// 确定截图成功后触发事件
-        /// </summary>
-        [Description("确定截图成功后触发事件"), Category("自定义事件")]
-        public event EventHandler<ImageCutRectEventArgs> CutImageEvent;
-
-        /// <summary>
-        /// 在图像进行缩放时触发事件
-        /// </summary>
-        [Description("在截图框状态更改时触发事件"), Category("自定义事件")]
-        public event EventHandler<ImageCutRectEventArgs> CutPanelVisibleChanged;
-
-        /// <summary>
-        /// 鼠标在画面上移动事件
-        /// </summary>
-        [Description("鼠标在画面上移动事件"), Category("自定义事件")]
-        public event Action<ImageMouseEventArgs> ImageMouseMoveEvent;
-
-        /// <summary>
-        /// 在图像进行缩放时触发事件
-        /// </summary>
-        [Description("在图像进行缩放时触发事件"), Category("自定义事件")]
-        public event EventHandler<ImageScaleEventArgs> MouseWheelScaleEvent;
-
-        #endregion Public 事件
-
-        #region Public 属性
-
-        /// <summary>
-        /// 设置或获取是否能够对控件进行绘制截图操作
-        /// </summary>
-        public bool CanImageDraw { get; set; }
-
-        /// <summary>
-        /// 保存当前点击的像素点坐标
-        /// </summary>
-        [Description("保存当前点击的像素点坐标"), Category("自定义属性")]
-        public Point CurrentMouseDownPixelPoint
-        {
-            get; private set;
-        }
-
-        /// <summary>
-        /// 保存当前点击的屏幕坐标
-        /// </summary>
-        [Description("保存当前点击的屏幕坐标"), Category("自定义属性")]
-        public Point CurrentMouseDownPoint { get; private set; }
-
-        /// <summary>
-        /// 右侧工具条截图按钮显示状态
-        /// </summary>
-        [Description("右侧工具条截图按钮显示状态"), Category("自定义属性")]
-        public Visibility CutButtonVisibility
-        {
-            get => (Visibility)this.GetValue(CutButtonVisibilityProperty);
-            set => this.SetValue(CutButtonVisibilityProperty, value);
-        }
-
-        /// <summary>
-        /// 当前图片框的显示高度
-        /// </summary>
-        public double? ImageActualHeight
-        {
-            get => this.Img?.ActualHeight;
-        }
-
-        /// <summary>
-        /// 当前图片框的显示宽度
-        /// </summary>
-        public double? ImageActualWidth
-        {
-            get => this.Img?.ActualWidth;
-        }
-
-        /// <summary>
-        /// 截图框Tooltip
-        /// </summary>
-        [Description("截图框Tooltip"), Category("自定义属性")]
-        public object CutPanelToolTip
-        {
-            get => this.GetValue(CutPanelToolTipProperty);
-            set => this.SetValue(CutPanelToolTipProperty, value);
-        }
-
-        /// <summary>
-        /// 最大缩放倍数
-        /// </summary>
-        [Description("最大缩放倍数"), Category("自定义属性")]
-        public double ImageMaxScaleValue
-        {
-            get => Convert.ToInt32(this.GetValue(ImageMaxScaleValueProperty));
-
-            set
-            {
-                if (value < 1.0)
-                    value = 1.0;
-                this.SetValue(ImageMaxScaleValueProperty, value);
-            }
-        }
-
-        /// <summary>
-        /// 当前缩放倍数
-        /// </summary>
-        [Description("当前缩放倍数"), Category("自定义属性")]
-        public double ImageScale
-        {
-            get => Convert.ToDouble(this.GetValue(ImageScaleProperty));
-
-            set
-            {
-                if (value < 1.0)
-                {
-                    value = 1.0;
-                }
-
-                this.SetValue(ImageScaleProperty, value);
-            }
-        }
-
-        /// <summary>
-        /// 当前图像源
-        /// </summary>
-        [Description("当前图像源"), Category("自定义属性")]
-        public ImageSource ImageSource
-        {
-            get
-            {
-                if (this.Img == null)
-                    return null;
-                var source = this.GetValue(ImageSourceProperty);
-                if (source == null)
-                    return null;
-                return (ImageSource)source;
-            }
-            set
-            {
-                //初始化最大尺寸
-                if (value != null && this.CutPanelMaxSize.IsEmpty)
-                {
-                    this.CutPanelMaxSize = new Size(value.Width, value.Height);
-                }
-                this.SetValue(ImageSourceProperty, value);
-            }
-        }
-
-        /// <summary>
-        /// 右侧工具条是否展开
-        /// </summary>
-        [Description("右侧工具条是否展开"), Category("自定义属性")]
-        public bool IsToolExpanderExpanded
-        {
-            get => (bool)this.GetValue(IsToolExpanderExpandedProperty);
-            set => this.SetValue(IsToolExpanderExpandedProperty, value);
-        }
-
-        /// <summary>
-        /// 取消截图按钮样式
-        /// </summary>
-        [Description("取消截图按钮样式"), Category("自定义属性")]
-        public Style MenuCancelStyle
-        {
-            get => (Style)this.GetValue(MenuCancelStyleProperty);
-            set => this.SetValue(MenuCancelStyleProperty, value);
-        }
-
-        /// <summary>
-        /// 确定截图按钮样式
-        /// </summary>
-        [Description("确定截图按钮样式"), Category("自定义属性")]
-        public Style MenuOkStyle
-        {
-            get => (Style)this.GetValue(MenuOkStyleProperty);
-            set => this.SetValue(MenuOkStyleProperty, value);
-        }
-
-        /// <summary>
-        /// 鼠标在图像上移动时当前的像素点位置
-        /// </summary>
-        [Description("鼠标在图像上移动时当前的像素点位置"), Category("自定义属性")]
-        public Point MouseOverPoint => this.Img.IsMouseOver ? this.GetCurrentPixelPoint(new MouseEventArgs(Mouse.PrimaryDevice, 1)) : new Point();
-
-        /// <summary>
-        /// 左侧滚动条样式
-        /// </summary>
-        [Description("左侧滚动条样式"), Category("自定义属性")]
-        public Style SliderStyle
-        {
-            get => (Style)this.GetValue(SliderStyleProperty);
-            set => this.SetValue(SliderStyleProperty, value);
-        }
-
-        /// <summary>
-        /// 缩放条的显示状态
-        /// </summary>
-        [Description("缩放条的显示状态"), Category("自定义属性")]
-        public Visibility SliderVisibility
-        {
-            get => (Visibility)this.GetValue(SliderVisibilityProperty);
-            set { this.SetValue(SliderVisibilityProperty, value); }
-        }
-
-        /// <summary>
-        /// 右侧工具条截图按钮样式
-        /// </summary>
-        [Description("右侧工具条截图按钮样式"), Category("自定义属性")]
-        public Style ToolCutButtonStyle
-        {
-            get => (Style)this.GetValue(ToolCutButtonStyleProperty);
-            set => this.SetValue(ToolCutButtonStyleProperty, value);
-        }
-
-        /// <summary>
-        /// 右侧工具条样式
-        /// </summary>
-        [Description("右侧工具条样式"), Category("自定义属性")]
-        public Style ToolExpanderStyle
-        {
-            get => (Style)this.GetValue(ToolExpanderStyleProperty);
-            set => this.SetValue(ToolExpanderStyleProperty, value);
-        }
-
-        /// <summary>
-        /// 右侧工具条显示状态
-        /// </summary>
-        [Description("右侧工具条显示状态"), Category("自定义属性")]
-        public Visibility ToolExpanderVisibility
-        {
-            get => (Visibility)this.GetValue(ToolExpanderVisibilityProperty);
-            set => this.SetValue(ToolExpanderVisibilityProperty, value);
-        }
-
-        #endregion Public 属性
-
-        #region Private 属性
-
-        private PixelTrans GetPixelTrans
-        {
-            get
-            {
-                var ims = (BitmapSource)this.Img.Source;
-                if (ims == null)
-                {
-                    return new PixelTrans();
-                }
-                this.w = ims.PixelWidth / this.Img.ActualWidth;
-                this.h = ims.PixelHeight / this.Img.ActualHeight;
-                return new PixelTrans(this.w, this.h);
-            }
-        }
-
-        #endregion Private 属性
 
         #region Public 方法
 
@@ -596,16 +124,21 @@ namespace GeneralTool.General.WPFHelper.WPFControls
         public static void SetToolButtons(ImageViewControl control, ToolButtonCollection buttons) => control.SetToolButtons(buttons);
 
         /// <summary>
+        /// 停止截取框的操作
+        /// </summary>
+        public void EndCutRect() => this.CutPanel.Visibility = Visibility.Collapsed;
+
+        /// <summary>
         /// 清除所有指定类型的图形
         /// </summary>
         /// <param name="drawType">
         /// </param>
-        public void ClearAll(ImageDrawType drawType = ImageDrawType.Ellipse | ImageDrawType.Rectangle)
+        public void ClearAll(ImageDrawType drawType = ImageDrawType.Ellipse | ImageDrawType.Rectangle | ImageDrawType.Line)
         {
             List<UIElement> list = new List<UIElement>();
             foreach (UIElement item in this.ImageCanvas.Children)
             {
-                if (item is Ellipse ellipse)
+                if (item is Ellipse)
                 {
                     if (drawType.HasFlag(ImageDrawType.Ellipse))
                         list.Add(item);
@@ -616,6 +149,10 @@ namespace GeneralTool.General.WPFHelper.WPFControls
                     if (drawType.HasFlag(ImageDrawType.Rectangle))
                         list.Add(rect);
                 }
+
+                if (item is Line)
+                    if (drawType.HasFlag(ImageDrawType.Line))
+                        list.Add(item);
             }
 
             foreach (var item in list)
@@ -694,16 +231,16 @@ namespace GeneralTool.General.WPFHelper.WPFControls
         /// <param name="thickness">
         /// 线条宽度
         /// </param>
-        public void DrawRect(Int32Rect drawRect, Brush stroke, Brush fill, double thickness = 1)
+        public Rectangle DrawRect(Int32Rect drawRect, Brush stroke, Brush fill, double thickness = 1)
         {
-            if (!this.CanImageDraw) return;
+            if (!this.CanImageDraw) return null;
             var leftPoint = new Point(drawRect.X, drawRect.Y);
-            var pos = this.TranslatePoint(leftPoint);
+            var pos = this.TranslateToCanvasPoint(leftPoint);
             var pixelRightTop = new Point(drawRect.Width + leftPoint.X, leftPoint.Y);
-            var rightTop = this.TranslatePoint(pixelRightTop);
+            var rightTop = this.TranslateToCanvasPoint(pixelRightTop);
 
             var pixelLeftBottom = new Point(leftPoint.X, drawRect.Height + leftPoint.Y);
-            var leftBoom = this.TranslatePoint(pixelLeftBottom);
+            var leftBoom = this.TranslateToCanvasPoint(pixelLeftBottom);
 
             var width = rightTop.X - pos.X;
             var height = leftBoom.Y - pos.Y;
@@ -723,12 +260,88 @@ namespace GeneralTool.General.WPFHelper.WPFControls
 
             if (double.IsInfinity(pos.X) || double.IsInfinity(pos.Y))
             {
-                return;
+                return null;
             }
             rect.Tag = drawRect;
 
             Canvas.SetLeft(rect, pos.X);
             Canvas.SetTop(rect, pos.Y);
+            return rect;
+        }
+
+        /// <summary>
+        /// 绘制线
+        /// </summary>
+        /// <param name="p1"></param>
+        /// <param name="p2"></param>
+        /// <param name="stroke"></param>
+        /// <param name="fill"></param>
+        /// <param name="thickness"></param>
+        public Line DrawLine(Point p1, Point p2, Brush stroke, Brush fill, double thickness = 1)
+        {
+            if (!this.CanImageDraw) return null;
+
+            p1 = this.TranslateToCanvasPoint(p1);
+            p2 = this.TranslateToCanvasPoint(p2);
+            var line = new Line()
+            {
+                Stroke = stroke,
+                Fill = fill,
+                StrokeThickness = thickness,
+                X1 = p1.X,
+                X2 = p2.X,
+                Y1 = p1.Y,
+                Y2 = p2.Y
+            };
+
+            //Canvas.SetLeft(line, p1.X);
+            //Canvas.SetTop(line, p1.Y);
+            ImageCanvas.Children.Add(line);
+            return line;
+        }
+
+        private readonly List<Path> addUielements = new List<Path>();
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="element"></param>
+        public void RemoveElement(Path element)
+        {
+            this.ImageCanvas.Children.Remove(element);
+            this.addUielements.Remove(element);
+        }
+
+        /// <summary>
+        /// 删除自定义图形
+        /// </summary>
+        /// <param name="shape"></param>
+        public void RemoveCustomeShape(BaseShape shape)
+        {
+            this.RemoveElement(shape.Path);
+            this.CustomeShapes.Remove(shape);
+            shape.Dispose();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="element"></param>
+        public void AddElement(Path element)
+        {
+            this.ImageCanvas.Children.Add(element);
+            this.addUielements.Add(element);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public void ClearElements()
+        {
+            foreach (var item in this.addUielements)
+            {
+                this.ImageCanvas.Children.Remove(item);
+            }
+            this.addUielements.Clear();
         }
 
         /// <summary>
@@ -751,6 +364,17 @@ namespace GeneralTool.General.WPFHelper.WPFControls
 
             var rect = new Int32Rect((int)x, (int)y, (int)width, (int)height);
             return rect;
+        }
+
+        /// <summary>
+        /// 保存指定范围内的图片
+        /// </summary>
+        /// <param name="rect"></param>
+        /// <param name="path"></param>
+        /// <param name="encoder"></param>
+        public void SaveCutRectBitmap(Int32Rect rect, string path, BitmapEncoderEnum encoder)
+        {
+            this.ImageSource.SaveBitmapSouce(rect, path, encoder);
         }
 
         /// <summary>
@@ -784,6 +408,7 @@ namespace GeneralTool.General.WPFHelper.WPFControls
             this.ImageScroll = this.GetTemplateChild(nameof(ImageScroll)) as ScrollViewer;
 
             this.ImageCanvas = this.GetTemplateChild(nameof(ImageCanvas)) as Canvas;
+            this.ImageCanvas.SizeChanged += ImageCanvas_SizeChanged;
             this.ImageCanvas.MouseWheel += this.Control_MouseWheel;
             this.ImageCanvas.MouseDown += this.Canvas_MouseDown;
             this.ImageCanvas.MouseUp += this.Canvas_MouseUp;
@@ -804,10 +429,11 @@ namespace GeneralTool.General.WPFHelper.WPFControls
 
             this.Img = this.GetTemplateChild(nameof(Img)) as Image;
             this.Img.MouseDown += this.Img_MouseDown;
-            this.Img.MouseMove += Img_MouseMove;
+            this.Img.PreviewMouseMove += Img_MouseMove;
             this.Img.MouseUp += this.Img_MouseUp;
             this.Img.SizeChanged += Img_SizeChanged;
 
+            this.ImageSource = this.writeable;
             this.ImageViewBox = this.GetTemplateChild(nameof(ImageViewBox)) as Viewbox;
 
             var contentGrid = this.GetTemplateChild("ContentGrid") as Grid;
@@ -846,23 +472,28 @@ namespace GeneralTool.General.WPFHelper.WPFControls
             {
                 this.CutPanelMaxSize = new Size(this.ImageSource.Width, this.ImageSource.Height);
             }
+            this.CanMoveImage = true;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public event EventHandler<SizeChangedEventArgs> CanvasSizeChanged;
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public event EventHandler<SizeChangedEventArgs> ImageSizeChangedEvent;
         private void Img_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            //更改了尺寸后,为了不变截取的框的位置,要重新调整
-            if (this.CutPanel.Visibility == Visibility.Collapsed) return;
-
             if (this.ImageSource == null) return;
 
-            ////计算出比例宽高
-            //var widthScale = e.NewSize.Width / e.PreviousSize.Width;
-            //var heightScale = e.NewSize.Height / e.PreviousSize.Height;
 
-            //上一次的像素位置
-            var rect = this.GetChooseRect();
-            //更新实际位置
+            this.ImageSizeChangedEvent?.Invoke(sender, e);
 
+            //更改了尺寸后,为了不变截取的框的位置,要重新调整
+            if (this.CutPanel.Visibility == Visibility.Collapsed) return;
         }
 
         /// <summary>
@@ -898,9 +529,9 @@ namespace GeneralTool.General.WPFHelper.WPFControls
         /// </param>
         /// <param name="r">
         /// </param>
-        public void SetPoint(Point pixelPoint, Brush brush, double r = 4)
+        public Ellipse SetPoint(Point pixelPoint, Brush brush, double r = 4)
         {
-            if (!this.CanImageDraw) return;
+            if (!this.CanImageDraw) return null;
             var myEllipse = new Ellipse
             {
                 Stroke = brush,
@@ -911,15 +542,38 @@ namespace GeneralTool.General.WPFHelper.WPFControls
                 Height = r
             };
             _ = this.ImageCanvas.Children.Add(myEllipse);
-            var pos = this.TranslatePoint(pixelPoint);
+            var pos = this.TranslateToCanvasPoint(pixelPoint);
             if (double.IsInfinity(pos.X) || double.IsInfinity(pos.Y))
             {
-                return;
+                return null;
             }
             myEllipse.Tag = pixelPoint;
             Canvas.SetLeft(myEllipse, pos.X - r / 2);
             Canvas.SetTop(myEllipse, pos.Y - r / 2);
+            return myEllipse;
         }
+
+
+        /// <summary>
+        /// 添加自定义图形
+        /// </summary>
+        /// <param name="shape"></param>
+        public void AddCustomeShape(BaseShape shape)
+        {
+            shape.StrokeThickness = shape.Path.StrokeThickness;
+            shape.CreateShape();
+            this.AddElement(shape.Path);
+            this.CustomeShapes.Add(shape);
+
+            shape.UpdateScaleSize(this.ImageScale);
+        }
+
+        private void ImageCanvas_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            this.CanvasSizeChanged?.Invoke(sender, e);
+        }
+
+
 
         #endregion Public 方法
 
@@ -938,14 +592,6 @@ namespace GeneralTool.General.WPFHelper.WPFControls
                 }
             }
 
-            //if (this.toolMenus == null )
-            //    return;
-            //if (this.Img.ContextMenu == null)
-            //    this.Img.ContextMenu = new ContextMenu();
-            //foreach (var item in this.toolMenus)
-            //{
-            //    this.Img.ContextMenu.Items.Add(item);
-            //}
             this.Img.ContextMenu = this.toolMenus;
         }
 
@@ -1036,13 +682,13 @@ namespace GeneralTool.General.WPFHelper.WPFControls
                 this.ShowSizeInCutRectangleCursors();
             }
 
-            if (e.LeftButton == MouseButtonState.Pressed && cuting && this.IsImageMouseDown)
+            if (e.LeftButton == MouseButtonState.Pressed && cuting && this.IsImageMouseDown && this.CanImageDraw)
             {
                 this.DrawRectangle(e);
             }
             else
             {
-                if (this.isDrag)
+                if (this.isDrag && this.CanMoveImage)
                 {
                     this.DragCanvas(e);
                 }
@@ -1068,7 +714,7 @@ namespace GeneralTool.General.WPFHelper.WPFControls
             }
 
             //判断当前截图框的位置
-            ResizeCutPanel(e);
+            ResizeCutPanel();
             if (this.CutRectangle.Visibility == Visibility.Visible)
                 this.CutPanelVisibleChanged?.Invoke(sender, new ImageCutRectEventArgs(this.GetChooseRect()));
             this.isDrag = false;
@@ -1173,6 +819,15 @@ namespace GeneralTool.General.WPFHelper.WPFControls
         public event EventHandler CutMenuCancelEvent;
         private void CutTempCancelClick(object sender, RoutedEventArgs e)
         {
+            this.RaiseCancelCutImage();
+            this.CutMenuCancelEvent?.Invoke(sender, e);
+        }
+
+        /// <summary>
+        /// 取消截图操作
+        /// </summary>
+        public void RaiseCancelCutImage()
+        {
             foreach (UIElement item in this.stackTools.Children)
             {
                 if (item is ToggleButton button)
@@ -1183,7 +838,6 @@ namespace GeneralTool.General.WPFHelper.WPFControls
 
             this.isDrag = false;
             this.ClearRectangle();
-            this.CutMenuCancelEvent?.Invoke(sender, e);
         }
 
         /// <summary>
@@ -1229,6 +883,8 @@ namespace GeneralTool.General.WPFHelper.WPFControls
         /// </param>
         private void DrawRectangle(MouseEventArgs e)
         {
+            if (this.ImageSource == null)
+                return;
             //鼠标当前的point
             Point Endpoint = e.GetPosition(Img);
 
@@ -1287,23 +943,39 @@ namespace GeneralTool.General.WPFHelper.WPFControls
             width *= this.w;
             height *= this.h;
 
-            width = width < minSize.Width ? minSize.Width : width;
-            width = width > maxSize.Width ? maxSize.Width : width;
-            height = height < minSize.Height ? minSize.Height : height;
-            height = height > maxSize.Height ? maxSize.Height : height;
+            if (minSize != Size.Empty)
+            {
+                width = width < minSize.Width ? minSize.Width : width;
+                height = height < minSize.Height ? minSize.Height : height;
+            }
 
-            this.CutRectangle.Width = width / this.w;
-            this.CutRectangle.Height = height / this.h;
+            if (maxSize != Size.Empty)
+            {
+                width = width > maxSize.Width ? maxSize.Width : width;
+
+                height = height > maxSize.Height ? maxSize.Height : height;
+            }
+
+            width /= this.w;
+            height /= this.h;
+            this.CutRectangle.Width = width;
+            this.CutRectangle.Height = height;
             StartLeft = this.Img.TranslatePoint(StartLeft, ImageCanvas);
             Canvas.SetLeft(this.CutPanel, StartLeft.X);
             Canvas.SetTop(this.CutPanel, StartLeft.Y);
         }
 
-        private Point GetCurrentPixelPoint(MouseEventArgs e)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="e"></param>
+        /// <returns></returns>
+        public Point GetCurrentPixelPoint(MouseEventArgs e)
         {
             var ims = (BitmapSource)this.Img.Source;
 
             var mousePoint = e.GetPosition(this.Img);
+            this.CurrentMouseDownPoint = mousePoint;
 
             this.w = ims.PixelWidth / this.Img.ActualWidth;
             var pixelMousePositionX = mousePoint.X * this.w;
@@ -1311,7 +983,9 @@ namespace GeneralTool.General.WPFHelper.WPFControls
             this.h = ims.PixelHeight / this.Img.ActualHeight;
 
             var pixelMousePositionY = mousePoint.Y * this.h;
-            return new Point(pixelMousePositionX, pixelMousePositionY);
+
+            this.CurrentMouseDownPixelPoint = new Point(pixelMousePositionX, pixelMousePositionY);
+            return this.CurrentMouseDownPixelPoint;
         }
 
         private void Img_MouseDown(object sender, MouseButtonEventArgs e)
@@ -1321,12 +995,14 @@ namespace GeneralTool.General.WPFHelper.WPFControls
             this.CurrentMouseDownPixelPoint = GetCurrentPixelPoint(e);
             this.CurrentMouseDownPoint = this.StartPoint;
             this.IsImageMouseDown = true;
+            this.ImageMouseDownEvent?.Invoke(this, e);
         }
 
         private void Img_MouseMove(object sender, MouseEventArgs e)
         {
             var point = this.GetCurrentPixelPoint(e);
-            this.ImageMouseMoveEvent?.Invoke(new ImageMouseEventArgs(e.MouseDevice, e.Timestamp, e.StylusDevice, point));
+            var canvasPoint = e.GetPosition(this.ImageCanvas);
+            this.ImageMouseMoveEvent?.Invoke(new ImageMouseEventArgs(e.MouseDevice, e.Timestamp, e.StylusDevice, point, canvasPoint));
 
             // this.Canvas_MouseMove(this.Img, e); this.lbPosition.Text = point.X +
             // Environment.NewLine + point.Y;
@@ -1472,11 +1148,9 @@ namespace GeneralTool.General.WPFHelper.WPFControls
         /// <summary>
         /// 重置截图框位置
         /// </summary>
-        /// <param name="e">
-        /// </param>
-        private void ResizeCutPanel(MouseButtonEventArgs e)
+        private void ResizeCutPanel()
         {
-            if (this.CutPanel.Visibility == Visibility.Collapsed)
+            if (this.CutPanel.Visibility == Visibility.Collapsed || this.ImageSource == null)
                 return;
 
             var width = this.CutRectangle.Width;
@@ -1514,12 +1188,12 @@ namespace GeneralTool.General.WPFHelper.WPFControls
                 width = minWidth;
             }
 
-            if (wTmp>maxSize.Width)
+            if (wTmp > maxSize.Width)
             {
                 width = maxWidth;
             }
 
-            if (hTmp<minSize.Height)
+            if (hTmp < minSize.Height)
             {
                 height = minHeight;
             }
@@ -1527,6 +1201,9 @@ namespace GeneralTool.General.WPFHelper.WPFControls
             if (hTmp > maxSize.Height)
                 height = maxHeight;
 
+            if (double.IsInfinity(width) || double.IsNaN(width) || double.IsNaN(height) || double.IsInfinity(height)
+                || double.IsPositiveInfinity(width) || double.IsPositiveInfinity(height) || double.IsNegativeInfinity(width) || double.IsNegativeInfinity(height))
+                return;
             this.CutRectangle.Width = width;
             this.CutRectangle.Height = height;
 
@@ -1672,7 +1349,12 @@ namespace GeneralTool.General.WPFHelper.WPFControls
             }
         }
 
-        private Point TranslatePoint(Point pixelPoint)
+        /// <summary>
+        /// 将当前的像素点转为画布点
+        /// </summary>
+        /// <param name="pixelPoint"></param>
+        /// <returns></returns>
+        public Point TranslateToCanvasPoint(Point pixelPoint)
         {
             //转换为目标点
             var wh = this.GetPixelTrans;
@@ -1680,6 +1362,21 @@ namespace GeneralTool.General.WPFHelper.WPFControls
             var y = pixelPoint.Y / wh.H;
             var pos = this.Img.TranslatePoint(new Point(x, y), ImageCanvas);
             return pos;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="controlPoint"></param>
+        /// <returns></returns>
+        public Point TranslateToPixelPoint(Point controlPoint)
+        {
+            //将相对于Canvas的点转为像素点
+            var pos = this.ImageCanvas.TranslatePoint(controlPoint, this.Img);
+            var wh = this.GetPixelTrans;
+            var x = pos.X * wh.W;
+            var y = pos.Y * wh.H;
+            return new Point(x, y);
         }
 
         /// <summary>
@@ -1711,7 +1408,17 @@ namespace GeneralTool.General.WPFHelper.WPFControls
             this.tt.X = -(actualPoint.X * (this.Slider.Value - 1)) + this.currentWheelPoint.X - actualPoint.X;
             this.tt.Y = -(actualPoint.Y * (this.Slider.Value - 1)) + this.currentWheelPoint.Y - actualPoint.Y;
             this.MouseWheelScaleEvent?.Invoke(this.Img, new ImageScaleEventArgs(this.Slider.Value));
+
+            this.ImageScale = Slider.Value;
+            //更新大小
+            foreach (var item in this.CustomeShapes)
+            {
+                if (item.AutoScale)
+                    item.UpdateScaleSize(this.ImageScale);
+            }
         }
+
+
 
         #endregion Private 方法
 
@@ -1753,16 +1460,35 @@ namespace GeneralTool.General.WPFHelper.WPFControls
 
         #endregion Private 结构
 
-        private enum DrawType
-        {
-            None,
-            Left,
-            Right,
-            Top,
-            Bottom
-        }
+
     }
 
+    /// <summary>
+    /// 拖动绘制方向
+    /// </summary>
+    public enum DrawType
+    {
+        /// <summary>
+        /// 无
+        /// </summary>
+        None,
+        /// <summary>
+        /// 左
+        /// </summary>
+        Left,
+        /// <summary>
+        /// 右
+        /// </summary>
+        Right,
+        /// <summary>
+        /// 上
+        /// </summary>
+        Top,
+        /// <summary>
+        /// 下
+        /// </summary>
+        Bottom
+    }
     /// <summary>
     /// 工具箱按钮集合
     /// </summary>

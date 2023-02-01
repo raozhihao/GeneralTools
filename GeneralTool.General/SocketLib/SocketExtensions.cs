@@ -36,13 +36,13 @@ namespace GeneralTool.General.SocketLib
                 {
                     if (c.LocalEndPoint.Equals(socket.LocalEndPoint) && c.RemoteEndPoint.Equals(socket.RemoteEndPoint))
                     {
-                        if (stateOfConnection == TcpState.Established)
+                        if (stateOfConnection == TcpState.Closed)
                         {
-                            return true;
+                            return false;
                         }
                         else
                         {
-                            return false;
+                            return true;
                         }
                     }
                 }

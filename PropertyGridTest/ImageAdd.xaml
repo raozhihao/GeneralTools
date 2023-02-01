@@ -1,0 +1,20 @@
+﻿<Window x:Class="PropertyGridTest.ImageAdd"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:g="clr-namespace:GeneralTool.General.WPFHelper.WPFControls;assembly=GeneralTool.General"
+        xmlns:local="clr-namespace:PropertyGridTest"
+        mc:Ignorable="d"
+        Title="ImageAdd" Height="450" Width="800">
+    <Grid>
+        <g:ImageViewControl x:Name="ImageControl"
+                            ImageSource="C:\Touch Tasks\Records\New Test\New Test_20220911155306\2022-09-11_1\日志测试\日志测试_1_1_2022_09_11_15_07_53.files\2022_09_11_15_53_07_864.jpeg"
+                            ImageMouseMoveEvent="ImageControl_ImageMouseMoveEvent"/>
+        <TextBlock HorizontalAlignment="Right"
+                   VerticalAlignment="Bottom"
+                   Background="Black"
+                   Foreground="White"
+                   x:Name="PosTxt" />
+    </Grid>
+</Window>

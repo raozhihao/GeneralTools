@@ -158,7 +158,7 @@ namespace GeneralTool.General.SerialPortEx
         /// <param name="backCheck">是否在后台实时检测</param>
         public void Open(bool backCheck)
         {
-            this.CheckState = true;
+            this.CheckState = backCheck;
             this.Open();
         }
 

@@ -1,0 +1,66 @@
+﻿<UserControl x:Class="SimpleDiagram.Demo.ImageDemoView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:g="clr-namespace:GeneralTool.General.WPFHelper.WPFControls;assembly=GeneralTool.General"
+             xmlns:local="clr-namespace:SimpleDiagram.Demo"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <Menu>
+
+            <MenuItem Header="添加图像"
+                      Click="LoadImage" />
+
+            <MenuItem Header="Loop"
+                      Click="LoopImage"
+                      x:Name="LoopMenu"/>
+
+            <RadioButton GroupName="Draw"
+                         IsChecked="False"
+                         x:Name="PointRadio"
+                         Content="点"
+                         Checked="PointRadio_Checked" />
+
+            <RadioButton GroupName="Draw"
+                         x:Name="RectRadio"
+                         Content="矩形" />
+
+            <RadioButton GroupName="Draw"
+                         x:Name="HeartRadio"
+                         Content="心形" />
+
+            <ToggleButton  x:Name="PolygonRadio"
+                         Content="多边形" 
+                           Unchecked="PolygonRadio_Unchecked"/>
+
+            <MenuItem Header="缩放"
+                      Click="ScaleClick" />
+
+            <MenuItem Header="去除第一个"
+                      Click="RemoveFirstClick" />
+
+        </Menu>
+
+        <g:ImageViewControl x:Name="ImgControl"
+                            Grid.Row="1"
+                            SourcePath="C:\Users\raozh\Pictures\2.bmp"
+                            CanImageDraw="True"
+                            ImageMouseMoveEvent="ImgControl_ImageMouseMoveEvent"/>
+
+       
+        <TextBlock Text=""
+                   Grid.Row="1"
+                   Background="Black"
+                   Foreground="Wheat"
+                   x:Name="PosTxt"
+                   HorizontalAlignment="Right"
+                   VerticalAlignment="Bottom" />
+    </Grid>
+</UserControl>

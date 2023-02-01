@@ -8,6 +8,7 @@ using GeneralTool.General.Interfaces;
 using GeneralTool.General.Logs;
 using GeneralTool.General.Models;
 using GeneralTool.General.NetHelper;
+using GeneralTool.General.WPFHelper;
 
 namespace GeneralTool.General.TaskLib
 {
@@ -121,32 +122,28 @@ namespace GeneralTool.General.TaskLib
                     {
                         RequestAddressItem requestAddressItem = this.RequestRoute[serverRequest.Url];
                         MethodInfo method = requestAddressItem.Target.GetType().GetMethod("GetServerErroMsg");
+                        serverResponse.ReturnTypeString = requestAddressItem.MethodInfo.ReturnType.AssemblyQualifiedName;
                         try
                         {
+                            var converter = new StringConverter();
                             ParameterInfo[] parameters = requestAddressItem.MethodInfo.GetParameters();
                             object[] array = new object[parameters.Length];
                             foreach (ParameterInfo parameterInfo in parameters)
                             {
-                                string value = serverRequest.GetValue(parameterInfo.Name);
-                                if (parameterInfo.ParameterType.IsValueType || parameterInfo.ParameterType.FullName.Equals(typeof(string).FullName))
+                                if (serverRequest.Parameters.TryGetValue(parameterInfo.Name, out var value))
                                 {
-                                    if (parameterInfo.ParameterType.IsEnum)
-                                        array[parameterInfo.Position] = Enum.Parse(parameterInfo.ParameterType, value);
-                                    else
-                                        array[parameterInfo.Position] = Convert.ChangeType(value, parameterInfo.ParameterType);
-                                }
-                                else if (this.ParamterConverters.ContainsKey(parameterInfo.ParameterType.FullName))
-                                {
-                                    array[parameterInfo.Position] = this.ParamterConverters[parameterInfo.ParameterType.FullName].Converter(value);
+                                    //如果有,则转换
+                                    array[parameterInfo.Position] = converter.ConvertSimpleType(value, parameterInfo.ParameterType);
                                 }
                                 else
                                 {
-                                    array[parameterInfo.Position] = jsonConvert.DeserializeObject(value, parameterInfo.ParameterType);
+                                    array[parameterInfo.Position] = converter.ConvertSimpleType(parameterInfo.DefaultValue, parameterInfo.ParameterType);
                                 }
                             }
                             try
                             {
                                 serverResponse.Result = requestAddressItem.MethodInfo.Invoke(requestAddressItem.Target, array);
+                                serverResponse.ResultString = converter.Convert(serverResponse.Result, null, null, null) + "";
                                 if (method != null)
                                 {
                                     serverResponse.ErroMsg = string.Concat(method.Invoke(requestAddressItem.Target, null));

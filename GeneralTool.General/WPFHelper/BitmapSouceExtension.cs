@@ -1,11 +1,9 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 using GeneralTool.General.Enums;
-using GeneralTool.General.ExceptionHelper;
 
 namespace GeneralTool.General.WPFHelper
 {
@@ -55,19 +53,11 @@ namespace GeneralTool.General.WPFHelper
                     encoder = new WmpBitmapEncoder();
                     break;
             }
-            try
-            {
-                encoder.Frames.Add(BitmapFrame.Create(source));
-                FileStream file = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite);
-                encoder.Save(file);
-                file.Close();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Trace.WriteLine(ex.GetInnerExceptionMessage());
-                return false;
-            }
+            encoder.Frames.Add(BitmapFrame.Create(source));
+            FileStream file = new FileStream(path, FileMode.OpenOrCreate, FileAccess.ReadWrite);
+            encoder.Save(file);
+            file.Close();
+            return true;
         }
 
         /// <summary>
@@ -80,11 +70,7 @@ namespace GeneralTool.General.WPFHelper
         /// <returns></returns>
         public static bool SaveBitmapSouce(this ImageSource source, Int32Rect rect, string path, BitmapEncoderEnum encoderEnum = BitmapEncoderEnum.Jpeg)
         {
-            BitmapSource cutSource = null;
-            if (source is BitmapImage img)
-                cutSource = img.GetChooseRectImageSouce(rect);
-            else if (source is BitmapFrame frame)
-                cutSource = frame.GetChooseRectImageSouce(rect);
+            var cutSource = source.GetChooseRectImageSouce(rect);
 
             return cutSource.SaveBitmapSouce(path, encoderEnum);
         }
@@ -165,6 +151,72 @@ namespace GeneralTool.General.WPFHelper
             return newSource;
         }
 
+        /// <summary>
+        /// 将Bitmap写入到writable中
+        /// </summary>
+        /// <param name="bitmap"></param>
+        /// <param name="writeable"></param>
+        /// <param name="reload">是否重新加载</param>
+        public static void WriteBitmap(this System.Drawing.Bitmap bitmap, ref WriteableBitmap writeable, bool reload)
+        {
+
+            BitmapPalette palette = null;
+            System.Windows.Media.PixelFormat format = PixelFormats.Bgr24;
+            if (bitmap.PixelFormat == System.Drawing.Imaging.PixelFormat.Format8bppIndexed)
+            {
+                if (writeable == null || writeable.Format != PixelFormats.Indexed8)
+                {
+                    var colors = new Color[256];
+                    for (byte i = 0; i < byte.MaxValue; i++)
+                    {
+                        colors[i] = Color.FromRgb(i, i, i);
+                    }
+                    palette = new BitmapPalette(colors);
+                    reload = true;
+                }
+                format = PixelFormats.Indexed8;
+            }
+            else
+            {
+                switch (bitmap.PixelFormat)
+                {
+
+                    case System.Drawing.Imaging.PixelFormat.Format32bppRgb:
+                    case System.Drawing.Imaging.PixelFormat.Format32bppArgb:
+                    case System.Drawing.Imaging.PixelFormat.Format32bppPArgb:
+                        format = PixelFormats.Bgr32;
+                        break;
+
+                }
+            }
+
+
+            if (reload || writeable == null || writeable.Format != format)
+                writeable = new WriteableBitmap(bitmap.Width, bitmap.Height, 96, 96, format, palette);
+
+            var data = bitmap.LockBits(new System.Drawing.Rectangle(new System.Drawing.Point(0, 0), bitmap.Size), System.Drawing.Imaging.ImageLockMode.ReadOnly, bitmap.PixelFormat);
+            try
+            {
+                writeable.WritePixels(new Int32Rect(0, 0, data.Width, data.Height), data.Scan0, data.Height * data.Stride, data.Stride, 0, 0);
+            }
+            finally
+            {
+                bitmap.UnlockBits(data);
+            }
+        }
+
+        /// <summary>
+        /// 将Bitmap写入到writable中
+        /// </summary>
+        /// <param name="imagePath"></param>
+        /// <param name="writeable"></param>
+        public static void WriteBitmap(this string imagePath, ref WriteableBitmap writeable)
+        {
+            using (var map = new System.Drawing.Bitmap(imagePath))
+            {
+                WriteBitmap(map, ref writeable, true);
+            }
+        }
 
         #endregion Public 方法
     }

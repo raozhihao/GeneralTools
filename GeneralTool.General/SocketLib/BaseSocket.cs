@@ -125,7 +125,6 @@ namespace GeneralTool.General.SocketLib
 
         private void ReceiveCallBack(IAsyncResult ar)
         {
-
             var state = ar.AsyncState as T;
             var client = state.WorkSocket;
             int read = 0;
@@ -133,7 +132,8 @@ namespace GeneralTool.General.SocketLib
             try
             {
                 read = client.EndReceive(ar);
-                this.Log.Debug($"读取到 {client.RemoteEndPoint} 的数据长度为 {read}");
+                if (read != 0)
+                    this.Log.Debug($"读取到 {client.RemoteEndPoint} 的数据长度为 {read}");
             }
             catch (Exception ex)
             {
@@ -201,6 +201,7 @@ namespace GeneralTool.General.SocketLib
                 var msg = "处理包过程中未捕获的异常错误:" + e;
                 this.Log.Fail(msg);
                 this.ErrorEvent?.Invoke(this, new SocketErrorArg(client, new Exception(msg)));
+                this.CloseClient(client, new Exception(msg));
             }
         }
 
@@ -246,6 +247,7 @@ namespace GeneralTool.General.SocketLib
                 var msg = $"向 {socket.RemoteEndPoint} 发送消息失败:{ex}";
                 this.Log.Fail(msg);
                 this.ErrorEvent?.Invoke(this, new SocketErrorArg(socket, new Exception(msg)));
+                this.CloseClient(socket, new Exception(msg));
                 return false;
             }
         }

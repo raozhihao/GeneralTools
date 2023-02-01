@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 namespace GeneralTool.General.WPFHelper
@@ -15,6 +16,11 @@ namespace GeneralTool.General.WPFHelper
         /// 该事件在更改组件上的属性时触发
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
+
+        /// <summary>
+        /// 属性正在更新中事件
+        /// </summary>
+        public event Func<PropertyChangArg, object> PropertyChaningEvent;
 
         #endregion Public 事件
 
@@ -50,10 +56,52 @@ namespace GeneralTool.General.WPFHelper
                 return;
             }
 
+            if (this.PropertyChaningEvent != null)
+            {
+                value = (T)this.PropertyChaningEvent(new PropertyChangArg(fieldValue, value, propertyName));
+            }
+
+            if (fieldValue != null && fieldValue.Equals(value))
+            {
+                return;
+            }
+
             fieldValue = value;
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         #endregion Public 方法
+    }
+
+    /// <summary>
+    /// 属性更新信息
+    /// </summary>
+    public class PropertyChangArg : EventArgs
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="oldValue"></param>
+        /// <param name="newValue"></param>
+        /// <param name="propertyName"></param>
+        public PropertyChangArg(object oldValue, object newValue, string propertyName)
+        {
+            this.OldValue = oldValue;
+            this.NewValue = newValue;
+            this.PropertyName = propertyName;
+        }
+
+        /// <summary>
+        /// 值
+        /// </summary>
+        public object OldValue { get; set; }
+        /// <summary>
+        /// 值
+        /// </summary>
+        public object NewValue { get; set; }
+        /// <summary>
+        /// 属性名
+        /// </summary>
+        public string PropertyName { get; set; }
     }
 }

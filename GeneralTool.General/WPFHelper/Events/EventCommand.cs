@@ -118,10 +118,7 @@ namespace GeneralTool.General.WPFHelper.Events
             if (string.IsNullOrWhiteSpace(this.EventName))
                 throw new ArgumentException($"事件源 {Source} 的事件名称 {this.EventName} 没有找到");
 
-            var @event = this.Source.GetType().GetEvent(this.EventName);
-            if (@event == null)
-                throw new ArgumentException($"在源 {Source} 中没有找到事件 {this.EventName}");
-
+            var @event = this.Source.GetType().GetEvent(this.EventName) ?? throw new ArgumentException($"在源 {Source} 中没有找到事件 {this.EventName}");
             var action = this.ActionEventHandler;
             var handler = Delegate.CreateDelegate(@event.EventHandlerType, action.Target, action.Method);
             @event.RemoveEventHandler(this.Source, handler);
@@ -138,10 +135,7 @@ namespace GeneralTool.General.WPFHelper.Events
             if (string.IsNullOrWhiteSpace(this.EventName))
                 throw new ArgumentException($"事件源 {Source} 的事件名称 {this.EventName} 没有找到");
 
-            var @event = this.Source.GetType().GetEvent(this.EventName);
-            if (@event == null)
-                throw new ArgumentException($"在源 {Source} 中没有找到事件 {this.EventName}");
-
+            var @event = this.Source.GetType().GetEvent(this.EventName) ?? throw new ArgumentException($"在源 {Source} 中没有找到事件 {this.EventName}");
             var action = this.ActionEventHandler;
             var handler = Delegate.CreateDelegate(@event.EventHandlerType, action.Target, action.Method);
             @event.AddEventHandler(this.Source, handler);

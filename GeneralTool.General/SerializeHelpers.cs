@@ -7,7 +7,6 @@ using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 
-using GeneralTool.General.ExceptionHelper;
 using GeneralTool.General.ValueTypeExtensions;
 
 namespace GeneralTool.General
@@ -54,12 +53,7 @@ namespace GeneralTool.General
                 data = binary.ReadBytes(Convert.ToInt32(ms.Length - len));
             }
             object obj;
-            if (type.IsValueType && !type.IsPrimitive)
-            {
-                //反序列化自定义结构
-                obj = DesrializeClass(data, type);
-            }
-            else if (type.IsGenericType)
+            if (type.IsGenericType)
             {
                 obj = DesrializeGeneric(data, type);
             }
@@ -70,6 +64,11 @@ namespace GeneralTool.General
             else if (type.GetCustomAttribute<SerializableAttribute>() != null)
             {
                 obj = DeserializeToObj(data);
+            }
+            else if (type.IsValueType && !type.IsPrimitive)
+            {
+                //反序列化自定义结构
+                obj = DesrializeClass(data, type);
             }
             else if (type == typeof(string))
             {
@@ -173,18 +172,13 @@ namespace GeneralTool.General
         private object DeserializeToObj(byte[] data)
         {
             object obj = null;
-            try
+
+            using (MemoryStream stream = new MemoryStream(data))
             {
-                using (MemoryStream stream = new MemoryStream(data))
-                {
-                    BinaryFormatter binary = new BinaryFormatter();
-                    obj = binary.Deserialize(stream);
-                }
+                BinaryFormatter binary = new BinaryFormatter();
+                obj = binary.Deserialize(stream);
             }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Trace.WriteLine(ex.GetInnerExceptionMessage());
-            }
+
             return obj;
         }
 
@@ -206,17 +200,10 @@ namespace GeneralTool.General
                     //读取长度
                     int clen = formart.ReadInt32();
                     byte[] cdata = formart.ReadBytes(clen);//当前项的长度
-                                                           //反序列化出来
-                    try
-                    {
-                        object elObj = Desrialize(cdata);
-                        //将数据加入进去
-                        method.Invoke(obj, new object[] { elObj, i });
-                    }
-                    catch (Exception ex)
-                    {
-                        System.Diagnostics.Trace.WriteLine(ex.GetInnerExceptionMessage());
-                    }
+                    object elObj = Desrialize(cdata);
+                    //将数据加入进去
+                    method.Invoke(obj, new object[] { elObj, i });                                  //反序列化出来
+
                 }
             }
             return obj;
@@ -224,16 +211,8 @@ namespace GeneralTool.General
 
         private object DesrializeClass(byte[] data, Type type)
         {
-            object obj = null;
+            object obj = Activator.CreateInstance(type);
             //创建类型
-            try
-            {
-                obj = Activator.CreateInstance(type);
-            }
-            catch (Exception)
-            {
-                return obj;
-            }
 
             using (MemoryStream stream = new MemoryStream(data))
             {
@@ -251,24 +230,17 @@ namespace GeneralTool.General
                         continue;//当前属性没有值
                     }
                     byte[] cdata = binary.ReadBytes(plen);
+                    object proObj = Desrialize(cdata);
+                    //将当前属性加入进去
+                    MethodInfo method = type.GetMethod("set_" + property.Name);
+                    if (method == null)
+                    {
+                        //没有set方法,直接跳过
+                        continue;
+                    }
+                    //有,则加入
+                    method.Invoke(obj, new object[] { proObj });
 
-                    try
-                    {
-                        object proObj = Desrialize(cdata);
-                        //将当前属性加入进去
-                        MethodInfo method = type.GetMethod("set_" + property.Name);
-                        if (method == null)
-                        {
-                            //没有set方法,直接跳过
-                            continue;
-                        }
-                        //有,则加入
-                        method.Invoke(obj, new object[] { proObj });
-                    }
-                    catch (Exception ex)
-                    {
-                        System.Diagnostics.Trace.WriteLine(ex.GetInnerExceptionMessage());
-                    }
                 }
             }
             return obj;
@@ -302,15 +274,8 @@ namespace GeneralTool.General
                         {
                             int clen = formart.ReadInt32();
                             byte[] cdata = formart.ReadBytes(clen);
-                            try
-                            {
-                                object proObj = Desrialize(cdata);
-                                addMethod.Invoke(obj, new object[] { proObj });
-                            }
-                            catch (Exception ex)
-                            {
-                                System.Diagnostics.Trace.WriteLine(ex.GetInnerExceptionMessage());
-                            }
+                            object proObj = Desrialize(cdata);
+                            addMethod.Invoke(obj, new object[] { proObj });
                         }
                         else
                         {
@@ -322,15 +287,8 @@ namespace GeneralTool.General
                                 //获取数据
                                 int clen = formart.ReadInt32();//数据长度
                                 byte[] cdata = formart.ReadBytes(clen);//当前项的字节数据
-                                try
-                                {
-                                    object proObj = Desrialize(cdata);
-                                    paraObj[j] = proObj;
-                                }
-                                catch (Exception ex)
-                                {
-                                    System.Diagnostics.Trace.WriteLine(ex.GetInnerExceptionMessage());
-                                }
+                                object proObj = Desrialize(cdata);
+                                paraObj[j] = proObj;
                             }
                             addMethod.Invoke(obj, paraObj);
                         }
@@ -577,16 +535,8 @@ namespace GeneralTool.General
 
                             if (method != null)
                             {
-                                byte[] argData = new byte[0];
-                                try
-                                {
-                                    object tmpObj = method.Invoke(obj, null);
-                                    argData = Serialize(tmpObj);
-                                }
-                                catch (Exception ex)
-                                {
-                                    System.Diagnostics.Trace.WriteLine(ex.GetInnerExceptionMessage());
-                                }
+                                object tmpObj = method.Invoke(obj, null);
+                                var argData = Serialize(tmpObj);
                                 datas.AddRange(BitConverter.GetBytes(argData.Length));//获取长度
                                 datas.AddRange(argData);//获取序列化后的内容
                             }
@@ -608,18 +558,11 @@ namespace GeneralTool.General
         private byte[] SerializeToBytes(object param)
         {
             byte[] byts = new byte[0];
-            try
+            using (MemoryStream stream = new MemoryStream())
             {
-                using (MemoryStream stream = new MemoryStream())
-                {
-                    BinaryFormatter binary = new BinaryFormatter();
-                    binary.Serialize(stream, param);
-                    byts = stream.ToArray();
-                }
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Trace.WriteLine(ex.GetInnerExceptionMessage());
+                BinaryFormatter binary = new BinaryFormatter();
+                binary.Serialize(stream, param);
+                byts = stream.ToArray();
             }
             return byts;
         }

@@ -130,7 +130,23 @@ namespace GeneralTool.General.TaskLib
                     finally
                     {
                         this.Log.Debug($"底层执行方法:{serverRequest.Url} 完成,准备发送给客户端");
-                        this.server.Send(this.JsonConvert.SerializeObject(serverResponse), e.Client);
+                        string result = "";
+                        try
+                        {
+                            result = this.JsonConvert.SerializeObject(serverResponse);
+                        }
+                        catch (Exception ex)
+                        {
+                            result = ex.GetInnerExceptionMessage();
+                            serverResponse = new ServerResponse()
+                            {
+                                RequestSuccess = false,
+                                ErroMsg = "方法调用成功,但返回时出错:" + result
+                            };
+
+                            result = this.JsonConvert.SerializeObject(serverResponse);
+                        }
+                        this.server.Send(result, e.Client);
                     }
                 }
 

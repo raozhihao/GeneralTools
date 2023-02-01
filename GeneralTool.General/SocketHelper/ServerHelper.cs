@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Net;
-using System.Net.Sockets;
 
 using GeneralTool.General.ExceptionHelper;
 using GeneralTool.General.Models;
@@ -182,7 +181,7 @@ namespace GeneralTool.General.SocketHelper
         private void SocketBase_RecevieAction(object sender, ReceiveArg package)
         {
             var list = package.PackBuffer;
-            var clientSocket = package.Client as Socket;
+            var clientSocket = package.Client;
             RequestCommand cmd = null;
             try
             {

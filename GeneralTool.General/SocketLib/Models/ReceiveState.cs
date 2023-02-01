@@ -8,10 +8,19 @@ namespace GeneralTool.General.SocketLib.Models
     /// </summary>
     public class ReceiveState
     {
+        private int bufferSize = 8192;
         /// <summary>
         /// 数据包缓冲区大小
         /// </summary>
-        public int BufferSize { get; set; }
+        public int BufferSize
+        {
+            get => this.bufferSize;
+            set
+            {
+                this.bufferSize = value;
+                this.Buffer = new byte[bufferSize];
+            }
+        }
         /// <summary>
         /// 数据包缓冲区
         /// </summary>
@@ -31,7 +40,6 @@ namespace GeneralTool.General.SocketLib.Models
         public ReceiveState()
         {
             this.BufferSize = 8192;
-            this.Buffer = new byte[this.BufferSize];
         }
     }
 }

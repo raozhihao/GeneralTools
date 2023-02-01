@@ -1,0 +1,37 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+using GeneralTool.General.WPFHelper.DiagramDesigner.Models;
+using SimpleDiagram.BlockVIewModels;
+
+namespace SimpleDiagram.Blocks
+{
+    public class StartBlock : BaseBlock
+    {
+        public override BaseBlockViewModel BlockViewModel { get; set; } = new StartViewModel();
+
+        public override void OnCreateInCanvas()
+        {
+            base.OnCreateInCanvas();
+            this.ConnectorThumbs[Direction.Right].Visibility =
+              this.ConnectorThumbs[Direction.Left].Visibility =
+              this.ConnectorThumbs[Direction.Top].Visibility =
+               System.Windows.Visibility.Collapsed;
+            this.ConnectorThumbs[Direction.Bottom].ConnectorType = ConnectorType.OnlySource;
+            this.IsStart = true;
+        }
+
+        public override WindowResult OpenWindow()
+        {
+            return WindowResult.None;
+        }
+
+        protected override void OnDispose()
+        {
+           
+        }
+    }
+}

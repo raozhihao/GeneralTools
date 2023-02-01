@@ -1,6 +1,7 @@
 ﻿using System;
 
 using GeneralTool.General.Enums;
+using GeneralTool.General.WPFHelper;
 
 namespace GeneralTool.General.Models
 {
@@ -51,6 +52,31 @@ namespace GeneralTool.General.Models
         /// 结果
         /// </summary>
         public object Result { get; set; }
+
+        /// <summary>
+        /// 返回类型
+        /// </summary>
+        public string ReturnTypeString { get; set; }
+
+        /// <summary>
+        /// 结果字符串
+        /// </summary>
+        public string ResultString { get; set; }
+
+        /// <summary>
+        /// 将结果转换为指定类型
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public object ToResult(Type type)
+        {
+            return new StringConverter().Convert(this.ResultString, type, null, null);
+        }
+
+        /// <summary>
+        /// 将结果转换为指定类型
+        /// </summary>
+        public T ToResult<T>() => (T)new StringConverter().Convert(this.ResultString, typeof(T), null, null);
 
         /// <summary>
         /// </summary>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -6,6 +7,7 @@ using System.Text;
 using GeneralTool.General.ExceptionHelper;
 using GeneralTool.General.Interfaces;
 using GeneralTool.General.Models;
+using GeneralTool.General.WebExtensioins;
 
 namespace GeneralTool.General.TaskLib
 {
@@ -87,7 +89,7 @@ namespace GeneralTool.General.TaskLib
             //取得请求的对象
             HttpListenerRequest request = context.Request;
             Log.Debug($"{request.HttpMethod} ,{request.RawUrl} ,{request.ProtocolVersion}");
-            var reader = new StreamReader(request.InputStream);
+            var reader = new StreamReader(request.InputStream, Encoding.UTF8);
             string msg = string.Empty;
             try
             {
@@ -130,14 +132,20 @@ namespace GeneralTool.General.TaskLib
             }
 
             var cmd = new ServerRequest();
-            var parameters = context.Request.QueryString;
-            for (int i = 0; i < parameters.Count; i++)
+
+            //获取参数
+            var method = context.Request.HttpMethod;
+            var queryString = WebUtility.UrlDecode(context.Request.Url.Query);
+            var dic = queryString.ParseUrlToQueryDictionary();
+            if (method.Equals("POST", StringComparison.InvariantCultureIgnoreCase))
             {
-                var key = parameters.GetKey(i);
-                var value = parameters[i];
-                cmd.Parameters.Add(key, value);
+                dic = new BaseJsonCovert().DeserializeObject<Dictionary<string, string>>(msg);
             }
 
+            foreach (var item in dic)
+            {
+                cmd.Parameters.Add(item.Key, item.Value);
+            }
             cmd.Url = url;
 
             //如果有事件,则交给用户去处理

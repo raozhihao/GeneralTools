@@ -54,6 +54,12 @@ namespace GeneralTool.General.DbHelper
         /// <summary>
         /// 添加参数集合
         /// </summary>
+        /// <param name="list">参数对象集合</param>
+        void AddParameters(params ParameterHelper[] list);
+
+        /// <summary>
+        /// 添加参数集合
+        /// </summary>
         /// <param name="parameters">参数对象集合</param>
         void AddParameters(params DbParameter[] parameters);
 
@@ -73,7 +79,7 @@ namespace GeneralTool.General.DbHelper
         /// 创建参数对象集合
         /// </summary>
         /// <param name="list">参数对象集合</param>
-        void CreateParameters(IEnumerable<ParameterHelper> list);
+        void AddParameters(IEnumerable<ParameterHelper> list);
 
         /// <summary>
         /// 增加,删除,更新
@@ -117,14 +123,7 @@ namespace GeneralTool.General.DbHelper
         /// <returns>返回成功与否</returns>
         bool GetDataTable(string query, out DataTable dt, string tableName = "", bool columnUpper = true);
 
-        /// <summary>
-        /// 获取指定对象集合
-        /// </summary>
-        /// <typeparam name="T">需要获取的对象</typeparam>
-        /// <param name="sql">sql语句</param>
-        /// <param name="values">返回的强类型集合</param>
-        /// <returns>返回正确与否</returns>
-        bool GetList<T>(string sql, out List<T> values);
+
 
         /// <summary>
         /// 获取对象集合
@@ -146,8 +145,9 @@ namespace GeneralTool.General.DbHelper
         /// </summary>
         /// <typeparam name="T">要获取的对象</typeparam>
         /// <param name="query">sql语句</param>
+        /// <param name="transtion"></param>
         /// <returns></returns>
-        List<T> QueryList<T>(string query);
+        List<T> QueryList<T>(string query, bool transtion = false);
 
         /// <summary>
         /// 将集合对象转为DataTable

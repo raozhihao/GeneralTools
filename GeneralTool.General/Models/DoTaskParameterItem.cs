@@ -226,7 +226,7 @@ namespace GeneralTool.General.Models
         private string GetArgs()
         {
             var builder = new StringBuilder();
-            builder.Append("{\"Url\":\"" + this.Url + "\",\"Paramters\":");
+            builder.Append("{\"Url\":\"" + this.Url + "\",\"" + nameof(ServerRequest.Parameters) + "\":");
 
             var list = this.Paramters;
             if (list.Count == 0)

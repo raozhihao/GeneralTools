@@ -23,6 +23,7 @@ namespace GeneralTool.General.Logs
         private readonly string logPathDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs");
 
         private FileStream currentFileStream = null;
+        private readonly string logName;
 
         #endregion Private 字段
 
@@ -32,9 +33,16 @@ namespace GeneralTool.General.Logs
         /// </summary>
         /// <param name="logName">
         /// </param>
-        public FileInfoLog(string logName)
+        /// <param name="logBaseDir">日志存放目录,如果无,则存放在当前应用程序Logs文件夹下</param>
+        public FileInfoLog(string logName, string logBaseDir = "")
         {
-            this.logPathDir = Directory.CreateDirectory(Path.Combine(logPathDir, logName)).FullName;
+            if (string.IsNullOrWhiteSpace(logBaseDir))
+                this.logPathDir = Directory.CreateDirectory(Path.Combine(logPathDir, logName)).FullName;
+            else
+            {
+                this.logName = logName;
+                this.logPathDir = logBaseDir;
+            }
         }
 
         #endregion Public 构造函数
@@ -84,13 +92,13 @@ namespace GeneralTool.General.Logs
         public void Info(string msg) => this.Log(msg, LogType.Info);
 
         /// <inheritdoc/>
-        public void Log(string msg, LogType logType = LogType.Info)
+        public virtual void Log(string msg, LogType logType = LogType.Info)
         {
             try
             {
                 lock (locker)
                 {
-                    string fileName = Path.Combine(this.logPathDir, DateTime.Now.ToString("yyyy-MM-dd_1") + ".log");
+                    string fileName = Path.Combine(this.logPathDir, this.logName + DateTime.Now.ToString("yyyy-MM-dd_1") + ".log");
                     var fileInfo = new FileInfo(fileName);
                     var createNew = true;
                     if (fileInfo.Exists)

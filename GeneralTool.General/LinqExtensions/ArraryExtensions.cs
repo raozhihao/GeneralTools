@@ -165,6 +165,24 @@ namespace GeneralTool.General.LinqExtensions
 
             return arr;
         }
+
+
+        /// <summary>
+        /// 转换为指定进制的字符串
+        /// </summary>
+        /// <param name="arr"></param>
+        /// <param name="fomart">要对每个字节转换的格式</param>
+        /// <returns></returns>
+        public static string FomartDatas<T>(this T[] arr, string fomart = "{0:X2}")
+        {
+            var str = string.Empty;
+            for (int i = 0; i < arr.Length; i++)
+            {
+                str += string.Format(fomart, arr[i]) + " ";
+            }
+            return str;
+        }
+
         #endregion Public 方法
     }
 }

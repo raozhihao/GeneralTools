@@ -232,11 +232,7 @@ namespace GeneralTool.General.Adb
             if (string.IsNullOrWhiteSpace(deviceSerial))
             {
                 var device = this.FirstDevice;
-                if (device == null)
-                {
-                    throw new Exception("Cant find device");
-                }
-                return device.Serial;
+                return device == null ? throw new Exception("Cant find device") : device.Serial;
             }
             return deviceSerial;
         }

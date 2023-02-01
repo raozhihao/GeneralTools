@@ -10,7 +10,7 @@ namespace GeneralTool.General.SerialPortEx
     {
         #region Private 字段
 
-        private readonly List<byte> SendDatas = new List<byte>();
+        private readonly List<byte> sendDatas = new List<byte>();
 
         #endregion Private 字段
 
@@ -26,7 +26,7 @@ namespace GeneralTool.General.SerialPortEx
         {
             Head = packetHead;
             End = packetEnd;
-            SendDatas.Add(Head);
+            sendDatas.Add(Head);
         }
 
         #endregion Public 构造函数
@@ -99,9 +99,9 @@ namespace GeneralTool.General.SerialPortEx
             }
 
             KeyWorld = keyWorld;
-            SendDatas.Add(keyWorld);
-            SendDatas.Add((byte)datas.Count());
-            SendDatas.AddRange(datas);
+            sendDatas.Add(keyWorld);
+            sendDatas.Add((byte)datas.Count());
+            sendDatas.AddRange(datas);
             Parity();
             IsSetData = true;
             return true;
@@ -113,7 +113,7 @@ namespace GeneralTool.General.SerialPortEx
         /// </returns>
         public byte[] ToSendDatas()
         {
-            return SendDatas.ToArray();
+            return sendDatas.ToArray();
         }
 
         #endregion Public 方法
@@ -123,13 +123,13 @@ namespace GeneralTool.General.SerialPortEx
         private void Parity()
         {
             byte b = 0;
-            foreach (byte sendData in SendDatas)
+            foreach (byte sendData in sendDatas)
             {
                 b = (byte)(b + sendData);
             }
 
-            SendDatas.Add(b);
-            SendDatas.Add(End);
+            sendDatas.Add(b);
+            sendDatas.Add(End);
         }
 
         #endregion Private 方法

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace GeneralTool.General
 {
@@ -17,7 +13,7 @@ namespace GeneralTool.General
         /// <param name="value">要判断的值</param>
         /// <param name="targetType">要判断的类型</param>
         /// <returns></returns>
-        public static bool CanConvert(this object value,Type targetType)
+        public static bool CanConvert(this object value, Type targetType)
         {
             if (value == null || targetType == null)
                 return false;

@@ -85,20 +85,6 @@ namespace GeneralTool.General.WPFHelper.Extensions
             LangProvider.LangProviderInstance.LangChanged += LangProviderInstance_LangChanged;
         }
 
-        private void Control_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            if ((bool)e.NewValue)
-            {
-                LangProvider.LangProviderInstance.LangChanged -= LangProviderInstance_LangChanged;
-                LangProvider.LangProviderInstance.LangChanged += LangProviderInstance_LangChanged;
-            }
-            else
-            {
-                LangProvider.LangProviderInstance.LangChanged -= LangProviderInstance_LangChanged;
-                BindingStaticClass.BindingLangWindow.Remove(sender as Window);
-            }
-
-        }
 
         private void LangProviderInstance_LangChanged(ResourceDictionary resx)
         {

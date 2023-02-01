@@ -21,9 +21,11 @@ namespace GeneralTool.General.Models
         /// </param>
         /// <param name="point">
         /// </param>
-        public ImageMouseEventArgs(MouseDevice mouse, int timestamp, StylusDevice stylusDevice, Point point) : base(mouse, timestamp, stylusDevice)
+        /// <param name="canvasPoint"></param>
+        public ImageMouseEventArgs(MouseDevice mouse, int timestamp, StylusDevice stylusDevice, Point point, Point canvasPoint) : base(mouse, timestamp, stylusDevice)
         {
             this.CurrentPixelPoint = point;
+            this.CanvasPoint = canvasPoint;
         }
 
         #endregion Public 构造函数
@@ -34,6 +36,11 @@ namespace GeneralTool.General.Models
         /// 当前像素坐标点
         /// </summary>
         public Point CurrentPixelPoint { get; set; }
+
+        /// <summary>
+        /// 在画布上的坐标点
+        /// </summary>
+        public Point CanvasPoint { get; set; }
 
         #endregion Public 属性
     }

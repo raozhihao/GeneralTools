@@ -90,10 +90,7 @@ namespace GeneralTool.General
         {
             //获取最后一个,直接关闭
             var window = this.lastWindows.LastOrDefault();
-            if (window != null)
-            {
-                window.Close();
-            }
+            window?.Close();
         }
 
 

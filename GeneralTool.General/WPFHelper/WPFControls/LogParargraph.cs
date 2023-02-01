@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
@@ -61,12 +63,23 @@ namespace GeneralTool.General.WPFHelper.WPFControls
         /// </summary>
         public static readonly DependencyProperty LinesProperty = DependencyProperty.RegisterAttached(nameof(Lines), typeof(ObservableCollection<LogMessageInfo>), typeof(LogParargraph), new PropertyMetadata(LinesChanged));
 
+        private static void LinesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is LogParargraph p)
+            {
+                if (e.NewValue != null)
+                {
+                    p.RaiseChanged((e.NewValue as ObservableCollection<LogMessageInfo>));
+                }
+            }
+        }
+
 
 
         /// <summary>
         /// 最大数量
         /// </summary>
-        public static readonly DependencyProperty MaxLineCountProperty = DependencyProperty.RegisterAttached(nameof(MaxLineCount), typeof(int), typeof(LogParargraph));
+        public static readonly DependencyProperty MaxLineCountProperty = DependencyProperty.RegisterAttached(nameof(MaxLineCount), typeof(int), typeof(LogParargraph), new PropertyMetadata(1000));
 
         /// <summary>
         /// Waring 日志前景色
@@ -80,22 +93,13 @@ namespace GeneralTool.General.WPFHelper.WPFControls
 
         #endregion Public 字段
 
-        private static void LinesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (d is LogParargraph p)
-            {
-                if (e.NewValue != null)
-                {
-                    p.RaiseChanged((e.NewValue as ObservableCollection<LogMessageInfo>));
-                }
-            }
-        }
         /// <summary>
         /// 
         /// </summary>
         /// <param name="logMessageInfos"></param>
         public void RaiseChanged(ObservableCollection<LogMessageInfo> logMessageInfos)
         {
+            logMessageInfos.CollectionChanged -= Dp_CollectionChanged;
             logMessageInfos.CollectionChanged += Dp_CollectionChanged;
         }
 
@@ -107,7 +111,10 @@ namespace GeneralTool.General.WPFHelper.WPFControls
             for (int index = 0; index < addItems.Count; index++)
             {
                 var msg = (LogMessageInfo)addItems[index];
-                var run = new Run(msg.Msg + Environment.NewLine);
+                var run = new Run(msg.Msg + Environment.NewLine)
+                {
+                    Tag = msg
+                };
                 Brush brush = null;
                 var visible = false;
                 switch (action)
@@ -152,21 +159,52 @@ namespace GeneralTool.General.WPFHelper.WPFControls
         private readonly object Locker = new object();
         private void Dp_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            this.Dispatcher.BeginInvoke(new Action(() =>
+            this.Dispatcher.Invoke(new Action(() =>
             {
                 lock (Locker)
                 {
                     var list = sender as ObservableCollection<LogMessageInfo>;
                     if (this.Inlines.Count > this.MaxLineCount)
                     {
+                        list.CollectionChanged -= Dp_CollectionChanged;
                         list.Clear();
                         this.Inlines.Clear();
+
+                        list.CollectionChanged += Dp_CollectionChanged;
+                    }
+                    else if (e.Action == NotifyCollectionChangedAction.Remove)
+                    {
+                        list.CollectionChanged -= Dp_CollectionChanged;
+                        this.RemoveItem(e.OldItems);
+                        list.CollectionChanged += Dp_CollectionChanged;
                     }
                     else if (list.Count == 0)
                         this.Inlines.Clear();
-                    AddItems(e.NewItems, e.Action);
+                    if (e.Action == NotifyCollectionChangedAction.Add)
+                    {
+                        AddItems(e.NewItems, e.Action);
+                    }
+
                 }
             }));
+        }
+
+        private void RemoveItem(IList oldItems)
+        {
+            if (oldItems == null)
+            {
+                return;
+            }
+
+            for (int i = 0; i < oldItems.Count; i++)
+            {
+                if (!(oldItems[i] is LogMessageInfo item)) continue;
+                var run = this.Inlines.FirstOrDefault(r => ((Run)r).Tag == item);
+                if (run != null)
+                    this.Inlines.Remove(run);
+            }
+
+
         }
 
 

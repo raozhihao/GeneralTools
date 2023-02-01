@@ -1,9 +1,11 @@
-﻿using System.Reflection;
+﻿using System.ComponentModel;
+using System.Reflection;
 using System.Windows.Controls;
 using System.Windows.Data;
 
 using GeneralTool.General.Interfaces;
 using GeneralTool.General.WPFHelper.Extensions;
+using GeneralTool.General.WPFHelper.WPFControls;
 
 namespace GeneralTool.General.WPFHelper.UIEditorConverts
 {
@@ -22,6 +24,13 @@ namespace GeneralTool.General.WPFHelper.UIEditorConverts
                 Text = propertyInfo.Name,
                 Margin = new System.Windows.Thickness(5)
             };
+            if (PropertyGridControl.AttributesDic.TryGetValue(propertyInfo.PropertyType.FullName, out var attrValue))
+            {
+                if (attrValue is DescriptionAttribute d)
+                {
+                    left.Text = d.Description;
+                }
+            }
 
             Grid.SetRow(left, Row);
             Grid.SetColumn(left, 0);

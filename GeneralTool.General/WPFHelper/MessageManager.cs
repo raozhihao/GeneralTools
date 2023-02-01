@@ -8,7 +8,7 @@ namespace GeneralTool.General.WPFHelper
     /// </summary>
     public class MessageManager
     {
-        private static Lazy<MessageManager> instance;
+        private static readonly Lazy<MessageManager> instance;
 
         /// <summary>
         /// 获取消息实例
@@ -19,8 +19,8 @@ namespace GeneralTool.General.WPFHelper
             instance = new Lazy<MessageManager>(() => new MessageManager());
             Instance = instance.Value;
         }
-        private ConcurrentDictionary<string, ConcurrentDictionary<object, object>> actionTokens = new ConcurrentDictionary<string, ConcurrentDictionary<object, object>>();
-        private ConcurrentDictionary<string, ConcurrentDictionary<object, object>> funcTokens = new ConcurrentDictionary<string, ConcurrentDictionary<object, object>>();
+        private readonly ConcurrentDictionary<string, ConcurrentDictionary<object, object>> actionTokens = new ConcurrentDictionary<string, ConcurrentDictionary<object, object>>();
+        private readonly ConcurrentDictionary<string, ConcurrentDictionary<object, object>> funcTokens = new ConcurrentDictionary<string, ConcurrentDictionary<object, object>>();
 
         /// <summary>
         /// 发送只有一个参数的消息,但没有返回

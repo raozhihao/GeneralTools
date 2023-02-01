@@ -1,0 +1,55 @@
+﻿<Window x:Class="PropertyGridTest.PanelTest"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:PropertyGridTest"
+        xmlns:g="clr-namespace:GeneralTool.General.WPFHelper.WPFControls;assembly=GeneralTool.General"
+        mc:Ignorable="d"
+        Title="PanelTest"
+        Height="450"
+        Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <Menu>
+            <MenuItem Header="Add"
+                      Click="Add" />
+            <MenuItem Header="Remove"
+                      Click="Remove" />
+        </Menu>
+
+        <ScrollViewer Grid.Row="1"
+                      HorizontalScrollBarVisibility="Auto"
+                      VerticalScrollBarVisibility="Auto"
+                      CanContentScroll="True">
+
+            <ItemsControl x:Name="ItemsControl"
+                          ItemsSource="{Binding Infos}"
+                          Grid.Row="1" >
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border BorderBrush="Black"
+                                BorderThickness="1">
+                            <TextBlock Text="{Binding}"
+                                       Background="Red"
+                                       Foreground="Wheat"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center" />
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <g:UniformColPanel Cols="2"/>
+                        <!--<UniformGrid Columns="3" />-->
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+            </ItemsControl>
+
+        </ScrollViewer>
+    </Grid>
+</Window>

@@ -158,7 +158,7 @@ namespace GeneralTool.General.WPFHelper.Extensions
             if (parameters.Count < 2)
             {
                 //单独绑定
-                var binding = new Binding()
+                var binding = new Binding
                 {
                     //为0的时候,就是没有绑定Path,则为单项绑定
                     Mode = parameters.Count == 0 ? BindingMode.OneWay : BindingMode.TwoWay,
@@ -171,10 +171,9 @@ namespace GeneralTool.General.WPFHelper.Extensions
                     ValidatesOnExceptions = ValidatesOnExceptions,
                     FallbackValue = FallbackValue,
                     ValidatesOnNotifyDataErrors = ValidatesOnNotifyDataErrors,
+                    //查看有没有Path
+                    Path = new PropertyPath(parameters.Count == 0 ? null : parameters[0])
                 };
-
-                //查看有没有Path
-                binding.Path = new PropertyPath(parameters.Count == 0 ? null : parameters[0]);
                 if (Source != null)
                     binding.Source = Source;
 

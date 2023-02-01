@@ -83,11 +83,12 @@
     <Compile Include="DataSetExtensions\DataRowEqualityComparer.cs" />
     <Compile Include="DataSetExtensions\DataTableExtensions.cs" />
     <Compile Include="DbHelper\BaseConStrBuilder.cs" />
-    <Compile Include="DbHelper\DataPropertyAttribute.cs" />
+    <Compile Include="DbHelper\DataKeyAttribute.cs" />
+    <Compile Include="DbHelper\DataColumnPropertyAttribute.cs" />
     <Compile Include="DbHelper\DataTableAttribute.cs" />
-    <Compile Include="DbHelper\DbContext.cs" />
+    <Compile Include="DbHelper\DataTypeAttribute.cs" />
     <Compile Include="DbHelper\DbManager.cs" />
-    <Compile Include="DbHelper\DbProviderGlobal.cs" />
+    <Compile Include="DbHelper\DefaultValueAttribute.cs" />
     <Compile Include="DbHelper\IDbManager.cs" />
     <Compile Include="DbHelper\ISqlConnectionString.cs" />
     <Compile Include="DbHelper\OracleConStrBuilder.cs" />
@@ -128,6 +129,7 @@
     <Compile Include="Logs\ConsoleLogInfo.cs" />
     <Compile Include="Logs\FileInfoLog.cs" />
     <Compile Include="Models\AdbDeviceData.cs" />
+    <Compile Include="Models\ExcuteCancelTokenSource.cs" />
     <Compile Include="Models\Cords.cs" />
     <Compile Include="Models\DoTaskParameterItem.cs" />
     <Compile Include="Models\GenExecuteType.cs" />
@@ -149,6 +151,7 @@
     <Compile Include="Models\SocketReceiveArgs.cs" />
     <Compile Include="Models\TaskModel.cs" />
     <Compile Include="ObjectPool.cs" />
+    <Compile Include="Orm\SqliteOrm\SqliteHelper.cs" />
     <Compile Include="ProcessHelpers\ProcessEngine.cs" />
     <Compile Include="ProcessHelpers\ProcessServer.cs" />
     <Compile Include="RandomEx.cs" />
@@ -174,10 +177,43 @@
     <Compile Include="SocketLib\SocketServer.cs" />
     <Compile Include="TaskExtensions\TaskRetry.cs" />
     <Compile Include="TaskExtensions\ThreadExtensions.cs" />
+    <Compile Include="TaskLib\BaseClientTask.cs" />
+    <Compile Include="TaskLib\FixedHeadSocketClient.cs" />
+    <Compile Include="TaskLib\FixedHeadSocketStation.cs" />
     <Compile Include="TaskLib\GenServerStation.cs" />
     <Compile Include="TaskLib\HttpServerStation.cs" />
     <Compile Include="TaskLib\RequestInfo.cs" />
+    <Compile Include="TaskLib\StationInfo.cs" />
+    <Compile Include="TaskLib\TaskClinet.cs" />
     <Compile Include="WPFHelper\AsyncObservableCollection.cs" />
+    <Compile Include="WPFHelper\DiagramDesigner\Adorners\ConnectionAdorner.cs" />
+    <Compile Include="WPFHelper\DiagramDesigner\Adorners\ConnectorAdorner.cs" />
+    <Compile Include="WPFHelper\DiagramDesigner\Adorners\RubberbandAdorner.cs" />
+    <Compile Include="WPFHelper\DiagramDesigner\Adorners\SelectAdorner.cs" />
+    <Compile Include="WPFHelper\DiagramDesigner\Common\IRemove.cs" />
+    <Compile Include="WPFHelper\DiagramDesigner\Common\MiddleController.cs" />
+    <Compile Include="WPFHelper\DiagramDesigner\Common\PathExecute.cs" />
+    <Compile Include="WPFHelper\DiagramDesigner\Controls\BlockItem.cs" />
+    <Compile Include="WPFHelper\DiagramDesigner\Controls\BlockItem.partial.cs" />
+    <Compile Include="WPFHelper\DiagramDesigner\Controls\DesignerCanvas.partial.cs" />
+    <Compile Include="WPFHelper\DiagramDesigner\Controls\Connection.cs" />
+    <Compile Include="WPFHelper\DiagramDesigner\Controls\DesignerCanvas.cs" />
+    <Compile Include="WPFHelper\DiagramDesigner\Controls\ZoomBox.cs" />
+    <Compile Include="WPFHelper\DiagramDesigner\Models\ArraryInfo.cs" />
+    <Compile Include="WPFHelper\DiagramDesigner\Models\BlockItemDo.cs" />
+    <Compile Include="WPFHelper\DiagramDesigner\Models\ConnectionDo.cs" />
+    <Compile Include="WPFHelper\DiagramDesigner\Models\Direction.cs" />
+    <Compile Include="WPFHelper\DiagramDesigner\Models\ConnectorThumbCollection.cs" />
+    <Compile Include="WPFHelper\DiagramDesigner\Models\ConnectionArgs.cs" />
+    <Compile Include="WPFHelper\DiagramDesigner\Models\ConnectorInfo.cs" />
+    <Compile Include="WPFHelper\DiagramDesigner\Models\ConnectorType.cs" />
+    <Compile Include="WPFHelper\DiagramDesigner\Models\DragObject.cs" />
+    <Compile Include="WPFHelper\DiagramDesigner\Models\SelectionService.cs" />
+    <Compile Include="WPFHelper\DiagramDesigner\Thumbs\ZoomThumb.cs" />
+    <Compile Include="WPFHelper\DiagramDesigner\Thumbs\ConnectorThumb.cs" />
+    <Compile Include="WPFHelper\DiagramDesigner\Thumbs\MoveThumb.cs" />
+    <Compile Include="WPFHelper\DiagramDesigner\Thumbs\ResizeThumb.cs" />
+    <Compile Include="WPFHelper\PointExtensions.cs" />
     <Compile Include="WPFHelper\Extensions\BindingExtension.cs" />
     <Compile Include="WPFHelper\Extensions\LangBindExtension.cs" />
     <Compile Include="WPFHelper\Extensions\NameDependency.cs" />
@@ -251,6 +287,7 @@
     <Compile Include="WPFHelper\LangProvider.cs" />
     <Compile Include="WPFHelper\MessageManager.cs" />
     <Compile Include="WPFHelper\SimpleCommand.cs" />
+    <Compile Include="WPFHelper\StringConverter.cs" />
     <Compile Include="WPFHelper\UIEditorConverts\BooleanEditorConvert.cs" />
     <Compile Include="WPFHelper\UIEditorConverts\EnumEditorConvert.cs" />
     <Compile Include="WPFHelper\UIEditorConverts\ObjectExpandeUIEditor.cs" />
@@ -260,8 +297,16 @@
     <Compile Include="ActiveWindowManager.cs" />
     <Compile Include="WPFHelper\WindowHelper.cs" />
     <Compile Include="WPFHelper\WPFControls\ImageViewControl.cs" />
+    <Compile Include="WPFHelper\WPFControls\ImageViewControl.Partial.cs" />
     <Compile Include="WPFHelper\WPFControls\LogParargraph.cs" />
     <Compile Include="WPFHelper\WPFControls\PropertyGridControl.cs" />
+    <Compile Include="WPFHelper\WPFControls\Shapes\BaseShape.cs" />
+    <Compile Include="WPFHelper\WPFControls\Shapes\PointShape.cs" />
+    <Compile Include="WPFHelper\WPFControls\Shapes\PolygonShape.cs" />
+    <Compile Include="WPFHelper\WPFControls\Shapes\RectShape.cs" />
+    <Compile Include="WPFHelper\WPFControls\Shapes\ResizeEventArgs.cs" />
+    <Compile Include="WPFHelper\WPFControls\Shapes\ResizeRectAdorner.cs" />
+    <Compile Include="WPFHelper\WPFControls\UniformColPanel.cs" />
     <Compile Include="WPFHelper\WpfWindowManager.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -281,6 +326,22 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="WPFHelper\DiagramDesigner\Resources\BlockItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WPFHelper\DiagramDesigner\Resources\CommonTemplate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WPFHelper\DiagramDesigner\Resources\Connection.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="WPFHelper\DiagramDesigner\Resources\ZoomBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="WPFHelper\DialogHelper\WaitView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -288,6 +349,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Window\" />
+    <Folder Include="WPFHelper\DiagramDesigner\Themes\" />
     <Folder Include="XmlExtensions\" />
   </ItemGroup>
   <ItemGroup>
@@ -304,6 +366,10 @@
     <None Include="Docs\LangProvider.md" />
     <None Include="Docs\EventBinding.md" />
     <None Include="GeneralToolSnk.pfx" />
+    <Compile Include="WPFHelper\DiagramDesigner\Common\PathExecute.SourceBottom.cs" />
+    <Compile Include="WPFHelper\DiagramDesigner\Common\PathExecute.SourceLeft.cs" />
+    <Compile Include="WPFHelper\DiagramDesigner\Common\PathExecute.SourceRight.cs" />
+    <Compile Include="WPFHelper\DiagramDesigner\Common\PathExecute.SourceTop.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

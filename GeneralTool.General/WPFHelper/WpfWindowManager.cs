@@ -9,7 +9,7 @@ namespace GeneralTool.General.WPFHelper
     /// </summary>
     public class WpfWindowManager
     {
-        private static Lazy<WpfWindowManager> instance;
+        private static readonly Lazy<WpfWindowManager> instance;
         /// <summary>
         /// 窗体注册管理实例
         /// </summary>
@@ -21,7 +21,7 @@ namespace GeneralTool.General.WPFHelper
             Instance = instance.Value;
         }
 
-        private ConcurrentDictionary<string, Window> windows = new ConcurrentDictionary<string, Window>();
+        private readonly ConcurrentDictionary<string, Window> windows = new ConcurrentDictionary<string, Window>();
 
         /// <summary>
         /// 注册窗体信息

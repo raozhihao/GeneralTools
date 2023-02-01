@@ -1,7 +1,10 @@
-﻿using System.Windows;
+﻿using System;
+using System.Collections.Generic;
+using System.Windows;
 using System.Windows.Controls;
 
 using GeneralTool.General.Attributes;
+using GeneralTool.General.Interfaces;
 using GeneralTool.General.WPFHelper.UIEditorConverts;
 
 namespace GeneralTool.General.WPFHelper.WPFControls
@@ -22,6 +25,8 @@ namespace GeneralTool.General.WPFHelper.WPFControls
         /// 选择的对象依赖属性
         /// </summary>
         public static readonly DependencyProperty SelectedObjectProperty = DependencyProperty.Register(nameof(SelectedObject), typeof(object), typeof(PropertyGridControl), new PropertyMetadata(null, PropertyChangedMethod));
+
+
 
         /// <summary>
         /// 排序依赖属性
@@ -85,6 +90,35 @@ namespace GeneralTool.General.WPFHelper.WPFControls
             this.InitSelectedObject();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public static Dictionary<string, Attribute> AttributesDic
+        {
+            get;
+            private set;
+        } = new Dictionary<string, Attribute>();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="attributes"></param>
+        public virtual void SetAttributes(Dictionary<string, Attribute> attributes)
+        {
+            AttributesDic = attributes;
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public static Dictionary<string, IUIEditorConvert> Converts { get; private set; } = new Dictionary<string, IUIEditorConvert>();
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="converts"></param>
+        public void SetConverts(Dictionary<string, IUIEditorConvert> converts)
+        {
+            Converts = converts;
+        }
         #endregion Public 方法
 
         #region Private 方法
@@ -111,8 +145,16 @@ namespace GeneralTool.General.WPFHelper.WPFControls
 
         private void InitSelectedObject(bool? sort = null)
         {
-            if (this.SelectedObject == null || this.GridContent == null)
+            if (this.SelectedObject == null)
+            {
+                this.GridContent?.Children.Clear();
                 return;
+            }
+            else if (this.GridContent == null)
+            {
+                return;
+            }
+
 
             this.GridContent.Children.Clear();
             var objType = this.SelectedObject.GetType();
@@ -124,6 +166,10 @@ namespace GeneralTool.General.WPFHelper.WPFControls
                 attribute = new UIEditorAttribute(typeof(ObjectExpandeUIEditor));
 
             int row = 0;
+
+            var type = this.SelectedObject.GetType();
+            var propertys = type.GetProperties();
+
 
             attribute.GetConvert().ConvertTo(this.GridContent, this.SelectedObject, null, sort, ref row, this.Header);
         }

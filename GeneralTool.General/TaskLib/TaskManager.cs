@@ -33,6 +33,7 @@ namespace GeneralTool.General.TaskLib
 
         private BaseTaskInvoke[] taskInokes;
 
+
         #endregion Private 字段
 
         #region Public 构造函数
@@ -57,14 +58,33 @@ namespace GeneralTool.General.TaskLib
 
             this.JsonCovert = jsonConvert;
             this.log = log;
-            this.ServerStation = new Station(jsonConvert, log, station);
+            var serverStation = new Station(jsonConvert, log, station);
+            //this.serverStationBases.Add(serverStation);
+            this.ServerStation = serverStation;
         }
+
 
         /// <summary>
         /// </summary>
         public TaskManager() : this(null, new ConsoleLogInfo())
         {
 
+        }
+
+        /// <summary>
+        /// 初始化,但不添加任何站点
+        /// </summary>
+        /// <param name="jsonConvert"></param>
+        /// <param name="log"></param>
+        public TaskManager(IJsonConvert jsonConvert, ILog log)
+        {
+            if (log == null)
+                log = new ConsoleLogInfo();
+            if (jsonConvert == null)
+                jsonConvert = new BaseJsonCovert();
+
+            this.JsonCovert = jsonConvert;
+            this.log = log;
         }
 
         #endregion Public 构造函数
@@ -122,7 +142,12 @@ namespace GeneralTool.General.TaskLib
         /// <summary>
         /// 服务器站点
         /// </summary>
-        internal Station ServerStation { get; set; }
+        public ObservableCollection<StationInfo> ServerStations { get; } = new ObservableCollection<StationInfo>();
+
+        /// <summary>
+        /// 当前的单站点(通过构造函数创建的单站点)
+        /// </summary>
+        public Station ServerStation { get; private set; }
 
         #endregion Internal 属性
 
@@ -154,6 +179,35 @@ namespace GeneralTool.General.TaskLib
         #region Public 方法
 
         /// <summary>
+        /// 添加远程服务站点
+        /// </summary>
+        /// <param name="station"></param>
+        /// <param name="ip"></param>
+        /// <param name="port"></param>
+        /// <param name="jsonConvert"></param>
+        /// <param name="log"></param>
+        public virtual void AddServerStation(ServerStationBase station, string ip, int port, IJsonConvert jsonConvert = null, ILog log = null)
+        {
+            if (log == null)
+                log = new ConsoleLogInfo();
+            if (jsonConvert == null)
+                jsonConvert = new BaseJsonCovert();
+
+            var stationInfo = new Station(jsonConvert, log, station);
+            var info = new StationInfo(ip, port, stationInfo);
+            this.ServerStations.Add(info);
+        }
+
+        /// <summary>
+        /// 添加远程服务站点
+        /// </summary>
+        /// <param name="station"></param>
+        public virtual void AddServerStation(StationInfo station)
+        {
+            this.ServerStations.Add(station);
+        }
+
+        /// <summary>
         /// 执行接口
         /// </summary>
         /// <param name="url">
@@ -162,7 +216,7 @@ namespace GeneralTool.General.TaskLib
         /// </param>
         /// <returns>
         /// </returns>
-        public object DoInterface(string url, DoTaskParameterItem parameterItem)
+        public virtual object DoInterface(string url, DoTaskParameterItem parameterItem)
         {
             var method = parameterItem.Method;
 
@@ -210,7 +264,7 @@ namespace GeneralTool.General.TaskLib
         /// </summary>
         /// <returns>
         /// </returns>
-        public Dictionary<string, DoTaskParameterItem> GetInterfaces()
+        public virtual Dictionary<string, DoTaskParameterItem> GetInterfaces()
         {
             if (this.TaskParameterItems.Count() != 0)
             {
@@ -220,97 +274,112 @@ namespace GeneralTool.General.TaskLib
             {
                 foreach (var obj in this.taskInokes)
                 {
-                    TaskModel taskModel = new TaskModel();
-                    var classRoute = obj.GetAttributeByClass<RouteAttribute>();
-                    if (classRoute == null)
-                    {
-                        continue;
-                    }
-
-                    taskModel.LangKey = classRoute.LangKey;
-                    taskModel.Explanation = classRoute.Explanation;
-                    var rootPath = classRoute.Url;
-
-                    var tmpDics = new Dictionary<string, DoTaskParameterItem>();
-                    var methods = obj.GetType().GetMethods().OrderBy(m => m.Name);
-                    methods.Foreach(m =>
-                    {
-                        var doModel = new DoTaskModel();
-                        var attributes = m.GetCustomAttributes().Where(a => a is RouteAttribute);
-                        if (attributes.Count() > 0)
-                        {
-                            var route = attributes.First() as RouteAttribute;
-                            var paramters = new ObservableCollection<ParameterItem>();
-                            m.GetParameters().Foreach(p =>
-                            {
-                                var it = new ParameterItem()
-                                {
-                                    ParameterName = p.Name,
-                                    ParameterType = p.ParameterType,
-                                    Index = p.Position
-                                };
-                                if (p.HasDefaultValue)
-                                {
-                                    it.Value = p.DefaultValue.ToString();
-                                }
-
-                                //查看是否有水印提示
-                                var water = p.GetCustomAttribute<WaterMarkAttribute>();
-                                if (water != null)
-                                {
-                                    it.WaterMark = water.WaterMark;
-                                }
-                                paramters.Add(it);
-                            });
-
-                            string key = rootPath + route.Url;
-
-                            var item = new DoTaskParameterItem()
-                            {
-                                //转换类型
-                                Paramters = paramters,
-                                Url = rootPath + route.Url,
-                                Method = m,
-                                TaskObj = obj,
-                                LangKey = route.LangKey,
-                                Explanation = route.Explanation,
-                                ResultType = m.ReturnType,
-                                HttpMethod = route.Method,
-                                ReturnString = route.ReturnString,
-                            };
-
-                            if (string.IsNullOrWhiteSpace(route.ReturnString))
-                            {
-                                //如果没有的话,则直接用type
-                                item.ReturnString = item.ResultType.Name;
-                            }
-                            item.InitLangKey();
-
-                            if (this.TaskParameterItems.ContainsKey(key))
-                            {
-                                this.log.Error($"已经存在 {key} ,跳过不加入");
-                            }
-                            else
-                            {
-                                this.TaskParameterItems.Add(key, item);
-                                tmpDics.Add(key, item);
-                                doModel.DoTaskParameterItem = item;
-                                doModel.Url = key;
-                                taskModel.DoTaskModels.Add(doModel);
-                            }
-                        }
-                    });
-                    this.currents.Add(obj, tmpDics);
-                    taskModel.InitLangKey();
-                    this.TaskModels.Add(taskModel);
+                    this.AddTaskModel(obj);
                 }
 
                 return this.TaskParameterItems;
             }
         }
 
+        /// <summary>
+        /// 添加一个项
+        /// </summary>
+        /// <param name="obj"></param>
+        public void AddTaskModel(BaseTaskInvoke obj)
+        {
+            TaskModel taskModel = new TaskModel();
+            var classRoute = obj.GetAttributeByClass<RouteAttribute>();
+            if (classRoute == null)
+            {
+                return;
+            }
+
+            taskModel.LangKey = classRoute.LangKey;
+            taskModel.Explanation = classRoute.Explanation;
+            var rootPath = classRoute.Url;
+
+            var tmpDics = new Dictionary<string, DoTaskParameterItem>();
+            var methods = obj.GetType().GetMethods().OrderBy(m => m.Name);
+            methods.Foreach(m =>
+            {
+                var doModel = new DoTaskModel();
+                var attributes = m.GetCustomAttributes().Where(a => a is RouteAttribute);
+                if (attributes.Count() > 0)
+                {
+                    var route = attributes.First() as RouteAttribute;
+                    var paramters = new ObservableCollection<ParameterItem>();
+                    m.GetParameters().Foreach(p =>
+                    {
+                        var it = new ParameterItem()
+                        {
+                            ParameterName = p.Name,
+                            ParameterType = p.ParameterType,
+                            Index = p.Position
+                        };
+                        if (p.HasDefaultValue)
+                        {
+                            it.Value = p.DefaultValue.ToString();
+                        }
+
+                        //查看是否有水印提示
+                        var water = p.GetCustomAttribute<WaterMarkAttribute>();
+                        if (water != null)
+                        {
+                            it.WaterMark = water.WaterMark;
+                        }
+                        paramters.Add(it);
+                    });
+
+                    string key = rootPath + route.Url;
+
+                    var item = new DoTaskParameterItem()
+                    {
+                        //转换类型
+                        Paramters = paramters,
+                        Url = rootPath + route.Url,
+                        Method = m,
+                        TaskObj = obj,
+                        LangKey = route.LangKey,
+                        Explanation = route.Explanation,
+                        ResultType = m.ReturnType,
+                        HttpMethod = route.Method,
+                        ReturnString = route.ReturnString,
+                    };
+
+                    if (string.IsNullOrWhiteSpace(route.ReturnString))
+                    {
+                        //如果没有的话,则直接用type
+                        item.ReturnString = item.ResultType.Name;
+                    }
+                    item.InitLangKey();
+
+                    if (this.TaskParameterItems.ContainsKey(key))
+                    {
+                        this.log.Error($"已经存在 {key} ,跳过不加入");
+                    }
+                    else
+                    {
+                        this.TaskParameterItems.Add(key, item);
+                        tmpDics.Add(key, item);
+                        doModel.DoTaskParameterItem = item;
+                        doModel.Url = key;
+                        taskModel.DoTaskModels.Add(doModel);
+                    }
+                }
+            });
+            if (taskModel.DoTaskModels.Count > 0)
+            {
+                this.currents.Add(obj, tmpDics);
+                taskModel.InitLangKey();
+                this.TaskModels.Add(taskModel);
+            }
+
+        }
+
+
+
         /// <inheritdoc/>
-        public bool Open(string ip, int port, params BaseTaskInvoke[] target)
+        public virtual bool Open(string ip, int port, params BaseTaskInvoke[] target)
         {
             if (!this.OpenWithoutServer(target))
                 return false;
@@ -336,8 +405,116 @@ namespace GeneralTool.General.TaskLib
             }
         }
 
+
+        /// <summary>
+        /// 打开单个站点
+        /// </summary>
+        /// <param name="station"></param>
+        /// <param name="target"></param>
+        public virtual bool OpenServerStation(StationInfo station, params BaseTaskInvoke[] target)
+        {
+            this.ServerStations.Add(station);
+            return this.OpenStation(station, target);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="target"></param>
+        /// <returns></returns>
+        public virtual bool OpenStations(params BaseTaskInvoke[] target)
+        {
+            foreach (var item in this.ServerStations)
+            {
+                try
+                {
+                    if (!this.IsInterfacesInit)
+                    {
+                        this.taskInokes = target;
+                        this.IsInterfacesInit = true;
+                    }
+
+                    taskInokes.Foreach(o =>
+                    {
+                        item.Station.AddStationObjectClass(o);
+                    });
+                }
+                catch (Exception ex)
+                {
+                    this.erroMsg = "开启接口列表失败:" + ex.GetInnerExceptionMessage();
+                    this.log.Fail(this.erroMsg);
+                    this.IsInterfacesInit = false;
+                    return false;
+                }
+
+                try
+                {
+                    if (item.IsSocketInit)
+                    {
+                        item.Station.Close();
+                    }
+
+                    item.Station.Start(item.Ip, item.Port);
+                    this.log.Debug($"服务已开启 IP:{item.Ip} PORT:{item.Port}");
+                    item.IsSocketInit = true;
+                }
+                catch (Exception ex)
+                {
+                    item.IsSocketInit = false;
+                    this.erroMsg = "启动中有模块失败" + ex.GetInnerExceptionMessage();
+                    this.log.Fail(this.erroMsg);
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private bool OpenStation(StationInfo info, params BaseTaskInvoke[] target)
+        {
+            try
+            {
+                if (!this.IsInterfacesInit)
+                {
+                    this.taskInokes = target;
+                    this.IsInterfacesInit = true;
+                }
+
+                taskInokes.Foreach(o =>
+                {
+                    info.Station.AddStationObjectClass(o);
+                });
+            }
+            catch (Exception ex)
+            {
+                this.erroMsg = "开启接口列表失败:" + ex.GetInnerExceptionMessage();
+                this.log.Fail(this.erroMsg);
+                this.IsInterfacesInit = false;
+                return false;
+            }
+
+            try
+            {
+                if (info.IsSocketInit)
+                {
+                    info.Station.Close();
+                }
+
+                info.Station.Start(info.Ip, info.Port);
+                this.log.Debug($"服务已开启 IP:{info.Ip} PORT:{info.Port}");
+                info.IsSocketInit = true;
+            }
+            catch (Exception ex)
+            {
+                info.IsSocketInit = false;
+                this.erroMsg = "启动中有模块失败" + ex.GetInnerExceptionMessage();
+                this.log.Fail(this.erroMsg);
+                return false;
+            }
+            return true;
+        }
+
         /// <inheritdoc/>
-        public bool OpenWithoutServer(params BaseTaskInvoke[] taskInokes)
+        public virtual bool OpenWithoutServer(params BaseTaskInvoke[] taskInokes)
         {
             try
             {
@@ -361,6 +538,21 @@ namespace GeneralTool.General.TaskLib
             }
         }
 
+
+        /// <summary>
+        /// 关闭
+        /// </summary>
+        public virtual void Close()
+        {
+            try
+            {
+                this.ServerStation?.Close();
+            }
+            catch (Exception)
+            {
+
+            }
+        }
         #endregion Public 方法
     }
 }

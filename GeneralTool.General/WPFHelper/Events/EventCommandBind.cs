@@ -110,20 +110,9 @@ namespace GeneralTool.General.WPFHelper.Events
         private static void RegisterEvent(UIElement d, string eventName, IEventCommand cmd)
         {
             var action = cmd.ActionEventHandler;
-            var @event = d.GetType().GetEvent(eventName);
-            if (@event == null)
-                throw new ArgumentNullException($"事件名称 {eventName} 不存在元素 {d} 中,请检查");
-
+            var @event = d.GetType().GetEvent(eventName) ?? throw new ArgumentNullException($"事件名称 {eventName} 不存在元素 {d} 中,请检查");
             var handler = Delegate.CreateDelegate(@event.EventHandlerType, action.Target, action.Method);
-            //if (d is ButtonBase b)
-            //{
-            //    var routeEvent = GetRouteEvent(b, eventName);
-            //    b.AddHandler(routeEvent, handler, true);
-            //}
-            //else
-            //{
-            //    @event.AddEventHandler(d, handler);
-            //}
+
             var routeEvent = GetRouteEvent(d, eventName);
             if (routeEvent != null)
                 d.AddHandler(routeEvent, handler, true);

@@ -1,4 +1,6 @@
-﻿using GeneralTool.General.Interfaces;
+﻿using System.Threading;
+
+using GeneralTool.General.Interfaces;
 using GeneralTool.General.Logs;
 
 namespace GeneralTool.General.TaskLib
@@ -49,6 +51,11 @@ namespace GeneralTool.General.TaskLib
         /// 日志
         /// </summary>
         public ILog Log { get; set; }
+
+        /// <summary>
+        /// Token
+        /// </summary>
+        public CancellationTokenSource TokenSource { get; set; } = new CancellationTokenSource();
 
         #endregion Public 属性
 

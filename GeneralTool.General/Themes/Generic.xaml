@@ -4,6 +4,10 @@
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/GeneralTool.General;component/Themes/ImageViewControl.xaml" />
         <ResourceDictionary Source="pack://application:,,,/GeneralTool.General;component/Themes/PropertyGridControl.xaml" />
+
+        <ResourceDictionary Source="pack://application:,,,/GeneralTool.General;component/WPFHelper/DiagramDesigner/Resources/BlockItem.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/GeneralTool.General;component/WPFHelper/DiagramDesigner/Resources/Connection.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/GeneralTool.General;component/WPFHelper/DiagramDesigner/Resources/ZoomBox.xaml" />
     </ResourceDictionary.MergedDictionaries>
     <!--  set up default styles for our custom controls  -->
     <Style TargetType="{x:Type wp:ImageViewControl}"

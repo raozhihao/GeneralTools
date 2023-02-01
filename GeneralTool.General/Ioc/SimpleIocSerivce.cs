@@ -130,8 +130,7 @@ namespace GeneralTool.General.Ioc
             {
                 if (item.Value.Instance is IInitInterface t)
                     t.Init();
-                if (item.Value.InitMethod != null)
-                    item.Value.InitMethod.Invoke(item.Value.Instance, null);
+                item.Value.InitMethod?.Invoke(item.Value.Instance, null);
             }
         }
 

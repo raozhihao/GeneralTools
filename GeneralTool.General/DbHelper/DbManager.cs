@@ -128,7 +128,24 @@ namespace GeneralTool.General.DbHelper
         /// 创建参数对象集合
         /// </summary>
         /// <param name="list">参数对象集合</param>
-        public virtual void CreateParameters(IEnumerable<ParameterHelper> list)
+        public virtual void AddParameters(IEnumerable<ParameterHelper> list)
+        {
+            if (list == null)
+            {
+                return;
+            }
+
+            foreach (var item in list)
+            {
+                AddParameter(item.Name, item.Value);
+            }
+        }
+
+        /// <summary>
+        /// 创建参数对象集合
+        /// </summary>
+        /// <param name="list">参数对象集合</param>
+        public virtual void AddParameters(params ParameterHelper[] list)
         {
             if (list == null)
             {
@@ -303,6 +320,49 @@ namespace GeneralTool.General.DbHelper
                 parameters.Clear();
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="query"></param>
+        /// <returns></returns>
+        public T GetDbDataAdapter<T>(string query) where T : DbDataAdapter
+        {
+            DbDataAdapter adapter = null;
+            DbCommand command = null;
+            try
+            {
+                command = CreateCommand(query, CommandType.Text);
+                adapter = DbProvider.CreateDataAdapter();
+
+                adapter.SelectCommand = command;
+
+                return adapter as T;
+            }
+            catch (Exception ex)
+            {
+                ErroMsg = ex.GetInnerExceptionMessage();
+                return default;
+            }
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="adapter"></param>
+        public void DisposeAdapter(DbDataAdapter adapter)
+        {
+            if (adapter == null) return;
+            try
+            {
+                this.parameters.Clear();
+                this.DisposeCommand(adapter.SelectCommand);
+                adapter.Dispose();
+            }
+            catch
+            {
+
+            }
+        }
 
         /// <summary>
         /// 调用有无返回值的存储过程
@@ -345,6 +405,23 @@ namespace GeneralTool.General.DbHelper
         {
             return this.TransctionExcuteSacler(proName, out obj, commandType);
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="query"></param>
+        /// <param name="transtion"></param>
+        /// <param name="commandType"></param>
+        /// <returns></returns>
+        public DbDataReader GetReader(string query, bool transtion = false, CommandType commandType = CommandType.Text)
+        {
+            DbCommand cmd = null;
+            if (transtion)
+                this.SetTransCommand(query, commandType);
+            else
+                cmd = this.CreateCommand(query, commandType);
+            return cmd.ExecuteReader();
+        }
+
 
         /// <summary>
         /// 获取DataTable
@@ -527,28 +604,6 @@ namespace GeneralTool.General.DbHelper
 
 
         /// <summary>
-        /// 获取指定对象集合
-        /// </summary>
-        /// <typeparam name="T">需要获取的对象</typeparam>
-        /// <param name="sql">sql语句</param>
-        /// <param name="values">返回的强类型集合</param>
-        /// <returns>返回正确与否</returns>
-        [Obsolete("该方法性能上有所损耗,请使用QueryList")]
-        public bool GetList<T>(string sql, out List<T> values)
-        {
-            values = new List<T>();
-            bool re = GetDataTable(sql, out DataTable dt, typeof(T).Name);
-            if (re)
-            {
-
-                values = ToList<T>(dt);
-                re = values != null;
-            }
-
-            return re;
-        }
-
-        /// <summary>
         /// 根据DataTable创建一个强类型对象集合
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -672,7 +727,7 @@ namespace GeneralTool.General.DbHelper
 
 
         /// <summary>
-        /// 获取单行的值,无返回值时返回null
+        /// 获取单列的值,无返回值时返回null
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="query"></param>
@@ -707,13 +762,20 @@ namespace GeneralTool.General.DbHelper
         /// </summary>
         /// <typeparam name="T">要获取的对象</typeparam>
         /// <param name="query">sql语句</param>
+        /// <param name="transtion"></param>
         /// <returns></returns>
-        public List<T> QueryList<T>(string query)
+        public List<T> QueryList<T>(string query, bool transtion = false)
         {
             DbCommand cmd = null;
             try
             {
-                cmd = CreateCommand(query, CommandType.Text);
+                if (transtion)
+                {
+                    this.SetTransCommand(query);
+                    cmd = this.transCommand;
+                }
+                else
+                    cmd = CreateCommand(query, CommandType.Text);
                 using (var reader = cmd.ExecuteReader())
                 {
                     if (!reader.HasRows)
@@ -730,13 +792,12 @@ namespace GeneralTool.General.DbHelper
                         foreach (PropertyInfo property in pr)
                         {
                             //判断当前的属性是否实现了对应的特性
-                            DataPropertyAttribute attr = null;
-                            var attrs = property.GetCustomAttributes(typeof(DataPropertyAttribute), false);
+                            DataColumnPropertyAttribute attr = null;
+                            var attrs = property.GetCustomAttributes(typeof(DataColumnPropertyAttribute), false);
                             if (null != attrs && attrs.Length > 0)
                             {
-                                attr = (DataPropertyAttribute)attrs[0];
+                                attr = (DataColumnPropertyAttribute)attrs[0];
                             }
-
 
                             string currentName = property.Name.ToLower();
                             if (attr != null)
@@ -919,11 +980,12 @@ namespace GeneralTool.General.DbHelper
                 for (int i = 0; i < columnCount; i++)
                 {
                     //判断当前的属性是否实现了对应的特性
-                    DataPropertyAttribute attr = null;
-                    var attrs = item.GetCustomAttributes(typeof(DataPropertyAttribute), false);
+                    DataColumnPropertyAttribute attr = null;
+
+                    var attrs = item.GetCustomAttributes(typeof(DataColumnPropertyAttribute), false);
                     if (null != attrs && attrs.Length > 0)
                     {
-                        attr = (DataPropertyAttribute)attrs[0];
+                        attr = (DataColumnPropertyAttribute)attrs[0];
                     }
 
                     // var attr = item.GetCustomAttribute<DataPropertyAttribute>();
