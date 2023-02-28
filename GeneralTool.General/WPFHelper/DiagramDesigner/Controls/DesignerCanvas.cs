@@ -502,10 +502,18 @@ namespace GeneralTool.General.WPFHelper.DiagramDesigner.Controls
             block.Header = dragObject.Header;
             block.IsStart = dragObject.IsStart;
 
+            BlockCopyArgs copyValue = new BlockCopyArgs() { DragItem = dragObject, DestBlock = block };
+            this.CopyEvent?.Invoke(this, copyValue);
+
+            if (copyValue.Block) return;
+
             //设置位置
             Connection connection = null;
 
+
+
             this.Children.Add(block);
+
             block.IsInCanvas = true;
             block.ApplyTemplate();
             AddTempelte(block);
@@ -638,15 +646,11 @@ namespace GeneralTool.General.WPFHelper.DiagramDesigner.Controls
                 }
             }
 
-            if (this.CopyEvent != null)
+            if (!copyValue.OnCreateToCanvas)
             {
-                var copyValue = new BlockCopyArgs() { DragItem = dragObject,DestBlock=block };
-                this.CopyEvent(this, copyValue);
-                if (copyValue.Handle)
-                {
-                    return;
-                }
+                return;
             }
+
             block.OnDragToCanvas(connection);
         }
 

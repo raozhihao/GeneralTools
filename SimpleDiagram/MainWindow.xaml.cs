@@ -96,7 +96,7 @@ namespace SimpleDiagram
         {
             if (e.DragItem.DragItem != null && e.DestBlock != null)
             {
-                e.Handle = true;
+                e.Block = true;
                 var source = e.DragItem.DragItem as BaseBlock;
                 var sink = e.DestBlock as BaseBlock;
                 sink.BlockViewModel = this.Copy(source.BlockViewModel);
