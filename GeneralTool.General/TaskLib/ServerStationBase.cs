@@ -146,7 +146,7 @@ namespace GeneralTool.General.TaskLib
                                 serverResponse.ResultString = converter.Convert(serverResponse.Result, null, null, null) + "";
                                 if (method != null)
                                 {
-                                    serverResponse.ErroMsg = string.Concat(method.Invoke(requestAddressItem.Target, null));
+                                     serverResponse.ErroMsg = string.Concat(method.Invoke(requestAddressItem.Target, null));
                                 }
                             }
                             catch (Exception ex2)

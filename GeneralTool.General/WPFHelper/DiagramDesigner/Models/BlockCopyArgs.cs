@@ -11,7 +11,7 @@ namespace GeneralTool.General.WPFHelper.DiagramDesigner.Models
     /// <summary>
     /// 复制属性集
     /// </summary>
-    public class BlockCopyArgs:EventArgs
+    public class BlockCopyArgs : EventArgs
     {
         /// <summary>
         /// 指示是否进行下一步的处理,如果为true则不进行下一步
@@ -31,6 +31,6 @@ namespace GeneralTool.General.WPFHelper.DiagramDesigner.Models
         /// <summary>
         /// 是否发送接下来的事件
         /// </summary>
-        public bool OnCreateToCanvas { get;  set; }
+        public bool OnCreateToCanvas { get; set; } = true;
     }
 }

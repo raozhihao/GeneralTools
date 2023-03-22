@@ -85,6 +85,16 @@ namespace GeneralTool.General.Attributes
             set => this.RegisterProperty(ref this.langKey, value);
         }
 
+        private int sortIndex;
+        /// <summary>
+        /// 排序
+        /// </summary>
+        public int SortIndex
+        {
+            get => this.sortIndex;
+            set => this.RegisterProperty(ref this.sortIndex, value);
+        }
+
         #endregion Public 属性
 
 

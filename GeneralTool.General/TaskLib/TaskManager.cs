@@ -299,7 +299,8 @@ namespace GeneralTool.General.TaskLib
             var rootPath = classRoute.Url;
 
             var tmpDics = new Dictionary<string, DoTaskParameterItem>();
-            var methods = obj.GetType().GetMethods().OrderBy(m => m.Name);
+            var methods = obj.GetType().GetMethods().OrderBy(m=>m.GetCustomAttribute<RouteAttribute>()?.SortIndex);
+
             methods.Foreach(m =>
             {
                 var doModel = new DoTaskModel();

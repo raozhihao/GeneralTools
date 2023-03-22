@@ -70,6 +70,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="BlockVIewModels\TxtBlockViewModel.cs" />
+    <Compile Include="NoPackStation.cs" />
     <Compile Include="Shapes\HeartShape.cs" />
     <Compile Include="Windows\TxtWindow.xaml.cs">
       <DependentUpon>TxtWindow.xaml</DependentUpon>
