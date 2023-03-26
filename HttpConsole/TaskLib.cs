@@ -7,7 +7,7 @@ namespace HttpConsole
     public class TaskLib : BaseTaskInvoke
     {
         [Route(nameof(Test), Method = GeneralTool.General.NetHelper.HttpMethod.POST)]
-        public string Test(string str, int count)
+        public string Test(string str, int count = 2)
         {
             return str;
         }

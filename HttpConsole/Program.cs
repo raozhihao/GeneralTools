@@ -1,5 +1,7 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 
+using GeneralTool.General.TaskLib;
 using GeneralTool.General.WPFHelper;
 
 namespace HttpConsole
@@ -43,20 +45,20 @@ namespace HttpConsole
 
             #region Task
 
-            //var httpStation = new HttpServerStation(null);
+            var httpStation = new HttpServerStation(null);
 
-            //var manager = new TaskManager(null,null,httpStation);
-            //var task = new TaskLib();
-            //manager.Open("127.0.0.1", 8878, task);
-            //manager.GetInterfaces();
-            //Console.ReadKey();
+            var manager = new TaskManager(null, null, httpStation);
+            var task = new TaskLib();
+            manager.Open("127.0.0.1", 8878, task);
+            manager.GetInterfaces();
+            Console.ReadKey();
 
             #endregion
 
 
-            var p = new Point(1, 2);
-            var str = new StringConverter().Convert(p, null, null, null);
-            str = new StringConverter().ConvertSimpleType(str + "", p.GetType());
+            //var p = new Point(1, 2);
+            //var str = new StringConverter().Convert(p, null, null, null);
+            //str = new StringConverter().ConvertSimpleType(str + "", p.GetType());
         }
     }
 
