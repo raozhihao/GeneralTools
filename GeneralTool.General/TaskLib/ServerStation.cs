@@ -112,7 +112,7 @@ namespace GeneralTool.General.TaskLib
                     serverResponse.ErroMsg = ex.GetInnerExceptionMessage();
                     return;
                 }
-                serverResponse = this.GetServerResponse(serverRequest);
+                serverResponse = this.GetServerResponse(serverRequest, this._jsonCovert);
             }
             catch (Exception ex5)
             {

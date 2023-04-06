@@ -1,8 +1,13 @@
 ﻿using System;
 using System.Windows;
 
+using GeneralTool.General.Interfaces;
 using GeneralTool.General.TaskLib;
 using GeneralTool.General.WPFHelper;
+
+using HttpConsole.Inis;
+
+using Newtonsoft.Json;
 
 namespace HttpConsole
 {
@@ -45,7 +50,7 @@ namespace HttpConsole
 
             #region Task
 
-            var httpStation = new HttpServerStation(null);
+            var httpStation = new HttpServerStation(null,new MyJson());
 
             var manager = new TaskManager(null, null, httpStation);
             var task = new TaskLib();
@@ -59,9 +64,34 @@ namespace HttpConsole
             //var p = new Point(1, 2);
             //var str = new StringConverter().Convert(p, null, null, null);
             //str = new StringConverter().ConvertSimpleType(str + "", p.GetType());
+
+            #region IniTest
+
+            var node = new WindowNode("Window");
+            var s = node.Str.Value;
+            node.Str.Value = "bbc";
+
+            #endregion
         }
     }
 
+    public class MyJson : IJsonConvert
+    {
+        public T DeserializeObject<T>(string value)
+        {
+           return JsonConvert.DeserializeObject<T>(value);
+        }
+
+        public object DeserializeObject(string value, Type type)
+        {
+           return JsonConvert.DeserializeObject(value, type);
+        }
+
+        public string SerializeObject(object serverResponse)
+        {
+           return JsonConvert.SerializeObject(serverResponse);
+        }
+    }
     public struct MyStruct
     {
         public int X { get; set; }

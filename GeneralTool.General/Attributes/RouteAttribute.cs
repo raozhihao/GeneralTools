@@ -45,6 +45,7 @@ namespace GeneralTool.General.Attributes
             set => this.RegisterProperty(ref this.returnString, value);
         }
 
+
         private string explantion;
         /// <summary>
         /// 提示信息
@@ -93,6 +94,26 @@ namespace GeneralTool.General.Attributes
         {
             get => this.sortIndex;
             set => this.RegisterProperty(ref this.sortIndex, value);
+        }
+
+        private bool reReponse;
+        /// <summary>
+        /// 是否原样返回
+        /// </summary>
+        public bool ReReponse
+        {
+            get => this.reReponse;
+            set=>this.RegisterProperty(ref this.reReponse, value);
+        }
+
+        private string reReponseFomartErroString;
+        /// <summary>
+        /// 当原样返回出现未捕获的异常时,应当返回的错误信息格式
+        /// </summary>
+        public string ReReponseErroFomartString
+        {
+            get => this.reReponseFomartErroString;
+            set => this.RegisterProperty(ref this.reReponseFomartErroString, value);
         }
 
         #endregion Public 属性

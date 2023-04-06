@@ -32,6 +32,11 @@ namespace GeneralTool.General.Attributes
             set;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public bool IsJson { get; set; }
+
         #endregion Public 属性
     }
 }

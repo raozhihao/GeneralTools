@@ -13,28 +13,7 @@ namespace GeneralTool.General.Models
     {
         #region Public 属性
 
-        /// <summary>
-        /// </summary>
-        public byte[] AttachDatas { get; set; }
-
-        /// <summary>
-        /// </summary>
-        public int AttachDatasLength
-        {
-            get
-            {
-                if (this.AttachDatas != null)
-                {
-                    return this.AttachDatas.Length;
-                }
-                return 0;
-            }
-        }
-
-        /// <summary>
-        /// </summary>
-        public AttachDataType AttachDataType { get; set; }
-
+    
         /// <summary>
         /// </summary>
         public string ErroMsg { get; set; }

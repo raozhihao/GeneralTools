@@ -29,6 +29,7 @@ namespace GeneralTool.General.IniHelpers
         public string SectionName { get; set; }
 
         #endregion Public 属性
+
     }
 
     /// <summary>
@@ -51,16 +52,50 @@ namespace GeneralTool.General.IniHelpers
         /// <param name="defaultValue">
         /// 默认值
         /// </param>
-        public Node(string sectionName, string keyName, T defaultValue)
+        /// <param name="create"></param>
+        /// <param name="iniPath"></param>
+        public Node(string sectionName, string keyName, T defaultValue, bool create = false, string iniPath = "")
         {
             this.SectionName = sectionName;
             this.KeyName = keyName;
+
             this.DefaultValue = defaultValue;
+            this.IniPath = iniPath;
+
+            if (create)
+            {
+                var tmp = this.IniHelper.GetValue<string>(SectionName, KeyName);
+                if (string.IsNullOrWhiteSpace(tmp))
+                {
+                    this.Value = defaultValue;
+                }
+            }
         }
+
 
         #endregion Public 构造函数
 
         #region Public 属性
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public IniHelper IniHelper { get; set; }
+
+        private string iniPath;
+        /// <summary>
+        /// 文件路径
+        /// </summary>
+        public string IniPath
+        {
+            get => this.iniPath;
+            set
+            {
+                if (string.IsNullOrEmpty(iniPath)) this.IniHelper = IniHelper.IniHelperInstance;
+                else this.IniHelper = new IniHelper(iniPath);
+                this.iniPath = value;
+            }
+        }
 
         /// <summary>
         /// 当前默认值
@@ -85,7 +120,7 @@ namespace GeneralTool.General.IniHelpers
             get
             {
                 //获取值
-                var tmp = IniHelper.IniHelperInstance.GetValue<string>(SectionName, KeyName);
+                var tmp = this.IniHelper.GetValue<string>(SectionName, KeyName);
                 if (string.IsNullOrWhiteSpace(tmp))
                     return DefaultValue;
                 var type = typeof(T);
@@ -128,7 +163,7 @@ namespace GeneralTool.General.IniHelpers
                 }
                 else
                 {
-                    return IniHelper.IniHelperInstance.GetValue<T>(SectionName, KeyName, default);
+                    return this.IniHelper.GetValue<T>(SectionName, KeyName, default);
                 }
             }
             set
@@ -157,11 +192,11 @@ namespace GeneralTool.General.IniHelpers
                         objs[i] = get.Invoke(value, new object[] { i });
                     }
                     string val = string.Join(",", objs);
-                    IniHelper.IniHelperInstance.WriteValue(SectionName, KeyName, val);
+                    this.IniHelper.WriteValueString(SectionName, KeyName, val);
                 }
                 else
                 {
-                    IniHelper.IniHelperInstance.WriteValue<T>(SectionName, KeyName, value);
+                    this.IniHelper.WriteValueT<T>(SectionName, KeyName, value);
                 }
             }
         }

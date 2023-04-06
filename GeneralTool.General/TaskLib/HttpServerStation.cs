@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Reflection;
 using System.Text;
 
+using GeneralTool.General.Attributes;
 using GeneralTool.General.ExceptionHelper;
 using GeneralTool.General.Interfaces;
 using GeneralTool.General.Models;
@@ -29,9 +31,16 @@ namespace GeneralTool.General.TaskLib
         /// <summary>
         /// 
         /// </summary>
+        public IJsonConvert JsonConvert { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="log"></param>
-        public HttpServerStation(ILog log) : base(log)
+        /// <param name="json"></param>
+        public HttpServerStation(ILog log = null, IJsonConvert json = null) : base(log)
         {
+            if (json == null) json = new BaseJsonCovert();
+            this.JsonConvert = json;
         }
         HttpListener httpListener;
 
@@ -101,22 +110,35 @@ namespace GeneralTool.General.TaskLib
                 return;
             }
 
+            var reponseString = "";
             try
             {
                 //将响应对象进行处理
-                ExcuteRequest(context, msg);
+                reponseString = ExcuteRequest(context, msg);
             }
             catch (Exception ex)
             {
-                Log.Log(ex.GetInnerExceptionMessage());
+                reponseString = ex.GetInnerExceptionMessage();
+
+                Log.Log(reponseString);
             }
+
+            if (reponseString == null) return;
+
+            var response = context.Response;
+            // 设置回应头部内容，长度，编码
+            response.ContentEncoding = Encoding.UTF8;
+
+            response.ContentType = "application/json; charset=utf-8";
+
+            WriteResponse(response, reponseString);
         }
-        private void ExcuteRequest(HttpListenerContext context, string msg)
+        private string ExcuteRequest(HttpListenerContext context, string msg)
         {
             if (this.HalderContext != null)
             {
                 HandlerContextMethod(context);
-                return;
+                return null;
             }
 
             // 取得回应对象
@@ -127,8 +149,9 @@ namespace GeneralTool.General.TaskLib
             if (!this.RequestRoute.ContainsKey(url))
             {
                 //不存在,返回
-                this.Log.Error($"不存在所请示的 [url] - [{url}]");
-                return;
+                var erro = $"不存在所请示的 [url] - [{url}]";
+                this.Log.Error(erro);
+                return erro;
             }
 
             var cmd = new ServerRequest();
@@ -139,7 +162,36 @@ namespace GeneralTool.General.TaskLib
             var dic = queryString.ParseUrlToQueryDictionary();
             if (method.Equals("POST", StringComparison.InvariantCultureIgnoreCase))
             {
-                dic = new BaseJsonCovert().DeserializeObject<Dictionary<string, string>>(msg);
+                var executed = false;
+                var parameters = this.RequestRoute[url].MethodInfo.GetParameters();
+                if (parameters.Length == 1)
+                {
+                    var pa = parameters[0];
+                    var wa = pa.GetCustomAttribute<WaterMarkAttribute>();
+                    if (wa != null && wa.IsJson)
+                    {
+                        //如果是Json类型,则直接设置了
+                        //var value = this.JsonConvert.DeserializeObject(msg, pa.ParameterType);
+                        dic = new Dictionary<string, string>();
+                        dic.Add(pa.Name, msg);
+                        executed = true;
+                    }
+                }
+
+                if (!executed)
+                {
+                    try
+                    {
+                        dic = this.JsonConvert.DeserializeObject<Dictionary<string, string>>(msg);
+                        if (dic == null) dic = new Dictionary<string, string>();
+                    }
+                    catch (Exception ex)
+                    {
+                        return ex.GetInnerExceptionMessage();
+                    }
+                }
+
+
             }
 
             foreach (var item in dic)
@@ -155,30 +207,27 @@ namespace GeneralTool.General.TaskLib
                 var item = this.RequestRoute[url];
                 if (item.HttpMethod.ToString().ToLower() != context.Request.HttpMethod.ToLower())
                 {
-                    this.Log.Error($"远程请示的Http Metod与接口不一致,请示的 url : {url} ,请示的Http Method : {context.Request.HttpMethod}");
-                    return;
+                    return $"远程请示的Http Metod与接口不一致,请示的 url : {url} ,请示的Http Method : {context.Request.HttpMethod}";
                 }
 
                 var info = new RequestInfo(cmd, response, item);
                 this.HandlerRequestMethod(info);
-                return;
+                return null;
             }
 
             Log.Debug($"Request:{msg}");
 
-            // 设置回应头部内容，长度，编码
-            response.ContentEncoding = Encoding.UTF8;
-
-            response.ContentType = "application/json; charset=utf-8";
 
 
-            var serverResponse = this.GetServerResponse(cmd);
-            string responseString = serverResponse.SerializeToJsonString();
+            string responseString = this.GetReponseString(cmd, this.JsonConvert);
 
             Log.Log($"Response:{responseString}" + Environment.NewLine);
 
-            WriteResponse(response, responseString);
+            return responseString;
+
         }
+
+
 
         private void HandlerContextMethod(HttpListenerContext context)
         {

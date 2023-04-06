@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 
+using GeneralTool.General.Attributes;
 using GeneralTool.General.Enums;
 using GeneralTool.General.ExceptionHelper;
 using GeneralTool.General.Interfaces;
@@ -53,6 +54,7 @@ namespace GeneralTool.General.TaskLib
         /// </summary>
         public Dictionary<string, RequestAddressItem> RequestRoute { get; set; } = new Dictionary<string, RequestAddressItem>();
 
+
         #endregion Protected 属性
 
         #region Public 方法
@@ -96,12 +98,10 @@ namespace GeneralTool.General.TaskLib
         /// 获取返回信息
         /// </summary>
         /// <param name="serverRequest">请示类型</param>
-        /// <param name="jsonConvert">Json转换器</param>
+        /// <param name="jsonConvert"></param>
         /// <returns></returns>
-        public ServerResponse GetServerResponse(ServerRequest serverRequest, IJsonConvert jsonConvert = null)
+        public ServerResponse GetServerResponse(ServerRequest serverRequest, IJsonConvert jsonConvert)
         {
-            if (jsonConvert == null)
-                jsonConvert = new BaseJsonCovert();
 
             ServerResponse serverResponse = new ServerResponse
             {
@@ -133,7 +133,13 @@ namespace GeneralTool.General.TaskLib
                                 if (serverRequest.Parameters.TryGetValue(parameterInfo.Name, out var value))
                                 {
                                     //如果有,则转换
-                                    array[parameterInfo.Position] = converter.ConvertSimpleType(value, parameterInfo.ParameterType);
+                                    var wa = parameterInfo.GetCustomAttribute<WaterMarkAttribute>();
+                                    if (wa != null && wa.IsJson)
+                                    {
+                                        array[parameterInfo.Position] = jsonConvert.DeserializeObject(value, parameterInfo.ParameterType);
+                                    }
+                                    else
+                                        array[parameterInfo.Position] = converter.ConvertSimpleType(value, parameterInfo.ParameterType);
                                 }
                                 else
                                 {
@@ -146,7 +152,7 @@ namespace GeneralTool.General.TaskLib
                                 serverResponse.ResultString = converter.Convert(serverResponse.Result, null, null, null) + "";
                                 if (method != null)
                                 {
-                                     serverResponse.ErroMsg = string.Concat(method.Invoke(requestAddressItem.Target, null));
+                                    serverResponse.ErroMsg = string.Concat(method.Invoke(requestAddressItem.Target, null));
                                 }
                             }
                             catch (Exception ex2)
@@ -182,6 +188,39 @@ namespace GeneralTool.General.TaskLib
                 serverResponse.ErroMsg = ex5.GetInnerExceptionMessage();
             }
             return serverResponse;
+        }
+
+        /// <summary>
+        /// 获取返回信息
+        /// </summary>
+        /// <param name="serverRequest">请示类型</param>
+        /// <param name="jsonConvert">Json转换器</param>
+        /// <returns></returns>
+        public string GetReponseString(ServerRequest serverRequest, IJsonConvert jsonConvert = null)
+        {
+            if (jsonConvert == null)
+                jsonConvert = new BaseJsonCovert();
+            var response = this.GetServerResponse(serverRequest, jsonConvert);
+
+            RequestAddressItem item = this.RequestRoute[serverRequest.Url];
+            var attr = item.MethodInfo.GetCustomAttribute<RouteAttribute>();
+            if (attr != null)
+            {
+                if (attr.ReReponse)
+                {
+                    if (response.RequestSuccess)
+                        return response.Result + "";
+                    else
+                    {
+                        if (!string.IsNullOrWhiteSpace(attr.ReReponseErroFomartString))
+                        {
+                            return attr.ReReponseErroFomartString.Replace("{0}", response.ErroMsg);
+                        }
+                    }
+                }
+            }
+
+            return jsonConvert.SerializeObject(response);
         }
 
         /// <summary>

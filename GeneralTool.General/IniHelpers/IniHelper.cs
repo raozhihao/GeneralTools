@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -64,7 +65,8 @@ namespace GeneralTool.General.IniHelpers
             // root Windows directory if it is not specified.  By calling
             // GetFullPath, we make sure we are always passing the full path
             // the win32 functions.
-            System.IO.Directory.CreateDirectory(System.IO.Path.GetDirectoryName(path));
+            var file = new FileInfo(path);
+            Microsoft.VisualBasic.FileIO.FileSystem.CreateDirectory(file.Directory.FullName);
             m_path = System.IO.Path.GetFullPath(path);
         }
 
@@ -650,7 +652,7 @@ namespace GeneralTool.General.IniHelpers
         /// <paramref name="sectionName"/> or <paramref name="keyName"/> or <paramref name="value"/>
         /// are a null reference (Nothing in VB)
         /// </exception>
-        public void WriteValue(string sectionName, string keyName, string value)
+        public void WriteValueString(string sectionName, string keyName, string value)
         {
             if (sectionName == null)
                 throw new ArgumentNullException("sectionName");
@@ -664,121 +666,7 @@ namespace GeneralTool.General.IniHelpers
             WriteValueInternal(sectionName, keyName, value);
         }
 
-        /// <summary>
-        /// Writes an <see cref="T:System.Int16"/> value to the ini file.
-        /// </summary>
-        /// <param name="sectionName">
-        /// The name of the section to write to .
-        /// </param>
-        /// <param name="keyName">
-        /// The name of the key to write to.
-        /// </param>
-        /// <param name="value">
-        /// The value to write
-        /// </param>
-        /// <exception cref="T:System.ComponentModel.Win32Exception">
-        /// The write failed.
-        /// </exception>
-        public void WriteValue(string sectionName, string keyName, short value)
-        {
-            WriteValue(sectionName, keyName, (int)value);
-        }
 
-        /// <summary>
-        /// Writes an <see cref="T:System.Int32"/> value to the ini file.
-        /// </summary>
-        /// <param name="sectionName">
-        /// The name of the section to write to .
-        /// </param>
-        /// <param name="keyName">
-        /// The name of the key to write to.
-        /// </param>
-        /// <param name="value">
-        /// The value to write
-        /// </param>
-        /// <exception cref="T:System.ComponentModel.Win32Exception">
-        /// The write failed.
-        /// </exception>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="sectionName"/> or <paramref name="keyName"/> are a null reference
-        /// (Nothing in VB)
-        /// </exception>
-        public void WriteValue(string sectionName, string keyName, int value)
-        {
-            WriteValue(sectionName, keyName, value.ToString(CultureInfo.InvariantCulture));
-        }
-
-        /// <summary>
-        /// Writes an <see cref="T:System.Single"/> value to the ini file.
-        /// </summary>
-        /// <param name="sectionName">
-        /// The name of the section to write to .
-        /// </param>
-        /// <param name="keyName">
-        /// The name of the key to write to.
-        /// </param>
-        /// <param name="value">
-        /// The value to write
-        /// </param>
-        /// <exception cref="T:System.ComponentModel.Win32Exception">
-        /// The write failed.
-        /// </exception>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="sectionName"/> or <paramref name="keyName"/> are a null reference
-        /// (Nothing in VB)
-        /// </exception>
-        public void WriteValue(string sectionName, string keyName, float value)
-        {
-            WriteValue(sectionName, keyName, value.ToString(CultureInfo.InvariantCulture));
-        }
-
-        /// <summary>
-        /// Writes a <see cref="T:System.Double"/> value to the ini file.
-        /// </summary>
-        /// <param name="sectionName">
-        /// The name of the section to write to .
-        /// </param>
-        /// <param name="keyName">
-        /// The name of the key to write to.
-        /// </param>
-        /// <param name="value">
-        /// The value to write
-        /// </param>
-        /// <exception cref="T:System.ComponentModel.Win32Exception">
-        /// The write failed.
-        /// </exception>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="sectionName"/> or <paramref name="keyName"/> are a null reference
-        /// (Nothing in VB)
-        /// </exception>
-        public void WriteValue(string sectionName, string keyName, double value)
-        {
-            WriteValue(sectionName, keyName, value.ToString(CultureInfo.InvariantCulture));
-        }
-
-        /// <summary>
-        /// Writes a <see cref="T:System.Boolean"/> value to the ini file.
-        /// </summary>
-        /// <param name="sectionName">
-        /// The name of the section to write to .
-        /// </param>
-        /// <param name="keyName">
-        /// The name of the key to write to.
-        /// </param>
-        /// <param name="value">
-        /// The value to write
-        /// </param>
-        /// <exception cref="T:System.ComponentModel.Win32Exception">
-        /// The write failed.
-        /// </exception>
-        /// <exception cref="ArgumentNullException">
-        /// <paramref name="sectionName"/> or <paramref name="keyName"/> are a null reference
-        /// (Nothing in VB)
-        /// </exception>
-        public void WriteValue(string sectionName, string keyName, bool value)
-        {
-            WriteValue(sectionName, keyName, value.ToString(CultureInfo.InvariantCulture));
-        }
 
         /// <summary>
         /// 写入值
@@ -794,7 +682,7 @@ namespace GeneralTool.General.IniHelpers
         public void WriteValue<T>(string sectionName, string keyName, IEnumerable<T> arrary)
         {
             var str = String.Join(",", arrary);
-            this.WriteValue(sectionName, keyName, str);
+            this.WriteValueString(sectionName, keyName, str);
         }
 
         /// <summary>
@@ -808,13 +696,13 @@ namespace GeneralTool.General.IniHelpers
         /// </param>
         /// <param name="item">
         /// </param>
-        public void WriteValue<T>(string sectionName, string keyName, T item)
+        public void WriteValueT<T>(string sectionName, string keyName, T item)
         {
             if (!this.InTypeCode<T>())
                 throw new ArgumentException("无法转换指定的类型");
             else
             {
-                WriteValue(sectionName, keyName, item.ToString());
+                WriteValueString(sectionName, keyName, item.ToString());
             }
         }
 
@@ -827,7 +715,7 @@ namespace GeneralTool.General.IniHelpers
         /// </param>
         public void WriteValue<T>(Node<T> node)
         {
-            this.WriteValue<T>(node.SectionName, node.KeyName, node.Value);
+            this.WriteValueT<T>(node.SectionName, node.KeyName, node.Value);
         }
 
         #endregion Public 方法

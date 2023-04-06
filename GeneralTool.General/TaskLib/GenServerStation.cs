@@ -118,7 +118,7 @@ namespace GeneralTool.General.TaskLib
                     try
                     {
                         this.Log.Debug($"由底层开始执行方法:{serverRequest.Url}");
-                        serverResponse = this.GetServerResponse(serverRequest, this.JsonConvert);
+                        serverResponse = this.GetServerResponse(serverRequest,this.JsonConvert);
                     }
                     catch (Exception ex6)
                     {
