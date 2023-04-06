@@ -214,7 +214,7 @@ namespace GeneralTool.General.TaskLib
                     {
                         if (!string.IsNullOrWhiteSpace(attr.ReReponseErroFomartString))
                         {
-                            return attr.ReReponseErroFomartString.Replace("{0}", response.ErroMsg);
+                            return attr.ReReponseErroFomartString.Replace("{0}", response.ErroMsg).Replace("\r\n", "");
                         }
                     }
                 }

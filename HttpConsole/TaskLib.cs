@@ -17,7 +17,7 @@ namespace HttpConsole
             }.SerializeToJsonString();
         }
 
-        [Route(nameof(TT), ReReponse = true, ReReponseErroFomartString = "{\"code\":\"0\",\"data\":[\"erroMsg\":\"{0}\"]}")]
+        [Route(nameof(TT), ReReponse = true, ReReponseErroFomartString = "{\"code\":\"0\",\"data\":{\"erroMsg\":\"{0}\"}}")]
         public void TT()
         {
             throw new System.Exception("1112312");
