@@ -26,7 +26,7 @@ namespace SimpleDiagram.Blocks
 
         public override void SetShow()
         {
-            
+
         }
 
         protected override void OnDispose()

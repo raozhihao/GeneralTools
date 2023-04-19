@@ -5,6 +5,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
+using GeneralTool.General.Extensions;
 using GeneralTool.General.WPFHelper;
 using GeneralTool.General.WPFHelper.WPFControls.Shapes;
 
@@ -46,7 +47,7 @@ namespace SimpleDiagram.Demo
             {
                 this.ImgControl.CanMoveImage = false;
                 this.startPoint = this.ImgControl.TranslateToCanvasPoint(this.ImgControl.CurrentMouseDownPixelPoint);
-                if (this.RectRadio.IsChecked.Value || this.HeartRadio.IsChecked.Value )
+                if (this.RectRadio.IsChecked.Value || this.HeartRadio.IsChecked.Value)
                 {
 
                     this.tmpPath = new Path()
@@ -68,7 +69,7 @@ namespace SimpleDiagram.Demo
                         StrokeThickness = 1 / this.ImgControl.ImageScale,
                     };
                     //矩形绘制
-                    var geo = new LineGeometry(startPoint,startPoint);
+                    var geo = new LineGeometry(startPoint, startPoint);
                     tmpPath.Data = geo;
 
                     this.ImgControl.AddElement(tmpPath);
@@ -111,18 +112,19 @@ namespace SimpleDiagram.Demo
         }
         private void ImgControl_ImageMouseMoveEvent(GeneralTool.General.Models.ImageMouseEventArgs obj)
         {
-            this.PosTxt.Text = obj.CurrentPixelPoint.ToIntPoint() + " _ " + obj.CanvasPoint.ToIntPoint();
+            this.PosTxt.Text = obj.CurrentPixelPoint.ToDrawPoint() + " _ " + obj.CanvasPoint.ToDrawPoint();
 
             var currPoint = obj.CanvasPoint;
             if (this.isDraw && obj.RightButton == MouseButtonState.Pressed)
             {
-                if (this.RectRadio.IsChecked.Value || this.HeartRadio.IsChecked.Value )
+                if (this.RectRadio.IsChecked.Value || this.HeartRadio.IsChecked.Value)
                 {
                     if (this.tmpPath.Data is RectangleGeometry g)
                     {
                         g.Rect = new Rect(this.startPoint, currPoint);
                     }
-                }else if (this.LineRadio.IsChecked.Value)
+                }
+                else if (this.LineRadio.IsChecked.Value)
                 {
                     if (this.tmpPath.Data is LineGeometry l)
                     {
@@ -157,7 +159,8 @@ namespace SimpleDiagram.Demo
                     pointShape.Path.Fill = Brushes.Red;
                     this.ImgControl.AddCustomeShape(pointShape);
                     this.PointRadio.IsChecked = false;
-                }else if (this.LineRadio.IsChecked.Value)
+                }
+                else if (this.LineRadio.IsChecked.Value)
                 {
                     if (this.tmpPath.Data is LineGeometry l)
                     {

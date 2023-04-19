@@ -5,7 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 
-using GeneralTool.General.ExceptionHelper;
+using GeneralTool.General.Extensions;
 using GeneralTool.General.Interfaces;
 using GeneralTool.General.Logs;
 

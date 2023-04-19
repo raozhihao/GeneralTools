@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading;
 
 using GeneralTool.General.ExceptionHelper;
+using GeneralTool.General.Extensions;
 using GeneralTool.General.Models;
 using GeneralTool.General.SocketLib;
 using GeneralTool.General.SocketLib.Models;

@@ -5,7 +5,7 @@ using System.Runtime.Remoting.Channels;
 using System.Runtime.Remoting.Channels.Ipc;
 using System.Runtime.Serialization.Formatters;
 
-using GeneralTool.General.ExceptionHelper;
+using GeneralTool.General.Extensions;
 
 namespace GeneralTool.General.IPCHelper
 {

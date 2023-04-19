@@ -12,7 +12,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Markup;
 
-using GeneralTool.General.ExceptionHelper;
+using GeneralTool.General.Extensions;
 
 using Microsoft.CSharp;
 

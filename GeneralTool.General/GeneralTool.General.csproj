@@ -82,7 +82,7 @@
     <Compile Include="AuboSixAxisMechanicalArm\Util.cs" />
     <Compile Include="ConvertExtensions.cs" />
     <Compile Include="DataSetExtensions\DataRowEqualityComparer.cs" />
-    <Compile Include="DataSetExtensions\DataTableExtensions.cs" />
+    <Compile Include="Extensions\DataTableExtensions.cs" />
     <Compile Include="DbHelper\BaseConStrBuilder.cs" />
     <Compile Include="DbHelper\DataKeyAttribute.cs" />
     <Compile Include="DbHelper\DataColumnPropertyAttribute.cs" />
@@ -100,16 +100,16 @@
     <Compile Include="Enums\AttachDataType.cs" />
     <Compile Include="Enums\BitmapEncoderEnum.cs" />
     <Compile Include="Enums\DeviceState.cs" />
-    <Compile Include="Enums\EnumExtension.cs" />
     <Compile Include="Enums\LogType.cs" />
     <Compile Include="Enums\RecEncodingType.cs" />
     <Compile Include="Enums\RequestStateCode.cs" />
     <Compile Include="EqualityComparer.cs" />
     <Compile Include="ExceptionHelper\DesrializeException.cs" />
-    <Compile Include="ExceptionHelper\ExceptionExtensions.cs" />
+    <Compile Include="Extensions\ExceptionExtensions.cs" />
     <Compile Include="ExceptionHelper\IPException.cs" />
     <Compile Include="ExceptionHelper\SerializeException.cs" />
     <Compile Include="ExceptionHelper\TypeNotEqualsException.cs" />
+    <Compile Include="Extensions\PointExtension.cs" />
     <Compile Include="IniHelpers\IniHelper.cs" />
     <Compile Include="IniHelpers\Node.cs" />
     <Compile Include="Interfaces\IClientHelper.cs" />
@@ -120,13 +120,13 @@
     <Compile Include="Ioc\DefinedClass.cs" />
     <Compile Include="Ioc\InitInterface.cs" />
     <Compile Include="Ioc\SimpleIocSerivce.cs" />
-    <Compile Include="IOExtensions\PathExtensions.cs" />
+    <Compile Include="Extensions\PathExtensions.cs" />
     <Compile Include="IPCHelper\IPCClientHelper.cs" />
     <Compile Include="IPCHelper\IPCServerHelper.cs" />
-    <Compile Include="LinqExtensions\ArraryExtensions.cs" />
-    <Compile Include="LinqExtensions\DictionaryExtensions.cs" />
-    <Compile Include="LinqExtensions\IEnumerableExtensions.cs" />
-    <Compile Include="LinqExtensions\StringExtensions.cs" />
+    <Compile Include="Extensions\ArraryExtensions.cs" />
+    <Compile Include="Extensions\DictionaryExtensions.cs" />
+    <Compile Include="Extensions\IEnumerableExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Logs\ConsoleLogInfo.cs" />
     <Compile Include="Logs\FileInfoLog.cs" />
     <Compile Include="Models\AdbDeviceData.cs" />
@@ -152,6 +152,7 @@
     <Compile Include="Models\SocketReceiveArgs.cs" />
     <Compile Include="Models\TaskModel.cs" />
     <Compile Include="ObjectPool.cs" />
+    <Compile Include="Extensions\ObjExtension.cs" />
     <Compile Include="Orm\SqliteOrm\SqliteHelper.cs" />
     <Compile Include="ProcessHelpers\ProcessEngine.cs" />
     <Compile Include="ProcessHelpers\ProcessServer.cs" />
@@ -215,7 +216,6 @@
     <Compile Include="WPFHelper\DiagramDesigner\Thumbs\ConnectorThumb.cs" />
     <Compile Include="WPFHelper\DiagramDesigner\Thumbs\MoveThumb.cs" />
     <Compile Include="WPFHelper\DiagramDesigner\Thumbs\ResizeThumb.cs" />
-    <Compile Include="WPFHelper\PointExtensions.cs" />
     <Compile Include="WPFHelper\Extensions\BindingExtension.cs" />
     <Compile Include="WPFHelper\Extensions\LangBindExtension.cs" />
     <Compile Include="WPFHelper\Extensions\NameDependency.cs" />
@@ -224,7 +224,7 @@
     <Compile Include="NetHelper\PublicEnum.cs" />
     <Compile Include="ProcessHelpers\ProcessHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SerializeExtensions.cs" />
+    <Compile Include="Extensions\SerializeExtensions.cs" />
     <Compile Include="SerializeHelpers.cs" />
     <Compile Include="SerialPortEx\SerialControl.cs">
       <SubType>Component</SubType>
@@ -255,12 +255,11 @@
     <Compile Include="TaskLib\SocketServer.cs" />
     <Compile Include="TaskLib\Station.cs" />
     <Compile Include="Models\DefaultFontStyle.cs" />
-    <Compile Include="ValueTypeExtensions\ByteExtensions.cs" />
-    <Compile Include="ValueTypeExtensions\EnumExtensions.cs" />
-    <Compile Include="ValueTypeExtensions\Int32Extensions.cs" />
-    <Compile Include="ValueTypeExtensions\StringExtensions.cs" />
+    <Compile Include="Extensions\ByteExtensions.cs" />
+    <Compile Include="Extensions\EnumExtensions.cs" />
+    <Compile Include="Extensions\Int32Extensions.cs" />
     <Compile Include="WebExtensioins\PageHelper.cs" />
-    <Compile Include="WebExtensioins\QueryHelpers.cs" />
+    <Compile Include="Extensions\QueryExtentions.cs" />
     <Compile Include="WinForm\WaitLoadHelper.cs" />
     <Compile Include="WPFHelper\BaseNotifyModel.cs" />
     <Compile Include="WPFHelper\BitmapSouceExtension.cs" />
@@ -351,9 +350,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Window\" />
     <Folder Include="WPFHelper\DiagramDesigner\Themes\" />
-    <Folder Include="XmlExtensions\" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="iconttf\iconfont.ttf" />

@@ -4,7 +4,7 @@ using System.IO;
 using System.Net;
 using System.Text;
 
-using GeneralTool.General.ExceptionHelper;
+using GeneralTool.General.Extensions;
 using GeneralTool.General.NetHelper.NetException;
 
 namespace GeneralTool.General.NetHelper

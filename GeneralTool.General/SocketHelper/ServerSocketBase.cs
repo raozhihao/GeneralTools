@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 
-using GeneralTool.General.ExceptionHelper;
+using GeneralTool.General.Extensions;
 using GeneralTool.General.SocketLib;
 
 namespace GeneralTool.General.SocketHelper

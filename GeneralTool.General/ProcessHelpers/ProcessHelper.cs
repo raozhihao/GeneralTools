@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 
-using GeneralTool.General.ExceptionHelper;
+using GeneralTool.General.Extensions;
 
 namespace GeneralTool.General.ProcessHelpers
 {

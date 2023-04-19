@@ -5,7 +5,7 @@ using System.Net.Sockets;
 using System.Text;
 
 using GeneralTool.General.Enums;
-using GeneralTool.General.ExceptionHelper;
+using GeneralTool.General.Extensions;
 using GeneralTool.General.Interfaces;
 using GeneralTool.General.Logs;
 using GeneralTool.General.Models;
@@ -118,7 +118,7 @@ namespace GeneralTool.General.TaskLib
                     try
                     {
                         this.Log.Debug($"由底层开始执行方法:{serverRequest.Url}");
-                        serverResponse = this.GetServerResponse(serverRequest,this.JsonConvert);
+                        serverResponse = this.GetServerResponse(serverRequest, this.JsonConvert);
                     }
                     catch (Exception ex6)
                     {

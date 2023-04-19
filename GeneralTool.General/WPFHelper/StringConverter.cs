@@ -3,6 +3,8 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Windows.Data;
 
+using GeneralTool.General.Extensions;
+
 namespace GeneralTool.General.WPFHelper
 {
     /// <summary>
@@ -111,13 +113,13 @@ namespace GeneralTool.General.WPFHelper
             }
             if (!flag && !converter.CanConvertTo(destinationType))
             {
-                if(str==null)
+                if (str == null)
                 {
                     if (destinationType.IsValueType)
                         return Activator.CreateInstance(destinationType);
-                    else 
+                    else
                         return null;
-                }    
+                }
                 return str.DeserializeJsonToObject(destinationType);
             }
             try

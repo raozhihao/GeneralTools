@@ -1,13 +1,14 @@
 ﻿using System;
-using System.Windows;
 
 using GeneralTool.General.Interfaces;
 using GeneralTool.General.TaskLib;
-using GeneralTool.General.WPFHelper;
 
 using HttpConsole.Inis;
 
 using Newtonsoft.Json;
+
+using GeneralTool.General.Extensions;
+using System.Data;
 
 namespace HttpConsole
 {
@@ -50,13 +51,13 @@ namespace HttpConsole
 
             #region Task
 
-            var httpStation = new HttpServerStation(null,new MyJson());
+            //var httpStation = new HttpServerStation(null, new MyJson());
 
-            var manager = new TaskManager(null, null, httpStation);
-            var task = new TaskLib();
-            manager.Open("127.0.0.1", 8878, task);
-            manager.GetInterfaces();
-            Console.ReadKey();
+            //var manager = new TaskManager(null, null, httpStation);
+            //var task = new TaskLib();
+            //manager.Open("127.0.0.1", 8878, task);
+            //manager.GetInterfaces();
+            //Console.ReadKey();
 
             #endregion
 
@@ -65,31 +66,61 @@ namespace HttpConsole
             //var str = new StringConverter().Convert(p, null, null, null);
             //str = new StringConverter().ConvertSimpleType(str + "", p.GetType());
 
+            //var arr1 = new int[] { 1, 2, 3 };
+            //var reslt = arr1.FomartDatas();
+
+
             #region IniTest
 
-            var node = new WindowNode("Window");
-            var s = node.Str.Value;
-            node.Str.Value = "bbc";
+            //var node = new WindowNode("Window");
+            //var s = node.Str.Value;
+            //node.Str.Value = "bbc";
 
             #endregion
+
+
+            var table = new DataTable();
+            table.Columns.Add("Id", typeof(int));
+            table.Columns.Add("Name", typeof(string));
+            table.Columns.Add("M1", typeof(M1));
+
+            table.Rows.Add(1, "aaa",new M1() { Checked=true});
+            table.Rows.Add(1, "bbb");
+
+            var list=table.ToList<Model>();
+
+            var t2= list.ToDataTable();
         }
+    }
+
+    public class Model
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+
+        public M1 M1 { get; set; }
+    }
+
+    public class M1
+    {
+        public bool Checked { get; set; }
     }
 
     public class MyJson : IJsonConvert
     {
         public T DeserializeObject<T>(string value)
         {
-           return JsonConvert.DeserializeObject<T>(value);
+            return JsonConvert.DeserializeObject<T>(value);
         }
 
         public object DeserializeObject(string value, Type type)
         {
-           return JsonConvert.DeserializeObject(value, type);
+            return JsonConvert.DeserializeObject(value, type);
         }
 
         public string SerializeObject(object serverResponse)
         {
-           return JsonConvert.SerializeObject(serverResponse);
+            return JsonConvert.SerializeObject(serverResponse);
         }
     }
     public struct MyStruct

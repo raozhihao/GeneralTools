@@ -6,10 +6,9 @@ using System.Reflection;
 using System.Text;
 
 using GeneralTool.General.Attributes;
-using GeneralTool.General.ExceptionHelper;
+using GeneralTool.General.Extensions;
 using GeneralTool.General.Interfaces;
 using GeneralTool.General.Models;
-using GeneralTool.General.WebExtensioins;
 
 namespace GeneralTool.General.TaskLib
 {
@@ -172,8 +171,10 @@ namespace GeneralTool.General.TaskLib
                     {
                         //如果是Json类型,则直接设置了
                         //var value = this.JsonConvert.DeserializeObject(msg, pa.ParameterType);
-                        dic = new Dictionary<string, string>();
-                        dic.Add(pa.Name, msg);
+                        dic = new Dictionary<string, string>
+                        {
+                            { pa.Name, msg }
+                        };
                         executed = true;
                     }
                 }
@@ -217,16 +218,12 @@ namespace GeneralTool.General.TaskLib
 
             Log.Debug($"Request:{msg}");
 
-
-
             string responseString = this.GetReponseString(cmd, this.JsonConvert);
 
             Log.Log($"Response:{responseString}" + Environment.NewLine);
 
             return responseString;
-
         }
-
 
 
         private void HandlerContextMethod(HttpListenerContext context)

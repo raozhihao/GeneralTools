@@ -1,0 +1,12 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+    <ResourceDictionary Source="Logs\中文_Logs.xaml"
+                        x:Key="Logs" />
+    
+    
+    <sys:String x:Key="CultureInfo">zh-cn</sys:String>
+    <sys:String x:Key="LanguageGroupBoxHeader">语言切换</sys:String>
+    <sys:String x:Key="RadioChineseContent">中文</sys:String>
+    <sys:String x:Key="RadioEnglishContent">英文</sys:String>
+</ResourceDictionary>

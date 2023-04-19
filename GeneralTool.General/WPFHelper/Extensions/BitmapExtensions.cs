@@ -3,7 +3,7 @@ using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using System.Windows.Media.Imaging;
 
-using GeneralTool.General.ExceptionHelper;
+using GeneralTool.General.Extensions;
 
 namespace GeneralTool.General.WPFHelper.Extensions
 {

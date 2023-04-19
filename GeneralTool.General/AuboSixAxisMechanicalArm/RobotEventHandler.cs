@@ -1,4 +1,4 @@
-﻿using GeneralTool.General.Enums;
+﻿using GeneralTool.General.Extensions;
 
 using static GeneralTool.General.AuboSixAxisMechanicalArm.MetaData;
 

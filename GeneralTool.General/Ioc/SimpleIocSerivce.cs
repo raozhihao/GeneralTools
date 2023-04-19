@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Runtime.Serialization;
 
 using GeneralTool.General.Attributes;
-using GeneralTool.General.ExceptionHelper;
+using GeneralTool.General.Extensions;
 
 namespace GeneralTool.General.Ioc
 {
@@ -156,7 +156,7 @@ namespace GeneralTool.General.Ioc
                 //查看是否有Route标记
                 if (checkInjectTypeAttr)
                 {
-                    var attr = type.GetCustomAttribute<Attributes.InjectTypeAttribute>();
+                    var attr = type.GetCustomAttribute<InjectTypeAttribute>();
                     if (attr == null)
                         continue;
                 }

@@ -1,0 +1,59 @@
+﻿<Window x:Class="LanguageSwitch.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:g="clr-namespace:GeneralTool.General.WPFHelper.Extensions;assembly=GeneralTool.General"
+        xmlns:c="clr-namespace:GeneralTool.General.WPFHelper.WPFControls;assembly=GeneralTool.General"
+        xmlns:local="clr-namespace:LanguageSwitch"
+        mc:Ignorable="d"
+        Title="MainWindow"
+        Height="450"
+        Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+
+            <GroupBox Header="{g:LangBind DefaultText=语言切换,LangKey=LanguageGroupBoxHeader}"
+                      Padding="5">
+                <ListBox ItemsSource="{Binding LanguageInfos,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                         SelectedIndex="{Binding SelectedLangIndex,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                         x:Name="List">
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel />
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <RadioButton GroupName="Language"
+                                         Content="{Binding}"
+                                         IsChecked="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem,Mode=FindAncestor},Path=IsSelected}" />
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+
+            </GroupBox>
+
+            <Button Grid.Row="1"
+                    Content="Excption"
+                    Command="{Binding ExcptionCommand}"/>
+        </Grid>
+
+        <RichTextBox Grid.Column="1"
+                     Padding="5">
+            <FlowDocument>
+                <c:LogParargraph MaxLineCount="100"
+                                 Lines="{Binding LogMessages}" />
+            </FlowDocument>
+        </RichTextBox>
+    </Grid>
+</Window>

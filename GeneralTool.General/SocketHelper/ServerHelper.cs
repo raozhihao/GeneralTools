@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Net;
 
-using GeneralTool.General.ExceptionHelper;
+using GeneralTool.General.Extensions;
 using GeneralTool.General.Models;
 using GeneralTool.General.ReflectionHelper;
 using GeneralTool.General.SocketLib;

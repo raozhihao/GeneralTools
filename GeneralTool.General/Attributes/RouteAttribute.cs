@@ -103,7 +103,7 @@ namespace GeneralTool.General.Attributes
         public bool ReReponse
         {
             get => this.reReponse;
-            set=>this.RegisterProperty(ref this.reReponse, value);
+            set => this.RegisterProperty(ref this.reReponse, value);
         }
 
         private string reReponseFomartErroString;

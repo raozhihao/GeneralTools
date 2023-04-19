@@ -1,4 +1,4 @@
-﻿using GeneralTool.General.LinqExtensions;
+﻿using GeneralTool.General.Extensions;
 
 namespace GeneralTool.General.Attributes
 {

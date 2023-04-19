@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 
-using GeneralTool.General.ExceptionHelper;
+using GeneralTool.General.Extensions;
 using GeneralTool.General.Models;
 using GeneralTool.General.TaskExtensions;
 

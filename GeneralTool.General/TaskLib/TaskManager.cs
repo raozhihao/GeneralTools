@@ -5,9 +5,8 @@ using System.Linq;
 using System.Reflection;
 
 using GeneralTool.General.Attributes;
-using GeneralTool.General.ExceptionHelper;
+using GeneralTool.General.Extensions;
 using GeneralTool.General.Interfaces;
-using GeneralTool.General.LinqExtensions;
 using GeneralTool.General.Logs;
 using GeneralTool.General.Models;
 
@@ -299,7 +298,7 @@ namespace GeneralTool.General.TaskLib
             var rootPath = classRoute.Url;
 
             var tmpDics = new Dictionary<string, DoTaskParameterItem>();
-            var methods = obj.GetType().GetMethods().OrderBy(m=>m.GetCustomAttribute<RouteAttribute>()?.SortIndex);
+            var methods = obj.GetType().GetMethods().OrderBy(m => m.GetCustomAttribute<RouteAttribute>()?.SortIndex);
 
             methods.Foreach(m =>
             {

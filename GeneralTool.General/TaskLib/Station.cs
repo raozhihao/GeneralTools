@@ -3,8 +3,8 @@ using System.Linq;
 using System.Reflection;
 
 using GeneralTool.General.Attributes;
+using GeneralTool.General.Extensions;
 using GeneralTool.General.Interfaces;
-using GeneralTool.General.LinqExtensions;
 using GeneralTool.General.Logs;
 
 namespace GeneralTool.General.TaskLib

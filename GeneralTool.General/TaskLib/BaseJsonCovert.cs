@@ -1,5 +1,6 @@
 ﻿using System;
 
+using GeneralTool.General.Extensions;
 using GeneralTool.General.Interfaces;
 
 namespace GeneralTool.General.TaskLib

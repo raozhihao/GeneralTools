@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 
-using GeneralTool.General.ValueTypeExtensions;
+using GeneralTool.General.Extensions;
 
 namespace GeneralTool.General
 {

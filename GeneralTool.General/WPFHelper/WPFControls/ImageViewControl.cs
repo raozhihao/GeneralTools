@@ -10,7 +10,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
 using GeneralTool.General.Enums;
-using GeneralTool.General.ExceptionHelper;
+using GeneralTool.General.Extensions;
 using GeneralTool.General.Models;
 using GeneralTool.General.WPFHelper.WPFControls.Shapes;
 

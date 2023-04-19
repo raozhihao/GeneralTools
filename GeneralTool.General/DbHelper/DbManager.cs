@@ -6,7 +6,7 @@ using System.Data.Common;
 using System.Linq;
 using System.Reflection;
 
-using GeneralTool.General.ExceptionHelper;
+using GeneralTool.General.Extensions;
 
 namespace GeneralTool.General.DbHelper
 {

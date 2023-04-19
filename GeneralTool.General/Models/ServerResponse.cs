@@ -13,7 +13,7 @@ namespace GeneralTool.General.Models
     {
         #region Public 属性
 
-    
+
         /// <summary>
         /// </summary>
         public string ErroMsg { get; set; }

@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 
-using GeneralTool.General.ExceptionHelper;
+using GeneralTool.General.Extensions;
 
 namespace GeneralTool.General.IPCHelper
 {
