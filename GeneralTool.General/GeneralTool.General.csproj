@@ -82,6 +82,7 @@
     <Compile Include="AuboSixAxisMechanicalArm\Util.cs" />
     <Compile Include="ConvertExtensions.cs" />
     <Compile Include="DataSetExtensions\DataRowEqualityComparer.cs" />
+    <Compile Include="Extensions\CenterExtensions.cs" />
     <Compile Include="Extensions\DataTableExtensions.cs" />
     <Compile Include="DbHelper\BaseConStrBuilder.cs" />
     <Compile Include="DbHelper\DataKeyAttribute.cs" />
@@ -105,11 +106,14 @@
     <Compile Include="Enums\RequestStateCode.cs" />
     <Compile Include="EqualityComparer.cs" />
     <Compile Include="ExceptionHelper\DesrializeException.cs" />
+    <Compile Include="Extensions\DistanceExtensions.cs" />
     <Compile Include="Extensions\ExceptionExtensions.cs" />
     <Compile Include="ExceptionHelper\IPException.cs" />
     <Compile Include="ExceptionHelper\SerializeException.cs" />
     <Compile Include="ExceptionHelper\TypeNotEqualsException.cs" />
+    <Compile Include="Extensions\OtherExtensions.cs" />
     <Compile Include="Extensions\PointExtension.cs" />
+    <Compile Include="Extensions\RectExtensions.cs" />
     <Compile Include="IniHelpers\IniHelper.cs" />
     <Compile Include="IniHelpers\Node.cs" />
     <Compile Include="Interfaces\IClientHelper.cs" />
@@ -127,8 +131,10 @@
     <Compile Include="Extensions\DictionaryExtensions.cs" />
     <Compile Include="Extensions\IEnumerableExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Logs\BaseLog.cs" />
     <Compile Include="Logs\ConsoleLogInfo.cs" />
     <Compile Include="Logs\FileInfoLog.cs" />
+    <Compile Include="Maths\Shapes.cs" />
     <Compile Include="Models\AdbDeviceData.cs" />
     <Compile Include="Models\ExcuteCancelTokenSource.cs" />
     <Compile Include="Models\Cords.cs" />
@@ -151,6 +157,13 @@
     <Compile Include="Models\SocketLinkObject.cs" />
     <Compile Include="Models\SocketReceiveArgs.cs" />
     <Compile Include="Models\TaskModel.cs" />
+    <Compile Include="MVS\CameraExposureTimeInfo.cs" />
+    <Compile Include="MVS\ErrorCode.cs" />
+    <Compile Include="MVS\Errors.cs" />
+    <Compile Include="MVS\ICamera.cs" />
+    <Compile Include="MVS\MVSCamera.cs" />
+    <Compile Include="MVS\MVSCameraProvider.cs" />
+    <Compile Include="MVS\CameraRectangleInfo.cs" />
     <Compile Include="ObjectPool.cs" />
     <Compile Include="Extensions\ObjExtension.cs" />
     <Compile Include="Orm\SqliteOrm\SqliteHelper.cs" />
@@ -217,6 +230,7 @@
     <Compile Include="WPFHelper\DiagramDesigner\Thumbs\MoveThumb.cs" />
     <Compile Include="WPFHelper\DiagramDesigner\Thumbs\ResizeThumb.cs" />
     <Compile Include="WPFHelper\Extensions\BindingExtension.cs" />
+    <Compile Include="WPFHelper\Extensions\BoolReverseConverter.cs" />
     <Compile Include="WPFHelper\Extensions\LangBindExtension.cs" />
     <Compile Include="WPFHelper\Extensions\NameDependency.cs" />
     <Compile Include="NetHelper\HttpHelper.cs" />

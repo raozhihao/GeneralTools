@@ -1,48 +1,55 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading;
 
 using GeneralTool.General.Enums;
-using GeneralTool.General.Interfaces;
 using GeneralTool.General.Models;
 
 namespace GeneralTool.General.Logs
 {
     /// <summary>
     /// </summary>
-    public class ConsoleLogInfo : ILog
+    public class ConsoleLogInfo : BaseLog
     {
-        #region Public 事件
 
-        /// <inheritdoc/>
-        public event EventHandler<LogMessageInfo> LogEvent;
-
-        #endregion Public 事件
 
         #region Public 方法
 
         /// <inheritdoc/>
-        public void Debug(string msg) => this.Log(msg, LogType.Debug);
+        public override void Debug(string msg) => this.Log(msg, LogType.Debug);
 
         /// <inheritdoc/>
-        public void Error(string msg) => this.Log(msg, LogType.Error);
+        public override void Error(string msg) => this.Log(msg, LogType.Error);
 
         /// <inheritdoc/>
-        public void Fail(string msg) => this.Log(msg, LogType.Fail);
+        public override void Fail(string msg) => this.Log(msg, LogType.Fail);
 
         /// <inheritdoc/>
-        public void Info(string msg) => this.Log(msg, LogType.Info);
+        public override void Info(string msg) => this.Log(msg, LogType.Info);
 
         /// <inheritdoc/>
-        public void Log(string msg, LogType logType = LogType.Info)
+        public override void Log(string msg, LogType logType = LogType.Info)
         {
-            msg = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff} : {msg}";
+            var result = new LogMessageInfo(msg, logType)
+            {
+                CurrentThreadId = Thread.CurrentThread.ManagedThreadId,
+                CurrentTime = DateTime.Now,
+            };
+
+            var headInfo = "";
+            if (this.ShowLogTypeInfo) headInfo = "[" + result.LogType + "]";
+            if (this.ShowLogThreadId) headInfo += " " + result.CurrentThreadId + " ";
+            if (this.ShowLogTime) headInfo += " " + result.CurrentTime + ":";
+
+            msg = $"{headInfo}{result.Msg}";
+            result.FullMsg = msg;
+
             Trace.WriteLine(msg);
-            //System.Diagnostics.Trace.WriteLine($"ConsoleLog: {msg} ,LogType: {logType}");
-            this.LogEvent?.Invoke(this, new LogMessageInfo(msg, logType, ""));
+            base.LogEventMethod(this, result);
         }
 
         /// <inheritdoc/>
-        public void Waring(string msg) => this.Log(msg, LogType.Waring);
+        public override void Waring(string msg) => this.Log(msg, LogType.Waring);
 
         #endregion Public 方法
     }

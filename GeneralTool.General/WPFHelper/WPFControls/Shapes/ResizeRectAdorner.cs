@@ -13,7 +13,7 @@ namespace GeneralTool.General.WPFHelper.WPFControls.Shapes
     /// </summary>
     public class ResizeRectAdorner : Adorner
     {
-        private BaseShape shape;
+        private readonly BaseShape shape;
         private Pen pen;
         private const int InflateScale = 10;
         /// <summary>

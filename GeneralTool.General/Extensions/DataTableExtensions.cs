@@ -514,7 +514,7 @@ namespace GeneralTool.General.Extensions
                             else
                             {
                                 //没有实现,直接返回其字符串形式
-                                value = value + "";
+                                value += "";
                             }
 
                         }

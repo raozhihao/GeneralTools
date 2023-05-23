@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Text.RegularExpressions;
 
 namespace GeneralTool.General.Extensions
 {
@@ -115,5 +116,24 @@ namespace GeneralTool.General.Extensions
         {
             return str.ToBytes(Encoding.UTF8);
         }
+
+        /// <summary>
+        /// 将字符串清洗后只剩中文
+        /// </summary>
+        /// <param name="text"></param>
+        /// <returns></returns>
+        public static string ToChinese(this string text)
+        {
+            var c = "";
+            foreach (var ch in text)
+            {
+                if (Regex.IsMatch(ch.ToString(), @"[\u4e00-\u9fbb]+"))
+                    c += ch.ToString();
+            }
+            return c;
+        }
+
+
+
     }
 }

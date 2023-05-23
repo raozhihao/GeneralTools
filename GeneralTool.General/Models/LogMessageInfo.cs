@@ -39,12 +39,30 @@ namespace GeneralTool.General.Models
         /// <summary>
         /// 日志类型
         /// </summary>
-        public LogType LogType { get; internal set; }
+        public LogType LogType { get; set; }
 
         /// <summary>
         /// 日志消息
         /// </summary>
-        public string Msg { get; internal set; }
+        public string Msg { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public int CurrentThreadId { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public DateTime CurrentTime { get; set; }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string FullMsg
+        {
+            get; internal set;
+        }
 
         #endregion Public 属性
     }

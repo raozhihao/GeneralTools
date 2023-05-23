@@ -98,8 +98,7 @@ namespace SimpleDiagram.Blocks
 
         public override void OnDragToCanvas(Connection connection)
         {
-            //if (connection == null)
-            //    return;
+           
 
             //在块被拖入画布时,如果有子窗口,则会显示,没有则不返回None
             WindowResult re;
@@ -107,7 +106,7 @@ namespace SimpleDiagram.Blocks
             {
                 re = this.OpenWindow();
             }
-            catch (Exception ex)
+            catch 
             {
                 this.ParentCanvas.RemoveItem(this);
                 return;

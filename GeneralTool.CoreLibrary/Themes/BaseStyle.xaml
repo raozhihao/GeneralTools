@@ -1,0 +1,37 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:fontStyle="clr-namespace:GeneralTool.CoreLibrary.Models">
+
+    <FontFamily x:Key="Generial.DefaultFontFaimly">/GeneralTool.CoreLibrary;component/iconttf/#iconfont</FontFamily>
+    <Style x:Key="IconFontStyle"
+           TargetType="{x:Type ContentControl}">
+        <Setter Property="FontFamily"
+                Value="{StaticResource Generial.DefaultFontFaimly}" />
+    </Style>
+
+    <Style x:Key="CutButtonIconFontStyle"
+           TargetType="{x:Type ContentControl}"
+           BasedOn="{StaticResource IconFontStyle}">
+
+        <Setter Property="Content"
+                Value="{x:Static fontStyle:DefaultFontStyle.Rect}" />
+    </Style>
+    <Style x:Key="MenuOkStyle"
+           TargetType="{x:Type ContentControl}"
+           BasedOn="{StaticResource IconFontStyle}">
+        <Setter Property="Content"
+                Value="{x:Static fontStyle:DefaultFontStyle.Ok}" />
+        <Setter Property="Margin"
+                Value="0,0,1,0" />
+        <Setter Property="ToolTip"
+                Value="确定" />
+    </Style>
+    <Style x:Key="MenuCancelStyle"
+           TargetType="{x:Type ContentControl}"
+           BasedOn="{StaticResource IconFontStyle}">
+        <Setter Property="Content"
+                Value="{x:Static fontStyle:DefaultFontStyle.Cancel}" />
+        <Setter Property="ToolTip"
+                Value="取消" />
+    </Style>
+</ResourceDictionary>

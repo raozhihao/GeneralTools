@@ -69,6 +69,20 @@ namespace GeneralTool.General.Extensions
         }
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="arrary"></param>
+        /// <param name="action"></param>
+        public static void For<T>(this IEnumerable<T> arrary, Action<T> action)
+        {
+            foreach (var item in arrary)
+            {
+                action?.Invoke(item);
+            }
+        }
+
+        /// <summary>
         /// 循环数组类型
         /// </summary>
         /// <typeparam name="T">
@@ -108,7 +122,7 @@ namespace GeneralTool.General.Extensions
 
             if (count < startIndex) count = startIndex + 1;
             if (count > enumables.Length) count = enumables.Length;
-           
+
             var index = RandomEx.Next(startIndex, count);
             return enumables[index];
         }

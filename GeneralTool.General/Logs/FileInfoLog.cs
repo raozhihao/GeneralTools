@@ -3,9 +3,9 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Threading;
 
 using GeneralTool.General.Enums;
-using GeneralTool.General.Interfaces;
 using GeneralTool.General.Models;
 
 namespace GeneralTool.General.Logs
@@ -13,7 +13,7 @@ namespace GeneralTool.General.Logs
     /// <summary>
     /// 文件日志
     /// </summary>
-    public class FileInfoLog : ILog
+    public class FileInfoLog : BaseLog
     {
         #region Private 字段
 
@@ -24,6 +24,8 @@ namespace GeneralTool.General.Logs
 
         private FileStream currentFileStream = null;
         private readonly string logName;
+
+
 
         #endregion Private 字段
 
@@ -41,18 +43,23 @@ namespace GeneralTool.General.Logs
             else
             {
                 this.logName = logName;
-                this.logPathDir = logBaseDir;
+                this.logPathDir = new DirectoryInfo(logBaseDir).FullName;
             }
+
+            Microsoft.VisualBasic.FileIO.FileSystem.CreateDirectory(this.logPathDir);
+
         }
+
+
 
         #endregion Public 构造函数
 
-        #region Public 事件
+        //#region Public 事件
 
-        /// <inheritdoc/>
-        public event EventHandler<LogMessageInfo> LogEvent;
+        ///// <inheritdoc/>
+        //public event EventHandler<LogMessageInfo> LogEvent;
 
-        #endregion Public 事件
+        //#endregion Public 事件
 
         #region Public 属性
 
@@ -60,10 +67,6 @@ namespace GeneralTool.General.Logs
         /// 是否将日志定向到控制台
         /// </summary>
         public bool ConsoleLogEnable { get; set; } = true;
-        /// <summary>
-        /// 是否将日志类型写入日志
-        /// </summary>
-        public bool InputLogType { get; set; } = true;
 
         /// <summary>
         /// 当前日志路径
@@ -80,19 +83,19 @@ namespace GeneralTool.General.Logs
         #region Public 方法
 
         /// <inheritdoc/>
-        public void Debug(string msg) => this.Log(msg, LogType.Debug);
+        public override void Debug(string msg) => this.Log(msg, LogType.Debug);
 
         /// <inheritdoc/>
-        public void Error(string msg) => this.Log(msg, LogType.Error);
+        public override void Error(string msg) => this.Log(msg, LogType.Error);
 
         /// <inheritdoc/>
-        public void Fail(string msg) => this.Log(msg, LogType.Fail);
+        public override void Fail(string msg) => this.Log(msg, LogType.Fail);
 
         /// <inheritdoc/>
-        public void Info(string msg) => this.Log(msg, LogType.Info);
+        public override void Info(string msg) => this.Log(msg, LogType.Info);
 
         /// <inheritdoc/>
-        public virtual void Log(string msg, LogType logType = LogType.Info)
+        public override void Log(string msg, LogType logType = LogType.Info)
         {
             try
             {
@@ -147,8 +150,8 @@ namespace GeneralTool.General.Logs
                     else if (this.currentFileStream == null)
                         this.currentFileStream = new FileStream(fileName, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
 
-                    msg = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff} : {msg}";
-                    var info = new LogMessageInfo(msg, logType, fileName);
+
+                    var info = new LogMessageInfo(msg, logType, fileName) { CurrentTime = DateTime.Now, CurrentThreadId = Thread.CurrentThread.ManagedThreadId };
                     this.lockDic.Enqueue(info);
                     WriteLog();
                     this.CurrentPath = fileName;
@@ -161,7 +164,29 @@ namespace GeneralTool.General.Logs
         }
 
         /// <inheritdoc/>
-        public void Waring(string msg) => this.Log(msg, LogType.Waring);
+        public override void Waring(string msg) => this.Log(msg, LogType.Waring);
+
+        /// <inheritdoc/>
+        public override void Dispose()
+        {
+            var time = DateTime.Now;
+            while (!this.lockDic.IsEmpty)
+            {
+                Thread.Sleep(10);
+                if (DateTime.Now - time > TimeSpan.FromMilliseconds(3))
+                    break;
+            }
+
+            try
+            {
+                this.currentFileStream?.Close();
+                this.currentFileStream?.Dispose();
+            }
+            catch
+            {
+
+            }
+        }
 
         #endregion Public 方法
 
@@ -172,19 +197,26 @@ namespace GeneralTool.General.Logs
             var re = this.lockDic.TryDequeue(out var result);
             if (re)
             {
-                if (this.InputLogType)
-                {
-                    result.Msg = $"[{result.LogType}] - {result.Msg}";
-                }
-                var data = Encoding.UTF8.GetBytes(result.Msg + Environment.NewLine);
+                var headInfo = "";
+                if (this.ShowLogTypeInfo) headInfo = "[" + result.LogType + "]";
+                if (this.ShowLogThreadId) headInfo += " " + result.CurrentThreadId + " ";
+                if (this.ShowLogTime) headInfo += " " + result.CurrentTime + ":";
+
+                var msg = $"{headInfo}{result.Msg}";
+                result.FullMsg = msg;
+
+                var data = Encoding.UTF8.GetBytes(msg + Environment.NewLine);
                 this.currentFileStream.Write(data, 0, data.Length);
                 this.currentFileStream.Flush();
 
                 if (this.ConsoleLogEnable)
-                    Trace.WriteLine(result.Msg);
-                this.LogEvent?.Invoke(this, result);
+                    Trace.WriteLine(msg);
+                // base.LogEvent?.Invoke(this, result);
+
+                base.LogEventMethod(this, result);
             }
         }
+
 
         #endregion Private 方法
     }

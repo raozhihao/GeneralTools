@@ -72,8 +72,6 @@ namespace SimpleDiagram
         /// <param name="current"></param>
         public async void Run(BaseBlockViewModel current)
         {
-
-
             this.tokenSource = new ExcuteCancelTokenSource();
 
             try

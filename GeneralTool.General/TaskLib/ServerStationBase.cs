@@ -149,7 +149,14 @@ namespace GeneralTool.General.TaskLib
                             try
                             {
                                 serverResponse.Result = requestAddressItem.MethodInfo.Invoke(requestAddressItem.Target, array);
-                                serverResponse.ResultString = converter.Convert(serverResponse.Result, null, null, null) + "";
+                                try
+                                {
+                                    serverResponse.ResultString = converter.Convert(serverResponse.Result, null, null, null) + "";
+                                }
+                                catch (Exception ex)
+                                {
+                                    serverResponse.ResultString = ex.GetInnerExceptionMessage();
+                                }
                                 if (method != null)
                                 {
                                     serverResponse.ErroMsg = string.Concat(method.Invoke(requestAddressItem.Target, null));

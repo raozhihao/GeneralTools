@@ -1,0 +1,161 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:t="clr-namespace:GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <sys:Double x:Key="Resize">3</sys:Double>
+    <ControlTemplate x:Key="ResizeControl"
+                     TargetType="Control">
+
+        <Grid>
+            <!--左边框-->
+            <t:ResizeThumb HorizontalAlignment="Left"
+                           VerticalAlignment="Stretch"
+                           Width="{StaticResource Resize}"
+                           Cursor="SizeWE"
+                           Panel.ZIndex="2" />
+
+            <!--上边框-->
+            <t:ResizeThumb VerticalAlignment="Top"
+                           HorizontalAlignment="Stretch"
+                           Cursor="SizeNS"
+                           Height="{StaticResource Resize}" />
+            <!--右边框-->
+            <t:ResizeThumb HorizontalAlignment="Right"
+                           VerticalAlignment="Stretch"
+                           Cursor="SizeWE"
+                           Margin="0"
+                           Width="{StaticResource Resize}"
+                           Panel.ZIndex="2" />
+
+            <!--下边框-->
+            <t:ResizeThumb VerticalAlignment="Bottom"
+                           HorizontalAlignment="Stretch"
+                           Cursor="SizeNS"
+                           Panel.ZIndex="2"
+                           Height="{StaticResource Resize}" />
+
+            <!--左上角-->
+
+            <t:ResizeThumb HorizontalAlignment="Left"
+                           VerticalAlignment="Top"
+                           Height="{StaticResource Resize}"
+                           Width="{StaticResource Resize}"
+                           Cursor="SizeNWSE"
+                           Panel.ZIndex="2" />
+
+            <!--右上角-->
+
+            <t:ResizeThumb HorizontalAlignment="Right"
+                           VerticalAlignment="Top"
+                           Height="{StaticResource Resize}"
+                           Width="{StaticResource Resize}"
+                           Cursor="SizeNESW"
+                           Panel.ZIndex="2" />
+
+            <!--右下角-->
+
+            <t:ResizeThumb HorizontalAlignment="Right"
+                           VerticalAlignment="Bottom"
+                           Width="{StaticResource Resize}"
+                           Height="{StaticResource Resize}"
+                           Cursor="SizeNWSE"
+                           Panel.ZIndex="2" />
+
+            <!--左下角-->
+
+            <t:ResizeThumb HorizontalAlignment="Left"
+                           VerticalAlignment="Bottom"
+                           Width="{StaticResource Resize}"
+                           Height="{StaticResource Resize}"
+                           Cursor="SizeNESW"
+                           Panel.ZIndex="2" />
+        </Grid>
+    </ControlTemplate>
+
+    <!--单连接点样式-->
+    <ControlTemplate x:Key="Connector"
+                     TargetType="Control">
+
+        <Border Width="30"
+                Height="30"
+                x:Name="ThumbBorder"
+                Margin="{TemplateBinding Margin}"
+                Background="Transparent">
+            <Ellipse Width="10"
+                     Height="10"
+                     Fill="Orange"
+                     StrokeThickness="1">
+
+            </Ellipse>
+
+        </Border>
+
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="BreakPoint"
+                     TargetType="Control">
+
+        <Control Background="Red"
+                 HorizontalAlignment="Left"
+                 VerticalAlignment="Top"
+                 Width="15"
+                 Height="15"
+                 Margin="-5 -5 0 0">
+            <Control.Template>
+                <ControlTemplate>
+                    <Ellipse  Fill="Red"
+                              StrokeThickness="1" />
+                </ControlTemplate>
+            </Control.Template>
+        </Control>
+    </ControlTemplate>
+
+    <!--四周连接点样式-->
+    <ControlTemplate x:Key="RectConnectorControlTemplete"
+                     TargetType="Control">
+        <Grid x:Name="PART_ControlGrid"
+              ClipToBounds="False">
+            <!--左边-->
+
+            <t:ConnectorThumb HorizontalAlignment="Left"
+                              VerticalAlignment="Center"
+                              Margin="-7.5 0 0 0"
+                              Panel.ZIndex="99"
+                              Direction="Left"
+                              x:Name="Left"
+                              Template="{StaticResource Connector}">
+            </t:ConnectorThumb>
+
+            <!--上边-->
+            <t:ConnectorThumb  HorizontalAlignment="Center"
+                               VerticalAlignment="Top"
+                               Margin="0 -7.5 0 0"
+                               Panel.ZIndex="13"
+                               Background="Orange"
+                               Template="{StaticResource Connector}"
+                               Direction="Top">
+
+            </t:ConnectorThumb>
+
+            <!--右边-->
+            <t:ConnectorThumb  HorizontalAlignment="Right"
+                               VerticalAlignment="Center"
+                               Margin="-0 0 -7.5 0"
+                               Panel.ZIndex="13"
+                               Background="Orange"
+                               Template="{StaticResource Connector}"
+                               Direction="Right" />
+
+            <!--下边-->
+            <t:ConnectorThumb  HorizontalAlignment="Center"
+                               VerticalAlignment="Bottom"
+                               Margin="0 0 0 -7.5"
+                               Panel.ZIndex="13"
+                               Background="Orange"
+                               Template="{StaticResource Connector}"
+                               Direction="Bottom" />
+
+        </Grid>
+    </ControlTemplate>
+</ResourceDictionary>

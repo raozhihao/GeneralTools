@@ -8,7 +8,7 @@ namespace GeneralTool.General.Interfaces
     /// <summary>
     /// 日志接口
     /// </summary>
-    public interface ILog
+    public interface ILog : IDisposable
     {
         #region Public 事件
 
@@ -77,6 +77,103 @@ namespace GeneralTool.General.Interfaces
         /// </returns>
         void Waring(string msg);
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <param name="logType"></param>
+        void Log(object msg, LogType logType = LogType.Info);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="msg"></param>
+        void Debug(object msg);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="msg"></param>
+        void Info(object msg);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="msg"></param>
+        void Error(object msg);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="msg"></param>
+        void Waring(object msg);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="msg"></param>
+        void Fail(object msg);
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <param name="logType"></param>
+        /// <param name="objects"></param>
+        void Log(string msg, LogType logType = LogType.Info, params object[] objects);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <param name="objects"></param>
+        void Debug(string msg, params object[] objects);
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <param name="objects"></param>
+        void Info(string msg, params object[] objects);
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <param name="objects"></param>
+        void Waring(string msg, params object[] objects);
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <param name="objects"></param>
+        void Fail(string msg, params object[] objects);
+
         #endregion Public 方法
+
+        #region 属性
+
+        /// <summary>
+        /// 显示日志类型
+        /// </summary>
+        bool ShowLogTypeInfo { get; set; }
+
+        /// <summary>
+        /// 显示日志Id
+        /// </summary>
+        bool ShowLogThreadId { get; set; }
+
+        /// <summary>
+        /// 显示日志时间
+        /// </summary>
+        bool ShowLogTime { get; set; }
+
+        #endregion
     }
 }

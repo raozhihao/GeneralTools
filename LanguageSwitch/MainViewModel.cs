@@ -3,10 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 
 using GeneralTool.General.Enums;
@@ -37,6 +34,9 @@ namespace LanguageSwitch
             }
         }
 
+
+        public string Text { get; set; }
+
         public SimpleCommand ExcptionCommand => new SimpleCommand(ExcptionMethod);
 
         private void ExcptionMethod()
@@ -62,7 +62,7 @@ namespace LanguageSwitch
             LangProvider.LangProviderInstance.ChangeLang(key);
 
             //获取Logs
-            var loadingStr = LangProvider.LangProviderInstance.GetLangValueFomart("Logs.ChangeLang",key);
+            var loadingStr = LangProvider.LangProviderInstance.GetLangValueFomart("Logs.ChangeLang", key);
             this.LogInfo(loadingStr);
 
             //更新区域语言
@@ -75,7 +75,7 @@ namespace LanguageSwitch
 
         public MainViewModel()
         {
-            
+
         }
 
         public void Init()
@@ -99,10 +99,10 @@ namespace LanguageSwitch
             LangProvider.LangProviderInstance.AddLangResources(resourcesDic);
             this.SelectedLangIndex = 0;
 
-           
+
         }
 
-        private void LogInfo(string loadingStr,LogType type= LogType.Info)
+        private void LogInfo(string loadingStr, LogType type = LogType.Info)
         {
             this.LogMessages.Add(new LogMessageInfo(loadingStr, type));
         }

@@ -15,11 +15,13 @@ namespace GeneralTool.General.WPFHelper
         /// <summary>
         /// 该事件在更改组件上的属性时触发
         /// </summary>
+        [field: NonSerialized]
         public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>
         /// 属性正在更新中事件
         /// </summary>
+        [field: NonSerialized]
         public event Func<PropertyChangArg, object> PropertyChaningEvent;
 
         #endregion Public 事件
@@ -70,8 +72,21 @@ namespace GeneralTool.General.WPFHelper
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="propertyName"></param>
+        public virtual void OnPropertyChanged(string propertyName = null)
+        {
+            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
         #endregion Public 方法
+
+
     }
+
+
 
     /// <summary>
     /// 属性更新信息

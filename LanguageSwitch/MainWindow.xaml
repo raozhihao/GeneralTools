@@ -20,6 +20,8 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
             </Grid.RowDefinitions>
 
             <GroupBox Header="{g:LangBind DefaultText=语言切换,LangKey=LanguageGroupBoxHeader}"
@@ -46,6 +48,8 @@
             <Button Grid.Row="1"
                     Content="Excption"
                     Command="{Binding ExcptionCommand}"/>
+
+            <TextBox Text="{Binding Text,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" Grid.Row="2"/>
         </Grid>
 
         <RichTextBox Grid.Column="1"

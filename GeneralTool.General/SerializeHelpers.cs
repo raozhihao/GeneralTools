@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Reflection;
+using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 
@@ -65,7 +66,7 @@ namespace GeneralTool.General
             {
                 obj = DeserializeToObj(data);
             }
-            else if (type.IsValueType && !type.IsPrimitive)
+            else if (type.IsValueType && !type.IsPrimitive && !type.IsEnum)
             {
                 //反序列化自定义结构
                 obj = DesrializeClass(data, type);
@@ -191,7 +192,7 @@ namespace GeneralTool.General
                 BinaryReader formart = new BinaryReader(stream);
                 int len = formart.ReadInt32();//获取数据的长度
                                               //生成数组
-                obj = Activator.CreateInstance(type, len) as Array;
+                obj = FormatterServices.GetUninitializedObject(type);//Activator.CreateInstance(type, len) as Array;
                 Type elType = type.GetElementType();
                 MethodInfo method = type.GetMethod("SetValue", new Type[] { typeof(object), typeof(int) });//添加方法SetValue
                                                                                                            //获取每一项
@@ -211,7 +212,7 @@ namespace GeneralTool.General
 
         private object DesrializeClass(byte[] data, Type type)
         {
-            object obj = Activator.CreateInstance(type);
+            object obj = FormatterServices.GetUninitializedObject(type);//Activator.CreateInstance(type);
             //创建类型
 
             using (MemoryStream stream = new MemoryStream(data))
@@ -254,7 +255,7 @@ namespace GeneralTool.General
             if (inter != null)
             {
                 //生成泛型
-                obj = Activator.CreateInstance(type);
+                obj = FormatterServices.GetUninitializedObject(type); //Activator.CreateInstance(type);
                 using (MemoryStream stream = new MemoryStream(data))
                 {
                     BinaryReader formart = new BinaryReader(stream);
