@@ -13,11 +13,7 @@ namespace GeneralTool.CoreLibrary.MVS
     {
         MVSCameraProvider.MV_CC_DEVICE_INFO_LIST m_stDeviceList;
         private MVSCameraProvider m_MyCamera = new MVSCameraProvider();
-        bool m_bGrabbing = false;
-        // MVSCameraProvider.MV_FRAME_OUT_INFO_EX m_stFrameInfo = new MVSCameraProvider.MV_FRAME_OUT_INFO_EX();
-
-        // ch:用于从驱动获取图像的缓存 | en:Buffer for getting image from driver
-        //UInt32 m_nBufSizeForDriver = 0;
+       
         readonly IntPtr m_BufForDriver = IntPtr.Zero;
         private static readonly object BufForDriverLock = new object();
 
@@ -147,7 +143,7 @@ namespace GeneralTool.CoreLibrary.MVS
 
         public bool Open(int index = 0, double exposureTime = -1)
         {
-            if (this.IsOpen || this.m_bGrabbing)
+            if (this.IsOpen )
                 return true;
 
             var devices = EnumableDeviceList();
@@ -181,7 +177,7 @@ namespace GeneralTool.CoreLibrary.MVS
             }
             if (this._ip != ip)
                 this.Close();
-            else if (this.m_bGrabbing)
+            else if (this.IsOpen)
                 return true;
 
             this._ip = ip;
@@ -276,14 +272,12 @@ namespace GeneralTool.CoreLibrary.MVS
         public bool StartGrab()
         {
             // ch:标志位置位true | en:Set position bit true
-            if (m_bGrabbing)
-                return true;
+            
 
             // ch:开始采集 | en:Start Grabbing
             int nRet = m_MyCamera.MV_CC_StartGrabbing_NET();
             if (MVSCameraProvider.MV_OK != nRet)
             {
-                this.m_bGrabbing = false;
                 this.IsOpen = false;
                 //this.ErroMsg = "Start Grabbing Fail!" + nRet;
                 this.ShowErrorMsg("采集出错", nRet);
@@ -292,7 +286,6 @@ namespace GeneralTool.CoreLibrary.MVS
             }
 
 
-            m_bGrabbing = true;
             this.IsOpen = true;
             return true;
         }
@@ -304,8 +297,7 @@ namespace GeneralTool.CoreLibrary.MVS
         public void StopGrab()
         {
             // ch:标志位设为false | en:Set flag bit false
-            m_bGrabbing = false;
-
+           
             // ch:停止采集 | en:Stop Grabbing
             int nRet = m_MyCamera.MV_CC_StopGrabbing_NET();
             if (nRet != MVSCameraProvider.MV_OK)
@@ -371,7 +363,7 @@ namespace GeneralTool.CoreLibrary.MVS
         {
             #region New
 
-            if (!this.IsOpen || !this.m_bGrabbing)
+            if (!this.IsOpen)
             {
                 this.ErroMsg = "相机未开启或未开始采集";
                 return null;
@@ -608,7 +600,7 @@ namespace GeneralTool.CoreLibrary.MVS
         /// <returns></returns>
         public bool SetMaxAOI(bool autoGrab = false)
         {
-            if (this.m_bGrabbing)
+            if (this.IsOpen)
             {
                 this.StopGrab();
             }
@@ -657,10 +649,6 @@ namespace GeneralTool.CoreLibrary.MVS
             this.ErroMsg = "";
             try
             {
-                if (m_bGrabbing == true)
-                {
-                    m_bGrabbing = false;
-                }
 
                 lock (BufForDriverLock)
                 {
@@ -712,7 +700,7 @@ namespace GeneralTool.CoreLibrary.MVS
         /// <returns></returns>
         public virtual CameraExposureTimeInfo GetExposureTime()
         {
-            MVSCameraProvider.MVCC_FLOATVALUE value = new MVSCameraProvider.MVCC_FLOATVALUE();
+           var value = new MVSCameraProvider.MVCC_FLOATVALUE();
             this.m_MyCamera.MV_CC_GetExposureTime_NET(ref value);
             var info = new CameraExposureTimeInfo()
             {

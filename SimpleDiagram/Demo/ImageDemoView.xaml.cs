@@ -5,9 +5,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
-using GeneralTool.General.Extensions;
-using GeneralTool.General.WPFHelper;
-using GeneralTool.General.WPFHelper.WPFControls.Shapes;
+using GeneralTool.CoreLibrary.Extensions;
+using GeneralTool.CoreLibrary.Models;
+using GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes;
 
 using Microsoft.Win32;
 
@@ -110,7 +110,7 @@ namespace SimpleDiagram.Demo
             }
 
         }
-        private void ImgControl_ImageMouseMoveEvent(GeneralTool.General.Models.ImageMouseEventArgs obj)
+        private void ImgControl_ImageMouseMoveEvent(ImageMouseEventArgs obj)
         {
             this.PosTxt.Text = obj.CurrentPixelPoint.ToDrawPoint() + " _ " + obj.CanvasPoint.ToDrawPoint();
 
@@ -155,7 +155,7 @@ namespace SimpleDiagram.Demo
                 this.ImgControl.CanMoveImage = true;
                 if (this.PointRadio.IsChecked.Value)
                 {
-                    var pointShape = new PointShape(this.ImgControl, this.ImgControl.CurrentMouseDownPixelPoint, 3);
+                    var pointShape = new PointShape(this.ImgControl.CurrentMouseDownPixelPoint, 3);
                     pointShape.Path.Fill = Brushes.Red;
                     this.ImgControl.AddCustomeShape(pointShape);
                     this.PointRadio.IsChecked = false;
@@ -166,7 +166,7 @@ namespace SimpleDiagram.Demo
                     {
                         var start = this.ImgControl.TranslateToPixelPoint(l.StartPoint);
                         var end = this.ImgControl.TranslateToPixelPoint(l.EndPoint);
-                        var lineShape = new LineShape(this.ImgControl, start, end);
+                        var lineShape = new LineShape(start, end);
                         lineShape.Path.Stroke = Brushes.Red;
                         lineShape.Path.StrokeThickness = 1;
                         this.ImgControl.AddCustomeShape(lineShape);
@@ -186,11 +186,11 @@ namespace SimpleDiagram.Demo
                         BaseShape shape = null;
                         if (this.RectRadio.IsChecked.Value)
                         {
-                            shape = new RectShape(this.ImgControl, new Rect(lt, rb));
+                            shape = new RectShape(new Rect(lt, rb));
                         }
                         else if (this.HeartRadio.IsChecked.Value)
                         {
-                            shape = new HeartShape(this.ImgControl, new Rect(lt, rb));
+                            shape = new HeartShape(new Rect(lt, rb));
                         }
 
                         shape.Path.Stroke = Brushes.Red;
@@ -248,7 +248,7 @@ namespace SimpleDiagram.Demo
 
             if (this.tmpPath.Data is PathGeometry g)
             {
-                var shape = new PolygonShape(this.ImgControl);
+                var shape = new PolygonShape();
                 foreach (var item in g.Figures)
                 {
                     var start = this.ImgControl.TranslateToPixelPoint(item.StartPoint);
@@ -277,7 +277,7 @@ namespace SimpleDiagram.Demo
         {
             var points = this.ImgControl.CustomeShapes[0].PixelPoints;
             var rect = new Rect(points[0], points[2]);
-            this.ImgControl.ImageSource.SaveBitmapSouce(new Int32Rect((int)rect.X, (int)rect.Y, (int)rect.Width, (int)rect.Height), "1.bmp");
+            this.ImgControl.SaveCutRectBitmap(new Int32Rect((int)rect.X, (int)rect.Y, (int)rect.Width, (int)rect.Height), "1.bmp", GeneralTool.CoreLibrary.Enums.BitmapEncoderEnum.Bmp);
         }
 
         private bool loop = true;

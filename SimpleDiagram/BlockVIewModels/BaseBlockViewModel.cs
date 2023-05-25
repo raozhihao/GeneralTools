@@ -4,10 +4,10 @@ using System.ComponentModel;
 using System.Reflection;
 using System.Threading.Tasks;
 
-using GeneralTool.General.Interfaces;
-using GeneralTool.General.Models;
-using GeneralTool.General.WPFHelper;
-using GeneralTool.General.WPFHelper.DiagramDesigner.Models;
+using GeneralTool.CoreLibrary.Interfaces;
+using GeneralTool.CoreLibrary.Models;
+using GeneralTool.CoreLibrary.WPFHelper;
+using GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Models;
 
 namespace SimpleDiagram.BlockVIewModels
 {

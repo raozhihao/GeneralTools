@@ -32,6 +32,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes
         /// <inheritdoc/>
         protected override void OnRender(DrawingContext drawingContext)
         {
+            if (!this.shape.Path.IsMouseOver) return;
             var data = this.shape.Path.Data.Bounds;
             data.Inflate(InflateScale / this.shape.ImageView.ImageScale, InflateScale / this.shape.ImageView.ImageScale);
             base.OnRender(drawingContext);
@@ -130,7 +131,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes
             canvasPoints.Add(firstCanvas);
             canvasGeoBuilder.Append($"M{firstCanvas}");
 
-            int i = 0;
+            int i;
             for (i = 1; i < pixelPoints.Count; i++)
             {
                 var p = this.shape.ImageView.TranslateToCanvasPoint(pixelPoints[i]);

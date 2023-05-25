@@ -159,7 +159,7 @@ namespace GeneralTool.General.WPFHelper.WPFControls
             this.GridContent.Children.Clear();
             var objType = this.SelectedObject.GetType();
             var attrs = objType.GetCustomAttributes(typeof(UIEditorAttribute), false);
-            UIEditorAttribute attribute = null;
+            UIEditorAttribute attribute;
             if (attrs.Length == 1)
                 attribute = attrs[0] as UIEditorAttribute;
             else

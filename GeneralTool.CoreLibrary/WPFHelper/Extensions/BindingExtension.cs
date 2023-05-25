@@ -152,7 +152,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
             //解析出各项属性
             var parameters = this.ParseStrings(this.Path);
 
-            BindingBase bindingBase = null;
+            BindingBase bindingBase;
 
             //如果属性值解析出来小于2,那就是0 和 1
             if (parameters.Count < 2)
@@ -208,7 +208,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
                 };
 
                 var window = Window.GetWindow(obj);
-                List<string> list = new List<string>();
+                var list = new List<string>();
                 foreach (var item in parameters)
                 {
                     var start = item[0] + "";
@@ -456,12 +456,12 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
         private object objDynamicCodeEval;
         private object CsharpCalculate(string expression, string parameterInfos, object[] values)
         {
-            CSharpCodeProvider objCSharpCodePrivoder = new CSharpCodeProvider();
+            var objCSharpCodePrivoder = new CSharpCodeProvider();
 
             // 2.ICodeComplier
             string lan = "CSharp";
-            CompilerInfo info = CodeDomProvider.GetCompilerInfo(lan);
-            CompilerParameters options = info.CreateDefaultCompilerParameters();
+            var info = CodeDomProvider.GetCompilerInfo(lan);
+            var options = info.CreateDefaultCompilerParameters();
             options.GenerateExecutable = false;
             options.GenerateInMemory = true;
             options.TreatWarningsAsErrors = false;
@@ -471,7 +471,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
 
             //引用当前类型的dll
             // 这里为生成的动态代码
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
 
             sb.Append("namespace DynamicCodeGenerate");
             sb.Append(Environment.NewLine);
@@ -500,7 +500,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
             //如果当前编译有错误
             if (cr.Errors.HasErrors)
             {
-                StringBuilder builder = new StringBuilder();
+                var builder = new StringBuilder();
                 foreach (CompilerError error in cr.Errors)
                 {
                     builder.AppendLine($"Line position:{error.Line} , Message :{error.ErrorText}");
@@ -509,7 +509,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
             }
             else
             {
-                Assembly objAssembly = cr.CompiledAssembly;
+                var objAssembly = cr.CompiledAssembly;
                 objDynamicCodeEval = objAssembly.CreateInstance("DynamicCodeGenerate.DynamicCodeEval");
                 objMI = objDynamicCodeEval.GetType().GetMethod("Eval");
                 var result = objMI.Invoke(objDynamicCodeEval, values);

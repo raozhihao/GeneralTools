@@ -28,7 +28,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
         {
             if (scroll == null)
             {
-                throw new ArgumentNullException("scroll");
+                throw new ArgumentNullException(nameof(scroll));
             }
 
             return (bool)scroll.GetValue(DataGridScrollProperty);
@@ -44,7 +44,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
         {
             if (scroll == null)
             {
-                throw new ArgumentNullException("scroll");
+                throw new ArgumentNullException(nameof(scroll));
             }
 
             scroll.SetValue(DataGridScrollProperty, alwaysScrollToEnd);

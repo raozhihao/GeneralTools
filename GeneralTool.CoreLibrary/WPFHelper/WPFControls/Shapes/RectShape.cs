@@ -11,17 +11,13 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes
     /// </summary>
     public class RectShape : BaseShape
     {
-        /// <inheritdoc/>
-        public RectShape(ImageViewControl viewControl) : base(viewControl)
-        {
-        }
+       
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="viewControl"></param>
         /// <param name="rect"></param>
-        public RectShape(ImageViewControl viewControl, Rect rect) : base(viewControl)
+        public RectShape(Rect rect) 
         {
             this.rect = rect;
         }

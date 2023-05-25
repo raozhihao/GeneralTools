@@ -9,18 +9,14 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes
     /// </summary>
     public class LineShape : BaseShape
     {
-        /// <inheritdoc/>
-        public LineShape(ImageViewControl viewControl) : base(viewControl)
-        {
-        }
+       
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="viewControl"></param>
         /// <param name="startPixelPoint"></param>
         /// <param name="endPixelPoint"></param>
-        public LineShape(ImageViewControl viewControl, Point startPixelPoint, Point endPixelPoint) : base(viewControl)
+        public LineShape(Point startPixelPoint, Point endPixelPoint) 
         {
             this.StartPoint = startPixelPoint;
             this.EndPoint = endPixelPoint;

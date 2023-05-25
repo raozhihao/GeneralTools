@@ -94,8 +94,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
             {
                 var p = this.dataContextMethodInfo.GetParameters();
                 var plen = p.Length;
-                var t = this.bindingMethodInfo.GetParameters();
-                List<object> list = new List<object>();
+                var list = new List<object>();
                 if (plen == 0)
                 {
                 }
@@ -152,7 +151,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
 
                     var p2 = parameters[1];
 
-                    bool re = p1.ParameterType.IsAssignableFrom(typeof(DependencyObject)) && p2.ParameterType.IsSubclassOf(typeof(System.MulticastDelegate));
+                    _ = p1.ParameterType.IsAssignableFrom(typeof(DependencyObject)) && p2.ParameterType.IsSubclassOf(typeof(System.MulticastDelegate));
                     {
                         //为路由事件
                         var method = p2.ParameterType.GetMethod("Invoke");

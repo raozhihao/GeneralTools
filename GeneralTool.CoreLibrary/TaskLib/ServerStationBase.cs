@@ -102,7 +102,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
         public ServerResponse GetServerResponse(ServerRequest serverRequest, IJsonConvert jsonConvert)
         {
 
-            ServerResponse serverResponse = new ServerResponse
+            var serverResponse = new ServerResponse
             {
                 StateCode = RequestStateCode.OK
             };
@@ -120,14 +120,14 @@ namespace GeneralTool.CoreLibrary.TaskLib
                     else
                     {
                         RequestAddressItem requestAddressItem = this.RequestRoute[serverRequest.Url];
-                        MethodInfo method = requestAddressItem.Target.GetType().GetMethod("GetServerErroMsg");
+                        var method = requestAddressItem.Target.GetType().GetMethod("GetServerErroMsg");
                         serverResponse.ReturnTypeString = requestAddressItem.MethodInfo.ReturnType.AssemblyQualifiedName;
                         try
                         {
                             var converter = new StringConverter();
-                            ParameterInfo[] parameters = requestAddressItem.MethodInfo.GetParameters();
+                            var parameters = requestAddressItem.MethodInfo.GetParameters();
                             object[] array = new object[parameters.Length];
-                            foreach (ParameterInfo parameterInfo in parameters)
+                            foreach (var parameterInfo in parameters)
                             {
                                 if (serverRequest.Parameters.TryGetValue(parameterInfo.Name, out var value))
                                 {
@@ -150,7 +150,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
                                 serverResponse.Result = requestAddressItem.MethodInfo.Invoke(requestAddressItem.Target, array);
                                 try
                                 {
-                                    serverResponse.ResultString = converter.Convert(serverResponse.Result, null, null, null) + "";
+                                    serverResponse.ResultString = jsonConvert.SerializeObject(serverResponse.Result); //converter.Convert(serverResponse.Result, null, null, null) + "";
                                 }
                                 catch (Exception ex)
                                 {

@@ -1,4 +1,5 @@
-﻿using GeneralTool.General.WPFHelper.DiagramDesigner.Models;
+﻿
+using GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Models;
 
 using SimpleDiagram.BlockVIewModels;
 

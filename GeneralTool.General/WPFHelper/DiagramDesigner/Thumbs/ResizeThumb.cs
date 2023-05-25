@@ -24,7 +24,7 @@ namespace GeneralTool.General.WPFHelper.DiagramDesigner.Thumbs
         private Size? prevSize;
         private void ResizeThumb_DragCompleted(object sender, DragCompletedEventArgs e)
         {
-            if (this.DataContext is BlockItem item && VisualTreeHelper.GetParent(item) is Canvas canvas && this.prevSize != null)
+            if (this.DataContext is BlockItem item && VisualTreeHelper.GetParent(item) is Canvas && this.prevSize != null)
             {
                 var currentSize = item.DesiredSize;
                 if (currentSize != this.prevSize.Value)
@@ -43,7 +43,7 @@ namespace GeneralTool.General.WPFHelper.DiagramDesigner.Thumbs
 
         private void ResizeThumb_DragStarted(object sender, DragStartedEventArgs e)
         {
-            if (this.DataContext is BlockItem item && VisualTreeHelper.GetParent(item) is Canvas canvas)
+            if (this.DataContext is BlockItem item && VisualTreeHelper.GetParent(item) is Canvas)
             {
                 this.prevSize = item.DesiredSize;
             }

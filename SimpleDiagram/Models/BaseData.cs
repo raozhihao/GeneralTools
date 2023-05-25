@@ -1,4 +1,4 @@
-﻿using GeneralTool.General.WPFHelper;
+﻿using GeneralTool.CoreLibrary.WPFHelper;
 
 namespace SimpleDiagram.Models
 {

@@ -452,13 +452,10 @@ namespace GeneralTool.CoreLibrary.Extensions
         public static List<T> ToList<T>(this DataTable dt)
         {
             var values = new List<T>();
-
-            T t = default;
-
             int count = dt.Rows.Count;
             for (int i = 0; i < count; i++)
             {
-                t = ToModel<T>(dt, i);
+                T t = ToModel<T>(dt, i);
                 values.Add(t);
             }
             return values;
@@ -473,7 +470,6 @@ namespace GeneralTool.CoreLibrary.Extensions
         /// <returns></returns>
         public static T ToModel<T>(this DataTable dt, int rowIndex)
         {
-            T t = default;
             T tobj = Activator.CreateInstance<T>();//创建一个对象
             PropertyInfo[] pr = tobj.GetType().GetProperties();//获取对象的所有公共属性
             int columnCount = dt.Columns.Count;
@@ -531,7 +527,7 @@ namespace GeneralTool.CoreLibrary.Extensions
                     }
                 }
             }
-            t = tobj;
+            T t = tobj;
             return t;
         }
 

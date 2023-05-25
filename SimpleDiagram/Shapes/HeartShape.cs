@@ -6,23 +6,18 @@ using System.Text;
 using System.Windows;
 using System.Windows.Media;
 
-using GeneralTool.General.WPFHelper.WPFControls;
-using GeneralTool.General.WPFHelper.WPFControls.Shapes;
+using GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes;
 
 namespace SimpleDiagram.Shapes
 {
     public class HeartShape : BaseShape
     {
-        public HeartShape(ImageViewControl viewControl) : base(viewControl)
-        {
-        }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="viewControl"></param>
         /// <param name="rect"></param>
-        public HeartShape(ImageViewControl viewControl, Rect rect) : base(viewControl)
+        public HeartShape( Rect rect) 
         {
             this.rect = rect;
         }

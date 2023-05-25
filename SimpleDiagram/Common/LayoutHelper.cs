@@ -1,10 +1,10 @@
 ﻿using System.Linq;
 using System.Windows.Controls;
 
-using GeneralTool.General.Interfaces;
-using GeneralTool.General.Logs;
-using GeneralTool.General.WPFHelper.DiagramDesigner.Controls;
-using GeneralTool.General.WPFHelper.DiagramDesigner.Models;
+using GeneralTool.CoreLibrary.Interfaces;
+using GeneralTool.CoreLibrary.Logs;
+using GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls;
+using GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Models;
 
 using SimpleDiagram.Blocks;
 

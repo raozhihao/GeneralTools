@@ -96,14 +96,12 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes
         /// </summary>
         public event EventHandler<ResizeEventArgs> ResizeChingingEventHandler;
 
-        private readonly ResizeRectAdorner rectAdorner;
+        private ResizeRectAdorner rectAdorner;
         private AdornerLayer adornerLayer;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="viewControl"></param>
-        public BaseShape(ImageViewControl viewControl)
+
+
+        internal void Init(ImageViewControl viewControl)
         {
             this.ImageView = viewControl;
             this.Path.IsHitTestVisible = true;
@@ -119,6 +117,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes
             this.Path.MouseLeave += Path_MouseLeave;
             this.rectAdorner.ResizeChingingEventHandler += RectAdorner_ResizeChingingEventHandler;
         }
+
 
         private void Path_MouseLeave(object sender, MouseEventArgs e)
         {

@@ -1,11 +1,12 @@
 ﻿using System;
+using System.IO.Ports;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
-using GeneralTool.General.Extensions;
-using GeneralTool.General.Models;
-using GeneralTool.General.WPFHelper.DiagramDesigner.Controls;
+using GeneralTool.CoreLibrary.Extensions;
+using GeneralTool.CoreLibrary.Models;
+using GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls;
 
 using SimpleDiagram.Blocks;
 using SimpleDiagram.BlockVIewModels;
@@ -24,6 +25,7 @@ namespace SimpleDiagram
         {
             InitializeComponent();
             this.Loaded += MainWindow_Loaded;
+
         }
 
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
@@ -91,7 +93,7 @@ namespace SimpleDiagram
                 this.tokenSource.Canceld = true;
         }
 
-        private void dc_CopyEvent(object sender, GeneralTool.General.WPFHelper.DiagramDesigner.Models.BlockCopyArgs e)
+        private void dc_CopyEvent(object sender, GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Models.BlockCopyArgs e)
         {
             if (e.DragItem.DragItem != null && e.DestBlock != null)
             {

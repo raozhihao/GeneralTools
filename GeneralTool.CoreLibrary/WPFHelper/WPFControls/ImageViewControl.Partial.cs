@@ -529,7 +529,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
                 if (value != null && this.CutPanelMaxSize.IsEmpty)
                 {
                     this.CutPanelMaxSize = new Size(value.Width, value.Height);
-                    this.ImageSource = null;
+                    //this.ImageSource = null;
                 }
 
                 this.Img?.ClearValue(Image.SourceProperty);

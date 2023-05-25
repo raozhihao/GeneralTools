@@ -71,7 +71,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
             }
             else
             {
-                ServerResponse serverResponse = new ServerResponse
+                var serverResponse = new ServerResponse
                 {
                     StateCode = RequestStateCode.OK
                 };

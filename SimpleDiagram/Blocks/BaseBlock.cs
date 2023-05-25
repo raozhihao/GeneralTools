@@ -4,9 +4,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-using GeneralTool.General.Interfaces;
-using GeneralTool.General.WPFHelper.DiagramDesigner.Controls;
-using GeneralTool.General.WPFHelper.DiagramDesigner.Models;
+using GeneralTool.CoreLibrary.Interfaces;
+using GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls;
+using GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Models;
 
 using SimpleDiagram.BlockVIewModels;
 

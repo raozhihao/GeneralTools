@@ -80,7 +80,7 @@ namespace GeneralTool.CoreLibrary.Models
             string result;
             try
             {
-                StringBuilder stringBuilder = new StringBuilder();
+                var stringBuilder = new StringBuilder();
                 foreach (string value in list)
                 {
                     int num = Convert.ToInt32(value);

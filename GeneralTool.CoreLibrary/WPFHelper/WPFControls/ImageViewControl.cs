@@ -135,7 +135,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         /// </param>
         public void ClearAll(ImageDrawType drawType = ImageDrawType.Ellipse | ImageDrawType.Rectangle | ImageDrawType.Line)
         {
-            List<UIElement> list = new List<UIElement>();
+            var list = new List<UIElement>();
             foreach (UIElement item in this.ImageCanvas.Children)
             {
                 if (item is Ellipse)
@@ -562,6 +562,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         public void AddCustomeShape(BaseShape shape)
         {
             shape.StrokeThickness = shape.Path.StrokeThickness;
+            shape.Init(this);
             shape.CreateShape();
             this.AddElement(shape.Path);
             this.CustomeShapes.Add(shape);
@@ -1208,8 +1209,6 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
             //查看当前框在图片中的右下角坐标
             var bottomRight = this.CutRectangle.TranslatePoint(new Point(this.CutRectangle.Width, this.CutRectangle.Height), this.Img);
 
-            var x = topLeft.X;
-            var y = topLeft.Y;
 
             //X超限
             if (topLeft.X < 0)

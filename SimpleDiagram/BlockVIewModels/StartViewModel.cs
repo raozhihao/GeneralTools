@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Threading.Tasks;
 
-using GeneralTool.General.Models;
+using GeneralTool.CoreLibrary.Models;
 
 namespace SimpleDiagram.BlockVIewModels
 {

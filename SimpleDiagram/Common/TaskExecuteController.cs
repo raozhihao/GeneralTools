@@ -2,10 +2,10 @@
 using System.Diagnostics;
 using System.Threading.Tasks;
 
-using GeneralTool.General.Extensions;
-using GeneralTool.General.Interfaces;
-using GeneralTool.General.Logs;
-using GeneralTool.General.Models;
+using GeneralTool.CoreLibrary.Extensions;
+using GeneralTool.CoreLibrary.Interfaces;
+using GeneralTool.CoreLibrary.Logs;
+using GeneralTool.CoreLibrary.Models;
 
 using SimpleDiagram.BlockVIewModels;
 

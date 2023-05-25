@@ -9,10 +9,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes
     /// </summary>
     public class PolygonShape : BaseShape
     {
-        /// <inheritdoc/>
-        public PolygonShape(ImageViewControl viewControl) : base(viewControl)
-        {
-        }
+       
 
         /// <inheritdoc/>
         public override void UpdateShape(List<Point> canvasPoints)

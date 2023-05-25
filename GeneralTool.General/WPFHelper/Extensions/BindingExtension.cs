@@ -152,7 +152,7 @@ namespace GeneralTool.General.WPFHelper.Extensions
             //解析出各项属性
             var parameters = this.ParseStrings(this.Path);
 
-            BindingBase bindingBase = null;
+            BindingBase bindingBase;
 
             //如果属性值解析出来小于2,那就是0 和 1
             if (parameters.Count < 2)

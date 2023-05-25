@@ -104,11 +104,11 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DialogHelper
 
             window.Dispatcher.BeginInvoke(new Action(() =>
             {
-                WaitView layer = new WaitView
+                var layer = new WaitView
                 {
                     DataContext = vm
                 }; //遮罩层
-                UIElement content = window.Content as UIElement;//原有的content
+                var content = window.Content as UIElement;//原有的content
                 window.Content = null;
 
                 int zindex = Panel.GetZIndex(content);

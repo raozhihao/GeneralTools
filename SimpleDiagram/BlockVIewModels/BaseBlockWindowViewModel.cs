@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Windows.Input;
 
-using GeneralTool.General.Interfaces;
-
-using GeneralTool.General.WPFHelper;
+using GeneralTool.CoreLibrary.Interfaces;
+using GeneralTool.CoreLibrary.WPFHelper;
 
 namespace SimpleDiagram.BlockVIewModels
 {

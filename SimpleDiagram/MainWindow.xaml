@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:c="clr-namespace:GeneralTool.General.WPFHelper.DiagramDesigner.Controls;assembly=GeneralTool.General"
+        xmlns:c="clr-namespace:GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls;assembly=GeneralTool.CoreLibrary"
         xmlns:t="clr-namespace:SimpleDiagram.Blocks"
         xmlns:local="clr-namespace:SimpleDiagram"
         xmlns:v="clr-namespace:SimpleDiagram.Demo"

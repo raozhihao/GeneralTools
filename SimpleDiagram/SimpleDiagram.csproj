@@ -126,13 +126,13 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GeneralTool.General\GeneralTool.General.csproj">
-      <Project>{41796e7d-0ac1-4330-bf92-0c3878aa58b3}</Project>
-      <Name>GeneralTool.General</Name>
-    </ProjectReference>
+    <Folder Include="ViewModels\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="ViewModels\" />
+    <ProjectReference Include="..\GeneralTool.CoreLibrary\GeneralTool.CoreLibrary.csproj">
+      <Project>{d6c7bf37-dbc8-4dae-9f79-c0ff8b3354c3}</Project>
+      <Name>GeneralTool.CoreLibrary</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

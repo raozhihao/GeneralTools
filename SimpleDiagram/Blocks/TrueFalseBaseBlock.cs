@@ -3,8 +3,8 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 
-using GeneralTool.General.WPFHelper.DiagramDesigner.Controls;
-using GeneralTool.General.WPFHelper.DiagramDesigner.Models;
+using GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls;
+using GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Models;
 
 using SimpleDiagram.BlockVIewModels;
 

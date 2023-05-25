@@ -10,18 +10,12 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes
     public class PointShape : BaseShape
     {
 
-        /// <inheritdoc/>
-        public PointShape(ImageViewControl viewControl) : base(viewControl)
-        {
-        }
-
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="viewControl"></param>
         /// <param name="centerPoint">中心点</param>
         /// <param name="radius">半径</param>
-        public PointShape(ImageViewControl viewControl, Point centerPoint, double radius) : base(viewControl)
+        public PointShape( Point centerPoint, double radius) 
         {
             this.centerPoint = centerPoint;
             this.Raidus = radius;

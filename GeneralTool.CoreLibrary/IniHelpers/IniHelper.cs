@@ -125,10 +125,10 @@ namespace GeneralTool.CoreLibrary.IniHelpers
         public void DeleteKey(string sectionName, string keyName)
         {
             if (sectionName == null)
-                throw new ArgumentNullException("sectionName");
+                throw new ArgumentNullException(nameof(sectionName));
 
             if (keyName == null)
-                throw new ArgumentNullException("keyName");
+                throw new ArgumentNullException(nameof(keyName));
 
             WriteValueInternal(sectionName, keyName, null);
         }
@@ -145,7 +145,7 @@ namespace GeneralTool.CoreLibrary.IniHelpers
         public void DeleteSection(string sectionName)
         {
             if (sectionName == null)
-                throw new ArgumentNullException("sectionName");
+                throw new ArgumentNullException(nameof(sectionName));
 
             WriteValueInternal(sectionName, null, null);
         }
@@ -295,10 +295,10 @@ namespace GeneralTool.CoreLibrary.IniHelpers
                             int defaultValue)
         {
             if (sectionName == null)
-                throw new ArgumentNullException("sectionName");
+                throw new ArgumentNullException(nameof(sectionName));
 
             if (keyName == null)
-                throw new ArgumentNullException("keyName");
+                throw new ArgumentNullException(nameof(keyName));
 
             return NativeMethods.GetPrivateProfileInt(sectionName, keyName, defaultValue, m_path);
         }
@@ -324,7 +324,7 @@ namespace GeneralTool.CoreLibrary.IniHelpers
             string[] retval;
 
             if (sectionName == null)
-                throw new ArgumentNullException("sectionName");
+                throw new ArgumentNullException(nameof(sectionName));
 
             //Allocate a buffer for the returned section names.
             IntPtr ptr = Marshal.AllocCoTaskMem(IniHelper.MaxSectionSize);
@@ -447,7 +447,7 @@ namespace GeneralTool.CoreLibrary.IniHelpers
             int equalSignPos;
 
             if (sectionName == null)
-                throw new ArgumentNullException("sectionName");
+                throw new ArgumentNullException(nameof(sectionName));
 
             //Allocate a buffer for the returned section names.
             IntPtr ptr = Marshal.AllocCoTaskMem((int)IniHelper.MaxSectionSize);
@@ -514,14 +514,13 @@ namespace GeneralTool.CoreLibrary.IniHelpers
                                 string defaultValue)
         {
             if (sectionName == null)
-                throw new ArgumentNullException("sectionName");
+                throw new ArgumentNullException(nameof(sectionName));
 
             if (keyName == null)
-                throw new ArgumentNullException("keyName");
+                throw new ArgumentNullException(nameof(keyName));
 
             var builder = new StringBuilder(MaxSectionSize);
-
-            var result = NativeMethods.GetPrivateProfileString(sectionName,
+            _ = NativeMethods.GetPrivateProfileString(sectionName,
                                                   keyName,
                                                   defaultValue,
                                                   builder,
@@ -543,10 +542,10 @@ namespace GeneralTool.CoreLibrary.IniHelpers
                               string keyName)
         {
             if (sectionName == null)
-                throw new ArgumentNullException("sectionName");
+                throw new ArgumentNullException(nameof(sectionName));
 
             if (keyName == null)
-                throw new ArgumentNullException("keyName");
+                throw new ArgumentNullException(nameof(keyName));
 
 
             //Allocate a buffer for the returned section names.
@@ -655,13 +654,13 @@ namespace GeneralTool.CoreLibrary.IniHelpers
         public void WriteValueString(string sectionName, string keyName, string value)
         {
             if (sectionName == null)
-                throw new ArgumentNullException("sectionName");
+                throw new ArgumentNullException(nameof(sectionName));
 
             if (keyName == null)
-                throw new ArgumentNullException("keyName");
+                throw new ArgumentNullException(nameof(keyName));
 
             if (value == null)
-                throw new ArgumentNullException("value");
+                throw new ArgumentNullException(nameof(value));
 
             WriteValueInternal(sectionName, keyName, value);
         }
