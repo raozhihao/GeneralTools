@@ -40,12 +40,12 @@ namespace GeneralTool.CoreLibrary.WPFHelper
         /// <summary>
         /// 当前的语言资源
         /// </summary>
-        internal protected ResourceDictionary CurrentResource { get; set; }
+        protected internal ResourceDictionary CurrentResource { get; set; }
 
         /// <summary>
         /// 界面默认资源库
         /// </summary>
-        internal protected Dictionary<string, string> DefaultResource { get; set; } = new Dictionary<string, string>();
+        protected internal Dictionary<string, string> DefaultResource { get; set; } = new Dictionary<string, string>();
         /// <summary>
         /// 添加语言包资源
         /// </summary>
@@ -57,7 +57,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper
                 throw new Exception("语言集合不可为null");
 
             if (this.langResourceDic.Count > 0)
-                this.CurrentResource = this.langResourceDic.First().Value;
+                CurrentResource = this.langResourceDic.First().Value;
         }
 
         /// <summary>
@@ -67,28 +67,28 @@ namespace GeneralTool.CoreLibrary.WPFHelper
         public virtual void ChangeLang(string key)
         {
             //查看是否传入的是默认的key
-            if (key == this.DefaultLang)
+            if (key == DefaultLang)
             {
                 //是默认的中文key,则移除之前的
-                if (this.CurrentResource != null)
+                if (CurrentResource != null)
                 {
-                    Application.Current.Resources.MergedDictionaries.Remove(this.CurrentResource);
+                    _ = Application.Current.Resources.MergedDictionaries.Remove(CurrentResource);
                 }
-                this.CurrentResource = null;
-                this.LangChanged?.Invoke(this.CurrentResource);
+                CurrentResource = null;
+                LangChanged?.Invoke(CurrentResource);
                 return;
             }
 
             //非默认key查看是否已经添加了
-            var re = this.langResourceDic.TryGetValue(key, out var chooseLangResx);
+            bool re = langResourceDic.TryGetValue(key, out ResourceDictionary chooseLangResx);
             if (!re)
                 return;//没有添加过,则返回
 
             //不一致,先清除
-            Application.Current.Resources.MergedDictionaries.Remove(this.CurrentResource);
+            _ = Application.Current.Resources.MergedDictionaries.Remove(CurrentResource);
             Application.Current.Resources.MergedDictionaries.Add(chooseLangResx);
-            this.CurrentResource = chooseLangResx;
-            this.LoadLang();
+            CurrentResource = chooseLangResx;
+            LoadLang();
         }
 
         /// <summary>
@@ -96,7 +96,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper
         /// </summary>
         public virtual void LoadLang()
         {
-            this.LangChanged?.Invoke(this.CurrentResource);
+            LangChanged?.Invoke(CurrentResource);
         }
 
         /// <summary>
@@ -106,18 +106,18 @@ namespace GeneralTool.CoreLibrary.WPFHelper
         /// <returns></returns>
         public virtual string GetLangValue(string langKey)
         {
-            string value = "";
-            if (this.CurrentResource == null)
+            string value;
+            if (CurrentResource == null)
             {
                 //返回默认的
-                this.DefaultResource.TryGetValue(langKey, out value);
+                _ = DefaultResource.TryGetValue(langKey, out value);
                 return value;
             }
 
-            value = GetValue(langKey, this.CurrentResource);
+            value = GetValue(langKey, CurrentResource);
             if (string.IsNullOrWhiteSpace(value))
             {
-                this.DefaultResource.TryGetValue(langKey, out value);
+                _ = DefaultResource.TryGetValue(langKey, out value);
             }
             return value;
         }
@@ -130,7 +130,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper
         /// <returns></returns>
         public virtual string GetLangValueFomart(string key, params object[] parmeters)
         {
-            var value = this.GetLangValue(key);
+            string value = GetLangValue(key);
             return string.Format(value, parmeters);
         }
 
@@ -138,14 +138,9 @@ namespace GeneralTool.CoreLibrary.WPFHelper
         {
             //获取第一个key
             key = key.Trim();
-            var index = key.IndexOf('.');
-            string langKey = "";
-            if (index > -1)
-                langKey = key.Substring(0, index).Trim();
-            else
-                langKey = key;
-
-            var value = resource[langKey];
+            int index = key.IndexOf('.');
+            string langKey = index > -1 ? key.Substring(0, index).Trim() : key;
+            object value = resource[langKey];
             if (value is ResourceDictionary r)
             {
                 //递归处理

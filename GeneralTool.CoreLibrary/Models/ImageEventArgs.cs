@@ -21,9 +21,9 @@ namespace GeneralTool.CoreLibrary.Models
         /// </param>
         public ImageEventArgs(BitmapSource source, bool sucess, string msg)
         {
-            this.Source = source;
-            this.Sucess = sucess;
-            this.ErroMsg = msg;
+            Source = source;
+            Sucess = sucess;
+            ErroMsg = msg;
         }
 
         #endregion Public 构造函数

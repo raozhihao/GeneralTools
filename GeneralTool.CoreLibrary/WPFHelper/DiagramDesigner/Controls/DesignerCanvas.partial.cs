@@ -6,7 +6,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
     /// <summary>
     /// 
     /// </summary>
-    partial class DesignerCanvas
+    public partial class DesignerCanvas
     {
         /// <summary>
         /// 
@@ -23,7 +23,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         public bool DragEndArrary
         {
             get => (bool)GetValue(DragEndArraryProperty);
-            set => this.SetValue(DragEndArraryProperty, value);
+            set => SetValue(DragEndArraryProperty, value);
         }
 
         /// <summary>
@@ -38,8 +38,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// </summary>
         public BlockItem SelectedBlockItem
         {
-            get => this.GetValue(SelectedBlockItemProperty) as BlockItem;
-            set => this.SetValue(SelectedBlockItemProperty, value);
+            get => GetValue(SelectedBlockItemProperty) as BlockItem;
+            set => SetValue(SelectedBlockItemProperty, value);
         }
 
         /// <summary>
@@ -54,8 +54,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// </summary>
         public BlockItem SelectedBreakBlock
         {
-            get => this.GetValue(SelectedBreakBlockItemProperty) as BlockItem;
-            set => this.SetValue(SelectedBreakBlockItemProperty, value);
+            get => GetValue(SelectedBreakBlockItemProperty) as BlockItem;
+            set => SetValue(SelectedBreakBlockItemProperty, value);
         }
 
         /// <summary>
@@ -71,8 +71,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// </summary>
         public bool CanOperation
         {
-            get => (bool)this.GetValue(CanOperationProperty);
-            set => this.SetValue(CanOperationProperty, value);
+            get => (bool)GetValue(CanOperationProperty);
+            set => SetValue(CanOperationProperty, value);
         }
 
         /// <summary>
@@ -95,7 +95,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
                 {
                     return;
                 }
-                var v = (bool)e.NewValue;
+                bool v = (bool)e.NewValue;
                 c.ZoomPanelVisibilityChangedEvent?.Invoke(v);
             }
         }
@@ -105,8 +105,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// </summary>
         public bool ZoomPanelVisibility
         {
-            get => (bool)this.GetValue(ZoomPanelVisibilityProperty);
-            set => this.SetValue(ZoomPanelVisibilityProperty, value);
+            get => (bool)GetValue(ZoomPanelVisibilityProperty);
+            set => SetValue(ZoomPanelVisibilityProperty, value);
         }
     }
 }

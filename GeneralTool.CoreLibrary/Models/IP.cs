@@ -28,7 +28,7 @@ namespace GeneralTool.CoreLibrary.Models
         /// </param>
         public IP(string ip)
         {
-            this.ip = this.ChangeToIp(ip);
+            this.ip = ChangeToIp(ip);
         }
 
         #endregion Public 构造函数
@@ -59,7 +59,7 @@ namespace GeneralTool.CoreLibrary.Models
 
         internal string GetIp()
         {
-            return this.ip;
+            return ip;
         }
 
         #endregion Internal 方法
@@ -80,7 +80,7 @@ namespace GeneralTool.CoreLibrary.Models
             string result;
             try
             {
-                var stringBuilder = new StringBuilder();
+                StringBuilder stringBuilder = new StringBuilder();
                 foreach (string value in list)
                 {
                     int num = Convert.ToInt32(value);
@@ -89,10 +89,10 @@ namespace GeneralTool.CoreLibrary.Models
                     {
                         throw new IPException(ip);
                     }
-                    stringBuilder.Append(num.ToString());
-                    stringBuilder.Append(".");
+                    _ = stringBuilder.Append(num.ToString());
+                    _ = stringBuilder.Append(".");
                 }
-                stringBuilder.Remove(stringBuilder.Length - 1, 1);
+                _ = stringBuilder.Remove(stringBuilder.Length - 1, 1);
                 list.Clear();
                 list = null;
                 result = stringBuilder.ToString();

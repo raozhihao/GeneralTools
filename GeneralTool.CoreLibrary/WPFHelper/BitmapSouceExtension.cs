@@ -70,7 +70,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper
         /// <returns></returns>
         public static bool SaveBitmapSouce(this ImageSource source, Int32Rect rect, string path, BitmapEncoderEnum encoderEnum = BitmapEncoderEnum.Jpeg)
         {
-            var cutSource = source.GetChooseRectImageSouce(rect);
+            BitmapSource cutSource = source.GetChooseRectImageSouce(rect);
 
             return cutSource.SaveBitmapSouce(path, encoderEnum);
         }
@@ -84,7 +84,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper
         /// <returns></returns>
         public static bool SaveBitmapSouce(this BitmapFrame source, Int32Rect rect, string path, BitmapEncoderEnum encoderEnum = BitmapEncoderEnum.Jpeg)
         {
-            var cutSource = source.GetChooseRectImageSouce(rect);
+            BitmapSource cutSource = source.GetChooseRectImageSouce(rect);
             return cutSource.SaveBitmapSouce(path, encoderEnum);
         }
 
@@ -98,7 +98,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper
         /// <returns></returns>
         public static bool SaveBitmapSouce(this BitmapImage source, Int32Rect rect, string path, BitmapEncoderEnum encoderEnum = BitmapEncoderEnum.Jpeg)
         {
-            var cutSource = source.GetChooseRectImageSouce(rect);
+            BitmapSource cutSource = source.GetChooseRectImageSouce(rect);
             return cutSource.SaveBitmapSouce(path, encoderEnum);
         }
 
@@ -112,10 +112,10 @@ namespace GeneralTool.CoreLibrary.WPFHelper
         {
             if (source is BitmapSource b)
             {
-                var stride = b.Format.BitsPerPixel * rect.Width / 8;
-                var data = new byte[rect.Height * stride];
+                int stride = b.Format.BitsPerPixel * rect.Width / 8;
+                byte[] data = new byte[rect.Height * stride];
                 b.CopyPixels(rect, data, stride, 0);
-                var newSource = BitmapSource.Create(rect.Width, rect.Height, b.DpiX, b.DpiY, b.Format, b.Palette, data, stride);
+                BitmapSource newSource = BitmapSource.Create(rect.Width, rect.Height, b.DpiX, b.DpiY, b.Format, b.Palette, data, stride);
                 return newSource;
             }
             return null;
@@ -129,10 +129,10 @@ namespace GeneralTool.CoreLibrary.WPFHelper
         /// <returns></returns>
         public static BitmapSource GetChooseRectImageSouce(this BitmapFrame source, Int32Rect rect)
         {
-            var stride = source.Format.BitsPerPixel * rect.Width / 8;
-            var data = new byte[rect.Height * stride];
+            int stride = source.Format.BitsPerPixel * rect.Width / 8;
+            byte[] data = new byte[rect.Height * stride];
             source.CopyPixels(rect, data, stride, 0);
-            var newSource = BitmapSource.Create(rect.Width, rect.Height, source.DpiX, source.DpiY, source.Format, source.Palette, data, stride);
+            BitmapSource newSource = BitmapSource.Create(rect.Width, rect.Height, source.DpiX, source.DpiY, source.Format, source.Palette, data, stride);
             return newSource;
         }
 
@@ -144,10 +144,10 @@ namespace GeneralTool.CoreLibrary.WPFHelper
         /// <returns></returns>
         public static BitmapSource GetChooseRectImageSouce(this BitmapImage source, Int32Rect rect)
         {
-            var stride = source.Format.BitsPerPixel * rect.Width / 8;
-            var data = new byte[rect.Height * stride];
+            int stride = source.Format.BitsPerPixel * rect.Width / 8;
+            byte[] data = new byte[rect.Height * stride];
             source.CopyPixels(rect, data, stride, 0);
-            var newSource = BitmapSource.Create(rect.Width, rect.Height, source.DpiX, source.DpiY, source.Format, source.Palette, data, stride);
+            BitmapSource newSource = BitmapSource.Create(rect.Width, rect.Height, source.DpiX, source.DpiY, source.Format, source.Palette, data, stride);
             return newSource;
         }
 
@@ -166,7 +166,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper
             {
                 if (writeable == null || writeable.Format != PixelFormats.Indexed8)
                 {
-                    var colors = new Color[256];
+                    Color[] colors = new Color[256];
                     for (byte i = 0; i < byte.MaxValue; i++)
                     {
                         colors[i] = Color.FromRgb(i, i, i);
@@ -190,11 +190,10 @@ namespace GeneralTool.CoreLibrary.WPFHelper
                 }
             }
 
-
             if (reload || writeable == null || writeable.Format != format)
                 writeable = new WriteableBitmap(bitmap.Width, bitmap.Height, 96, 96, format, palette);
 
-            var data = bitmap.LockBits(new System.Drawing.Rectangle(new System.Drawing.Point(0, 0), bitmap.Size), System.Drawing.Imaging.ImageLockMode.ReadOnly, bitmap.PixelFormat);
+            System.Drawing.Imaging.BitmapData data = bitmap.LockBits(new System.Drawing.Rectangle(new System.Drawing.Point(0, 0), bitmap.Size), System.Drawing.Imaging.ImageLockMode.ReadOnly, bitmap.PixelFormat);
             try
             {
                 writeable.WritePixels(new Int32Rect(0, 0, data.Width, data.Height), data.Scan0, data.Height * data.Stride, data.Stride, 0, 0);
@@ -212,7 +211,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper
         /// <param name="writeable"></param>
         public static void WriteBitmap(this string imagePath, ref WriteableBitmap writeable)
         {
-            using (var map = new System.Drawing.Bitmap(imagePath))
+            using (System.Drawing.Bitmap map = new System.Drawing.Bitmap(imagePath))
             {
                 WriteBitmap(map, ref writeable, true);
             }

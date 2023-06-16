@@ -19,11 +19,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
         /// <returns></returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (bool.TryParse(value + "", out var val))
-            {
-                return !val;
-            }
-            return true;
+            return bool.TryParse(value + "", out bool val) ? !val : (object)true;
         }
 
         /// <summary>

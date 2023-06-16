@@ -74,9 +74,8 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000006 RID: 6 RVA: 0x000020FA File Offset: 0x000002FA
         public MVSCameraProvider()
         {
-            this.handle = IntPtr.Zero;
+            handle = IntPtr.Zero;
         }
-
 
         /// <summary>
         /// Create Device
@@ -86,12 +85,12 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000008 RID: 8 RVA: 0x00002138 File Offset: 0x00000338
         public int MV_CC_CreateDevice_NET(ref MV_CC_DEVICE_INFO stDevInfo)
         {
-            if (IntPtr.Zero != this.handle)
+            if (IntPtr.Zero != handle)
             {
-                _ = MV_CC_DestroyHandle(this.handle);
-                this.handle = IntPtr.Zero;
+                _ = MV_CC_DestroyHandle(handle);
+                handle = IntPtr.Zero;
             }
-            return MV_CC_CreateHandle(ref this.handle, ref stDevInfo);
+            return MV_CC_CreateHandle(ref handle, ref stDevInfo);
         }
 
         /// <summary>
@@ -102,12 +101,12 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000009 RID: 9 RVA: 0x0000216F File Offset: 0x0000036F
         public int MV_CC_CreateDeviceWithoutLog_NET(ref MV_CC_DEVICE_INFO stDevInfo)
         {
-            if (IntPtr.Zero != this.handle)
+            if (IntPtr.Zero != handle)
             {
-                _ = MV_CC_DestroyHandle(this.handle);
-                this.handle = IntPtr.Zero;
+                _ = MV_CC_DestroyHandle(handle);
+                handle = IntPtr.Zero;
             }
-            return MV_CC_CreateHandleWithoutLog(ref this.handle, ref stDevInfo);
+            return MV_CC_CreateHandleWithoutLog(ref handle, ref stDevInfo);
         }
 
         /// <summary>
@@ -117,8 +116,8 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600000A RID: 10 RVA: 0x000021A8 File Offset: 0x000003A8
         public int MV_CC_DestroyDevice_NET()
         {
-            int result = MV_CC_DestroyHandle(this.handle);
-            this.handle = IntPtr.Zero;
+            int result = MV_CC_DestroyHandle(handle);
+            handle = IntPtr.Zero;
             return result;
         }
 
@@ -129,7 +128,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600000B RID: 11 RVA: 0x000021CD File Offset: 0x000003CD
         public int MV_CC_OpenDevice_NET()
         {
-            return MV_CC_OpenDevice(this.handle, 1U, 0);
+            return MV_CC_OpenDevice(handle, 1U, 0);
         }
 
         /// <summary>
@@ -141,7 +140,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600000C RID: 12 RVA: 0x000021DC File Offset: 0x000003DC
         public int MV_CC_OpenDevice_NET(uint nAccessMode, ushort nSwitchoverKey)
         {
-            return MVSCameraProvider.MV_CC_OpenDevice(this.handle, nAccessMode, nSwitchoverKey);
+            return MVSCameraProvider.MV_CC_OpenDevice(handle, nAccessMode, nSwitchoverKey);
         }
 
         /// <summary>
@@ -151,7 +150,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600000D RID: 13 RVA: 0x000021EB File Offset: 0x000003EB
         public int MV_CC_CloseDevice_NET()
         {
-            return MV_CC_CloseDevice(this.handle);
+            return MV_CC_CloseDevice(handle);
         }
 
         /// <summary>
@@ -161,7 +160,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600000E RID: 14 RVA: 0x000021F8 File Offset: 0x000003F8
         public bool MV_CC_IsDeviceConnected_NET()
         {
-            return MV_CC_IsDeviceConnected(this.handle);
+            return MV_CC_IsDeviceConnected(handle);
         }
 
         /// <summary>
@@ -173,7 +172,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600000F RID: 15 RVA: 0x00002205 File Offset: 0x00000405
         public int MV_CC_RegisterImageCallBackEx_NET(cbOutputExdelegate cbOutput, IntPtr pUser)
         {
-            return MV_CC_RegisterImageCallBackEx(this.handle, cbOutput, pUser);
+            return MV_CC_RegisterImageCallBackEx(handle, cbOutput, pUser);
         }
 
         /// <summary>
@@ -185,7 +184,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000010 RID: 16 RVA: 0x00002214 File Offset: 0x00000414
         public int MV_CC_RegisterImageCallBackForRGB_NET(cbOutputExdelegate cbOutput, IntPtr pUser)
         {
-            return MV_CC_RegisterImageCallBackForRGB(this.handle, cbOutput, pUser);
+            return MV_CC_RegisterImageCallBackForRGB(handle, cbOutput, pUser);
         }
 
         /// <summary>
@@ -197,7 +196,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000011 RID: 17 RVA: 0x00002223 File Offset: 0x00000423
         public int MV_CC_RegisterImageCallBackForBGR_NET(cbOutputExdelegate cbOutput, IntPtr pUser)
         {
-            return MV_CC_RegisterImageCallBackForBGR(this.handle, cbOutput, pUser);
+            return MV_CC_RegisterImageCallBackForBGR(handle, cbOutput, pUser);
         }
 
         /// <summary>
@@ -207,7 +206,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000012 RID: 18 RVA: 0x00002232 File Offset: 0x00000432
         public int MV_CC_StartGrabbing_NET()
         {
-            return MV_CC_StartGrabbing(this.handle);
+            return MV_CC_StartGrabbing(handle);
         }
 
         /// <summary>
@@ -217,7 +216,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000013 RID: 19 RVA: 0x0000223F File Offset: 0x0000043F
         public int MV_CC_StopGrabbing_NET()
         {
-            return MV_CC_StopGrabbing(this.handle);
+            return MV_CC_StopGrabbing(handle);
         }
 
         /// <summary>
@@ -232,7 +231,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000014 RID: 20 RVA: 0x0000224C File Offset: 0x0000044C
         public int MV_CC_GetImageForRGB_NET(IntPtr pData, uint nDataSize, ref MV_FRAME_OUT_INFO_EX pFrameInfo, int nMsec)
         {
-            return MV_CC_GetImageForRGB(this.handle, pData, nDataSize, ref pFrameInfo, nMsec);
+            return MV_CC_GetImageForRGB(handle, pData, nDataSize, ref pFrameInfo, nMsec);
         }
 
         /// <summary>
@@ -247,7 +246,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000015 RID: 21 RVA: 0x0000225E File Offset: 0x0000045E
         public int MV_CC_GetImageForBGR_NET(IntPtr pData, uint nDataSize, ref MV_FRAME_OUT_INFO_EX pFrameInfo, int nMsec)
         {
-            return MV_CC_GetImageForBGR(this.handle, pData, nDataSize, ref pFrameInfo, nMsec);
+            return MV_CC_GetImageForBGR(handle, pData, nDataSize, ref pFrameInfo, nMsec);
         }
 
         /// <summary>
@@ -259,7 +258,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000016 RID: 22 RVA: 0x00002270 File Offset: 0x00000470
         public int MV_CC_GetImageBuffer_NET(ref MV_FRAME_OUT pFrame, int nMsec)
         {
-            return MV_CC_GetImageBuffer(this.handle, ref pFrame, nMsec);
+            return MV_CC_GetImageBuffer(handle, ref pFrame, nMsec);
         }
 
         /// <summary>
@@ -270,7 +269,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000017 RID: 23 RVA: 0x0000227F File Offset: 0x0000047F
         public int MV_CC_FreeImageBuffer_NET(ref MV_FRAME_OUT pFrame)
         {
-            return MV_CC_FreeImageBuffer(this.handle, ref pFrame);
+            return MV_CC_FreeImageBuffer(handle, ref pFrame);
         }
 
         /// <summary>
@@ -284,7 +283,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000018 RID: 24 RVA: 0x0000228D File Offset: 0x0000048D
         public int MV_CC_GetOneFrameTimeout_NET(IntPtr pData, uint nDataSize, ref MV_FRAME_OUT_INFO_EX pFrameInfo, int nMsec)
         {
-            return MV_CC_GetOneFrameTimeout(this.handle, pData, nDataSize, ref pFrameInfo, nMsec);
+            return MV_CC_GetOneFrameTimeout(handle, pData, nDataSize, ref pFrameInfo, nMsec);
         }
 
         /// <summary>
@@ -294,7 +293,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000019 RID: 25 RVA: 0x0000229F File Offset: 0x0000049F
         public int MV_CC_ClearImageBuffer_NET()
         {
-            return MV_CC_ClearImageBuffer(this.handle);
+            return MV_CC_ClearImageBuffer(handle);
         }
 
         /// <summary>
@@ -305,7 +304,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600001A RID: 26 RVA: 0x000022AC File Offset: 0x000004AC
         public int MV_CC_DisplayOneFrame_NET(ref MV_DISPLAY_FRAME_INFO pDisplayInfo)
         {
-            return MV_CC_DisplayOneFrame(this.handle, ref pDisplayInfo);
+            return MV_CC_DisplayOneFrame(handle, ref pDisplayInfo);
         }
 
         /// <summary>
@@ -316,7 +315,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600001B RID: 27 RVA: 0x000022BA File Offset: 0x000004BA
         public int MV_CC_SetImageNodeNum_NET(uint nNum)
         {
-            return MV_CC_SetImageNodeNum(this.handle, nNum);
+            return MV_CC_SetImageNodeNum(handle, nNum);
         }
 
         /// <summary>
@@ -327,7 +326,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600001C RID: 28 RVA: 0x000022C8 File Offset: 0x000004C8
         public int MV_CC_SetGrabStrategy_NET(MV_GRAB_STRATEGY enGrabStrategy)
         {
-            return MV_CC_SetGrabStrategy(this.handle, enGrabStrategy);
+            return MV_CC_SetGrabStrategy(handle, enGrabStrategy);
         }
 
         /// <summary>
@@ -338,7 +337,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600001D RID: 29 RVA: 0x000022D6 File Offset: 0x000004D6
         public int MV_CC_SetOutputQueueSize_NET(uint nOutputQueueSize)
         {
-            return MV_CC_SetOutputQueueSize(this.handle, nOutputQueueSize);
+            return MV_CC_SetOutputQueueSize(handle, nOutputQueueSize);
         }
 
         /// <summary>
@@ -349,7 +348,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600001E RID: 30 RVA: 0x000022E4 File Offset: 0x000004E4
         public int MV_CC_GetDeviceInfo_NET(ref MV_CC_DEVICE_INFO pstDevInfo)
         {
-            return MV_CC_GetDeviceInfo(this.handle, ref pstDevInfo);
+            return MV_CC_GetDeviceInfo(handle, ref pstDevInfo);
         }
 
         /// <summary>
@@ -360,7 +359,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600001F RID: 31 RVA: 0x000022F2 File Offset: 0x000004F2
         public int MV_CC_GetAllMatchInfo_NET(ref MV_ALL_MATCH_INFO pstInfo)
         {
-            return MV_CC_GetAllMatchInfo(this.handle, ref pstInfo);
+            return MV_CC_GetAllMatchInfo(handle, ref pstInfo);
         }
 
         /// <summary>
@@ -372,7 +371,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000020 RID: 32 RVA: 0x00002300 File Offset: 0x00000500
         public int MV_CC_GetIntValueEx_NET(string strKey, ref MVCC_INTVALUE_EX pstValue)
         {
-            return MV_CC_GetIntValueEx(this.handle, strKey, ref pstValue);
+            return MV_CC_GetIntValueEx(handle, strKey, ref pstValue);
         }
 
         /// <summary>
@@ -384,7 +383,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000021 RID: 33 RVA: 0x0000230F File Offset: 0x0000050F
         public int MV_CC_SetIntValueEx_NET(string strKey, long nValue)
         {
-            return MV_CC_SetIntValueEx(this.handle, strKey, nValue);
+            return MV_CC_SetIntValueEx(handle, strKey, nValue);
         }
 
         /// <summary>
@@ -396,7 +395,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000022 RID: 34 RVA: 0x0000231E File Offset: 0x0000051E
         public int MV_CC_GetEnumValue_NET(string strKey, ref MVCC_ENUMVALUE pstValue)
         {
-            return MV_CC_GetEnumValue(this.handle, strKey, ref pstValue);
+            return MV_CC_GetEnumValue(handle, strKey, ref pstValue);
         }
 
         /// <summary>
@@ -408,7 +407,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000023 RID: 35 RVA: 0x0000232D File Offset: 0x0000052D
         public int MV_CC_SetEnumValue_NET(string strKey, uint nValue)
         {
-            return MV_CC_SetEnumValue(this.handle, strKey, nValue);
+            return MV_CC_SetEnumValue(handle, strKey, nValue);
         }
 
         /// <summary>
@@ -420,7 +419,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000024 RID: 36 RVA: 0x0000233C File Offset: 0x0000053C
         public int MV_CC_SetEnumValueByString_NET(string strKey, string sValue)
         {
-            return MV_CC_SetEnumValueByString(this.handle, strKey, sValue);
+            return MV_CC_SetEnumValueByString(handle, strKey, sValue);
         }
 
         /// <summary>
@@ -432,7 +431,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000025 RID: 37 RVA: 0x0000234B File Offset: 0x0000054B
         public int MV_CC_GetFloatValue_NET(string strKey, ref MVCC_FLOATVALUE pstValue)
         {
-            return MV_CC_GetFloatValue(this.handle, strKey, ref pstValue);
+            return MV_CC_GetFloatValue(handle, strKey, ref pstValue);
         }
 
         /// <summary>
@@ -444,7 +443,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000026 RID: 38 RVA: 0x0000235A File Offset: 0x0000055A
         public int MV_CC_SetFloatValue_NET(string strKey, float fValue)
         {
-            return MV_CC_SetFloatValue(this.handle, strKey, fValue);
+            return MV_CC_SetFloatValue(handle, strKey, fValue);
         }
 
         /// <summary>
@@ -456,7 +455,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000027 RID: 39 RVA: 0x00002369 File Offset: 0x00000569
         public int MV_CC_GetBoolValue_NET(string strKey, ref bool pbValue)
         {
-            return MV_CC_GetBoolValue(this.handle, strKey, ref pbValue);
+            return MV_CC_GetBoolValue(handle, strKey, ref pbValue);
         }
 
         /// <summary>
@@ -468,7 +467,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000028 RID: 40 RVA: 0x00002378 File Offset: 0x00000578
         public int MV_CC_SetBoolValue_NET(string strKey, bool bValue)
         {
-            return MV_CC_SetBoolValue(this.handle, strKey, bValue);
+            return MV_CC_SetBoolValue(handle, strKey, bValue);
         }
 
         /// <summary>
@@ -480,7 +479,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000029 RID: 41 RVA: 0x00002387 File Offset: 0x00000587
         public int MV_CC_GetStringValue_NET(string strKey, ref MVCC_STRINGVALUE pstValue)
         {
-            return MV_CC_GetStringValue(this.handle, strKey, ref pstValue);
+            return MV_CC_GetStringValue(handle, strKey, ref pstValue);
         }
 
         /// <summary>
@@ -492,7 +491,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600002A RID: 42 RVA: 0x00002396 File Offset: 0x00000596
         public int MV_CC_SetStringValue_NET(string strKey, string strValue)
         {
-            return MV_CC_SetStringValue(this.handle, strKey, strValue);
+            return MV_CC_SetStringValue(handle, strKey, strValue);
         }
 
         /// <summary>
@@ -503,7 +502,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600002B RID: 43 RVA: 0x000023A5 File Offset: 0x000005A5
         public int MV_CC_SetCommandValue_NET(string strKey)
         {
-            return MV_CC_SetCommandValue(this.handle, strKey);
+            return MV_CC_SetCommandValue(handle, strKey);
         }
 
         /// <summary>
@@ -513,7 +512,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600002C RID: 44 RVA: 0x000023B3 File Offset: 0x000005B3
         public int MV_CC_InvalidateNodes_NET()
         {
-            return MV_CC_InvalidateNodes(this.handle);
+            return MV_CC_InvalidateNodes(handle);
         }
 
         /// <summary>
@@ -524,7 +523,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600002D RID: 45 RVA: 0x000023C0 File Offset: 0x000005C0
         public int MV_CC_LocalUpgrade_NET(string pFilePathName)
         {
-            return MV_CC_LocalUpgrade(this.handle, pFilePathName);
+            return MV_CC_LocalUpgrade(handle, pFilePathName);
         }
 
         /// <summary>
@@ -535,7 +534,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600002E RID: 46 RVA: 0x000023CE File Offset: 0x000005CE
         public int MV_CC_GetUpgradeProcess_NET(ref uint pnProcess)
         {
-            return MV_CC_GetUpgradeProcess(this.handle, ref pnProcess);
+            return MV_CC_GetUpgradeProcess(handle, ref pnProcess);
         }
 
         /// <summary>
@@ -548,7 +547,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600002F RID: 47 RVA: 0x000023DC File Offset: 0x000005DC
         public int MV_CC_ReadMemory_NET(IntPtr pBuffer, long nAddress, long nLength)
         {
-            return MV_CC_ReadMemory(this.handle, pBuffer, nAddress, nLength);
+            return MV_CC_ReadMemory(handle, pBuffer, nAddress, nLength);
         }
 
         /// <summary>
@@ -561,7 +560,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000030 RID: 48 RVA: 0x000023EC File Offset: 0x000005EC
         public int MV_CC_WriteMemory_NET(IntPtr pBuffer, long nAddress, long nLength)
         {
-            return MV_CC_WriteMemory(this.handle, pBuffer, nAddress, nLength);
+            return MV_CC_WriteMemory(handle, pBuffer, nAddress, nLength);
         }
 
         /// <summary>
@@ -573,7 +572,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000031 RID: 49 RVA: 0x000023FC File Offset: 0x000005FC
         public int MV_CC_RegisterExceptionCallBack_NET(cbExceptiondelegate cbException, IntPtr pUser)
         {
-            return MV_CC_RegisterExceptionCallBack(this.handle, cbException, pUser);
+            return MV_CC_RegisterExceptionCallBack(handle, cbException, pUser);
         }
 
         /// <summary>
@@ -585,7 +584,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000032 RID: 50 RVA: 0x0000240B File Offset: 0x0000060B
         public int MV_CC_RegisterAllEventCallBack_NET(cbEventdelegateEx cbEvent, IntPtr pUser)
         {
-            return MV_CC_RegisterAllEventCallBack(this.handle, cbEvent, pUser);
+            return MV_CC_RegisterAllEventCallBack(handle, cbEvent, pUser);
         }
 
         /// <summary>
@@ -598,7 +597,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000033 RID: 51 RVA: 0x0000241A File Offset: 0x0000061A
         public int MV_CC_RegisterEventCallBackEx_NET(string pEventName, cbEventdelegateEx cbEvent, IntPtr pUser)
         {
-            return MV_CC_RegisterEventCallBackEx(this.handle, pEventName, cbEvent, pUser);
+            return MV_CC_RegisterEventCallBackEx(handle, pEventName, cbEvent, pUser);
         }
 
         /// <summary>
@@ -611,7 +610,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000034 RID: 52 RVA: 0x0000242A File Offset: 0x0000062A
         public int MV_GIGE_ForceIpEx_NET(uint nIP, uint nSubNetMask, uint nDefaultGateWay)
         {
-            return MV_GIGE_ForceIpEx(this.handle, nIP, nSubNetMask, nDefaultGateWay);
+            return MV_GIGE_ForceIpEx(handle, nIP, nSubNetMask, nDefaultGateWay);
         }
 
         /// <summary>
@@ -622,7 +621,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000035 RID: 53 RVA: 0x0000243A File Offset: 0x0000063A
         public int MV_GIGE_SetIpConfig_NET(uint nType)
         {
-            return MV_GIGE_SetIpConfig(this.handle, nType);
+            return MV_GIGE_SetIpConfig(handle, nType);
         }
 
         /// <summary>
@@ -633,7 +632,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000036 RID: 54 RVA: 0x00002448 File Offset: 0x00000648
         public int MV_GIGE_SetNetTransMode_NET(uint nType)
         {
-            return MV_GIGE_SetNetTransMode(this.handle, nType);
+            return MV_GIGE_SetNetTransMode(handle, nType);
         }
 
         /// <summary>
@@ -644,7 +643,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000037 RID: 55 RVA: 0x00002456 File Offset: 0x00000656
         public int MV_GIGE_GetNetTransInfo_NET(ref MV_NETTRANS_INFO pstInfo)
         {
-            return MV_GIGE_GetNetTransInfo(this.handle, ref pstInfo);
+            return MV_GIGE_GetNetTransInfo(handle, ref pstInfo);
         }
 
         /// <summary>
@@ -666,7 +665,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000039 RID: 57 RVA: 0x0000246C File Offset: 0x0000066C
         public int MV_GIGE_SetGvspTimeout_NET(uint nMillisec)
         {
-            return MV_GIGE_SetGvspTimeout(this.handle, nMillisec);
+            return MV_GIGE_SetGvspTimeout(handle, nMillisec);
         }
 
         /// <summary>
@@ -677,7 +676,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600003A RID: 58 RVA: 0x0000247A File Offset: 0x0000067A
         public int MV_GIGE_GetGvspTimeout_NET(ref uint pMillisec)
         {
-            return MV_GIGE_GetGvspTimeout(this.handle, ref pMillisec);
+            return MV_GIGE_GetGvspTimeout(handle, ref pMillisec);
         }
 
         /// <summary>
@@ -688,7 +687,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600003B RID: 59 RVA: 0x00002488 File Offset: 0x00000688
         public int MV_GIGE_SetGvcpTimeout_NET(uint nMillisec)
         {
-            return MV_GIGE_SetGvcpTimeout(this.handle, nMillisec);
+            return MV_GIGE_SetGvcpTimeout(handle, nMillisec);
         }
 
         /// <summary>
@@ -699,7 +698,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600003C RID: 60 RVA: 0x00002496 File Offset: 0x00000696
         public int MV_GIGE_GetGvcpTimeout_NET(ref uint pMillisec)
         {
-            return MV_GIGE_GetGvcpTimeout(this.handle, ref pMillisec);
+            return MV_GIGE_GetGvcpTimeout(handle, ref pMillisec);
         }
 
         /// <summary>
@@ -710,7 +709,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600003D RID: 61 RVA: 0x000024A4 File Offset: 0x000006A4
         public int MV_GIGE_SetRetryGvcpTimes_NET(uint nRetryGvcpTimes)
         {
-            return MV_GIGE_SetRetryGvcpTimes(this.handle, nRetryGvcpTimes);
+            return MV_GIGE_SetRetryGvcpTimes(handle, nRetryGvcpTimes);
         }
 
         /// <summary>
@@ -721,7 +720,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600003E RID: 62 RVA: 0x000024B2 File Offset: 0x000006B2
         public int MV_GIGE_GetRetryGvcpTimes_NET(ref uint pRetryGvcpTimes)
         {
-            return MV_GIGE_GetRetryGvcpTimes(this.handle, ref pRetryGvcpTimes);
+            return MV_GIGE_GetRetryGvcpTimes(handle, ref pRetryGvcpTimes);
         }
 
         /// <summary>
@@ -731,7 +730,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600003F RID: 63 RVA: 0x000024C0 File Offset: 0x000006C0
         public int MV_CC_GetOptimalPacketSize_NET()
         {
-            return MV_CC_GetOptimalPacketSize(this.handle);
+            return MV_CC_GetOptimalPacketSize(handle);
         }
 
         /// <summary>
@@ -744,7 +743,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000040 RID: 64 RVA: 0x000024CD File Offset: 0x000006CD
         public int MV_GIGE_SetResend_NET(uint bEnable, uint nMaxResendPercent, uint nResendTimeout)
         {
-            return MV_GIGE_SetResend(this.handle, bEnable, nMaxResendPercent, nResendTimeout);
+            return MV_GIGE_SetResend(handle, bEnable, nMaxResendPercent, nResendTimeout);
         }
 
         /// <summary>
@@ -755,7 +754,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000041 RID: 65 RVA: 0x000024DD File Offset: 0x000006DD
         public int MV_GIGE_SetResendMaxRetryTimes_NET(uint nRetryTimes)
         {
-            return MV_GIGE_SetResendMaxRetryTimes(this.handle, nRetryTimes);
+            return MV_GIGE_SetResendMaxRetryTimes(handle, nRetryTimes);
         }
 
         /// <summary>
@@ -766,7 +765,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000042 RID: 66 RVA: 0x000024EB File Offset: 0x000006EB
         public int MV_GIGE_GetResendMaxRetryTimes_NET(ref uint pnRetryTimes)
         {
-            return MV_GIGE_GetResendMaxRetryTimes(this.handle, ref pnRetryTimes);
+            return MV_GIGE_GetResendMaxRetryTimes(handle, ref pnRetryTimes);
         }
 
         /// <summary>
@@ -777,7 +776,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000043 RID: 67 RVA: 0x000024F9 File Offset: 0x000006F9
         public int MV_GIGE_SetResendTimeInterval_NET(uint nMillisec)
         {
-            return MV_GIGE_SetResendTimeInterval(this.handle, nMillisec);
+            return MV_GIGE_SetResendTimeInterval(handle, nMillisec);
         }
 
         /// <summary>
@@ -788,7 +787,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000044 RID: 68 RVA: 0x00002507 File Offset: 0x00000707
         public int MV_GIGE_GetResendTimeInterval_NET(ref uint pnMillisec)
         {
-            return MV_GIGE_GetResendTimeInterval(this.handle, ref pnMillisec);
+            return MV_GIGE_GetResendTimeInterval(handle, ref pnMillisec);
         }
 
         /// <summary>
@@ -799,7 +798,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000045 RID: 69 RVA: 0x00002515 File Offset: 0x00000715
         public int MV_GIGE_SetTransmissionType_NET(ref MV_CC_TRANSMISSION_TYPE pstTransmissionType)
         {
-            return MV_GIGE_SetTransmissionType(this.handle, ref pstTransmissionType);
+            return MV_GIGE_SetTransmissionType(handle, ref pstTransmissionType);
         }
 
         /// <summary>
@@ -834,7 +833,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000048 RID: 72 RVA: 0x00002535 File Offset: 0x00000735
         public int MV_CAML_SetDeviceBaudrate_NET(uint nBaudrate)
         {
-            return MV_CAML_SetDeviceBaudrate(this.handle, nBaudrate);
+            return MV_CAML_SetDeviceBaudrate(handle, nBaudrate);
         }
 
         /// <summary>
@@ -844,7 +843,7 @@ namespace GeneralTool.CoreLibrary.MVS
         /// <returns></returns>
         public int MV_CAML_SetDeviceBauderate_NET(uint nBaudrate)
         {
-            return MV_CAML_SetDeviceBaudrate(this.handle, nBaudrate);
+            return MV_CAML_SetDeviceBaudrate(handle, nBaudrate);
         }
 
         /// <summary>
@@ -856,7 +855,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600004A RID: 74 RVA: 0x00002551 File Offset: 0x00000751
         public int MV_CAML_GetDeviceBaudrate_NET(ref uint pnCurrentBaudrate)
         {
-            return MV_CAML_GetDeviceBaudrate(this.handle, ref pnCurrentBaudrate);
+            return MV_CAML_GetDeviceBaudrate(handle, ref pnCurrentBaudrate);
         }
 
         /// <summary>
@@ -864,7 +863,7 @@ namespace GeneralTool.CoreLibrary.MVS
         /// </summary>
         public int MV_CAML_GetDeviceBauderate_NET(ref uint pnCurrentBaudrate)
         {
-            return MV_CAML_GetDeviceBaudrate(this.handle, ref pnCurrentBaudrate);
+            return MV_CAML_GetDeviceBaudrate(handle, ref pnCurrentBaudrate);
         }
 
         /// <summary>
@@ -876,7 +875,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600004C RID: 76 RVA: 0x0000256D File Offset: 0x0000076D
         public int MV_CAML_GetSupportBaudrates_NET(ref uint pnBaudrateAblity)
         {
-            return MV_CAML_GetSupportBaudrates(this.handle, ref pnBaudrateAblity);
+            return MV_CAML_GetSupportBaudrates(handle, ref pnBaudrateAblity);
         }
 
         /// <summary>
@@ -884,7 +883,7 @@ namespace GeneralTool.CoreLibrary.MVS
         /// </summary>
         public int MV_CAML_GetSupportBauderates_NET(ref uint pnBaudrateAblity)
         {
-            return MV_CAML_GetSupportBaudrates(this.handle, ref pnBaudrateAblity);
+            return MV_CAML_GetSupportBaudrates(handle, ref pnBaudrateAblity);
         }
 
         /// <summary>
@@ -895,7 +894,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600004E RID: 78 RVA: 0x00002589 File Offset: 0x00000789
         public int MV_CAML_SetGenCPTimeOut_NET(uint nMillisec)
         {
-            return MV_CAML_SetGenCPTimeOut(this.handle, nMillisec);
+            return MV_CAML_SetGenCPTimeOut(handle, nMillisec);
         }
 
         /// <summary>
@@ -906,7 +905,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600004F RID: 79 RVA: 0x00002597 File Offset: 0x00000797
         public int MV_USB_SetTransferSize_NET(uint nTransferSize)
         {
-            return MV_USB_SetTransferSize(this.handle, nTransferSize);
+            return MV_USB_SetTransferSize(handle, nTransferSize);
         }
 
         /// <summary>
@@ -917,7 +916,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000050 RID: 80 RVA: 0x000025A5 File Offset: 0x000007A5
         public int MV_USB_GetTransferSize_NET(ref uint pTransferSize)
         {
-            return MV_USB_GetTransferSize(this.handle, ref pTransferSize);
+            return MV_USB_GetTransferSize(handle, ref pTransferSize);
         }
 
         /// <summary>
@@ -928,7 +927,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000051 RID: 81 RVA: 0x000025B3 File Offset: 0x000007B3
         public int MV_USB_SetTransferWays_NET(uint nTransferWays)
         {
-            return MV_USB_SetTransferWays(this.handle, nTransferWays);
+            return MV_USB_SetTransferWays(handle, nTransferWays);
         }
 
         /// <summary>
@@ -939,7 +938,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000052 RID: 82 RVA: 0x000025C1 File Offset: 0x000007C1
         public int MV_USB_GetTransferWays_NET(ref uint pTransferWays)
         {
-            return MV_USB_GetTransferWays(this.handle, ref pTransferWays);
+            return MV_USB_GetTransferWays(handle, ref pTransferWays);
         }
 
         /// <summary>
@@ -974,12 +973,12 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000055 RID: 85 RVA: 0x000025E1 File Offset: 0x000007E1
         public int MV_CC_CreateDeviceByGenTL_NET(ref MV_GENTL_DEV_INFO stDevInfo)
         {
-            if (IntPtr.Zero != this.handle)
+            if (IntPtr.Zero != handle)
             {
-                MV_CC_DestroyHandle(this.handle);
-                this.handle = IntPtr.Zero;
+                _ = MV_CC_DestroyHandle(handle);
+                handle = IntPtr.Zero;
             }
-            return MV_CC_CreateHandleByGenTL(ref this.handle, ref stDevInfo);
+            return MV_CC_CreateHandleByGenTL(ref handle, ref stDevInfo);
         }
 
         /// <summary>
@@ -992,7 +991,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000056 RID: 86 RVA: 0x00002618 File Offset: 0x00000818
         public int MV_XML_GetGenICamXML_NET(IntPtr pData, uint nDataSize, ref uint pnDataLen)
         {
-            return MV_XML_GetGenICamXML(this.handle, pData, nDataSize, ref pnDataLen);
+            return MV_XML_GetGenICamXML(handle, pData, nDataSize, ref pnDataLen);
         }
 
         /// <summary>
@@ -1004,7 +1003,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000057 RID: 87 RVA: 0x00002628 File Offset: 0x00000828
         public int MV_XML_GetNodeAccessMode_NET(string pstrName, ref MV_XML_AccessMode pAccessMode)
         {
-            return MV_XML_GetNodeAccessMode(this.handle, pstrName, ref pAccessMode);
+            return MV_XML_GetNodeAccessMode(handle, pstrName, ref pAccessMode);
         }
 
         /// <summary>
@@ -1016,7 +1015,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000058 RID: 88 RVA: 0x00002637 File Offset: 0x00000837
         public int MV_XML_GetNodeInterfaceType_NET(string pstrName, ref MV_XML_InterfaceType pInterfaceType)
         {
-            return MV_XML_GetNodeInterfaceType(this.handle, pstrName, ref pInterfaceType);
+            return MV_XML_GetNodeInterfaceType(handle, pstrName, ref pInterfaceType);
         }
 
         /// <summary>
@@ -1027,7 +1026,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000059 RID: 89 RVA: 0x00002646 File Offset: 0x00000846
         public int MV_CC_SaveImageEx_NET(ref MV_SAVE_IMAGE_PARAM_EX stSaveParam)
         {
-            return MV_CC_SaveImageEx2(this.handle, ref stSaveParam);
+            return MV_CC_SaveImageEx2(handle, ref stSaveParam);
         }
 
         /// <summary>
@@ -1038,7 +1037,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600005A RID: 90 RVA: 0x00002654 File Offset: 0x00000854
         public int MV_CC_SaveImageToFile_NET(ref MV_SAVE_IMG_TO_FILE_PARAM pstSaveFileParam)
         {
-            return MV_CC_SaveImageToFile(this.handle, ref pstSaveFileParam);
+            return MV_CC_SaveImageToFile(handle, ref pstSaveFileParam);
         }
 
         /// <summary>
@@ -1049,7 +1048,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600005B RID: 91 RVA: 0x00002662 File Offset: 0x00000862
         public int MV_CC_SavePointCloudData_NET(ref MV_SAVE_POINT_CLOUD_PARAM pstPointDataParam)
         {
-            return MV_CC_SavePointCloudData(this.handle, ref pstPointDataParam);
+            return MV_CC_SavePointCloudData(handle, ref pstPointDataParam);
         }
 
         /// <summary>
@@ -1060,7 +1059,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600005C RID: 92 RVA: 0x00002670 File Offset: 0x00000870
         public int MV_CC_RotateImage_NET(ref MV_CC_ROTATE_IMAGE_PARAM pstRotateParam)
         {
-            return MV_CC_RotateImage(this.handle, ref pstRotateParam);
+            return MV_CC_RotateImage(handle, ref pstRotateParam);
         }
 
         /// <summary>
@@ -1071,7 +1070,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600005D RID: 93 RVA: 0x0000267E File Offset: 0x0000087E
         public int MV_CC_FlipImage_NET(ref MV_CC_FLIP_IMAGE_PARAM pstFlipParam)
         {
-            return MV_CC_FlipImage(this.handle, ref pstFlipParam);
+            return MV_CC_FlipImage(handle, ref pstFlipParam);
         }
 
         /// <summary>
@@ -1082,7 +1081,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600005E RID: 94 RVA: 0x0000268C File Offset: 0x0000088C
         public int MV_CC_ConvertPixelType_NET(ref MV_PIXEL_CONVERT_PARAM pstCvtParam)
         {
-            return MV_CC_ConvertPixelType(this.handle, ref pstCvtParam);
+            return MV_CC_ConvertPixelType(handle, ref pstCvtParam);
         }
 
         /// <summary>
@@ -1093,7 +1092,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600005F RID: 95 RVA: 0x0000269A File Offset: 0x0000089A
         public int MV_CC_SetBayerCvtQuality_NET(uint BayerCvtQuality)
         {
-            return MV_CC_SetBayerCvtQuality(this.handle, BayerCvtQuality);
+            return MV_CC_SetBayerCvtQuality(handle, BayerCvtQuality);
         }
 
         /// <summary>
@@ -1104,7 +1103,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000060 RID: 96 RVA: 0x000026A8 File Offset: 0x000008A8
         public int MV_CC_SetBayerGammaValue_NET(float fBayerGammaValue)
         {
-            return MV_CC_SetBayerGammaValue(this.handle, fBayerGammaValue);
+            return MV_CC_SetBayerGammaValue(handle, fBayerGammaValue);
         }
 
         /// <summary>
@@ -1115,7 +1114,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000061 RID: 97 RVA: 0x000026B6 File Offset: 0x000008B6
         public int MV_CC_SetBayerGammaParam_NET(ref MV_CC_GAMMA_PARAM pstGammaParam)
         {
-            return MV_CC_SetBayerGammaParam(this.handle, ref pstGammaParam);
+            return MV_CC_SetBayerGammaParam(handle, ref pstGammaParam);
         }
 
         /// <summary>
@@ -1126,7 +1125,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000062 RID: 98 RVA: 0x000026C4 File Offset: 0x000008C4
         public int MV_CC_SetBayerCCMParam_NET(ref MV_CC_CCM_PARAM pstCCMParam)
         {
-            return MV_CC_SetBayerCCMParam(this.handle, ref pstCCMParam);
+            return MV_CC_SetBayerCCMParam(handle, ref pstCCMParam);
         }
 
         /// <summary>
@@ -1137,7 +1136,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000063 RID: 99 RVA: 0x000026D2 File Offset: 0x000008D2
         public int MV_CC_SetBayerCCMParamEx_NET(ref MV_CC_CCM_PARAM_EX pstCCMParam)
         {
-            return MV_CC_SetBayerCCMParamEx(this.handle, ref pstCCMParam);
+            return MV_CC_SetBayerCCMParamEx(handle, ref pstCCMParam);
         }
 
         /// <summary>
@@ -1148,7 +1147,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000064 RID: 100 RVA: 0x000026E0 File Offset: 0x000008E0
         public int MV_CC_SetBayerCLUTParam_NET(ref MV_CC_CLUT_PARAM pstCLUTParam)
         {
-            return MV_CC_SetBayerCLUTParam(this.handle, ref pstCLUTParam);
+            return MV_CC_SetBayerCLUTParam(handle, ref pstCLUTParam);
         }
 
         /// <summary>
@@ -1159,7 +1158,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000065 RID: 101 RVA: 0x000026EE File Offset: 0x000008EE
         public int MV_CC_ImageContrast_NET(ref MV_CC_CONTRAST_PARAM pstContrastParam)
         {
-            return MV_CC_ImageContrast(this.handle, ref pstContrastParam);
+            return MV_CC_ImageContrast(handle, ref pstContrastParam);
         }
 
         /// <summary>
@@ -1170,7 +1169,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000066 RID: 102 RVA: 0x000026FC File Offset: 0x000008FC
         public int MV_CC_ImageSharpen_NET(ref MV_CC_SHARPEN_PARAM pstSharpenParam)
         {
-            return MV_CC_ImageSharpen(this.handle, ref pstSharpenParam);
+            return MV_CC_ImageSharpen(handle, ref pstSharpenParam);
         }
 
         /// <summary>
@@ -1181,7 +1180,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000067 RID: 103 RVA: 0x0000270A File Offset: 0x0000090A
         public int MV_CC_ColorCorrect_NET(ref MV_CC_COLOR_CORRECT_PARAM pstColorCorrectParam)
         {
-            return MV_CC_ColorCorrect(this.handle, ref pstColorCorrectParam);
+            return MV_CC_ColorCorrect(handle, ref pstColorCorrectParam);
         }
 
         /// <summary>
@@ -1192,7 +1191,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000068 RID: 104 RVA: 0x00002718 File Offset: 0x00000918
         public int MV_CC_NoiseEstimate_NET(ref MV_CC_NOISE_ESTIMATE_PARAM pstNoiseEstimateParam)
         {
-            return MV_CC_NoiseEstimate(this.handle, ref pstNoiseEstimateParam);
+            return MV_CC_NoiseEstimate(handle, ref pstNoiseEstimateParam);
         }
 
         /// <summary>
@@ -1203,7 +1202,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000069 RID: 105 RVA: 0x00002726 File Offset: 0x00000926
         public int MV_CC_SpatialDenoise_NET(ref MV_CC_SPATIAL_DENOISE_PARAM pstSpatialDenoiseParam)
         {
-            return MV_CC_SpatialDenoise(this.handle, ref pstSpatialDenoiseParam);
+            return MV_CC_SpatialDenoise(handle, ref pstSpatialDenoiseParam);
         }
 
         /// <summary>
@@ -1214,7 +1213,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600006A RID: 106 RVA: 0x00002734 File Offset: 0x00000934
         public int MV_CC_LSCCalib_NET(ref MV_CC_LSC_CALIB_PARAM pstLSCCalibParam)
         {
-            return MV_CC_LSCCalib(this.handle, ref pstLSCCalibParam);
+            return MV_CC_LSCCalib(handle, ref pstLSCCalibParam);
         }
 
         /// <summary>
@@ -1225,7 +1224,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600006B RID: 107 RVA: 0x00002742 File Offset: 0x00000942
         public int MV_CC_LSCCorrect_NET(ref MV_CC_LSC_CORRECT_PARAM pstLSCCorrectParam)
         {
-            return MV_CC_LSCCorrect(this.handle, ref pstLSCCorrectParam);
+            return MV_CC_LSCCorrect(handle, ref pstLSCCorrectParam);
         }
 
         /// <summary>
@@ -1236,7 +1235,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600006C RID: 108 RVA: 0x00002750 File Offset: 0x00000950
         public int MV_CC_HB_Decode_NET(ref MV_CC_HB_DECODE_PARAM pstDecodeParam)
         {
-            return MV_CC_HB_Decode(this.handle, ref pstDecodeParam);
+            return MV_CC_HB_Decode(handle, ref pstDecodeParam);
         }
 
         /// <summary>
@@ -1247,7 +1246,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600006D RID: 109 RVA: 0x0000275E File Offset: 0x0000095E
         public int MV_CC_BayerNoiseEstimate_NET(ref MV_CC_BAYER_NOISE_ESTIMATE_PARAM pstNoiseEstimateParam)
         {
-            return MV_CC_BayerNoiseEstimate(this.handle, ref pstNoiseEstimateParam);
+            return MV_CC_BayerNoiseEstimate(handle, ref pstNoiseEstimateParam);
         }
 
         /// <summary>
@@ -1258,7 +1257,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600006E RID: 110 RVA: 0x0000276C File Offset: 0x0000096C
         public int MV_CC_BayerSpatialDenoise_NET(ref MV_CC_BAYER_SPATIAL_DENOISE_PARAM pstSpatialDenoiseParam)
         {
-            return MV_CC_BayerSpatialDenoise(this.handle, ref pstSpatialDenoiseParam);
+            return MV_CC_BayerSpatialDenoise(handle, ref pstSpatialDenoiseParam);
         }
 
         /// <summary>
@@ -1269,7 +1268,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600006F RID: 111 RVA: 0x0000277A File Offset: 0x0000097A
         public int MV_CC_FeatureSave_NET(string pFileName)
         {
-            return MV_CC_FeatureSave(this.handle, pFileName);
+            return MV_CC_FeatureSave(handle, pFileName);
         }
 
         /// <summary>
@@ -1280,7 +1279,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000070 RID: 112 RVA: 0x00002788 File Offset: 0x00000988
         public int MV_CC_FeatureLoad_NET(string pFileName)
         {
-            return MV_CC_FeatureLoad(this.handle, pFileName);
+            return MV_CC_FeatureLoad(handle, pFileName);
         }
 
         /// <summary>
@@ -1291,7 +1290,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000071 RID: 113 RVA: 0x00002796 File Offset: 0x00000996
         public int MV_CC_FileAccessRead_NET(ref MV_CC_FILE_ACCESS pstFileAccess)
         {
-            return MV_CC_FileAccessRead(this.handle, ref pstFileAccess);
+            return MV_CC_FileAccessRead(handle, ref pstFileAccess);
         }
 
         /// <summary>
@@ -1302,7 +1301,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000072 RID: 114 RVA: 0x000027A4 File Offset: 0x000009A4
         public int MV_CC_FileAccessWrite_NET(ref MV_CC_FILE_ACCESS pstFileAccess)
         {
-            return MV_CC_FileAccessWrite(this.handle, ref pstFileAccess);
+            return MV_CC_FileAccessWrite(handle, ref pstFileAccess);
         }
 
         /// <summary>
@@ -1313,7 +1312,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000073 RID: 115 RVA: 0x000027B2 File Offset: 0x000009B2
         public int MV_CC_GetFileAccessProgress_NET(ref MV_CC_FILE_ACCESS_PROGRESS pstFileAccessProgress)
         {
-            return MV_CC_GetFileAccessProgress(this.handle, ref pstFileAccessProgress);
+            return MV_CC_GetFileAccessProgress(handle, ref pstFileAccessProgress);
         }
 
         /// <summary>
@@ -1324,7 +1323,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000074 RID: 116 RVA: 0x000027C0 File Offset: 0x000009C0
         public int MV_CC_StartRecord_NET(ref MV_CC_RECORD_PARAM pstRecordParam)
         {
-            return MV_CC_StartRecord(this.handle, ref pstRecordParam);
+            return MV_CC_StartRecord(handle, ref pstRecordParam);
         }
 
         /// <summary>
@@ -1335,7 +1334,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000075 RID: 117 RVA: 0x000027CE File Offset: 0x000009CE
         public int MV_CC_InputOneFrame_NET(ref MV_CC_INPUT_FRAME_INFO pstInputFrameInfo)
         {
-            return MV_CC_InputOneFrame(this.handle, ref pstInputFrameInfo);
+            return MV_CC_InputOneFrame(handle, ref pstInputFrameInfo);
         }
 
         /// <summary>
@@ -1345,7 +1344,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000076 RID: 118 RVA: 0x000027DC File Offset: 0x000009DC
         public int MV_CC_StopRecord_NET()
         {
-            return MV_CC_StopRecord(this.handle);
+            return MV_CC_StopRecord(handle);
         }
 
         /// <summary>
@@ -1368,7 +1367,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000078 RID: 120 RVA: 0x000027F1 File Offset: 0x000009F1
         public int MV_CC_GetImageInfo_NET(ref MV_IMAGE_BASIC_INFO pstInfo)
         {
-            return MV_CC_GetImageInfo(this.handle, ref pstInfo);
+            return MV_CC_GetImageInfo(handle, ref pstInfo);
         }
 
         /// <summary>
@@ -1378,7 +1377,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000079 RID: 121 RVA: 0x000027FF File Offset: 0x000009FF
         public IntPtr MV_CC_GetTlProxy_NET()
         {
-            return MV_CC_GetTlProxy(this.handle);
+            return MV_CC_GetTlProxy(handle);
         }
 
         /// <summary>
@@ -1389,7 +1388,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600007A RID: 122 RVA: 0x0000280C File Offset: 0x00000A0C
         public int MV_XML_GetRootNode_NET(ref MV_XML_NODE_FEATURE pstNode)
         {
-            return MV_XML_GetRootNode(this.handle, ref pstNode);
+            return MV_XML_GetRootNode(handle, ref pstNode);
         }
 
         /// <summary>
@@ -1401,7 +1400,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600007B RID: 123 RVA: 0x0000281A File Offset: 0x00000A1A
         public int MV_XML_GetChildren_NET(ref MV_XML_NODE_FEATURE pstNode, IntPtr pstNodesList)
         {
-            return MV_XML_GetChildren(this.handle, ref pstNode, pstNodesList);
+            return MV_XML_GetChildren(handle, ref pstNode, pstNodesList);
         }
 
         /// <summary>
@@ -1413,7 +1412,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600007C RID: 124 RVA: 0x00002829 File Offset: 0x00000A29
         public int MV_XML_GetChildren_NET(ref MV_XML_NODE_FEATURE pstNode, ref MV_XML_NODES_LIST pstNodesList)
         {
-            return MV_XML_GetChildren(this.handle, ref pstNode, ref pstNodesList);
+            return MV_XML_GetChildren(handle, ref pstNode, ref pstNodesList);
         }
 
         /// <summary>
@@ -1425,7 +1424,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600007D RID: 125 RVA: 0x00002838 File Offset: 0x00000A38
         public int MV_XML_GetNodeFeature_NET(ref MV_XML_NODE_FEATURE pstNode, IntPtr pstFeature)
         {
-            return MV_XML_GetNodeFeature(this.handle, ref pstNode, pstFeature);
+            return MV_XML_GetNodeFeature(handle, ref pstNode, pstFeature);
         }
 
         /// <summary>
@@ -1437,7 +1436,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600007E RID: 126 RVA: 0x00002847 File Offset: 0x00000A47
         public int MV_XML_UpdateNodeFeature_NET(MV_XML_InterfaceType enType, IntPtr pstFeature)
         {
-            return MV_XML_UpdateNodeFeature(this.handle, enType, pstFeature);
+            return MV_XML_UpdateNodeFeature(handle, enType, pstFeature);
         }
 
         /// <summary>
@@ -1449,7 +1448,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600007F RID: 127 RVA: 0x00002856 File Offset: 0x00000A56
         public int MV_XML_RegisterUpdateCallBack_NET(cbXmlUpdatedelegate cbXmlUpdate, IntPtr pUser)
         {
-            return MV_XML_RegisterUpdateCallBack(this.handle, cbXmlUpdate, pUser);
+            return MV_XML_RegisterUpdateCallBack(handle, cbXmlUpdate, pUser);
         }
 
         /// <summary>
@@ -1462,7 +1461,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000080 RID: 128 RVA: 0x00002865 File Offset: 0x00000A65
         public int MV_CC_GetOneFrame_NET(IntPtr pData, uint nDataSize, ref MV_FRAME_OUT_INFO pFrameInfo)
         {
-            return MV_CC_GetOneFrame(this.handle, pData, nDataSize, ref pFrameInfo);
+            return MV_CC_GetOneFrame(handle, pData, nDataSize, ref pFrameInfo);
         }
 
         /// <summary>
@@ -1475,7 +1474,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000081 RID: 129 RVA: 0x00002875 File Offset: 0x00000A75
         public int MV_CC_GetOneFrameEx_NET(IntPtr pData, uint nDataSize, ref MV_FRAME_OUT_INFO_EX pFrameInfo)
         {
-            return MV_CC_GetOneFrameEx(this.handle, pData, nDataSize, ref pFrameInfo);
+            return MV_CC_GetOneFrameEx(handle, pData, nDataSize, ref pFrameInfo);
         }
 
         /// <summary>
@@ -1487,7 +1486,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000082 RID: 130 RVA: 0x00002885 File Offset: 0x00000A85
         public int MV_CC_RegisterImageCallBack_NET(cbOutputdelegate cbOutput, IntPtr pUser)
         {
-            return MV_CC_RegisterImageCallBack(this.handle, cbOutput, pUser);
+            return MV_CC_RegisterImageCallBack(handle, cbOutput, pUser);
         }
 
         /// <summary>
@@ -1509,7 +1508,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000084 RID: 132 RVA: 0x0000289C File Offset: 0x00000A9C
         public int MV_GIGE_ForceIp_NET(uint nIP)
         {
-            return MV_GIGE_ForceIp(this.handle, nIP);
+            return MV_GIGE_ForceIp(handle, nIP);
         }
 
         /// <summary>
@@ -1521,7 +1520,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000085 RID: 133 RVA: 0x000028AA File Offset: 0x00000AAA
         public int MV_CC_RegisterEventCallBack_NET(cbEventdelegate cbEvent, IntPtr pUser)
         {
-            return MV_CC_RegisterEventCallBack(this.handle, cbEvent, pUser);
+            return MV_CC_RegisterEventCallBack(handle, cbEvent, pUser);
         }
 
         /// <summary>
@@ -1532,7 +1531,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000086 RID: 134 RVA: 0x000028B9 File Offset: 0x00000AB9
         public int MV_CC_Display_NET(IntPtr hWnd)
         {
-            return MV_CC_Display(this.handle, hWnd);
+            return MV_CC_Display(handle, hWnd);
         }
 
         /// <summary>
@@ -1544,7 +1543,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000087 RID: 135 RVA: 0x000028C7 File Offset: 0x00000AC7
         public int MV_CC_GetIntValue_NET(string strKey, ref MVCC_INTVALUE pstValue)
         {
-            return MV_CC_GetIntValue(this.handle, strKey, ref pstValue);
+            return MV_CC_GetIntValue(handle, strKey, ref pstValue);
         }
 
         /// <summary>
@@ -1556,7 +1555,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000088 RID: 136 RVA: 0x000028D6 File Offset: 0x00000AD6
         public int MV_CC_SetIntValue_NET(string strKey, uint nValue)
         {
-            return MV_CC_SetIntValue(this.handle, strKey, nValue);
+            return MV_CC_SetIntValue(handle, strKey, nValue);
         }
 
         /// <summary>
@@ -1567,7 +1566,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000089 RID: 137 RVA: 0x000028E5 File Offset: 0x00000AE5
         public int MV_CC_GetWidth_NET(ref MVCC_INTVALUE pstValue)
         {
-            return MV_CC_GetWidth(this.handle, ref pstValue);
+            return MV_CC_GetWidth(handle, ref pstValue);
         }
 
         /// <summary>
@@ -1578,7 +1577,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600008A RID: 138 RVA: 0x000028F3 File Offset: 0x00000AF3
         public int MV_CC_SetWidth_NET(uint nValue)
         {
-            return MV_CC_SetWidth(this.handle, nValue);
+            return MV_CC_SetWidth(handle, nValue);
         }
 
         /// <summary>
@@ -1589,7 +1588,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600008B RID: 139 RVA: 0x00002901 File Offset: 0x00000B01
         public int MV_CC_GetHeight_NET(ref MVCC_INTVALUE pstValue)
         {
-            return MV_CC_GetHeight(this.handle, ref pstValue);
+            return MV_CC_GetHeight(handle, ref pstValue);
         }
 
         /// <summary>
@@ -1600,7 +1599,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600008C RID: 140 RVA: 0x0000290F File Offset: 0x00000B0F
         public int MV_CC_SetHeight_NET(uint nValue)
         {
-            return MV_CC_SetHeight(this.handle, nValue);
+            return MV_CC_SetHeight(handle, nValue);
         }
 
         /// <summary>
@@ -1611,7 +1610,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600008D RID: 141 RVA: 0x0000291D File Offset: 0x00000B1D
         public int MV_CC_GetAOIoffsetX_NET(ref MVCC_INTVALUE pstValue)
         {
-            return MV_CC_GetAOIoffsetX(this.handle, ref pstValue);
+            return MV_CC_GetAOIoffsetX(handle, ref pstValue);
         }
 
         /// <summary>
@@ -1622,7 +1621,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600008E RID: 142 RVA: 0x0000292B File Offset: 0x00000B2B
         public int MV_CC_SetAOIoffsetX_NET(uint nValue)
         {
-            return MV_CC_SetAOIoffsetX(this.handle, nValue);
+            return MV_CC_SetAOIoffsetX(handle, nValue);
         }
 
         /// <summary>
@@ -1633,7 +1632,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600008F RID: 143 RVA: 0x00002939 File Offset: 0x00000B39
         public int MV_CC_GetAOIoffsetY_NET(ref MVCC_INTVALUE pstValue)
         {
-            return MV_CC_GetAOIoffsetY(this.handle, ref pstValue);
+            return MV_CC_GetAOIoffsetY(handle, ref pstValue);
         }
 
         /// <summary>
@@ -1644,7 +1643,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000090 RID: 144 RVA: 0x00002947 File Offset: 0x00000B47
         public int MV_CC_SetAOIoffsetY_NET(uint nValue)
         {
-            return MV_CC_SetAOIoffsetY(this.handle, nValue);
+            return MV_CC_SetAOIoffsetY(handle, nValue);
         }
 
         /// <summary>
@@ -1655,7 +1654,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000091 RID: 145 RVA: 0x00002955 File Offset: 0x00000B55
         public int MV_CC_GetAutoExposureTimeLower_NET(ref MVCC_INTVALUE pstValue)
         {
-            return MV_CC_GetAutoExposureTimeLower(this.handle, ref pstValue);
+            return MV_CC_GetAutoExposureTimeLower(handle, ref pstValue);
         }
 
         /// <summary>
@@ -1666,7 +1665,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000092 RID: 146 RVA: 0x00002963 File Offset: 0x00000B63
         public int MV_CC_SetAutoExposureTimeLower_NET(uint nValue)
         {
-            return MV_CC_SetAutoExposureTimeLower(this.handle, nValue);
+            return MV_CC_SetAutoExposureTimeLower(handle, nValue);
         }
 
         /// <summary>
@@ -1677,7 +1676,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000093 RID: 147 RVA: 0x00002971 File Offset: 0x00000B71
         public int MV_CC_GetAutoExposureTimeUpper_NET(ref MVCC_INTVALUE pstValue)
         {
-            return MV_CC_GetAutoExposureTimeUpper(this.handle, ref pstValue);
+            return MV_CC_GetAutoExposureTimeUpper(handle, ref pstValue);
         }
 
         /// <summary>
@@ -1688,7 +1687,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000094 RID: 148 RVA: 0x0000297F File Offset: 0x00000B7F
         public int MV_CC_SetAutoExposureTimeUpper_NET(uint nValue)
         {
-            return MV_CC_SetAutoExposureTimeUpper(this.handle, nValue);
+            return MV_CC_SetAutoExposureTimeUpper(handle, nValue);
         }
 
         /// <summary>
@@ -1699,7 +1698,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000095 RID: 149 RVA: 0x0000298D File Offset: 0x00000B8D
         public int MV_CC_GetBrightness_NET(ref MVCC_INTVALUE pstValue)
         {
-            return MV_CC_GetBrightness(this.handle, ref pstValue);
+            return MV_CC_GetBrightness(handle, ref pstValue);
         }
 
         /// <summary>
@@ -1710,7 +1709,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000096 RID: 150 RVA: 0x0000299B File Offset: 0x00000B9B
         public int MV_CC_SetBrightness_NET(uint nValue)
         {
-            return MV_CC_SetBrightness(this.handle, nValue);
+            return MV_CC_SetBrightness(handle, nValue);
         }
 
         /// <summary>
@@ -1721,7 +1720,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000097 RID: 151 RVA: 0x000029A9 File Offset: 0x00000BA9
         public int MV_CC_GetFrameRate_NET(ref MVCC_FLOATVALUE pstValue)
         {
-            return MV_CC_GetFrameRate(this.handle, ref pstValue);
+            return MV_CC_GetFrameRate(handle, ref pstValue);
         }
 
         /// <summary>
@@ -1732,7 +1731,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000098 RID: 152 RVA: 0x000029B7 File Offset: 0x00000BB7
         public int MV_CC_SetFrameRate_NET(float fValue)
         {
-            return MV_CC_SetFrameRate(this.handle, fValue);
+            return MV_CC_SetFrameRate(handle, fValue);
         }
 
         /// <summary>
@@ -1743,7 +1742,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x06000099 RID: 153 RVA: 0x000029C5 File Offset: 0x00000BC5
         public int MV_CC_GetGain_NET(ref MVCC_FLOATVALUE pstValue)
         {
-            return MV_CC_GetGain(this.handle, ref pstValue);
+            return MV_CC_GetGain(handle, ref pstValue);
         }
 
         /// <summary>
@@ -1754,7 +1753,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600009A RID: 154 RVA: 0x000029D3 File Offset: 0x00000BD3
         public int MV_CC_SetGain_NET(float fValue)
         {
-            return MV_CC_SetGain(this.handle, fValue);
+            return MV_CC_SetGain(handle, fValue);
         }
 
         /// <summary>
@@ -1765,7 +1764,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600009B RID: 155 RVA: 0x000029E1 File Offset: 0x00000BE1
         public int MV_CC_GetExposureTime_NET(ref MVCC_FLOATVALUE pstValue)
         {
-            return MV_CC_GetExposureTime(this.handle, ref pstValue);
+            return MV_CC_GetExposureTime(handle, ref pstValue);
         }
 
         /// <summary>
@@ -1776,7 +1775,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600009C RID: 156 RVA: 0x000029EF File Offset: 0x00000BEF
         public int MV_CC_SetExposureTime_NET(float fValue)
         {
-            return MV_CC_SetExposureTime(this.handle, fValue);
+            return MV_CC_SetExposureTime(handle, fValue);
         }
 
         /// <summary>
@@ -1787,7 +1786,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600009D RID: 157 RVA: 0x000029FD File Offset: 0x00000BFD
         public int MV_CC_GetPixelFormat_NET(ref MVCC_ENUMVALUE pstValue)
         {
-            return MV_CC_GetPixelFormat(this.handle, ref pstValue);
+            return MV_CC_GetPixelFormat(handle, ref pstValue);
         }
 
         /// <summary>
@@ -1795,7 +1794,7 @@ namespace GeneralTool.CoreLibrary.MVS
         /// </summary>
         public int MV_CC_SetPixelFormat_NET(uint nValue)
         {
-            return MV_CC_SetPixelFormat(this.handle, nValue);
+            return MV_CC_SetPixelFormat(handle, nValue);
         }
 
         /// <summary>
@@ -1806,7 +1805,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x0600009F RID: 159 RVA: 0x00002A19 File Offset: 0x00000C19
         public int MV_CC_GetAcquisitionMode_NET(ref MVCC_ENUMVALUE pstValue)
         {
-            return MV_CC_GetAcquisitionMode(this.handle, ref pstValue);
+            return MV_CC_GetAcquisitionMode(handle, ref pstValue);
         }
 
         /// <summary>
@@ -1817,7 +1816,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x060000A0 RID: 160 RVA: 0x00002A27 File Offset: 0x00000C27
         public int MV_CC_SetAcquisitionMode_NET(uint nValue)
         {
-            return MV_CC_SetAcquisitionMode(this.handle, nValue);
+            return MV_CC_SetAcquisitionMode(handle, nValue);
         }
 
         /// <summary>
@@ -1828,7 +1827,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x060000A1 RID: 161 RVA: 0x00002A35 File Offset: 0x00000C35
         public int MV_CC_GetGainMode_NET(ref MVCC_ENUMVALUE pstValue)
         {
-            return MV_CC_GetGainMode(this.handle, ref pstValue);
+            return MV_CC_GetGainMode(handle, ref pstValue);
         }
 
         /// <summary>
@@ -1839,7 +1838,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x060000A2 RID: 162 RVA: 0x00002A43 File Offset: 0x00000C43
         public int MV_CC_SetGainMode_NET(uint nValue)
         {
-            return MV_CC_SetGainMode(this.handle, nValue);
+            return MV_CC_SetGainMode(handle, nValue);
         }
 
         /// <summary>
@@ -1850,7 +1849,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x060000A3 RID: 163 RVA: 0x00002A51 File Offset: 0x00000C51
         public int MV_CC_GetExposureAutoMode_NET(ref MVCC_ENUMVALUE pstValue)
         {
-            return MV_CC_GetExposureAutoMode(this.handle, ref pstValue);
+            return MV_CC_GetExposureAutoMode(handle, ref pstValue);
         }
 
         /// <summary>
@@ -1861,7 +1860,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x060000A4 RID: 164 RVA: 0x00002A5F File Offset: 0x00000C5F
         public int MV_CC_SetExposureAutoMode_NET(uint nValue)
         {
-            return MV_CC_SetExposureAutoMode(this.handle, nValue);
+            return MV_CC_SetExposureAutoMode(handle, nValue);
         }
 
         /// <summary>
@@ -1872,7 +1871,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x060000A5 RID: 165 RVA: 0x00002A6D File Offset: 0x00000C6D
         public int MV_CC_GetTriggerMode_NET(ref MVCC_ENUMVALUE pstValue)
         {
-            return MV_CC_GetTriggerMode(this.handle, ref pstValue);
+            return MV_CC_GetTriggerMode(handle, ref pstValue);
         }
 
         /// <summary>
@@ -1883,7 +1882,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x060000A6 RID: 166 RVA: 0x00002A7B File Offset: 0x00000C7B
         public int MV_CC_SetTriggerMode_NET(uint nValue)
         {
-            return MV_CC_SetTriggerMode(this.handle, nValue);
+            return MV_CC_SetTriggerMode(handle, nValue);
         }
 
         /// <summary>
@@ -1894,7 +1893,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x060000A7 RID: 167 RVA: 0x00002A89 File Offset: 0x00000C89
         public int MV_CC_GetTriggerDelay_NET(ref MVCC_FLOATVALUE pstValue)
         {
-            return MV_CC_GetTriggerDelay(this.handle, ref pstValue);
+            return MV_CC_GetTriggerDelay(handle, ref pstValue);
         }
 
         /// <summary>
@@ -1905,7 +1904,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x060000A8 RID: 168 RVA: 0x00002A97 File Offset: 0x00000C97
         public int MV_CC_SetTriggerDelay_NET(float fValue)
         {
-            return MV_CC_SetTriggerDelay(this.handle, fValue);
+            return MV_CC_SetTriggerDelay(handle, fValue);
         }
 
         /// <summary>
@@ -1913,7 +1912,7 @@ namespace GeneralTool.CoreLibrary.MVS
         /// </summary>
         public int MV_CC_GetTriggerSource_NET(ref MVCC_ENUMVALUE pstValue)
         {
-            return MV_CC_GetTriggerSource(this.handle, ref pstValue);
+            return MV_CC_GetTriggerSource(handle, ref pstValue);
         }
 
         /// <summary>
@@ -1924,7 +1923,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x060000AA RID: 170 RVA: 0x00002AB3 File Offset: 0x00000CB3
         public int MV_CC_SetTriggerSource_NET(uint nValue)
         {
-            return MV_CC_SetTriggerSource(this.handle, nValue);
+            return MV_CC_SetTriggerSource(handle, nValue);
         }
 
         /// <summary>
@@ -1934,7 +1933,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x060000AB RID: 171 RVA: 0x00002AC1 File Offset: 0x00000CC1
         public int MV_CC_TriggerSoftwareExecute_NET()
         {
-            return MV_CC_TriggerSoftwareExecute(this.handle);
+            return MV_CC_TriggerSoftwareExecute(handle);
         }
 
         /// <summary>
@@ -1945,7 +1944,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x060000AC RID: 172 RVA: 0x00002ACE File Offset: 0x00000CCE
         public int MV_CC_GetGammaSelector_NET(ref MVCC_ENUMVALUE pstValue)
         {
-            return MV_CC_GetGammaSelector(this.handle, ref pstValue);
+            return MV_CC_GetGammaSelector(handle, ref pstValue);
         }
 
         /// <summary>
@@ -1956,7 +1955,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x060000AD RID: 173 RVA: 0x00002ADC File Offset: 0x00000CDC
         public int MV_CC_SetGammaSelector_NET(uint nValue)
         {
-            return MV_CC_SetGammaSelector(this.handle, nValue);
+            return MV_CC_SetGammaSelector(handle, nValue);
         }
 
         /// <summary>
@@ -1967,7 +1966,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x060000AE RID: 174 RVA: 0x00002AEA File Offset: 0x00000CEA
         public int MV_CC_GetGamma_NET(ref MVCC_FLOATVALUE pstValue)
         {
-            return MV_CC_GetGamma(this.handle, ref pstValue);
+            return MV_CC_GetGamma(handle, ref pstValue);
         }
 
         /// <summary>
@@ -1978,7 +1977,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x060000AF RID: 175 RVA: 0x00002AF8 File Offset: 0x00000CF8
         public int MV_CC_SetGamma_NET(float fValue)
         {
-            return MV_CC_SetGamma(this.handle, fValue);
+            return MV_CC_SetGamma(handle, fValue);
         }
 
         /// <summary>
@@ -1989,7 +1988,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x060000B0 RID: 176 RVA: 0x00002B06 File Offset: 0x00000D06
         public int MV_CC_GetSharpness_NET(ref MVCC_INTVALUE pstValue)
         {
-            return MV_CC_GetSharpness(this.handle, ref pstValue);
+            return MV_CC_GetSharpness(handle, ref pstValue);
         }
 
         /// <summary>
@@ -2000,7 +1999,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x060000B1 RID: 177 RVA: 0x00002B14 File Offset: 0x00000D14
         public int MV_CC_SetSharpness_NET(uint nValue)
         {
-            return MV_CC_SetSharpness(this.handle, nValue);
+            return MV_CC_SetSharpness(handle, nValue);
         }
 
         /// <summary>
@@ -2011,7 +2010,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x060000B2 RID: 178 RVA: 0x00002B22 File Offset: 0x00000D22
         public int MV_CC_GetHue_NET(ref MVCC_INTVALUE pstValue)
         {
-            return MV_CC_GetHue(this.handle, ref pstValue);
+            return MV_CC_GetHue(handle, ref pstValue);
         }
 
         /// <summary>
@@ -2022,7 +2021,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x060000B3 RID: 179 RVA: 0x00002B30 File Offset: 0x00000D30
         public int MV_CC_SetHue_NET(uint nValue)
         {
-            return MV_CC_SetHue(this.handle, nValue);
+            return MV_CC_SetHue(handle, nValue);
         }
 
         /// <summary>
@@ -2033,7 +2032,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x060000B4 RID: 180 RVA: 0x00002B3E File Offset: 0x00000D3E
         public int MV_CC_GetSaturation_NET(ref MVCC_INTVALUE pstValue)
         {
-            return MV_CC_GetSaturation(this.handle, ref pstValue);
+            return MV_CC_GetSaturation(handle, ref pstValue);
         }
 
         /// <summary>
@@ -2044,7 +2043,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x060000B5 RID: 181 RVA: 0x00002B4C File Offset: 0x00000D4C
         public int MV_CC_SetSaturation_NET(uint nValue)
         {
-            return MV_CC_SetSaturation(this.handle, nValue);
+            return MV_CC_SetSaturation(handle, nValue);
         }
 
         /// <summary>
@@ -2055,7 +2054,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x060000B6 RID: 182 RVA: 0x00002B5A File Offset: 0x00000D5A
         public int MV_CC_GetBalanceWhiteAuto_NET(ref MVCC_ENUMVALUE pstValue)
         {
-            return MV_CC_GetBalanceWhiteAuto(this.handle, ref pstValue);
+            return MV_CC_GetBalanceWhiteAuto(handle, ref pstValue);
         }
 
         /// <summary>
@@ -2066,7 +2065,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x060000B7 RID: 183 RVA: 0x00002B68 File Offset: 0x00000D68
         public int MV_CC_SetBalanceWhiteAuto_NET(uint nValue)
         {
-            return MV_CC_SetBalanceWhiteAuto(this.handle, nValue);
+            return MV_CC_SetBalanceWhiteAuto(handle, nValue);
         }
 
         /// <summary>
@@ -2077,7 +2076,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x060000B8 RID: 184 RVA: 0x00002B76 File Offset: 0x00000D76
         public int MV_CC_GetBalanceRatioRed_NET(ref MVCC_INTVALUE pstValue)
         {
-            return MV_CC_GetBalanceRatioRed(this.handle, ref pstValue);
+            return MV_CC_GetBalanceRatioRed(handle, ref pstValue);
         }
 
         /// <summary>
@@ -2088,7 +2087,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x060000B9 RID: 185 RVA: 0x00002B84 File Offset: 0x00000D84
         public int MV_CC_SetBalanceRatioRed_NET(uint nValue)
         {
-            return MV_CC_SetBalanceRatioRed(this.handle, nValue);
+            return MV_CC_SetBalanceRatioRed(handle, nValue);
         }
 
         /// <summary>
@@ -2099,7 +2098,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x060000BA RID: 186 RVA: 0x00002B92 File Offset: 0x00000D92
         public int MV_CC_GetBalanceRatioGreen_NET(ref MVCC_INTVALUE pstValue)
         {
-            return MV_CC_GetBalanceRatioGreen(this.handle, ref pstValue);
+            return MV_CC_GetBalanceRatioGreen(handle, ref pstValue);
         }
 
         /// <summary>
@@ -2110,7 +2109,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x060000BB RID: 187 RVA: 0x00002BA0 File Offset: 0x00000DA0
         public int MV_CC_SetBalanceRatioGreen_NET(uint nValue)
         {
-            return MV_CC_SetBalanceRatioGreen(this.handle, nValue);
+            return MV_CC_SetBalanceRatioGreen(handle, nValue);
         }
 
         /// <summary>
@@ -2121,7 +2120,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x060000BC RID: 188 RVA: 0x00002BAE File Offset: 0x00000DAE
         public int MV_CC_GetBalanceRatioBlue_NET(ref MVCC_INTVALUE pstValue)
         {
-            return MV_CC_GetBalanceRatioBlue(this.handle, ref pstValue);
+            return MV_CC_GetBalanceRatioBlue(handle, ref pstValue);
         }
 
         /// <summary>
@@ -2132,7 +2131,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x060000BD RID: 189 RVA: 0x00002BBC File Offset: 0x00000DBC
         public int MV_CC_SetBalanceRatioBlue_NET(uint nValue)
         {
-            return MV_CC_SetBalanceRatioBlue(this.handle, nValue);
+            return MV_CC_SetBalanceRatioBlue(handle, nValue);
         }
 
         /// <summary>
@@ -2143,7 +2142,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x060000BE RID: 190 RVA: 0x00002BCA File Offset: 0x00000DCA
         public int MV_CC_GetDeviceUserID_NET(ref MVCC_STRINGVALUE pstValue)
         {
-            return MV_CC_GetDeviceUserID(this.handle, ref pstValue);
+            return MV_CC_GetDeviceUserID(handle, ref pstValue);
         }
 
         /// <summary>
@@ -2154,7 +2153,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x060000BF RID: 191 RVA: 0x00002BD8 File Offset: 0x00000DD8
         public int MV_CC_SetDeviceUserID_NET(string chValue)
         {
-            return MV_CC_SetDeviceUserID(this.handle, chValue);
+            return MV_CC_SetDeviceUserID(handle, chValue);
         }
 
         /// <summary>
@@ -2165,7 +2164,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x060000C0 RID: 192 RVA: 0x00002BE6 File Offset: 0x00000DE6
         public int MV_CC_GetBurstFrameCount_NET(ref MVCC_INTVALUE pstValue)
         {
-            return MV_CC_GetBurstFrameCount(this.handle, ref pstValue);
+            return MV_CC_GetBurstFrameCount(handle, ref pstValue);
         }
 
         /// <summary>
@@ -2176,7 +2175,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x060000C1 RID: 193 RVA: 0x00002BF4 File Offset: 0x00000DF4
         public int MV_CC_SetBurstFrameCount_NET(uint nValue)
         {
-            return MV_CC_SetBurstFrameCount(this.handle, nValue);
+            return MV_CC_SetBurstFrameCount(handle, nValue);
         }
 
         /// <summary>
@@ -2187,7 +2186,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x060000C2 RID: 194 RVA: 0x00002C02 File Offset: 0x00000E02
         public int MV_CC_GetAcquisitionLineRate_NET(ref MVCC_INTVALUE pstValue)
         {
-            return MV_CC_GetAcquisitionLineRate(this.handle, ref pstValue);
+            return MV_CC_GetAcquisitionLineRate(handle, ref pstValue);
         }
 
         /// <summary>
@@ -2198,7 +2197,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x060000C3 RID: 195 RVA: 0x00002C10 File Offset: 0x00000E10
         public int MV_CC_SetAcquisitionLineRate_NET(uint nValue)
         {
-            return MV_CC_SetAcquisitionLineRate(this.handle, nValue);
+            return MV_CC_SetAcquisitionLineRate(handle, nValue);
         }
 
         /// <summary>
@@ -2209,7 +2208,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x060000C4 RID: 196 RVA: 0x00002C1E File Offset: 0x00000E1E
         public int MV_CC_GetHeartBeatTimeout_NET(ref MVCC_INTVALUE pstValue)
         {
-            return MV_CC_GetHeartBeatTimeout(this.handle, ref pstValue);
+            return MV_CC_GetHeartBeatTimeout(handle, ref pstValue);
         }
 
         /// <summary>
@@ -2220,7 +2219,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x060000C5 RID: 197 RVA: 0x00002C2C File Offset: 0x00000E2C
         public int MV_CC_SetHeartBeatTimeout_NET(uint nValue)
         {
-            return MV_CC_SetHeartBeatTimeout(this.handle, nValue);
+            return MV_CC_SetHeartBeatTimeout(handle, nValue);
         }
 
         /// <summary>
@@ -2231,7 +2230,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x060000C6 RID: 198 RVA: 0x00002C3A File Offset: 0x00000E3A
         public int MV_GIGE_GetGevSCPSPacketSize_NET(ref MVCC_INTVALUE pstValue)
         {
-            return MV_GIGE_GetGevSCPSPacketSize(this.handle, ref pstValue);
+            return MV_GIGE_GetGevSCPSPacketSize(handle, ref pstValue);
         }
 
         /// <summary>
@@ -2242,7 +2241,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x060000C7 RID: 199 RVA: 0x00002C48 File Offset: 0x00000E48
         public int MV_GIGE_SetGevSCPSPacketSize_NET(uint nValue)
         {
-            return MV_GIGE_SetGevSCPSPacketSize(this.handle, nValue);
+            return MV_GIGE_SetGevSCPSPacketSize(handle, nValue);
         }
 
         /// <summary>
@@ -2253,7 +2252,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x060000C8 RID: 200 RVA: 0x00002C56 File Offset: 0x00000E56
         public int MV_GIGE_GetGevSCPD_NET(ref MVCC_INTVALUE pstValue)
         {
-            return MV_GIGE_GetGevSCPD(this.handle, ref pstValue);
+            return MV_GIGE_GetGevSCPD(handle, ref pstValue);
         }
 
         /// <summary>
@@ -2264,7 +2263,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x060000C9 RID: 201 RVA: 0x00002C64 File Offset: 0x00000E64
         public int MV_GIGE_SetGevSCPD_NET(uint nValue)
         {
-            return MV_GIGE_SetGevSCPD(this.handle, nValue);
+            return MV_GIGE_SetGevSCPD(handle, nValue);
         }
 
         /// <summary>
@@ -2275,7 +2274,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x060000CA RID: 202 RVA: 0x00002C72 File Offset: 0x00000E72
         public int MV_GIGE_GetGevSCDA_NET(ref uint pnIP)
         {
-            return MV_GIGE_GetGevSCDA(this.handle, ref pnIP);
+            return MV_GIGE_GetGevSCDA(handle, ref pnIP);
         }
 
         /// <summary>
@@ -2286,7 +2285,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x060000CB RID: 203 RVA: 0x00002C80 File Offset: 0x00000E80
         public int MV_GIGE_SetGevSCDA_NET(uint nIP)
         {
-            return MV_GIGE_SetGevSCDA(this.handle, nIP);
+            return MV_GIGE_SetGevSCDA(handle, nIP);
         }
 
         /// <summary>
@@ -2297,7 +2296,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x060000CC RID: 204 RVA: 0x00002C8E File Offset: 0x00000E8E
         public int MV_GIGE_GetGevSCSP_NET(ref uint pnPort)
         {
-            return MV_GIGE_GetGevSCSP(this.handle, ref pnPort);
+            return MV_GIGE_GetGevSCSP(handle, ref pnPort);
         }
 
         /// <summary>
@@ -2308,7 +2307,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x060000CD RID: 205 RVA: 0x00002C9C File Offset: 0x00000E9C
         public int MV_GIGE_SetGevSCSP_NET(uint nPort)
         {
-            return MV_GIGE_SetGevSCSP(this.handle, nPort);
+            return MV_GIGE_SetGevSCSP(handle, nPort);
         }
 
         /// <summary>
@@ -2318,7 +2317,7 @@ namespace GeneralTool.CoreLibrary.MVS
         // Token: 0x060000CE RID: 206 RVA: 0x00002CAA File Offset: 0x00000EAA
         public IntPtr GetCameraHandle()
         {
-            return this.handle;
+            return handle;
         }
 
         /// <summary>
@@ -3146,7 +3145,6 @@ namespace GeneralTool.CoreLibrary.MVS
         /// <summary>Successed, no error</summary>
         /// <summary/>
         public const int MV_OK = 0;
-
 
         /// <summary>GigE Device</summary>
         /// <summary/>

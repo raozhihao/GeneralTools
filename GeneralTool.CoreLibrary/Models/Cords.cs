@@ -42,9 +42,9 @@ namespace GeneralTool.CoreLibrary.Models
         /// <param name="attr"></param>
         public Element(int cx, int cy, Dictionary<string, string> attr)
         {
-            this.X = cx;
-            this.Y = cy;
-            this.Attributes = attr;
+            X = cx;
+            Y = cy;
+            Attributes = attr;
         }
     }
 }

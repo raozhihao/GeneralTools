@@ -33,11 +33,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
         public static bool GetAlwaysScrollToEnd(ScrollViewer scroll)
         {
             bool flag = scroll == null;
-            if (flag)
-            {
-                throw new ArgumentNullException("scroll");
-            }
-            return (bool)scroll.GetValue(ScrollViewerExtensions.AlwaysScrollToEndProperty);
+            return flag ? throw new ArgumentNullException("scroll") : (bool)scroll.GetValue(ScrollViewerExtensions.AlwaysScrollToEndProperty);
         }
 
         /// <summary>

@@ -22,9 +22,9 @@ namespace GeneralTool.CoreLibrary.Models
         /// </param>
         public LogMessageInfo(string msg, LogType logType, string path = "")
         {
-            this.Msg = msg;
-            this.LogType = logType;
-            this.CurrentFileName = path;
+            Msg = msg;
+            LogType = logType;
+            CurrentFileName = path;
         }
 
         #endregion Public 构造函数

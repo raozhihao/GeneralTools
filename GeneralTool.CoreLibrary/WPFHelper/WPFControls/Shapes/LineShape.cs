@@ -9,19 +9,18 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes
     /// </summary>
     public class LineShape : BaseShape
     {
-       
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="startPixelPoint"></param>
         /// <param name="endPixelPoint"></param>
-        public LineShape(Point startPixelPoint, Point endPixelPoint) 
+        public LineShape(Point startPixelPoint, Point endPixelPoint)
         {
-            this.StartPoint = startPixelPoint;
-            this.EndPoint = endPixelPoint;
-            this.PixelPoints.Add(this.StartPoint);
-            this.PixelPoints.Add(this.EndPoint);
+            StartPoint = startPixelPoint;
+            EndPoint = endPixelPoint;
+            PixelPoints.Add(StartPoint);
+            PixelPoints.Add(EndPoint);
         }
 
         private Point startPoint;
@@ -30,8 +29,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes
         /// </summary>
         public Point StartPoint
         {
-            get => this.startPoint;
-            set => this.RegisterProperty(ref this.startPoint, value);
+            get => startPoint;
+            set => RegisterProperty(ref startPoint, value);
         }
 
         private Point endPoint;
@@ -40,27 +39,27 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes
         /// </summary>
         public Point EndPoint
         {
-            get => this.endPoint;
-            set => this.RegisterProperty(ref this.endPoint, value);
+            get => endPoint;
+            set => RegisterProperty(ref endPoint, value);
         }
 
         /// <inheritdoc/>
         public override void CreateShape()
         {
-            if (this.PixelPoints.Count > 1)
+            if (PixelPoints.Count > 1)
             {
-                this.StartPoint = this.PixelPoints[0];
-                this.EndPoint = this.PixelPoints[1];
+                StartPoint = PixelPoints[0];
+                EndPoint = PixelPoints[1];
             }
-            var sp = this.ImageView.TranslateToCanvasPoint(this.StartPoint);
-            var ep = this.ImageView.TranslateToCanvasPoint(this.EndPoint);
-            this.Path.Data = new LineGeometry(sp, ep);
+            Point sp = ImageView.TranslateToCanvasPoint(StartPoint);
+            Point ep = ImageView.TranslateToCanvasPoint(EndPoint);
+            Path.Data = new LineGeometry(sp, ep);
         }
 
         /// <inheritdoc/>
         public override void UpdateShape(List<Point> canvasPoints)
         {
-            if (this.Path.Data is LineGeometry g)
+            if (Path.Data is LineGeometry g)
             {
                 g.StartPoint = canvasPoints[0];
                 g.EndPoint = canvasPoints[1];

@@ -58,8 +58,8 @@ namespace GeneralTool.CoreLibrary.TaskLib
             try
             {
                 //必须设置响应中正文的字节数，否则在关闭输出流时将会出错
-                this.Response.ContentLength64 = buff.Length;
-                Stream output = this.Response.OutputStream;
+                Response.ContentLength64 = buff.Length;
+                Stream output = Response.OutputStream;
 
                 output.Write(buff, 0, buff.Length);
                 output.Close();
@@ -67,7 +67,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
             }
             finally
             {
-                this.Response.Close();
+                Response.Close();
             }
         }
     }

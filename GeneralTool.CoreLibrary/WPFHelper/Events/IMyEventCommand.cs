@@ -30,7 +30,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Events
         /// <param name="d">
         /// 引发事件的源对象
         /// </param>
-        void SetObject(Object d);
+        void SetObject(object d);
 
         /// <summary>
         /// 设置事件的自定义参数

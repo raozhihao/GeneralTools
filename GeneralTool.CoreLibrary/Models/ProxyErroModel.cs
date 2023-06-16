@@ -18,8 +18,8 @@ namespace GeneralTool.CoreLibrary.Models
         /// </param>
         public ProxyErroModel(RequestCommand requestCommand, ResponseCommand responseCommand)
         {
-            this.RequestCommand = requestCommand;
-            this.ResponseCommand = responseCommand;
+            RequestCommand = requestCommand;
+            ResponseCommand = responseCommand;
         }
 
         #endregion Public 构造函数

@@ -17,7 +17,7 @@ namespace GeneralTool.CoreLibrary.DbHelper
         /// <param name="dataType"></param>
         public DataTypeAttribute(string dataType)
         {
-            this.DataType = dataType;
+            DataType = dataType;
         }
     }
 }

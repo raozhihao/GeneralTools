@@ -16,13 +16,12 @@ namespace GeneralTool.CoreLibrary.WPFHelper
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             //将指定的值转为字符串类型
-            var str = value + "";
+            string str = value + "";
 
             if (string.IsNullOrWhiteSpace(str))
                 return str;
 
-            var type = value.GetType();
-
+            Type type = value.GetType();
 
             TypeConverter converter = TypeDescriptor.GetConverter(type);
             bool flag = converter.CanConvertFrom(value.GetType());
@@ -42,13 +41,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             //将指定类型的字符串值转为指定类型的值
-            var str = value + "";
-            if (String.IsNullOrEmpty(str))
-                return null;
-            if (targetType == null)
-                return str;
-
-            return ConvertSimpleType(str, targetType);
+            string str = value + "";
+            return string.IsNullOrEmpty(str) ? null : targetType == null ? str : ConvertSimpleType(str, targetType);
         }
 
         /// <summary>
@@ -59,16 +53,29 @@ namespace GeneralTool.CoreLibrary.WPFHelper
         /// <returns></returns>
         public object ConvertSimpleType(string value, Type destinationType)
         {
+            if (typeof(string) == destinationType)
+                return value;
+
             object returnValue;
             if ((value == null) || destinationType.IsInstanceOfType(value))
             {
                 return value;
             }
-            string str = value as string;
+            string str = value;
             if ((str != null) && (str.Length == 0))
             {
                 return null;
             }
+
+            if (destinationType.IsValueType)
+            {
+                object obj = Activator.CreateInstance(destinationType);
+                if (obj is IConvertible)
+                {
+                    return System.Convert.ChangeType(value, destinationType);
+                }
+            }
+
             TypeConverter converter = TypeDescriptor.GetConverter(destinationType);
             bool flag = converter.CanConvertFrom(destinationType);
             if (!flag)
@@ -105,6 +112,11 @@ namespace GeneralTool.CoreLibrary.WPFHelper
             {
                 return null;
             }
+
+            if (value is IConvertible)
+            {
+                return System.Convert.ChangeType(value, destinationType);
+            }
             TypeConverter converter = TypeDescriptor.GetConverter(destinationType);
             bool flag = converter.CanConvertFrom(value.GetType());
             if (!flag)
@@ -113,14 +125,9 @@ namespace GeneralTool.CoreLibrary.WPFHelper
             }
             if (!flag && !converter.CanConvertTo(destinationType))
             {
-                if (str == null)
-                {
-                    if (destinationType.IsValueType)
-                        return Activator.CreateInstance(destinationType);
-                    else
-                        return null;
-                }
-                return str.DeserializeJsonToObject(destinationType);
+                return str == null
+                    ? destinationType.IsValueType ? Activator.CreateInstance(destinationType) : null
+                    : str.DeserializeJsonToObject(destinationType);
             }
             try
             {
@@ -132,7 +139,6 @@ namespace GeneralTool.CoreLibrary.WPFHelper
             }
             return returnValue;
         }
-
 
     }
 }

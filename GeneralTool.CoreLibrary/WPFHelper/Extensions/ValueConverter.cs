@@ -57,8 +57,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
 
             public InnerValueConverter(Func<ValueConverterArgs<TInput>, TOutput> convertFunc, Func<ValueConverterArgs<TOutput>, TInput> convertBackFunc)
             {
-                this._convertFunc = convertFunc;
-                this._convertBackFunc = convertBackFunc;
+                _convertFunc = convertFunc;
+                _convertBackFunc = convertBackFunc;
             }
 
             #endregion Public 构造函数
@@ -67,16 +67,14 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
 
             public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
             {
-                return this._convertFunc(new ValueConverterArgs<TInput>((TInput)value, parameter, targetType, culture) { InputType = typeof(TInput), OutType = typeof(TOutput) });
+                return _convertFunc(new ValueConverterArgs<TInput>((TInput)value, parameter, targetType, culture) { InputType = typeof(TInput), OutType = typeof(TOutput) });
             }
 
             public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
             {
-                if (this._convertBackFunc == null)
-                {
-                    throw new NotImplementedException();
-                }
-                return this._convertBackFunc(new ValueConverterArgs<TOutput>((TOutput)value, parameter, targetType, culture) { InputType = typeof(TInput), OutType = typeof(TOutput) });
+                return _convertBackFunc == null
+                    ? throw new NotImplementedException()
+                    : (object)_convertBackFunc(new ValueConverterArgs<TOutput>((TOutput)value, parameter, targetType, culture) { InputType = typeof(TInput), OutType = typeof(TOutput) });
             }
 
             #endregion Public 方法
@@ -103,8 +101,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
 
             public InnerValueConverter(Type inputType, Type outType, Func<ValueConverterObjectArgs, object> convertFunc, Func<ValueConverterObjectArgs, object> convertBackFunc)
             {
-                this._convertFunc = convertFunc;
-                this._convertBackFunc = convertBackFunc;
+                _convertFunc = convertFunc;
+                _convertBackFunc = convertBackFunc;
                 this.inputType = inputType;
                 this.outType = outType;
             }
@@ -115,17 +113,15 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
 
             public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
             {
-                var args = new ValueConverterObjectArgs(value, parameter, targetType, culture) { InputType = this.inputType, OutType = this.outType };
-                return this._convertFunc(args);
+                ValueConverterObjectArgs args = new ValueConverterObjectArgs(value, parameter, targetType, culture) { InputType = inputType, OutType = outType };
+                return _convertFunc(args);
             }
 
             public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
             {
-                if (this._convertBackFunc == null)
-                {
-                    throw new NotImplementedException();
-                }
-                return this._convertBackFunc(new ValueConverterObjectArgs(value, parameter, targetType, culture) { InputType = this.inputType, OutType = this.outType });
+                return _convertBackFunc == null
+                    ? throw new NotImplementedException()
+                    : _convertBackFunc(new ValueConverterObjectArgs(value, parameter, targetType, culture) { InputType = inputType, OutType = outType });
             }
 
             #endregion Public 方法
@@ -154,10 +150,10 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
         /// </param>
         public ValueConverterArgs(T value, object parameter, Type targetType, CultureInfo culture)
         {
-            this.Value = value;
-            this.Parameter = parameter;
-            this.Culture = culture;
-            this.TargetType = targetType;
+            Value = value;
+            Parameter = parameter;
+            Culture = culture;
+            TargetType = targetType;
         }
 
         #endregion Public 构造函数
@@ -212,10 +208,10 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
         /// </param>
         public ValueConverterObjectArgs(object value, object parameter, Type targetType, CultureInfo culture)
         {
-            this.Value = value;
-            this.Parameter = parameter;
-            this.Culture = culture;
-            this.TargetType = targetType;
+            Value = value;
+            Parameter = parameter;
+            Culture = culture;
+            TargetType = targetType;
         }
 
         #endregion Public 构造函数

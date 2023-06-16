@@ -76,11 +76,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper
         public bool CanExecute(object parameter)
         {
             Func<T, bool> canExecute = CanExecuteDelegate;
-            if (canExecute == null)
-            {
-                return true;
-            }
-            return canExecute((T)parameter);
+            return canExecute == null || canExecute((T)parameter);
         }
 
         /// <summary>

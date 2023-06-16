@@ -20,13 +20,13 @@ namespace GeneralTool.CoreLibrary.WPFHelper.UIEditorConverts
         ///<inheritdoc/>
         public void ConvertTo(Grid gridParent, object instance, PropertyInfo propertyInfo, bool? sort, ref int Row, string header = null)
         {
-            var left = new TextBlock()
+            TextBlock left = new TextBlock()
             {
                 Text = propertyInfo.Name,
                 Margin = new System.Windows.Thickness(5)
             };
 
-            if (PropertyGridControl.AttributesDic.TryGetValue(propertyInfo.PropertyType.FullName, out var attrValue))
+            if (PropertyGridControl.AttributesDic.TryGetValue(propertyInfo.PropertyType.FullName, out Attribute attrValue))
             {
                 if (attrValue is DescriptionAttribute d)
                 {
@@ -36,7 +36,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.UIEditorConverts
 
             Grid.SetRow(left, Row);
             Grid.SetColumn(left, 0);
-            var right = new ComboBox()
+            ComboBox right = new ComboBox()
             {
                 Margin = new System.Windows.Thickness(5),
                 BorderThickness = new System.Windows.Thickness(0, 0, 0, 1),
@@ -59,15 +59,15 @@ namespace GeneralTool.CoreLibrary.WPFHelper.UIEditorConverts
                 right.IsEnabled = false;
                 bindingMode = BindingMode.OneWay;
             }
-            var arr = Enum.GetValues(propertyInfo.PropertyType);
+            Array arr = Enum.GetValues(propertyInfo.PropertyType);
             right.ItemsSource = arr;
 
-            right.SetBinding(ComboBox.TextProperty, new Binding(propertyInfo.Name) { Converter = new CoverterEx().ObjectToStringConverter, Mode = bindingMode });
+            _ = right.SetBinding(ComboBox.TextProperty, new Binding(propertyInfo.Name) { Converter = new CoverterEx().ObjectToStringConverter, Mode = bindingMode });
 
             Grid.SetRow(right, Row++);
             Grid.SetColumn(right, 1);
-            gridParent.Children.Add(left);
-            gridParent.Children.Add(right);
+            _ = gridParent.Children.Add(left);
+            _ = gridParent.Children.Add(right);
         }
 
         #endregion Public 方法

@@ -26,12 +26,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
         /// </returns>
         public static bool GetDataGridScroll(DataGrid scroll)
         {
-            if (scroll == null)
-            {
-                throw new ArgumentNullException(nameof(scroll));
-            }
-
-            return (bool)scroll.GetValue(DataGridScrollProperty);
+            return scroll == null ? throw new ArgumentNullException(nameof(scroll)) : (bool)scroll.GetValue(DataGridScrollProperty);
         }
 
         /// <summary>

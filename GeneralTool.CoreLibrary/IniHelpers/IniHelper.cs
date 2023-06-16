@@ -5,7 +5,6 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 
-
 namespace GeneralTool.CoreLibrary.IniHelpers
 {
     /// <summary>
@@ -16,9 +15,6 @@ namespace GeneralTool.CoreLibrary.IniHelpers
         #region Private 字段
 
         private static readonly Lazy<IniHelper> _instance;
-
-        //The path of the file we are operating on.
-        private readonly string m_path;
 
         #endregion Private 字段
 
@@ -39,10 +35,7 @@ namespace GeneralTool.CoreLibrary.IniHelpers
         /// </summary>
         public static readonly IniHelper IniHelperInstance;
 
-
-
         #endregion Public 字段
-
 
         #region Public 构造函数
 
@@ -65,9 +58,9 @@ namespace GeneralTool.CoreLibrary.IniHelpers
             // root Windows directory if it is not specified.  By calling
             // GetFullPath, we make sure we are always passing the full path
             // the win32 functions.
-            var file = new FileInfo(path);
+            FileInfo file = new FileInfo(path);
             Microsoft.VisualBasic.FileIO.FileSystem.CreateDirectory(file.Directory.FullName);
-            m_path = System.IO.Path.GetFullPath(path);
+            Path = System.IO.Path.GetFullPath(path);
         }
 
         /// <summary>
@@ -87,13 +80,7 @@ namespace GeneralTool.CoreLibrary.IniHelpers
         /// <value>
         /// A file path.
         /// </value>
-        public string Path
-        {
-            get
-            {
-                return m_path;
-            }
-        }
+        public string Path { get; }
 
         #endregion Public 属性
 
@@ -164,12 +151,12 @@ namespace GeneralTool.CoreLibrary.IniHelpers
         /// </returns>
         public T[] GetArray<T>(string sectionName, string keyName)
         {
-            if (!this.InTypeCode<T>())
+            if (!InTypeCode<T>())
             {
                 throw new ArgumentException("无法转换指定的类型");
             }
-            var strTmp = this.GetString(sectionName, keyName, "");
-            var array = strTmp.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            string strTmp = GetString(sectionName, keyName, "");
+            string[] array = strTmp.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 
             return Array.ConvertAll<string, T>(array, new Converter<string, T>(s => { return (T)Convert.ChangeType(s, typeof(T)); }));
         }
@@ -198,10 +185,10 @@ namespace GeneralTool.CoreLibrary.IniHelpers
                                  bool defaultValue)
         {
             string str = GetString(sectionName, keyName, "");
-            if (String.IsNullOrEmpty(str))
+            if (string.IsNullOrEmpty(str))
                 return defaultValue;
 
-            if (!Boolean.TryParse(str, out bool retval))
+            if (!bool.TryParse(str, out bool retval))
             {
                 retval = defaultValue;
             }
@@ -234,10 +221,10 @@ namespace GeneralTool.CoreLibrary.IniHelpers
         {
             string str = GetString(sectionName, keyName, "");
 
-            if (String.IsNullOrEmpty(str))
+            if (string.IsNullOrEmpty(str))
                 return defaultValue;
 
-            if (!Double.TryParse(str, NumberStyles.Float, CultureInfo.InvariantCulture, out double retval))
+            if (!double.TryParse(str, NumberStyles.Float, CultureInfo.InvariantCulture, out double retval))
                 retval = defaultValue;
 
             return retval;
@@ -294,13 +281,11 @@ namespace GeneralTool.CoreLibrary.IniHelpers
                             string keyName,
                             int defaultValue)
         {
-            if (sectionName == null)
-                throw new ArgumentNullException(nameof(sectionName));
-
-            if (keyName == null)
-                throw new ArgumentNullException(nameof(keyName));
-
-            return NativeMethods.GetPrivateProfileInt(sectionName, keyName, defaultValue, m_path);
+            return sectionName == null
+                ? throw new ArgumentNullException(nameof(sectionName))
+                : keyName == null
+                ? throw new ArgumentNullException(nameof(keyName))
+                : NativeMethods.GetPrivateProfileInt(sectionName, keyName, defaultValue, Path);
         }
 
         /// <summary>
@@ -337,7 +322,7 @@ namespace GeneralTool.CoreLibrary.IniHelpers
                                                             null,
                                                             ptr,
                                                             (uint)IniHelper.MaxSectionSize,
-                                                            m_path);
+                                                            Path);
 
                 retval = ConvertNullSeperatedStringToStringArray(ptr, len);
             }
@@ -365,13 +350,13 @@ namespace GeneralTool.CoreLibrary.IniHelpers
             int len;
 
             //Allocate a buffer for the returned section names.
-            IntPtr ptr = Marshal.AllocCoTaskMem((int)IniHelper.MaxSectionSize);
+            IntPtr ptr = Marshal.AllocCoTaskMem(MaxSectionSize);
 
             try
             {
                 //Get the section names into the buffer.
                 len = NativeMethods.GetPrivateProfileSectionNames(ptr,
-                    (uint)IniHelper.MaxSectionSize, m_path);
+                    (uint)IniHelper.MaxSectionSize, Path);
 
                 retval = ConvertNullSeperatedStringToStringArray(ptr, len);
             }
@@ -450,7 +435,7 @@ namespace GeneralTool.CoreLibrary.IniHelpers
                 throw new ArgumentNullException(nameof(sectionName));
 
             //Allocate a buffer for the returned section names.
-            IntPtr ptr = Marshal.AllocCoTaskMem((int)IniHelper.MaxSectionSize);
+            IntPtr ptr = Marshal.AllocCoTaskMem(MaxSectionSize);
 
             try
             {
@@ -458,7 +443,7 @@ namespace GeneralTool.CoreLibrary.IniHelpers
                 int len = NativeMethods.GetPrivateProfileSection(sectionName,
                                                                  ptr,
                                                                  (uint)IniHelper.MaxSectionSize,
-                                                                 m_path);
+                                                                 Path);
 
                 keyValuePairs = ConvertNullSeperatedStringToStringArray(ptr, len);
             }
@@ -519,14 +504,13 @@ namespace GeneralTool.CoreLibrary.IniHelpers
             if (keyName == null)
                 throw new ArgumentNullException(nameof(keyName));
 
-            var builder = new StringBuilder(MaxSectionSize);
+            StringBuilder builder = new StringBuilder(MaxSectionSize);
             _ = NativeMethods.GetPrivateProfileString(sectionName,
                                                   keyName,
                                                   defaultValue,
                                                   builder,
                                                   IniHelper.MaxSectionSize,
-                                                  m_path);
-
+                                                  Path);
 
             return builder.ToString();
         }
@@ -547,19 +531,18 @@ namespace GeneralTool.CoreLibrary.IniHelpers
             if (keyName == null)
                 throw new ArgumentNullException(nameof(keyName));
 
-
             //Allocate a buffer for the returned section names.
             IntPtr ptr = Marshal.AllocCoTaskMem(IniHelper.MaxSectionSize);
 
             try
             {
                 //Get the section names into the buffer.
-                var len = NativeMethods.GetPrivateProfileString(sectionName,
+                int len = NativeMethods.GetPrivateProfileString(sectionName,
                                                              keyName,
                                                              "",
                                                              ptr,
                                                              (uint)IniHelper.MaxSectionSize,
-                                                            m_path);
+                                                            Path);
 
                 string buff = Marshal.PtrToStringAuto(ptr, len - 1);
 
@@ -572,7 +555,6 @@ namespace GeneralTool.CoreLibrary.IniHelpers
 
             return "";
         }
-
 
         /// <summary>
         /// 获取值
@@ -589,12 +571,12 @@ namespace GeneralTool.CoreLibrary.IniHelpers
         /// </returns>
         public T GetValue<T>(string sectionName, string keyName, T defaultVal = default)
         {
-            if (!this.InTypeCode<T>())
+            if (!InTypeCode<T>())
             {
                 throw new ArgumentException("无法转换指定的类型");
             }
 
-            var strTmp = this.GetString(sectionName, keyName, defaultVal + "");
+            string strTmp = GetString(sectionName, keyName, defaultVal + "");
             return (T)Convert.ChangeType(strTmp, typeof(T));
         }
 
@@ -609,10 +591,7 @@ namespace GeneralTool.CoreLibrary.IniHelpers
         /// </returns>
         public T GetValue<T>(Node<T> Node)
         {
-            if (!this.InTypeCode<T>())
-                throw new ArgumentException("无法转换指定的类型");
-
-            return GetValue<T>(Node.SectionName, Node.KeyName, Node.Value);
+            return !InTypeCode<T>() ? throw new ArgumentException("无法转换指定的类型") : GetValue<T>(Node.SectionName, Node.KeyName, Node.Value);
         }
 
         /// <summary>
@@ -626,10 +605,7 @@ namespace GeneralTool.CoreLibrary.IniHelpers
         /// </returns>
         public T[] GetValues<T>(Node<T> node)
         {
-            if (!this.InTypeCode<T>())
-                throw new ArgumentException("无法转换指定的类型");
-
-            return GetArray<T>(node.SectionName, node.KeyName);
+            return !InTypeCode<T>() ? throw new ArgumentException("无法转换指定的类型") : GetArray<T>(node.SectionName, node.KeyName);
         }
 
         /// <summary>
@@ -665,8 +641,6 @@ namespace GeneralTool.CoreLibrary.IniHelpers
             WriteValueInternal(sectionName, keyName, value);
         }
 
-
-
         /// <summary>
         /// 写入值
         /// </summary>
@@ -680,8 +654,8 @@ namespace GeneralTool.CoreLibrary.IniHelpers
         /// </param>
         public void WriteValue<T>(string sectionName, string keyName, IEnumerable<T> arrary)
         {
-            var str = String.Join(",", arrary);
-            this.WriteValueString(sectionName, keyName, str);
+            string str = string.Join(",", arrary);
+            WriteValueString(sectionName, keyName, str);
         }
 
         /// <summary>
@@ -697,7 +671,7 @@ namespace GeneralTool.CoreLibrary.IniHelpers
         /// </param>
         public void WriteValueT<T>(string sectionName, string keyName, T item)
         {
-            if (!this.InTypeCode<T>())
+            if (!InTypeCode<T>())
                 throw new ArgumentException("无法转换指定的类型");
             else
             {
@@ -714,7 +688,7 @@ namespace GeneralTool.CoreLibrary.IniHelpers
         /// </param>
         public void WriteValue<T>(Node<T> node)
         {
-            this.WriteValueT<T>(node.SectionName, node.KeyName, node.Value);
+            WriteValueT<T>(node.SectionName, node.KeyName, node.Value);
         }
 
         #endregion Public 方法
@@ -778,7 +752,7 @@ namespace GeneralTool.CoreLibrary.IniHelpers
         /// </exception>
         private void WriteValueInternal(string sectionName, string keyName, string value)
         {
-            if (!NativeMethods.WritePrivateProfileString(sectionName, keyName, value, m_path))
+            if (!NativeMethods.WritePrivateProfileString(sectionName, keyName, value, Path))
             {
                 throw new System.ComponentModel.Win32Exception();
             }

@@ -19,19 +19,13 @@ namespace GeneralTool.CoreLibrary.TaskLib
     {
         #region Private 字段
 
-        private readonly Dictionary<object, Dictionary<string, DoTaskParameterItem>> currents = new Dictionary<object, Dictionary<string, DoTaskParameterItem>>();
-
         private readonly ILog log;
 
         /// <summary>
         /// 任务函数核参数列表
         /// </summary>
         private readonly Dictionary<string, DoTaskParameterItem> TaskParameterItems = new Dictionary<string, DoTaskParameterItem>();
-
-        private string erroMsg;
-
         private BaseTaskInvoke[] taskInokes;
-
 
         #endregion Private 字段
 
@@ -55,13 +49,12 @@ namespace GeneralTool.CoreLibrary.TaskLib
             if (jsonConvert == null)
                 jsonConvert = new BaseJsonCovert();
 
-            this.JsonCovert = jsonConvert;
+            JsonCovert = jsonConvert;
             this.log = log;
-            var serverStation = new Station(jsonConvert, log, station);
+            Station serverStation = new Station(jsonConvert, log, station);
             //this.serverStationBases.Add(serverStation);
-            this.ServerStation = serverStation;
+            ServerStation = serverStation;
         }
-
 
         /// <summary>
         /// </summary>
@@ -82,7 +75,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
             if (jsonConvert == null)
                 jsonConvert = new BaseJsonCovert();
 
-            this.JsonCovert = jsonConvert;
+            JsonCovert = jsonConvert;
             this.log = log;
         }
 
@@ -93,26 +86,12 @@ namespace GeneralTool.CoreLibrary.TaskLib
         /// <summary>
         /// 获取所有任务
         /// </summary>
-        public Dictionary<object, Dictionary<string, DoTaskParameterItem>> Currents
-        {
-            get
-            {
-                return currents;
-            }
-        }
-
-
+        public Dictionary<object, Dictionary<string, DoTaskParameterItem>> Currents { get; } = new Dictionary<object, Dictionary<string, DoTaskParameterItem>>();
 
         /// <summary>
         /// 错误信息
         /// </summary>
-        public string ErroMsg
-        {
-            get
-            {
-                return erroMsg;
-            }
-        }
+        public string ErroMsg { get; private set; }
 
         /// <summary>
         /// 是否被初始化
@@ -157,19 +136,9 @@ namespace GeneralTool.CoreLibrary.TaskLib
         {
             get
             {
-                if (this.TaskParameterItems.Count == 0)
-                {
-                    return new Dictionary<string, DoTaskParameterItem>();
-                }
-
-                if (this.currents.ContainsKey(obj))
-                {
-                    return this.currents[obj];
-                }
-                else
-                {
-                    return new Dictionary<string, DoTaskParameterItem>();
-                }
+                return TaskParameterItems.Count == 0
+                    ? new Dictionary<string, DoTaskParameterItem>()
+                    : Currents.ContainsKey(obj) ? Currents[obj] : new Dictionary<string, DoTaskParameterItem>();
             }
         }
 
@@ -192,9 +161,9 @@ namespace GeneralTool.CoreLibrary.TaskLib
             if (jsonConvert == null)
                 jsonConvert = new BaseJsonCovert();
 
-            var stationInfo = new Station(jsonConvert, log, station);
-            var info = new StationInfo(ip, port, stationInfo);
-            this.ServerStations.Add(info);
+            Station stationInfo = new Station(jsonConvert, log, station);
+            StationInfo info = new StationInfo(ip, port, stationInfo);
+            ServerStations.Add(info);
         }
 
         /// <summary>
@@ -203,7 +172,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
         /// <param name="station"></param>
         public virtual void AddServerStation(StationInfo station)
         {
-            this.ServerStations.Add(station);
+            ServerStations.Add(station);
         }
 
         /// <summary>
@@ -217,20 +186,20 @@ namespace GeneralTool.CoreLibrary.TaskLib
         /// </returns>
         public virtual object DoInterface(string url, DoTaskParameterItem parameterItem)
         {
-            var method = parameterItem.Method;
+            MethodInfo method = parameterItem.Method;
 
             //获取参数
-            var paramterInfos = method.GetParameters();
+            ParameterInfo[] paramterInfos = method.GetParameters();
 
             //创建参数数组
-            var paras = new object[paramterInfos.Length];
-            foreach (var info in paramterInfos)
+            object[] paras = new object[paramterInfos.Length];
+            foreach (ParameterInfo info in paramterInfos)
             {
                 if (info.IsOut)
                     continue;
 
-                var valueMsg = parameterItem.GetValue(info.Name);
-                var parameterType = info.ParameterType;
+                object valueMsg = parameterItem.GetValue(info.Name);
+                Type parameterType = info.ParameterType;
 
                 //如果是值类型/String类型
                 if (parameterType.IsValueType || parameterType == typeof(string))
@@ -241,8 +210,8 @@ namespace GeneralTool.CoreLibrary.TaskLib
                     }
                     catch (Exception ex)
                     {
-                        var message = $"无法将参数 {info.Name} 转换为值 {valueMsg} 错误:{ex.GetInnerExceptionMessage()}";
-                        this.log.Fail(message);
+                        string message = $"无法将参数 {info.Name} 转换为值 {valueMsg} 错误:{ex.GetInnerExceptionMessage()}";
+                        log.Fail(message);
                         throw new Exception(message);
                     }
                 }
@@ -265,18 +234,18 @@ namespace GeneralTool.CoreLibrary.TaskLib
         /// </returns>
         public virtual Dictionary<string, DoTaskParameterItem> GetInterfaces()
         {
-            if (this.TaskParameterItems.Count() != 0)
+            if (TaskParameterItems.Count() != 0)
             {
-                return this.TaskParameterItems;
+                return TaskParameterItems;
             }
             else
             {
-                foreach (var obj in this.taskInokes)
+                foreach (BaseTaskInvoke obj in taskInokes)
                 {
-                    this.AddTaskModel(obj);
+                    AddTaskModel(obj);
                 }
 
-                return this.TaskParameterItems;
+                return TaskParameterItems;
             }
         }
 
@@ -287,7 +256,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
         public void AddTaskModel(BaseTaskInvoke obj)
         {
             TaskModel taskModel = new TaskModel();
-            var classRoute = obj.GetAttributeByClass<RouteAttribute>();
+            RouteAttribute classRoute = obj.GetAttributeByClass<RouteAttribute>();
             if (classRoute == null)
             {
                 return;
@@ -295,22 +264,22 @@ namespace GeneralTool.CoreLibrary.TaskLib
 
             taskModel.LangKey = classRoute.LangKey;
             taskModel.Explanation = classRoute.Explanation;
-            var rootPath = classRoute.Url;
+            string rootPath = classRoute.Url;
 
-            var tmpDics = new Dictionary<string, DoTaskParameterItem>();
-            var methods = obj.GetType().GetMethods().OrderBy(m => m.GetCustomAttribute<RouteAttribute>()?.SortIndex);
+            Dictionary<string, DoTaskParameterItem> tmpDics = new Dictionary<string, DoTaskParameterItem>();
+            IOrderedEnumerable<MethodInfo> methods = obj.GetType().GetMethods().OrderBy(m => m.GetCustomAttribute<RouteAttribute>()?.SortIndex);
 
             methods.Foreach(m =>
             {
-                var doModel = new DoTaskModel();
-                var attributes = m.GetCustomAttributes().Where(a => a is RouteAttribute);
+                DoTaskModel doModel = new DoTaskModel();
+                IEnumerable<Attribute> attributes = m.GetCustomAttributes().Where(a => a is RouteAttribute);
                 if (attributes.Count() > 0)
                 {
-                    var route = attributes.First() as RouteAttribute;
-                    var paramters = new ObservableCollection<ParameterItem>();
-                    m.GetParameters().Foreach(p =>
+                    RouteAttribute route = attributes.First() as RouteAttribute;
+                    ObservableCollection<ParameterItem> paramters = new ObservableCollection<ParameterItem>();
+                    _ = m.GetParameters().Foreach(p =>
                     {
-                        var it = new ParameterItem()
+                        ParameterItem it = new ParameterItem()
                         {
                             ParameterName = p.Name,
                             ParameterType = p.ParameterType,
@@ -322,7 +291,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
                         }
 
                         //查看是否有水印提示
-                        var water = p.GetCustomAttribute<WaterMarkAttribute>();
+                        WaterMarkAttribute water = p.GetCustomAttribute<WaterMarkAttribute>();
                         if (water != null)
                         {
                             it.WaterMark = water.WaterMark;
@@ -332,7 +301,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
 
                     string key = rootPath + route.Url;
 
-                    var item = new DoTaskParameterItem()
+                    DoTaskParameterItem item = new DoTaskParameterItem()
                     {
                         //转换类型
                         Paramters = paramters,
@@ -353,13 +322,13 @@ namespace GeneralTool.CoreLibrary.TaskLib
                     }
                     item.InitLangKey();
 
-                    if (this.TaskParameterItems.ContainsKey(key))
+                    if (TaskParameterItems.ContainsKey(key))
                     {
-                        this.log.Error($"已经存在 {key} ,跳过不加入");
+                        log.Error($"已经存在 {key} ,跳过不加入");
                     }
                     else
                     {
-                        this.TaskParameterItems.Add(key, item);
+                        TaskParameterItems.Add(key, item);
                         tmpDics.Add(key, item);
                         doModel.DoTaskParameterItem = item;
                         doModel.Url = key;
@@ -369,42 +338,39 @@ namespace GeneralTool.CoreLibrary.TaskLib
             });
             if (taskModel.DoTaskModels.Count > 0)
             {
-                this.currents.Add(obj, tmpDics);
+                Currents.Add(obj, tmpDics);
                 taskModel.InitLangKey();
-                this.TaskModels.Add(taskModel);
+                TaskModels.Add(taskModel);
             }
 
         }
-
-
 
         /// <inheritdoc/>
         public virtual bool Open(string ip, int port, params BaseTaskInvoke[] target)
         {
-            if (!this.OpenWithoutServer(target))
+            if (!OpenWithoutServer(target))
                 return false;
 
             try
             {
-                if (this.IsSocketInit)
+                if (IsSocketInit)
                 {
-                    this.ServerStation.Close();
+                    ServerStation.Close();
                 }
 
-                this.ServerStation.Start(ip, port);
-                this.log.Debug($"服务已开启 IP:{ip} PORT:{port}");
-                this.IsSocketInit = true;
+                _ = ServerStation.Start(ip, port);
+                log.Debug($"服务已开启 IP:{ip} PORT:{port}");
+                IsSocketInit = true;
                 return true;
             }
             catch (Exception ex)
             {
-                this.IsSocketInit = false;
-                this.erroMsg = "启动中有模块失败" + ex.GetInnerExceptionMessage();
-                this.log.Fail(this.erroMsg);
+                IsSocketInit = false;
+                ErroMsg = "启动中有模块失败" + ex.GetInnerExceptionMessage();
+                log.Fail(ErroMsg);
                 return false;
             }
         }
-
 
         /// <summary>
         /// 打开单个站点
@@ -413,8 +379,8 @@ namespace GeneralTool.CoreLibrary.TaskLib
         /// <param name="target"></param>
         public virtual bool OpenServerStation(StationInfo station, params BaseTaskInvoke[] target)
         {
-            this.ServerStations.Add(station);
-            return this.OpenStation(station, target);
+            ServerStations.Add(station);
+            return OpenStation(station, target);
         }
 
         /// <summary>
@@ -424,26 +390,26 @@ namespace GeneralTool.CoreLibrary.TaskLib
         /// <returns></returns>
         public virtual bool OpenStations(params BaseTaskInvoke[] target)
         {
-            foreach (var item in this.ServerStations)
+            foreach (StationInfo item in ServerStations)
             {
                 try
                 {
-                    if (!this.IsInterfacesInit)
+                    if (!IsInterfacesInit)
                     {
-                        this.taskInokes = target;
-                        this.IsInterfacesInit = true;
+                        taskInokes = target;
+                        IsInterfacesInit = true;
                     }
 
-                    taskInokes.Foreach(o =>
+                    _ = taskInokes.Foreach(o =>
                     {
-                        item.Station.AddStationObjectClass(o);
+                        _ = item.Station.AddStationObjectClass(o);
                     });
                 }
                 catch (Exception ex)
                 {
-                    this.erroMsg = "开启接口列表失败:" + ex.GetInnerExceptionMessage();
-                    this.log.Fail(this.erroMsg);
-                    this.IsInterfacesInit = false;
+                    ErroMsg = "开启接口列表失败:" + ex.GetInnerExceptionMessage();
+                    log.Fail(ErroMsg);
+                    IsInterfacesInit = false;
                     return false;
                 }
 
@@ -454,15 +420,15 @@ namespace GeneralTool.CoreLibrary.TaskLib
                         item.Station.Close();
                     }
 
-                    item.Station.Start(item.Ip, item.Port);
-                    this.log.Debug($"服务已开启 IP:{item.Ip} PORT:{item.Port}");
+                    _ = item.Station.Start(item.Ip, item.Port);
+                    log.Debug($"服务已开启 IP:{item.Ip} PORT:{item.Port}");
                     item.IsSocketInit = true;
                 }
                 catch (Exception ex)
                 {
                     item.IsSocketInit = false;
-                    this.erroMsg = "启动中有模块失败" + ex.GetInnerExceptionMessage();
-                    this.log.Fail(this.erroMsg);
+                    ErroMsg = "启动中有模块失败" + ex.GetInnerExceptionMessage();
+                    log.Fail(ErroMsg);
                     return false;
                 }
             }
@@ -473,22 +439,22 @@ namespace GeneralTool.CoreLibrary.TaskLib
         {
             try
             {
-                if (!this.IsInterfacesInit)
+                if (!IsInterfacesInit)
                 {
-                    this.taskInokes = target;
-                    this.IsInterfacesInit = true;
+                    taskInokes = target;
+                    IsInterfacesInit = true;
                 }
 
-                taskInokes.Foreach(o =>
+                _ = taskInokes.Foreach(o =>
                 {
-                    info.Station.AddStationObjectClass(o);
+                    _ = info.Station.AddStationObjectClass(o);
                 });
             }
             catch (Exception ex)
             {
-                this.erroMsg = "开启接口列表失败:" + ex.GetInnerExceptionMessage();
-                this.log.Fail(this.erroMsg);
-                this.IsInterfacesInit = false;
+                ErroMsg = "开启接口列表失败:" + ex.GetInnerExceptionMessage();
+                log.Fail(ErroMsg);
+                IsInterfacesInit = false;
                 return false;
             }
 
@@ -499,15 +465,15 @@ namespace GeneralTool.CoreLibrary.TaskLib
                     info.Station.Close();
                 }
 
-                info.Station.Start(info.Ip, info.Port);
-                this.log.Debug($"服务已开启 IP:{info.Ip} PORT:{info.Port}");
+                _ = info.Station.Start(info.Ip, info.Port);
+                log.Debug($"服务已开启 IP:{info.Ip} PORT:{info.Port}");
                 info.IsSocketInit = true;
             }
             catch (Exception ex)
             {
                 info.IsSocketInit = false;
-                this.erroMsg = "启动中有模块失败" + ex.GetInnerExceptionMessage();
-                this.log.Fail(this.erroMsg);
+                ErroMsg = "启动中有模块失败" + ex.GetInnerExceptionMessage();
+                log.Fail(ErroMsg);
                 return false;
             }
             return true;
@@ -518,26 +484,25 @@ namespace GeneralTool.CoreLibrary.TaskLib
         {
             try
             {
-                if (!this.IsInterfacesInit)
+                if (!IsInterfacesInit)
                 {
                     this.taskInokes = taskInokes;
-                    taskInokes.Foreach(o =>
+                    _ = taskInokes.Foreach(o =>
                     {
-                        this.ServerStation.AddStationObjectClass(o);
+                        _ = ServerStation.AddStationObjectClass(o);
                     });
-                    this.IsInterfacesInit = true;
+                    IsInterfacesInit = true;
                 }
                 return true;
             }
             catch (Exception ex)
             {
-                this.erroMsg = "开启接口列表失败:" + ex.GetInnerExceptionMessage();
-                this.log.Fail(this.erroMsg);
-                this.IsInterfacesInit = false;
+                ErroMsg = "开启接口列表失败:" + ex.GetInnerExceptionMessage();
+                log.Fail(ErroMsg);
+                IsInterfacesInit = false;
                 return false;
             }
         }
-
 
         /// <summary>
         /// 关闭
@@ -546,7 +511,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
         {
             try
             {
-                this.ServerStation?.Close();
+                ServerStation?.Close();
             }
             catch (Exception)
             {

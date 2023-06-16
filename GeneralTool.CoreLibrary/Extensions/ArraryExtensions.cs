@@ -10,43 +10,6 @@ namespace GeneralTool.CoreLibrary.Extensions
     public static class ArraryExtensions
     {
         #region Public 方法
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="arrary"></param>
-        /// <param name="match"></param>
-        /// <returns></returns>
-        public static int FindIndex<T>(this T[] arrary, Predicate<T> match)
-        {
-            for (int i = 0; i < arrary.Length; i++)
-            {
-                if (match(arrary[i]))
-                {
-                    return i;
-                }
-            }
-            return -1;
-        }
-
-        /// <summary>
-        /// 查找指定值位置
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="arrary"></param>
-        /// <param name="item"></param>
-        /// <returns></returns>
-        public static int FindIndex<T>(this T[] arrary, T item)
-        {
-            for (int i = 0; i < arrary.Length; i++)
-            {
-                if (item.Equals(arrary[i]))
-                {
-                    return i;
-                }
-            }
-            return -1;
-        }
 
         /// <summary>
         /// 循环数组类型
@@ -76,7 +39,7 @@ namespace GeneralTool.CoreLibrary.Extensions
         /// <param name="action"></param>
         public static void For<T>(this IEnumerable<T> arrary, Action<T> action)
         {
-            foreach (var item in arrary)
+            foreach (T item in arrary)
             {
                 action?.Invoke(item);
             }
@@ -102,7 +65,6 @@ namespace GeneralTool.CoreLibrary.Extensions
             return arrary;
         }
 
-
         /// <summary>
         /// 随机获取集合中的一项数据
         /// </summary>
@@ -119,11 +81,10 @@ namespace GeneralTool.CoreLibrary.Extensions
             if (startIndex + 1 == enumables.Length || startIndex == 0)
                 return enumables[startIndex];
 
-
             if (count < startIndex) count = startIndex + 1;
             if (count > enumables.Length) count = enumables.Length;
 
-            var index = RandomEx.Next(startIndex, count);
+            int index = RandomEx.Next(startIndex, count);
             return enumables[index];
         }
 
@@ -137,14 +98,14 @@ namespace GeneralTool.CoreLibrary.Extensions
         public static object[,] ToSecondArrary(this IList enumables, int rows, int cols)
         {
             //将一维数组放入二维数组中
-            var arr = new object[rows, cols];
-            var count = enumables.Count;
+            object[,] arr = new object[rows, cols];
+            int count = enumables.Count;
 
             for (int i = 0; i < rows; i++)
             {
                 for (int j = 0; j < cols; j++)
                 {
-                    var index = cols * i + j;
+                    int index = cols * i + j;
                     if (index >= count)
                     {
                         break;
@@ -166,14 +127,14 @@ namespace GeneralTool.CoreLibrary.Extensions
         public static T[,] ToSecondArrary<T>(this IList<T> enumables, int rows, int cols)
         {
             //将一维数组放入二维数组中
-            var arr = new T[rows, cols];
-            var count = enumables.Count;
+            T[,] arr = new T[rows, cols];
+            int count = enumables.Count;
 
             for (int i = 0; i < rows; i++)
             {
                 for (int j = 0; j < cols; j++)
                 {
-                    var index = cols * i + j;
+                    int index = cols * i + j;
                     if (index >= count)
                     {
                         break;
@@ -185,20 +146,20 @@ namespace GeneralTool.CoreLibrary.Extensions
             return arr;
         }
 
-
         /// <summary>
         /// 转换为指定进制的字符串
         /// </summary>
         /// <param name="arr"></param>
         /// <param name="fomart">要对每个字节转换的格式</param>
         /// <returns></returns>
-        public static string FomartDatas<T>(this T[] arr, string fomart = "{0:X2}")
+        public static string FomartDatas<T>(this IEnumerable<T> arr, string fomart = "{0:X2}", string spaceSymbol = " ")
         {
-            var str = string.Empty;
-            for (int i = 0; i < arr.Length; i++)
+            string str = string.Empty;
+            foreach (T item in arr)
             {
-                str += string.Format(fomart, arr[i]) + " ";
+                str += string.Format(fomart, item) + spaceSymbol;
             }
+
             return str;
         }
 

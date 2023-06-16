@@ -32,12 +32,12 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes
         /// <inheritdoc/>
         protected override void OnRender(DrawingContext drawingContext)
         {
-            if (!this.shape.Path.IsMouseOver) return;
-            var data = this.shape.Path.Data.Bounds;
-            data.Inflate(InflateScale / this.shape.ImageView.ImageScale, InflateScale / this.shape.ImageView.ImageScale);
+            if (!shape.Path.IsMouseOver) return;
+            Rect data = shape.Path.Data.Bounds;
+            data.Inflate(InflateScale / shape.ImageView.ImageScale, InflateScale / shape.ImageView.ImageScale);
             base.OnRender(drawingContext);
 
-            pen = new Pen(Brushes.Beige, 4 / this.shape.ImageView.ImageScale)
+            pen = new Pen(Brushes.Beige, 4 / shape.ImageView.ImageScale)
             {
                 DashStyle = new DashStyle()
                 {
@@ -54,13 +54,11 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes
         /// <inheritdoc/>
         protected override void OnPreviewMouseLeftButtonDown(MouseButtonEventArgs e)
         {
-            this.CaptureMouse();
+            _ = CaptureMouse();
 
-
-            this.mouseStartDown = e.GetPosition(this);
+            mouseStartDown = e.GetPosition(this);
 
             e.Handled = true;
-
 
             base.OnPreviewMouseLeftButtonDown(e);
         }
@@ -72,12 +70,12 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes
             if (e.LeftButton == MouseButtonState.Pressed)
             {
                 //Resize
-                this.ResizePath(e);
+                ResizePath(e);
             }
             else
             {
                 //show resize cursor
-                this.ShowReizeCuursors();
+                ShowReizeCuursors();
             }
             e.Handled = true;
 
@@ -88,29 +86,29 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes
         protected override void OnPreviewMouseUp(MouseButtonEventArgs e)
         {
 
-            this.ReleaseMouseCapture();
+            ReleaseMouseCapture();
 
-            this.mouseStartDown = null;
+            mouseStartDown = null;
 
-            this.shape.UpdatePixelpoints();
+            shape.UpdatePixelpoints();
 
             base.OnPreviewMouseUp(e);
         }
 
         private void ResizePath(MouseEventArgs e)
         {
-            if (this.shape.PixelPoints.Count == 1) return;
+            if (shape.PixelPoints.Count == 1) return;
 
-            if (e.LeftButton != MouseButtonState.Pressed || this.mouseStartDown == null || this.Cursor == null) return;
+            if (e.LeftButton != MouseButtonState.Pressed || mouseStartDown == null || Cursor == null) return;
 
             //鼠标当前的位置
-            var currPoint = e.GetPosition(this);
+            Point currPoint = e.GetPosition(this);
 
             //偏移量
-            var vector = currPoint - this.mouseStartDown.Value;
+            Vector vector = currPoint - mouseStartDown.Value;
 
             //确保只能向一个方向调整
-            switch (this.drawType)
+            switch (drawType)
             {
                 case DrawType.Left:
                 case DrawType.Right:
@@ -123,51 +121,51 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes
             }
 
             //将当前像素坐标全部转为canvas坐标,并找出其四个方向的最小最大坐标
-            var canvasGeoBuilder = new StringBuilder();
-            var canvasPoints = new List<Point>();
-            var pixelPoints = this.shape.PixelPoints;
-            var first = pixelPoints[0];
-            var firstCanvas = this.shape.ImageView.TranslateToCanvasPoint(first);
+            StringBuilder canvasGeoBuilder = new StringBuilder();
+            List<Point> canvasPoints = new List<Point>();
+            System.Collections.ObjectModel.ObservableCollection<Point> pixelPoints = shape.PixelPoints;
+            Point first = pixelPoints[0];
+            Point firstCanvas = shape.ImageView.TranslateToCanvasPoint(first);
             canvasPoints.Add(firstCanvas);
-            canvasGeoBuilder.Append($"M{firstCanvas}");
+            _ = canvasGeoBuilder.Append($"M{firstCanvas}");
 
             int i;
             for (i = 1; i < pixelPoints.Count; i++)
             {
-                var p = this.shape.ImageView.TranslateToCanvasPoint(pixelPoints[i]);
+                Point p = shape.ImageView.TranslateToCanvasPoint(pixelPoints[i]);
                 canvasPoints.Add(p);
-                canvasGeoBuilder.Append($"L{p}");
+                _ = canvasGeoBuilder.Append($"L{p}");
             }
 
-            var geo = Geometry.Parse(canvasGeoBuilder.ToString());
-            var geoBounds = geo.Bounds;
-            var left = (int)geoBounds.Left;
-            var right = (int)geoBounds.Right;
-            var top = (int)geoBounds.Top;
-            var bottom = (int)geoBounds.Bottom;
+            Geometry geo = Geometry.Parse(canvasGeoBuilder.ToString());
+            Rect geoBounds = geo.Bounds;
+            int left = (int)geoBounds.Left;
+            int right = (int)geoBounds.Right;
+            int top = (int)geoBounds.Top;
+            int bottom = (int)geoBounds.Bottom;
 
-            var count = 0;
+            int count = 0;
             //判断偏移方向
             for (i = 0; i < canvasPoints.Count; i++)
             {
-                var item = canvasPoints[i];
+                Point item = canvasPoints[i];
 
-                if (this.drawType == DrawType.Left && (int)item.X >= right)
+                if (drawType == DrawType.Left && (int)item.X >= right)
                 {
                     count++;
                     continue;
                 }
-                else if (this.drawType == DrawType.Right && (int)item.X <= left)
+                else if (drawType == DrawType.Right && (int)item.X <= left)
                 {
                     count++;
                     continue;
                 }
-                else if (this.drawType == DrawType.Top && (int)item.Y >= bottom)
+                else if (drawType == DrawType.Top && (int)item.Y >= bottom)
                 {
                     count++;
                     continue;
                 }
-                else if (this.drawType == DrawType.Bottom && (int)item.Y <= top)
+                else if (drawType == DrawType.Bottom && (int)item.Y <= top)
                 {
                     count++;
                     continue;
@@ -177,24 +175,24 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes
                 canvasPoints[i] = item;
             }
 
-            var resizeInfo = new ResizeEventArgs()
+            ResizeEventArgs resizeInfo = new ResizeEventArgs()
             {
-                PixelPoints = this.ParsePixelPoints(canvasPoints)
+                PixelPoints = ParsePixelPoints(canvasPoints)
             };
-            this.ResizeChingingEventHandler?.Invoke(this, resizeInfo);
+            ResizeChingingEventHandler?.Invoke(this, resizeInfo);
             if (resizeInfo.Handled) return;
 
             //进行更新
-            this.shape.UpdateShapePoints(canvasPoints);
-            this.InvalidateVisual();
+            shape.UpdateShapePoints(canvasPoints);
+            InvalidateVisual();
         }
 
         private List<Point> ParsePixelPoints(List<Point> canvasPoints)
         {
-            var list = new List<Point>();
-            foreach (var item in canvasPoints)
+            List<Point> list = new List<Point>();
+            foreach (Point item in canvasPoints)
             {
-                list.Add(this.shape.ImageView.TranslateToPixelPoint(item));
+                list.Add(shape.ImageView.TranslateToPixelPoint(item));
             }
             return list;
         }
@@ -202,62 +200,61 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes
         private void ShowReizeCuursors()
         {
             //确定当前鼠标点的位置
-            if (this.shape.PixelPoints.Count == 1) return;
+            if (shape.PixelPoints.Count == 1) return;
 
-            var mousePoint = Mouse.GetPosition(this);
+            Point mousePoint = Mouse.GetPosition(this);
 
-            var bound = this.shape.Path.Data.Bounds;
-            bound.Inflate(InflateScale / this.shape.ImageView.ImageScale, InflateScale / this.shape.ImageView.ImageScale);
+            Rect bound = shape.Path.Data.Bounds;
+            bound.Inflate(InflateScale / shape.ImageView.ImageScale, InflateScale / shape.ImageView.ImageScale);
 
             //判断
-            var xDis = bound.Right - mousePoint.X;
-            var leftXDis = bound.Left - mousePoint.X;
-            var yDis = bound.Bottom - mousePoint.Y;
-            var topYDis = bound.Top - mousePoint.Y;
+            double xDis = bound.Right - mousePoint.X;
+            double leftXDis = bound.Left - mousePoint.X;
+            double yDis = bound.Bottom - mousePoint.Y;
+            double topYDis = bound.Top - mousePoint.Y;
 
-            var scale = this.shape.ImageView.ImageScale;
+            double scale = shape.ImageView.ImageScale;
             //判断鼠标是否在右边框
-            var mouseInRightLine = xDis > -1 / scale && xDis < 3 / scale && mousePoint.Y > (bound.Top + 1 / scale) && mousePoint.Y < bound.Bottom - 1 / scale;
+            bool mouseInRightLine = xDis > -1 / scale && xDis < 3 / scale && mousePoint.Y > (bound.Top + 1 / scale) && mousePoint.Y < bound.Bottom - 1 / scale;
 
             //判断鼠标是否在左边框
-            var mouseInLeftLine = leftXDis > -1 / scale && leftXDis < 3 / scale && mousePoint.Y > (bound.Top + 1 / scale) && mousePoint.Y < bound.Bottom - 1 / scale;
+            bool mouseInLeftLine = leftXDis > -1 / scale && leftXDis < 3 / scale && mousePoint.Y > (bound.Top + 1 / scale) && mousePoint.Y < bound.Bottom - 1 / scale;
 
             //判断鼠标是否在下边框
-            var mouseInBottomLine = yDis > -1 / scale && yDis < 3 / scale && mousePoint.X > bound.Left + 1 / scale && mousePoint.X < bound.Right - 1 / scale;
+            bool mouseInBottomLine = yDis > -1 / scale && yDis < 3 / scale && mousePoint.X > bound.Left + 1 / scale && mousePoint.X < bound.Right - 1 / scale;
 
             //判断鼠标是否在上边框
-            var mouseInTopLine = topYDis > -1 / scale && topYDis < 3 / scale && mousePoint.X > bound.Left + 1 / scale && mousePoint.X < bound.Right - 1 / scale;
-
+            bool mouseInTopLine = topYDis > -1 / scale && topYDis < 3 / scale && mousePoint.X > bound.Left + 1 / scale && mousePoint.X < bound.Right - 1 / scale;
 
             //右边的显示应该处于右顶点到右底点之间
             if (mouseInRightLine)
             {
                 //处于右边
-                this.Cursor = Cursors.SizeWE;
-                this.drawType = DrawType.Right;
+                Cursor = Cursors.SizeWE;
+                drawType = DrawType.Right;
             }
             else if (mouseInLeftLine)
             {
                 //处于左边
-                this.Cursor = Cursors.SizeWE;
-                this.drawType = DrawType.Left;
+                Cursor = Cursors.SizeWE;
+                drawType = DrawType.Left;
             }
             else if (mouseInBottomLine)
             {
                 //处于下方
-                this.Cursor = Cursors.SizeNS;
-                this.drawType = DrawType.Bottom;
+                Cursor = Cursors.SizeNS;
+                drawType = DrawType.Bottom;
             }
             else if (mouseInTopLine)
             {
                 //处于上方
-                this.Cursor = Cursors.SizeNS;
-                this.drawType = DrawType.Top;
+                Cursor = Cursors.SizeNS;
+                drawType = DrawType.Top;
             }
             else
             {
-                this.drawType = DrawType.None;
-                this.Cursor = null;
+                drawType = DrawType.None;
+                Cursor = null;
             }
         }
     }

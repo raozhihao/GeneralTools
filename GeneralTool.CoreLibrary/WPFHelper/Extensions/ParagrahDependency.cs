@@ -304,10 +304,10 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
                 return;
             for (int index = 0; index < addItems.Count; index++)
             {
-                var msg = (LogMessageInfo)addItems[index];
-                var run = new Run(msg.Msg + Environment.NewLine);
+                LogMessageInfo msg = (LogMessageInfo)addItems[index];
+                Run run = new Run(msg.Msg + Environment.NewLine);
                 Brush brush = null;
-                var visible = false;
+                bool visible = false;
                 switch (action)
                 {
                     case NotifyCollectionChangedAction.Add:
@@ -350,11 +350,11 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
         private static readonly object Locker = new object();
         private static void Dp_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            paragraph.Dispatcher.BeginInvoke(new Action(() =>
+            _ = paragraph.Dispatcher.BeginInvoke(new Action(() =>
             {
                 lock (Locker)
                 {
-                    var list = sender as ObservableCollection<LogMessageInfo>;
+                    ObservableCollection<LogMessageInfo> list = sender as ObservableCollection<LogMessageInfo>;
                     if (paragraph.Inlines.Count > GetMaxCount(paragraph))
                     {
                         list.Clear();

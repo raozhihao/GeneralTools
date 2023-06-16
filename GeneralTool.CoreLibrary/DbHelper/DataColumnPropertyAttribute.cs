@@ -29,7 +29,7 @@ namespace GeneralTool.CoreLibrary.DbHelper
         /// <param name="dataName">对应数据库字段上的名称</param>
         public DataColumnPropertyAttribute(string dataName)
         {
-            this.DataName = dataName.ToLower();
+            DataName = dataName.ToLower();
         }
 
     }

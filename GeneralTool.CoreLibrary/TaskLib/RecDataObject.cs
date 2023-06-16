@@ -56,7 +56,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
         /// </summary>
         ~RecDataObject()
         {
-            this.Dispose();
+            Dispose();
         }
 
         #endregion Private 析构函数
@@ -67,7 +67,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
         /// </summary>
         public void Dispose()
         {
-            this.Dispose(true);
+            Dispose(true);
             GC.SuppressFinalize(this);
         }
 
@@ -79,7 +79,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
         /// </summary>
         internal void DelEndString()
         {
-            this.StringDatas = this.StringDatas.Split(new char[1])[0];
+            StringDatas = StringDatas.Split(new char[1])[0];
         }
 
         #endregion Internal 方法
@@ -92,15 +92,15 @@ namespace GeneralTool.CoreLibrary.TaskLib
         /// </param>
         protected virtual void Dispose(bool disposing)
         {
-            bool flag = !this.disposedValue;
+            bool flag = !disposedValue;
             if (flag)
             {
                 if (disposing)
                 {
-                    this.Datas = null;
-                    this.StringDatas = null;
+                    Datas = null;
+                    StringDatas = null;
                 }
-                this.disposedValue = true;
+                disposedValue = true;
             }
         }
 

@@ -39,7 +39,7 @@ namespace GeneralTool.CoreLibrary.Models
         /// </returns>
         public string GetValue(string key)
         {
-            return this.Parameters[key];
+            return Parameters[key];
         }
 
         /// <summary>
@@ -53,7 +53,7 @@ namespace GeneralTool.CoreLibrary.Models
         /// </returns>
         public T GetValue<T>(string key)
         {
-            return (T)((object)Convert.ChangeType(this.Parameters[key], typeof(T)));
+            return (T)Convert.ChangeType(Parameters[key], typeof(T));
         }
 
         #endregion Public 方法

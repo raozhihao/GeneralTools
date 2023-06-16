@@ -18,7 +18,7 @@ namespace GeneralTool.CoreLibrary.SerialPortEx
         /// <param name="onlineState"></param>
         public OnlineStateEventArgs(OnlineState onlineState)
         {
-            this.OnlineState = onlineState;
+            OnlineState = onlineState;
         }
     }
 

@@ -14,15 +14,15 @@ namespace GeneralTool.CoreLibrary.Models
         /// </summary>
         public ExcuteCancelTokenSource()
         {
-            this.tokenSource = new CancellationTokenSource();
+            tokenSource = new CancellationTokenSource();
         }
         /// <summary>
         /// 通知取消
         /// </summary>
         public void Cancel()
         {
-            this.isRequestCancel = true;
-            this.tokenSource?.Cancel();
+            isRequestCancel = true;
+            tokenSource?.Cancel();
         }
 
         /// <summary>
@@ -39,15 +39,15 @@ namespace GeneralTool.CoreLibrary.Models
         /// </summary>
         public async Task Pause()
         {
-            this.IsPauseNotify = true;
+            IsPauseNotify = true;
             //查看是否已经获取到了暂停信号
             await Task.Run(async () =>
             {
-                while (!IsPaused && !this.isRequestCancel)
+                while (!IsPaused && !isRequestCancel)
                 {
                     try
                     {
-                        await Task.Delay(10, this.Token);
+                        await Task.Delay(10, Token);
                     }
                     catch (Exception)
                     {
@@ -66,14 +66,14 @@ namespace GeneralTool.CoreLibrary.Models
         /// </summary>
         public async Task Resume()
         {
-            this.IsResumed = true;
+            IsResumed = true;
             await Task.Run(async () =>
             {
-                while (!this.IsResumed && !this.isRequestCancel)
+                while (!IsResumed && !isRequestCancel)
                 {
                     try
                     {
-                        await Task.Delay(10, this.Token);
+                        await Task.Delay(10, Token);
                     }
                     catch (Exception)
                     {
@@ -92,13 +92,13 @@ namespace GeneralTool.CoreLibrary.Models
         public void Reset()
         {
             WaitPause();
-            this.isFirstRequest = false;
-            this.isRequestCancel = false;
-            this.CanPause = false;
-            this.IsPauseNotify = false;
-            this.IsResumed = false;
-            this.tokenSource?.Dispose();
-            this.tokenSource = new CancellationTokenSource();
+            isFirstRequest = false;
+            isRequestCancel = false;
+            CanPause = false;
+            IsPauseNotify = false;
+            IsResumed = false;
+            tokenSource?.Dispose();
+            tokenSource = new CancellationTokenSource();
         }
 
         /// <summary>
@@ -106,32 +106,32 @@ namespace GeneralTool.CoreLibrary.Models
         /// </summary>
         private void WaitPause()
         {
-            while (this.IsPauseNotify)
+            while (IsPauseNotify)
             {
                 IsPaused = true;
-                if (this.isRequestCancel && !this.isFirstRequest)
+                if (isRequestCancel && !isFirstRequest)
                 {
                     //停止命令优先级更高
-                    this.NotifyCancel();
+                    NotifyCancel();
                     return;
                 }
-                if (this.IsResumed)
+                if (IsResumed)
                     break;
                 Thread.Sleep(10);
             }
 
             //重置
-            this.IsPauseNotify = false;
-            this.IsResumed = false;
+            IsPauseNotify = false;
+            IsResumed = false;
         }
 
         private void NotifyCancel()
         {
-            this.LastIndex = 0;
-            this.CanceledEvent?.Invoke(this);
-            this.CanceledEvent = null;
-            this.isFirstRequest = true;
-            this.CanPause = false;
+            LastIndex = 0;
+            CanceledEvent?.Invoke(this);
+            CanceledEvent = null;
+            isFirstRequest = true;
+            CanPause = false;
         }
 
         /// <summary>
@@ -151,11 +151,11 @@ namespace GeneralTool.CoreLibrary.Models
                 lock (locker)
                 {
                     //如果是已经触发了取消事件,且未在第一次,则触发事件
-                    if (this.isRequestCancel && !this.isFirstRequest)
+                    if (isRequestCancel && !isFirstRequest)
                     {
-                        this.NotifyCancel();
+                        NotifyCancel();
                     }
-                    else if (!this.isRequestCancel)
+                    else if (!isRequestCancel)
                     {
                         WaitPause();
                     }
@@ -166,7 +166,6 @@ namespace GeneralTool.CoreLibrary.Models
             }
 
         }
-
 
         /// <summary>
         /// 最后执行的Index坐标
@@ -203,9 +202,7 @@ namespace GeneralTool.CoreLibrary.Models
         {
             get
             {
-                if (this.tokenSource == null)
-                    return CancellationToken.None;
-                return this.tokenSource.Token;
+                return tokenSource == null ? CancellationToken.None : tokenSource.Token;
             }
         }
 

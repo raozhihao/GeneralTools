@@ -52,7 +52,7 @@ namespace GeneralTool.CoreLibrary.IPCHelper
         /// </summary>
         ~IPCServerHelper()
         {
-            Stop();
+            _ = Stop();
         }
 
         #endregion Private 析构函数
@@ -90,7 +90,7 @@ namespace GeneralTool.CoreLibrary.IPCHelper
         /// </summary>
         public void Dispose()
         {
-            Stop();
+            _ = Stop();
         }
 
         /// <summary>

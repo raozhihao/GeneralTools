@@ -80,7 +80,6 @@ namespace GeneralTool.CoreLibrary.Interfaces
         /// </returns>
         bool OpenWithoutServer(params BaseTaskInvoke[] taskInokes);
 
-
         #endregion Public 方法
     }
 }

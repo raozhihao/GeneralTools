@@ -27,9 +27,9 @@ namespace GeneralTool.CoreLibrary.SocketLib
         /// <returns></returns>
         public static SocketServer<ReceiveState> CreateCommandPack(ILog log = null)
         {
-            var server = new SocketServer<ReceiveState>(log)
+            SocketServer<ReceiveState> server = new SocketServer<ReceiveState>(log)
             {
-                Package = new Func<IPackage<ReceiveState>>(() => new CommandLinePackage())
+                PackageFunc = new Func<IPackage<ReceiveState>>(() => new CommandLinePackage())
             };
             return server;
         }
@@ -40,9 +40,9 @@ namespace GeneralTool.CoreLibrary.SocketLib
         /// <returns></returns>
         public static SocketServer<ReceiveState> CreateCustomCommandPack(string cmd, ILog log = null)
         {
-            var server = new SocketServer<ReceiveState>(log)
+            SocketServer<ReceiveState> server = new SocketServer<ReceiveState>(log)
             {
-                Package = new Func<IPackage<ReceiveState>>(() => new CustomCommandPackage(cmd))
+                PackageFunc = new Func<IPackage<ReceiveState>>(() => new CustomCommandPackage(cmd))
             };
             return server;
         }
@@ -53,9 +53,9 @@ namespace GeneralTool.CoreLibrary.SocketLib
         /// <returns></returns>
         public static SocketServer<ReceiveState> CreateCustomCommandPack(byte[] cmd, ILog log = null)
         {
-            var server = new SocketServer<ReceiveState>(log)
+            SocketServer<ReceiveState> server = new SocketServer<ReceiveState>(log)
             {
-                Package = new Func<IPackage<ReceiveState>>(() => new CustomCommandPackage(cmd))
+                PackageFunc = new Func<IPackage<ReceiveState>>(() => new CustomCommandPackage(cmd))
             };
             return server;
         }
@@ -67,9 +67,9 @@ namespace GeneralTool.CoreLibrary.SocketLib
         /// <returns></returns>
         public static SocketServer<FixedHeadRecevieState> CreateFixedCommandPack(ILog log = null)
         {
-            var server = new SocketServer<FixedHeadRecevieState>(log)
+            SocketServer<FixedHeadRecevieState> server = new SocketServer<FixedHeadRecevieState>(log)
             {
-                Package = new Func<IPackage<FixedHeadRecevieState>>(() => new FixedHeadPackage())
+                PackageFunc = new Func<IPackage<FixedHeadRecevieState>>(() => new FixedHeadPackage())
             };
             return server;
         }

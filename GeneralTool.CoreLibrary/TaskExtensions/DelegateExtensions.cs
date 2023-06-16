@@ -128,13 +128,13 @@ namespace GeneralTool.CoreLibrary.TaskExtensions
             CheckType<T>(handler.Method, args);
             try
             {
-                var t = (T)handler.DynamicInvoke(args);
+                T t = (T)handler.DynamicInvoke(args);
                 lastErroMsg = null;
                 return t;
             }
             catch (Exception ex)
             {
-                var exMsg = ex.GetInnerExceptionMessage();
+                string exMsg = ex.GetInnerExceptionMessage();
                 string msg = $"任务执行失败,失败消息:{exMsg + Environment.NewLine}当前执行间隔:{reTryTime},当前次数剩余{--reTryCount},准备进行下一次尝试";
                 System.Diagnostics.Trace.WriteLine(msg);
                 lastErroMsg = exMsg;
@@ -218,14 +218,14 @@ namespace GeneralTool.CoreLibrary.TaskExtensions
             CheckType<T>(handler.Method, args);
             try
             {
-                var t = await Task.Run(() => (T)handler.DynamicInvoke(args));
+                T t = await Task.Run(() => (T)handler.DynamicInvoke(args));
 
                 lastErroMsg = null;
                 return t;
             }
             catch (Exception ex)
             {
-                var exMsg = ex.GetInnerExceptionMessage();
+                string exMsg = ex.GetInnerExceptionMessage();
                 string msg = $"任务执行失败,失败消息:{exMsg + Environment.NewLine}当前执行间隔:{reTryTime},当前次数剩余{--reTryCount},准备进行下一次尝试";
                 System.Diagnostics.Trace.WriteLine(msg);
                 lastErroMsg = exMsg;
@@ -269,13 +269,13 @@ namespace GeneralTool.CoreLibrary.TaskExtensions
             CheckType<T>(handler.Method, args);
             try
             {
-                var t = (T)handler.DynamicInvoke(args);
+                T t = (T)handler.DynamicInvoke(args);
                 lastErroMsg = null;
                 return new Result<T>() { LastErroMsg = lastErroMsg, ResultItem = t, ResultBool = true };
             }
             catch (Exception ex)
             {
-                var exMsg = ex.GetInnerExceptionMessage();
+                string exMsg = ex.GetInnerExceptionMessage();
                 string msg = $"任务执行失败,失败消息:{exMsg + Environment.NewLine}当前执行间隔:{reTryTime},当前次数剩余{--reTryCount},准备进行下一次尝试";
                 System.Diagnostics.Trace.WriteLine(msg);
                 lastErroMsg = exMsg;
@@ -320,14 +320,14 @@ namespace GeneralTool.CoreLibrary.TaskExtensions
             CheckType<T>(handler.Method, args);
             try
             {
-                var t = await Task.Run(() => (T)handler.DynamicInvoke(args));
+                T t = await Task.Run(() => (T)handler.DynamicInvoke(args));
 
                 lastErroMsg = null;
                 return new Result<T>() { LastErroMsg = lastErroMsg, ResultBool = true, ResultItem = t };
             }
             catch (Exception ex)
             {
-                var exMsg = ex.GetInnerExceptionMessage();
+                string exMsg = ex.GetInnerExceptionMessage();
                 string msg = $"任务执行失败,失败消息:{exMsg + Environment.NewLine}当前执行间隔:{reTryTime},当前次数剩余{--reTryCount},准备进行下一次尝试";
                 System.Diagnostics.Trace.WriteLine(msg);
                 lastErroMsg = exMsg;

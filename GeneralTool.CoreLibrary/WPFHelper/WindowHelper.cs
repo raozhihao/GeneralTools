@@ -31,6 +31,5 @@ namespace GeneralTool.CoreLibrary.WPFHelper
         /// <returns></returns>
         public static HwndSource GetHwndSource(this Visual visual) => (HwndSource)PresentationSource.FromVisual(visual);
 
-
     }
 }

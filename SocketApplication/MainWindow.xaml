@@ -1,0 +1,48 @@
+﻿<m:MetroWindow x:Class="SocketApplication.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:m="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:local="clr-namespace:SocketApplication"
+        mc:Ignorable="d"
+        Title="Sockt调试工具"
+        Height="450"
+        Width="800">
+
+    <m:MetroWindow.DataContext>
+        <ObjectDataProvider ObjectType="{x:Type local:MainViewModel}" />
+    </m:MetroWindow.DataContext>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+
+        <Menu>
+            <MenuItem Header="创建服务器" Click="CreateServerMethod"/>
+            <MenuItem Header="创建客户端" />
+        </Menu>
+
+        <!--<m:MetroTabControl Grid.Row="1"  x:Name="MetroTable" ItemsSource="{Binding Items}">
+            
+             <m:MetroTabControl.ItemTemplate>
+                <DataTemplate>
+                    <m:MetroHeader Header="{Binding Header}" FontSize="50"/>
+                </DataTemplate>
+            </m:MetroTabControl.ItemTemplate>
+
+            <m:MetroTabControl.ContentTemplate>
+                <DataTemplate>
+                    <UserControl Content="{Binding Content}" />
+                </DataTemplate>
+            </m:MetroTabControl.ContentTemplate>
+        </m:MetroTabControl>-->
+
+        <m:MetroTabControl  x:Name="MetroTable" Grid.Row="1">
+          
+           
+        </m:MetroTabControl>
+    </Grid>
+</m:MetroWindow>

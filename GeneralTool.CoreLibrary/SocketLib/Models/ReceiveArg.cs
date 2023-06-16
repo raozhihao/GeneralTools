@@ -16,8 +16,8 @@ namespace GeneralTool.CoreLibrary.SocketLib.Models
         /// <param name="client"></param>
         public ReceiveArg(IEnumerable<byte> packBuffer, Socket client)
         {
-            this.PackBuffer = packBuffer;
-            this.Client = client;
+            PackBuffer = packBuffer;
+            Client = client;
         }
 
         /// <summary>

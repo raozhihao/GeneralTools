@@ -95,13 +95,20 @@ namespace SimpleDiagram
 
         private void dc_CopyEvent(object sender, GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Models.BlockCopyArgs e)
         {
-            if (e.DragItem.DragItem != null && e.DestBlock != null)
+            if (e.DragItem != null && e.DestBlock != null && e.DragItem.DragItem != null && e.DragItem.CanRepeatToCanvas)
             {
-                e.Block = true;
                 var source = e.DragItem.DragItem as BaseBlock;
                 var sink = e.DestBlock as BaseBlock;
-                sink.BlockViewModel = this.Copy(source.BlockViewModel);
+
+                //清除连接线相关属性,否则会出现循环引用
+                source.BlockViewModel.SourceBlockModels.Clear();
+                source.BlockViewModel.SinkBlockModels.Clear();
+
+                sink.BlockViewModel = source.BlockViewModel.Copy();
                 sink.BlockViewModel.BlockId = sink.ID.ToString();
+
+                //复制完成后不打开
+                e.OnCreateToCanvas = false;
             }
         }
 

@@ -11,18 +11,15 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes
     /// </summary>
     public class RectShape : BaseShape
     {
-       
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="rect"></param>
-        public RectShape(Rect rect) 
+        public RectShape(Rect rect)
         {
             this.rect = rect;
         }
-
-
 
         private Rect rect;
         /// <summary>
@@ -30,46 +27,46 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes
         /// </summary>
         public Rect Rect
         {
-            get => this.rect;
+            get => rect;
             set
             {
-                this.UpdateShape(this.ParseToPoints(value).ToList());
-                this.rect = value;
+                UpdateShape(ParseToPoints(value).ToList());
+                rect = value;
             }
         }
 
         private ObservableCollection<Point> ParseToPoints(Rect value)
         {
-            this.PixelPoints.Clear();
-            this.PixelPoints.Add(value.Location);
-            this.PixelPoints.Add(value.TopRight);
-            this.PixelPoints.Add(value.BottomRight);
-            this.PixelPoints.Add(value.BottomLeft);
-            return this.PixelPoints;
+            PixelPoints.Clear();
+            PixelPoints.Add(value.Location);
+            PixelPoints.Add(value.TopRight);
+            PixelPoints.Add(value.BottomRight);
+            PixelPoints.Add(value.BottomLeft);
+            return PixelPoints;
         }
 
         /// <inheritdoc/>
         public override void CreateShape()
         {
-            this.ParseToPoints(this.rect);
-            var canvasRect = this.ParseToCanvasRect(this.rect);
-            var rectGeo = new RectangleGeometry(canvasRect);
-            this.Path.Data = rectGeo;
+            _ = ParseToPoints(rect);
+            Rect canvasRect = ParseToCanvasRect(rect);
+            RectangleGeometry rectGeo = new RectangleGeometry(canvasRect);
+            Path.Data = rectGeo;
         }
 
         private Rect ParseToCanvasRect(Rect rect)
         {
-            var lt = rect.TopLeft;
-            var rb = rect.BottomRight;
-            lt = this.ImageView.TranslateToCanvasPoint(lt);
-            rb = this.ImageView.TranslateToCanvasPoint(rb);
+            Point lt = rect.TopLeft;
+            Point rb = rect.BottomRight;
+            lt = ImageView.TranslateToCanvasPoint(lt);
+            rb = ImageView.TranslateToCanvasPoint(rb);
             return new Rect(lt, rb);
         }
 
         /// <inheritdoc/>
         public override void UpdateShape(List<Point> canvasPoints)
         {
-            if (this.Path.Data is RectangleGeometry g)
+            if (Path.Data is RectangleGeometry g)
             {
                 g.Rect = new Rect(canvasPoints[0], canvasPoints[2]);
             }

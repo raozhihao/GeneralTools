@@ -25,7 +25,7 @@ namespace GeneralTool.CoreLibrary
             this.maxCount = maxCount;
             for (int i = 0; i < maxCount; i++)
             {
-                this.Objects.Add(objectFunc.Invoke());
+                Objects.Add(objectFunc.Invoke());
             }
         }
 
@@ -36,11 +36,11 @@ namespace GeneralTool.CoreLibrary
         {
             get
             {
-                if (this.isDisposed)
+                if (isDisposed)
                     throw new ObjectDisposedException(nameof(ObjectPool<T>));
 
                 T item = default;
-                while (!this.Objects.TryTake(out item))
+                while (!Objects.TryTake(out item))
                 {
                     //System.Diagnostics.Trace.WriteLine("等待新的进入");
                 }
@@ -55,16 +55,16 @@ namespace GeneralTool.CoreLibrary
         /// <param name="item"></param>
         public void Resolve(T item)
         {
-            if (this.isDisposed)
-                throw new ObjectDisposedException(this.GetType().Name);
+            if (isDisposed)
+                throw new ObjectDisposedException(GetType().Name);
             //如果当前池是满的,则先不添加,等待有空位
 
-            while (this.Objects.Count >= this.maxCount)
+            while (Objects.Count >= maxCount)
             {
                 // System.Diagnostics.Trace.WriteLine("池满了");
             }
 
-            this.Objects.Add(item);
+            Objects.Add(item);
             // System.Diagnostics.Trace.WriteLine("归还");
         }
 
@@ -73,9 +73,9 @@ namespace GeneralTool.CoreLibrary
         {
             //System.Diagnostics.Trace.WriteLine($"Dispose count {this.Objects.Count}");
             isDisposed = true;
-            while (this.Objects.Count > 0)
+            while (Objects.Count > 0)
             {
-                this.Objects.TryTake(out var result);
+                _ = Objects.TryTake(out T result);
                 if (result is IDisposable d) d.Dispose();
             }
         }

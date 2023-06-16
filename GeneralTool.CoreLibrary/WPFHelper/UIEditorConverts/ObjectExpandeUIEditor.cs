@@ -24,7 +24,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.UIEditorConverts
         {
             //在对应的grid中写入
 
-            var visible = UIEditorHelper.GetCusomAttr<System.ComponentModel.BrowsableAttribute>(propertyInfo);
+            BrowsableAttribute visible = UIEditorHelper.GetCusomAttr<System.ComponentModel.BrowsableAttribute>(propertyInfo);
 
             if (visible != null && !visible.Browsable)
                 return;
@@ -32,30 +32,26 @@ namespace GeneralTool.CoreLibrary.WPFHelper.UIEditorConverts
             //添加行
             gridParent.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(0, GridUnitType.Auto) });
 
-            var editorAttribute = UIEditorHelper.GetCusomAttr<UIEditorAttribute>(propertyInfo);
+            UIEditorAttribute editorAttribute = UIEditorHelper.GetCusomAttr<UIEditorAttribute>(propertyInfo);
             if (editorAttribute == null)
             {
                 //根据类型不同,调用不同的转换器,只处理基础类型,值类型与string
-                var proType = propertyInfo.PropertyType;
+                Type proType = propertyInfo.PropertyType;
 
-                if (proType == typeof(string))
-                    editorAttribute = new UIEditorAttribute(typeof(StringEditorConvert));
-                else if (proType.IsValueType)
-                {
-                    if (proType.IsEnum)
-                        editorAttribute = new UIEditorAttribute(typeof(EnumEditorConvert));
-                    else if (proType == typeof(Boolean))
-                        editorAttribute = new UIEditorAttribute(typeof(BooleanEditorConvert));
-                    else
-                        editorAttribute = new UIEditorAttribute(typeof(StringEditorConvert));
-                }
-                else
-                    editorAttribute = new UIEditorAttribute(typeof(StringObjectEditorConvert));
+                editorAttribute = proType == typeof(string)
+                    ? new UIEditorAttribute(typeof(StringEditorConvert))
+                    : proType.IsValueType
+                        ? proType.IsEnum
+                                            ? new UIEditorAttribute(typeof(EnumEditorConvert))
+                                            : proType == typeof(bool)
+                                            ? new UIEditorAttribute(typeof(BooleanEditorConvert))
+                                            : new UIEditorAttribute(typeof(StringEditorConvert))
+                        : new UIEditorAttribute(typeof(StringObjectEditorConvert));
             }
             if (editorAttribute == null || editorAttribute.Convert == null)
                 return;
 
-            var c = editorAttribute.GetConvert();
+            IUIEditorConvert c = editorAttribute.GetConvert();
 
             c.ConvertTo(gridParent, instance, propertyInfo, sortAsc, ref Row);
 
@@ -134,8 +130,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.UIEditorConverts
         public void ConvertTo(Grid gridParent, object instance, PropertyInfo propertyInfo, bool? sort, ref int Row, string header = null)
         {
             if (instance == null) return;
-            var instanceType = instance.GetType();
-            var gridContent = new Grid
+            Type instanceType = instance.GetType();
+            Grid gridContent = new Grid
             {
                 Margin = new Thickness(5, 0, 0, 0),
                 Name = "Grid_" + Row
@@ -143,26 +139,26 @@ namespace GeneralTool.CoreLibrary.WPFHelper.UIEditorConverts
             Grid.SetRow(gridContent, Row++);
             Grid.SetColumnSpan(gridContent, 2);
 
-            gridParent.Children.Add(gridContent);
+            _ = gridParent.Children.Add(gridContent);
 
             gridContent.DataContext = instance;
             gridContent.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(0, GridUnitType.Auto) });
 
-            if (PropertyGridControl.AttributesDic.TryGetValue(instance.GetType().FullName, out var attrValue))
+            if (PropertyGridControl.AttributesDic.TryGetValue(instance.GetType().FullName, out Attribute attrValue))
             {
                 if (attrValue is DescriptionAttribute a)
                 {
                     header = a.Description;
                 }
             }
-            var expande = new Expander() { Header = header ?? instanceType.Name, IsExpanded = true };
+            Expander expande = new Expander() { Header = header ?? instanceType.Name, IsExpanded = true };
 
             Grid.SetColumnSpan(expande, 2);
             Grid.SetRow(expande, 0);
 
-            gridContent.Children.Add(expande);
+            _ = gridContent.Children.Add(expande);
 
-            var newGrid = new Grid
+            Grid newGrid = new Grid
             {
                 Name = "ngrid_" + Row
             };
@@ -173,9 +169,9 @@ namespace GeneralTool.CoreLibrary.WPFHelper.UIEditorConverts
             int row = 0;
             IEnumerable<PropertyInfo> pros = instanceType.GetProperties();//获取所有属性
 
-            var groups = pros.GroupBy(p =>
+            IEnumerable<IGrouping<CategoryAttribute, PropertyInfo>> groups = pros.GroupBy(p =>
              {
-                 var categoryAttr = p.GetCustomAttribute<System.ComponentModel.CategoryAttribute>();
+                 CategoryAttribute categoryAttr = p.GetCustomAttribute<System.ComponentModel.CategoryAttribute>();
                  if (categoryAttr == null)
                  {
                      if (PropertyGridControl.AttributesDic.ContainsKey(p.PropertyType.FullName))
@@ -192,32 +188,32 @@ namespace GeneralTool.CoreLibrary.WPFHelper.UIEditorConverts
             {
                 groups = sort.Value ? groups.OrderBy(p => p.Key.Category) : groups.OrderByDescending(p => p.Key.Category);
             }
-            foreach (var item in groups)
+            foreach (IGrouping<CategoryAttribute, PropertyInfo> item in groups)
             {
                 string headerName = item.Key.Category;
 
                 //在其下再增加一个Expande
 
                 newGrid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(0, GridUnitType.Auto) });
-                var newExpander = new Expander() { Header = headerName };
+                Expander newExpander = new Expander() { Header = headerName };
                 Grid.SetColumnSpan(newExpander, 2);
                 Grid.SetRow(newExpander, row++);
-                newGrid.Children.Add(newExpander);
+                _ = newGrid.Children.Add(newExpander);
                 //增加一个Grid,用以保存对应的属性
-                var gridExpander = new Grid();
+                Grid gridExpander = new Grid();
                 gridExpander.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(0, GridUnitType.Auto) });
                 gridExpander.ColumnDefinitions.Add(new ColumnDefinition());
                 newExpander.Content = gridExpander;
                 int newRow = 0;
 
-                var newItem = item.AsEnumerable();
+                IEnumerable<PropertyInfo> newItem = item.AsEnumerable();
                 if (sort != null)
                 {
                     newItem = sort.Value ? item.OrderBy(p => p.Name) : item.OrderByDescending(p => p.Name);
                 }
-                foreach (var pro in newItem)
+                foreach (PropertyInfo pro in newItem)
                 {
-                    var editor = new ExpandeUIEditor();
+                    ExpandeUIEditor editor = new ExpandeUIEditor();
 
                     editor.ConvertTo(gridExpander, pro.GetValue(instance), pro, sort, ref newRow);
                 }

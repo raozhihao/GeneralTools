@@ -17,8 +17,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Adorners
         public SelectAdorner(UIElement adornedElement, Point startPoint) : base(adornedElement)
         {
             drawingPen = new Pen(Brushes.LightSlateGray, 1.5);
-            this.fillBrush = new SolidColorBrush(Color.FromArgb(100, 234, 12, 223));
-            this.Start = startPoint;
+            fillBrush = new SolidColorBrush(Color.FromArgb(100, 234, 12, 223));
+            Start = startPoint;
         }
 
         private Point? start;
@@ -27,13 +27,13 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Adorners
         /// </summary>
         public Point? Start
         {
-            get => this.start;
+            get => start;
             set
             {
-                if (this.start == value)
+                if (start == value)
                     return;
-                this.start = value;
-                this.InvalidateVisual();
+                start = value;
+                InvalidateVisual();
             }
         }
 
@@ -43,14 +43,14 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Adorners
         /// </summary>
         public Point? End
         {
-            get => this.end;
+            get => end;
             set
             {
                 if (end == value)
                     return;
-                this.end = value;
+                end = value;
 
-                this.InvalidateVisual();
+                InvalidateVisual();
             }
         }
 
@@ -61,10 +61,10 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Adorners
         {
             base.OnRender(drawingContext);
             //
-            if (this.Start == null || this.End == null) return;
+            if (Start == null || End == null) return;
 
-            var rect = new Rect(this.Start.Value, this.End.Value);
-            drawingContext.DrawRectangle(this.fillBrush, this.drawingPen, rect);
+            Rect rect = new Rect(Start.Value, End.Value);
+            drawingContext.DrawRectangle(fillBrush, drawingPen, rect);
 
         }
     }

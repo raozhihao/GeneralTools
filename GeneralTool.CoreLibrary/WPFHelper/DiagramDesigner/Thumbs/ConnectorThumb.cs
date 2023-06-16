@@ -24,8 +24,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
         /// </summary>
         public Direction Direction
         {
-            get => (Direction)this.GetValue(DirectionProperty);
-            set => this.SetValue(DirectionProperty, value);
+            get => (Direction)GetValue(DirectionProperty);
+            set => SetValue(DirectionProperty, value);
         }
 
         /// <summary>
@@ -38,8 +38,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
         /// </summary>
         public ConnectorType ConnectorType
         {
-            get => (ConnectorType)this.GetValue(ConnectorTypeProperty);
-            set => this.SetValue(ConnectorTypeProperty, value);
+            get => (ConnectorType)GetValue(ConnectorTypeProperty);
+            set => SetValue(ConnectorTypeProperty, value);
         }
 
         //public static readonly DependencyProperty SinkCountProperty = DependencyProperty.Register(nameof(SinkCount), typeof(int), typeof(ConnectorThumb), new PropertyMetadata(1));
@@ -61,8 +61,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
         /// </summary>
         public int SourceCount
         {
-            get => (int)this.GetValue(SourceCountProperty);
-            set => this.SetValue(SourceCountProperty, value);
+            get => (int)GetValue(SourceCountProperty);
+            set => SetValue(SourceCountProperty, value);
         }
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
         /// </summary>
         public ConnectorThumb()
         {
-            this.Loaded += ConnectorThumb_Loaded;
+            Loaded += ConnectorThumb_Loaded;
         }
 
         /// <summary>
@@ -83,11 +83,10 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
         public AdornerLayer Layer { get; set; }
         private void ConnectorThumb_Loaded(object sender, RoutedEventArgs e)
         {
-            this.SourceBlock = this.DataContext as BlockItem;
-            if (this.SourceBlock != null)
-                Layer = AdornerLayer.GetAdornerLayer(this.SourceBlock);
+            SourceBlock = DataContext as BlockItem;
+            if (SourceBlock != null)
+                Layer = AdornerLayer.GetAdornerLayer(SourceBlock);
         }
-
 
         private bool isDrag;
         /// <summary>
@@ -100,33 +99,32 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
         protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
         {
             base.OnMouseLeftButtonDown(e);
-            this.SinkBlock = null;
-            if (this.SourceBlock == null || !this.SourceBlock.ParentCanvas.CanOperation)
+            SinkBlock = null;
+            if (SourceBlock == null || !SourceBlock.ParentCanvas.CanOperation)
             {
                 return;
             }
             //读取当前可作为起点的数量
-            var count = this.SourceBlock.ParentCanvas.Children.OfType<Connection>().Where(c => c.SourceThumb == this).Count();
+            int count = SourceBlock.ParentCanvas.Children.OfType<Connection>().Where(c => c.SourceThumb == this).Count();
             if (count > 0)
             {
-                this.isDrag = false;
+                isDrag = false;
                 return;
             }
 
-            if (this.ConnectorType == ConnectorType.OnlySink)
+            if (ConnectorType == ConnectorType.OnlySink)
             {
-                this.isDrag = false;
+                isDrag = false;
                 return;//仅作为目标点,不允许拉动
             }
 
-
-            this.isDrag = true;
-            if (this.isDrag && this.SourceBlock != null && this.Layer != null)
+            isDrag = true;
+            if (isDrag && SourceBlock != null && Layer != null)
             {
                 //创建一个Adorner
-                this.Cursor = Cursors.Cross;
-                var startPoint = this.TranslatePoint(new Point(this.ActualWidth / 2, this.ActualHeight / 2), this.SourceBlock);
-                this.Connector = new ConnectorAdorner(this.SourceBlock, startPoint, this);
+                Cursor = Cursors.Cross;
+                Point startPoint = TranslatePoint(new Point(ActualWidth / 2, ActualHeight / 2), SourceBlock);
+                Connector = new ConnectorAdorner(SourceBlock, startPoint, this);
 
                 Layer.Add(Connector);
                 e.Handled = true;
@@ -139,16 +137,15 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
         protected override void OnMouseMove(MouseEventArgs e)
         {
             base.OnMouseMove(e);
-            if (this.isDrag && this.SourceBlock != null && this.Layer != null)
+            if (isDrag && SourceBlock != null && Layer != null)
             {
                 //获取Canvas
 
-                var point = e.GetPosition(this.SourceBlock);
-                this.Connector.End = point;
+                Point point = e.GetPosition(SourceBlock);
+                Connector.End = point;
                 e.Handled = true;
             }
         }
-
 
         /// <summary>
         /// 
@@ -161,15 +158,15 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
         {
             base.OnMouseLeftButtonUp(e);
 
-            this.Cursor = null;
-            this.isDrag = false;
-            if (this.Connector == null) return;
-            var canvas = this.SourceBlock.Parent as DesignerCanvas;
-            if (this.SourceBlock != null && this.Layer != null)
+            Cursor = null;
+            isDrag = false;
+            if (Connector == null) return;
+            DesignerCanvas canvas = SourceBlock.Parent as DesignerCanvas;
+            if (SourceBlock != null && Layer != null)
             {
                 //找到落点,如果找到就将落点的Item也一并找到,在其变换位置时,更新End坐标
                 //获取Canvas
-                var destThumb = canvas?.HitConnectorItem(e);
+                ConnectorThumb destThumb = canvas?.HitConnectorItem(e);
 
                 //判断目标点是否可作为终点使用
                 if (destThumb != null && (destThumb.ConnectorType == ConnectorType.None || destThumb.ConnectorType == ConnectorType.OnlySink))
@@ -181,25 +178,25 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
                     //if (!destThumb.SourceBlock.Equals(this.SourceBlock) && destThumb.SinkCount != count)
 
                     //if (destThumb.SourceBlock != null&&!destThumb.SourceBlock.Equals(this.SourceBlock)&&this.GetCanConnectThumbs(destThumb.Direction)&&!this.SourceBlock.SinkItems.Contains(destThumb.SourceBlock))
-                    if (this.GetCanConnectThumbs(destThumb.Direction))
+                    if (GetCanConnectThumbs(destThumb.Direction))
                     {
                         //一个源只能对应一个相同的目标点,两个块之间不能互连
                         //当前块是否已经拥有目标点了,以及当前目标点是否作为源时是否已经拥有当前块做为目标点
                         //if (!this.SourceBlock.ContainsSink(destThumb.SourceBlock) && !destThumb.SourceBlock.ContainsSink(this.SourceBlock))
                         //{
                         //获取目标点的中间点
-                        var destCenterPoint = new Point(destThumb.RenderSize.Width / 2, destThumb.RenderSize.Height / 2);
+                        Point destCenterPoint = new Point(destThumb.RenderSize.Width / 2, destThumb.RenderSize.Height / 2);
                         //中间点在canvas中的位置
-                        var canvasPoint = destThumb.TranslatePoint(destCenterPoint, canvas);
+                        Point canvasPoint = destThumb.TranslatePoint(destCenterPoint, canvas);
                         //相对于当前源的位置
-                        var thisPoint = canvas.TranslatePoint(canvasPoint, this.SourceBlock);
-                        this.Connector.End = thisPoint;
+                        Point thisPoint = canvas.TranslatePoint(canvasPoint, SourceBlock);
+                        Connector.End = thisPoint;
 
                         // this.connector.DestItem = destThumb.SourceBlock;
-                        this.Connector.DestThumb = destThumb;
+                        Connector.DestThumb = destThumb;
                         // destThumb.SourceBlock = this.SourceBlock;
                         //在当前块的目标集合中添加目标块
-                        this.SourceBlock.AddSinkItem(destThumb.SourceBlock);
+                        SourceBlock.AddSinkItem(destThumb.SourceBlock);
                         //在当前目标块的源集合中添加当前块
                         // destThumb.SourceBlock.AddSourceItem(this.SourceBlock);
 
@@ -213,9 +210,9 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
                 }
             }
 
-            if (this.Connector != null)
-                this.Layer.Remove(this.Connector);
-            this.ReleaseMouseCapture();
+            if (Connector != null)
+                Layer.Remove(Connector);
+            ReleaseMouseCapture();
         }
 
         /// <summary>
@@ -223,9 +220,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
         /// </summary>
         public bool GetCanConnectThumbs(Direction direction)
         {
-            if (this.directions == null)
-                return true;
-            return this.directions.Contains(direction);
+            return directions == null || directions.Contains(direction);
         }
 
         private Direction[] directions;

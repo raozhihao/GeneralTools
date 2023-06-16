@@ -10,10 +10,10 @@ namespace GeneralTool.CoreLibrary.Extensions
 
         public static IPAddress ParseToIp(this uint nCurrentIp)
         {
-            var i1 = ((nCurrentIp) & 0xff000000) >> 24;
-            var i2 = ((nCurrentIp) & 0x00ff0000) >> 16;
-            var i3 = ((nCurrentIp) & 0x0000ff00) >> 8;
-            var i4 = ((nCurrentIp) & 0x000000ff);
+            uint i1 = ((nCurrentIp) & 0xff000000) >> 24;
+            uint i2 = ((nCurrentIp) & 0x00ff0000) >> 16;
+            uint i3 = ((nCurrentIp) & 0x0000ff00) >> 8;
+            uint i4 = ((nCurrentIp) & 0x000000ff);
             return $"{i1}.{i2}.{i3}.{i4}".ParseToIPAddress();
         }
 
@@ -22,7 +22,6 @@ namespace GeneralTool.CoreLibrary.Extensions
 
         public static string ParseToIPString(this uint nCurrentIp)
             => nCurrentIp.ParseToIp().ToString();
-
 
     }
 }

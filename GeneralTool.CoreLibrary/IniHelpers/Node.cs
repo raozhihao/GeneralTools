@@ -16,7 +16,7 @@ namespace GeneralTool.CoreLibrary.IniHelpers
         /// </param>
         public Category(string sectionName)
         {
-            this.SectionName = sectionName;
+            SectionName = sectionName;
         }
 
         #endregion Public 构造函数
@@ -56,22 +56,21 @@ namespace GeneralTool.CoreLibrary.IniHelpers
         /// <param name="iniPath"></param>
         public Node(string sectionName, string keyName, T defaultValue, bool create = false, string iniPath = "")
         {
-            this.SectionName = sectionName;
-            this.KeyName = keyName;
+            SectionName = sectionName;
+            KeyName = keyName;
 
-            this.DefaultValue = defaultValue;
-            this.IniPath = iniPath;
+            DefaultValue = defaultValue;
+            IniPath = iniPath;
 
             if (create)
             {
-                var tmp = this.IniHelper.GetValue<string>(SectionName, KeyName);
+                string tmp = IniHelper.GetValue<string>(SectionName, KeyName);
                 if (string.IsNullOrWhiteSpace(tmp))
                 {
-                    this.Value = defaultValue;
+                    Value = defaultValue;
                 }
             }
         }
-
 
         #endregion Public 构造函数
 
@@ -88,12 +87,11 @@ namespace GeneralTool.CoreLibrary.IniHelpers
         /// </summary>
         public string IniPath
         {
-            get => this.iniPath;
+            get => iniPath;
             set
             {
-                if (string.IsNullOrEmpty(iniPath)) this.IniHelper = IniHelper.IniHelperInstance;
-                else this.IniHelper = new IniHelper(iniPath);
-                this.iniPath = value;
+                IniHelper = string.IsNullOrEmpty(iniPath) ? IniHelper.IniHelperInstance : new IniHelper(iniPath);
+                iniPath = value;
             }
         }
 
@@ -120,15 +118,15 @@ namespace GeneralTool.CoreLibrary.IniHelpers
             get
             {
                 //获取值
-                var tmp = this.IniHelper.GetValue<string>(SectionName, KeyName);
+                string tmp = IniHelper.GetValue<string>(SectionName, KeyName);
                 if (string.IsNullOrWhiteSpace(tmp))
                     return DefaultValue;
-                var type = typeof(T);
+                Type type = typeof(T);
                 //如果是泛型或数组类型
                 if (type.IsGenericType || type.IsArray)
                 {
                     //创建类型
-                    var arr = tmp.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                    string[] arr = tmp.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
 
                     object obj;
                     if (type.IsGenericType)
@@ -140,22 +138,22 @@ namespace GeneralTool.CoreLibrary.IniHelpers
                         else
                         {
                             obj = Activator.CreateInstance(type, new object[] { arr.Length });
-                            var method = type.GetMethod("Add", new Type[] { type.GenericTypeArguments[0] });
+                            MethodInfo method = type.GetMethod("Add", new Type[] { type.GenericTypeArguments[0] });
                             for (int i = 0; i < arr.Length; i++)
                             {
-                                method.Invoke(obj, new object[] { Convert.ChangeType(arr[i], type.GenericTypeArguments[0]) });
+                                _ = method.Invoke(obj, new object[] { Convert.ChangeType(arr[i], type.GenericTypeArguments[0]) });
                             }
                         }
                     }
                     else
                     {
                         string assName = type.FullName.Replace("[]", string.Empty);
-                        var t = Type.GetType(assName);
+                        Type t = Type.GetType(assName);
                         obj = Activator.CreateInstance(type, new object[] { arr.Length });
-                        var method = type.GetMethod("Set", new Type[] { typeof(int), t });
+                        MethodInfo method = type.GetMethod("Set", new Type[] { typeof(int), t });
                         for (int i = 0; i < arr.Length; i++)
                         {
-                            method.Invoke(obj, new object[] { i, Convert.ChangeType(arr[i], t) });
+                            _ = method.Invoke(obj, new object[] { i, Convert.ChangeType(arr[i], t) });
                         }
                     }
 
@@ -163,12 +161,12 @@ namespace GeneralTool.CoreLibrary.IniHelpers
                 }
                 else
                 {
-                    return this.IniHelper.GetValue<T>(SectionName, KeyName, default);
+                    return IniHelper.GetValue<T>(SectionName, KeyName, default);
                 }
             }
             set
             {
-                var type = value.GetType();
+                Type type = value.GetType();
                 if (type.IsGenericType || type.IsArray)
                 {
                     //获取长度
@@ -192,11 +190,11 @@ namespace GeneralTool.CoreLibrary.IniHelpers
                         objs[i] = get.Invoke(value, new object[] { i });
                     }
                     string val = string.Join(",", objs);
-                    this.IniHelper.WriteValueString(SectionName, KeyName, val);
+                    IniHelper.WriteValueString(SectionName, KeyName, val);
                 }
                 else
                 {
-                    this.IniHelper.WriteValueT<T>(SectionName, KeyName, value);
+                    IniHelper.WriteValueT<T>(SectionName, KeyName, value);
                 }
             }
         }
@@ -214,6 +212,7 @@ namespace GeneralTool.CoreLibrary.IniHelpers
         {
             return value.Value;
         }
+
 
         #endregion Public 方法
     }

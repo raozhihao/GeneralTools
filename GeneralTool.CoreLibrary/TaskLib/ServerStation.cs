@@ -10,7 +10,6 @@ namespace GeneralTool.CoreLibrary.TaskLib
     public class ServerStation : ServerStationBase
     {
 
-
         #region Public 构造函数
         /// <summary>
         /// 
@@ -24,8 +23,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
             if (jsonConvert == null)
                 jsonConvert = new BaseJsonCovert();
 
-
-            this.SocketServer = new GenServerStation<ReceiveState>(jsonConvert, log, null);
+            SocketServer = new GenServerStation<ReceiveState>(jsonConvert, log, null);
         }
 
         #endregion Public 构造函数
@@ -46,7 +44,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
         /// <returns></returns>
         public override bool Close()
         {
-            this.SocketServer.Close();
+            _ = SocketServer.Close();
             return true;
         }
 
@@ -58,7 +56,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
         /// <returns></returns>
         public override bool Start(string ip, int port)
         {
-            return this.SocketServer.Start(ip, port);
+            return SocketServer.Start(ip, port);
         }
 
         #endregion Public 方法

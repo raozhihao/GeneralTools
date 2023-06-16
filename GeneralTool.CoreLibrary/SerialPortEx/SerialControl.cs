@@ -1,5 +1,4 @@
-﻿#if NET452
-
+﻿
 using System;
 using System.Collections.Generic;
 using System.IO.Ports;
@@ -30,7 +29,6 @@ namespace GeneralTool.CoreLibrary.SerialPortEx
         {
             base.DataReceived += SerialControl_DataReceived;
         }
-
 
         #endregion Public 构造函数
 
@@ -98,7 +96,7 @@ namespace GeneralTool.CoreLibrary.SerialPortEx
         /// </summary>
         public new void Close()
         {
-            if (this.CheckState)
+            if (CheckState)
                 tokenSource.Cancel();
 
             base.Close();
@@ -115,7 +113,7 @@ namespace GeneralTool.CoreLibrary.SerialPortEx
             return new SerialRequest(Head, End);
         }
 
-        CancellationTokenSource tokenSource;
+        private CancellationTokenSource tokenSource;
         /// <summary>
         /// 开启
         /// </summary>
@@ -128,22 +126,21 @@ namespace GeneralTool.CoreLibrary.SerialPortEx
 
             base.Open();
 
-
-            if (this.CheckState)
+            if (CheckState)
             {
-                this.OnlineStateEvent?.Invoke(this, new OnlineStateEventArgs(OnlineState.Online));
+                OnlineStateEvent?.Invoke(this, new OnlineStateEventArgs(OnlineState.Online));
                 tokenSource = new CancellationTokenSource();
 
-                Task.Run(() =>
+                _ = Task.Run(() =>
                 {
                     System.Diagnostics.Trace.WriteLine("开始线程检测");
                     while (!tokenSource.IsCancellationRequested)
                     {
-                        if (!this.IsOpen)
+                        if (!IsOpen)
                         {
-                            if (this.isRequest)
-                                RecEvent.Set();
-                            this.OnlineStateEvent?.Invoke(this, new OnlineStateEventArgs(OnlineState.Unline));
+                            if (isRequest)
+                                _ = RecEvent.Set();
+                            OnlineStateEvent?.Invoke(this, new OnlineStateEventArgs(OnlineState.Unline));
                             break;
                         }
 
@@ -160,8 +157,8 @@ namespace GeneralTool.CoreLibrary.SerialPortEx
         /// <param name="backCheck">是否在后台实时检测</param>
         public void Open(bool backCheck)
         {
-            this.CheckState = backCheck;
-            this.Open();
+            CheckState = backCheck;
+            Open();
         }
 
         /// <summary>
@@ -174,24 +171,24 @@ namespace GeneralTool.CoreLibrary.SerialPortEx
         public SerialResponse Send(SerialRequest request)
         {
             //重置信号量,以免被上一次的污染
-            RecEvent.Reset();
+            _ = RecEvent.Reset();
             recDatas.Clear();
 
             if (!request.IsSetData)
                 throw new Exception("不能发送没有设置数据的消息结构！");
 
-            if (!this.IsOpen)
+            if (!IsOpen)
             {
-                this.isRequest = false;
+                isRequest = false;
                 return new SerialResponse(request, recDatas.ToArray(), null);
             }
 
             byte[] array = request.ToSendDatas();
             CurrentRequest = request;
             Write(array, 0, array.Length);
-            this.isRequest = true;
-            RecEvent.WaitOne(base.ReadTimeout);
-            this.isRequest = false;
+            isRequest = true;
+            _ = RecEvent.WaitOne(base.ReadTimeout);
+            isRequest = false;
             int num = 0;
             if (recDatas.Count() > 3)
                 num = recDatas[2];
@@ -230,13 +227,7 @@ namespace GeneralTool.CoreLibrary.SerialPortEx
                 for (int i = 0; i < recDatas.Count - 2; i++)
                     b = (byte)(b + recDatas[i]);
 
-                if (b != recDatas[recDatas.Count - 2])
-                    return false;
-
-                if (CurrentRequest.End != recDatas.Last())
-                    return false;
-
-                return true;
+                return b == recDatas[recDatas.Count - 2] && CurrentRequest.End == recDatas.Last();
             }
 
             recDatas.Clear();
@@ -252,7 +243,7 @@ namespace GeneralTool.CoreLibrary.SerialPortEx
             try
             {
                 byte[] array = new byte[base.BytesToRead];
-                Read(array, 0, array.Length);
+                _ = Read(array, 0, array.Length);
                 byte[] array2 = array;
                 foreach (byte b in array2)
                 {
@@ -268,17 +259,16 @@ namespace GeneralTool.CoreLibrary.SerialPortEx
                     recDatas.Add(b);
                     //如果检测通过
                     if (CheckPacketAllReady())
-                        RecEvent.Set();
+                        _ = RecEvent.Set();
                 }
             }
             catch (Exception ex)
             {
-                this.ErrorMsg?.Invoke(ex);
-                RecEvent.Set();
+                ErrorMsg?.Invoke(ex);
+                _ = RecEvent.Set();
             }
         }
 
         #endregion Private 方法
     }
 }
-#endif

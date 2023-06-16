@@ -212,7 +212,6 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// </summary>
         public const int ROBOT_IO_CO1 = 3;
 
-
         //接口板IO类型
         //
         /// <summary>
@@ -275,7 +274,6 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// 
         /// </summary>
         public const string TOOL_IO_3 = ("T_DI/O_03");
-
 
         //
         /// <summary>
@@ -359,7 +357,6 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// 
         /// </summary>
         public const int RobotResumed = 3;
-
 
         //机械臂工作模式
         /// <summary>

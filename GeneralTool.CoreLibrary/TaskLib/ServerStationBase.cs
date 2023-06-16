@@ -27,7 +27,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
         {
             if (log == null)
                 log = new ConsoleLogInfo();
-            this.Log = log;
+            Log = log;
         }
 
         #endregion Public 构造函数
@@ -53,7 +53,6 @@ namespace GeneralTool.CoreLibrary.TaskLib
         /// </summary>
         public Dictionary<string, RequestAddressItem> RequestRoute { get; set; } = new Dictionary<string, RequestAddressItem>();
 
-
         #endregion Protected 属性
 
         #region Public 方法
@@ -72,16 +71,16 @@ namespace GeneralTool.CoreLibrary.TaskLib
         /// </returns>
         public virtual bool AddRoute(string url, object target, MethodInfo m, HttpMethod httpMethod)
         {
-            bool flag = this.RequestRoute.ContainsKey(url);
+            bool flag = RequestRoute.ContainsKey(url);
             bool result;
             if (flag)
             {
-                this.Log.Error($"类型: {target} 方法: {url} 已存在,不添加");
+                Log.Error($"类型: {target} 方法: {url} 已存在,不添加");
                 result = false;
             }
             else
             {
-                this.RequestRoute.Add(url, new RequestAddressItem
+                RequestRoute.Add(url, new RequestAddressItem
                 {
                     Url = url,
                     MethodInfo = m,
@@ -102,7 +101,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
         public ServerResponse GetServerResponse(ServerRequest serverRequest, IJsonConvert jsonConvert)
         {
 
-            var serverResponse = new ServerResponse
+            ServerResponse serverResponse = new ServerResponse
             {
                 StateCode = RequestStateCode.OK
             };
@@ -111,7 +110,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
                 try
                 {
                     serverResponse.RequestUrl = serverRequest.Url;
-                    if (!this.RequestRoute.ContainsKey(serverRequest.Url))
+                    if (!RequestRoute.ContainsKey(serverRequest.Url))
                     {
                         serverResponse.StateCode = RequestStateCode.UrlError;
                         serverResponse.RequestSuccess = false;
@@ -119,26 +118,23 @@ namespace GeneralTool.CoreLibrary.TaskLib
                     }
                     else
                     {
-                        RequestAddressItem requestAddressItem = this.RequestRoute[serverRequest.Url];
-                        var method = requestAddressItem.Target.GetType().GetMethod("GetServerErroMsg");
+                        RequestAddressItem requestAddressItem = RequestRoute[serverRequest.Url];
+                        MethodInfo method = requestAddressItem.Target.GetType().GetMethod("GetServerErroMsg");
                         serverResponse.ReturnTypeString = requestAddressItem.MethodInfo.ReturnType.AssemblyQualifiedName;
                         try
                         {
-                            var converter = new StringConverter();
-                            var parameters = requestAddressItem.MethodInfo.GetParameters();
+                            StringConverter converter = new StringConverter();
+                            ParameterInfo[] parameters = requestAddressItem.MethodInfo.GetParameters();
                             object[] array = new object[parameters.Length];
-                            foreach (var parameterInfo in parameters)
+                            foreach (ParameterInfo parameterInfo in parameters)
                             {
-                                if (serverRequest.Parameters.TryGetValue(parameterInfo.Name, out var value))
+                                if (serverRequest.Parameters.TryGetValue(parameterInfo.Name, out string value))
                                 {
                                     //如果有,则转换
-                                    var wa = parameterInfo.GetCustomAttribute<WaterMarkAttribute>();
-                                    if (wa != null && wa.IsJson)
-                                    {
-                                        array[parameterInfo.Position] = jsonConvert.DeserializeObject(value, parameterInfo.ParameterType);
-                                    }
-                                    else
-                                        array[parameterInfo.Position] = converter.ConvertSimpleType(value, parameterInfo.ParameterType);
+                                    WaterMarkAttribute wa = parameterInfo.GetCustomAttribute<WaterMarkAttribute>();
+                                    array[parameterInfo.Position] = wa != null && wa.IsJson
+                                        ? jsonConvert.DeserializeObject(value, parameterInfo.ParameterType)
+                                        : converter.ConvertSimpleType(value, parameterInfo.ParameterType);
                                 }
                                 else
                                 {
@@ -163,7 +159,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
                             }
                             catch (Exception ex2)
                             {
-                                this.Log.Fail($"客户端调用服务方法执行发生错误:{ex2}");
+                                Log.Fail($"客户端调用服务方法执行发生错误:{ex2}");
                                 serverResponse.StateCode = RequestStateCode.ServerOptionError;
                                 serverResponse.RequestSuccess = false;
                                 serverResponse.ErroMsg = ex2.GetInnerExceptionMessage();
@@ -171,7 +167,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
                         }
                         catch (Exception ex3)
                         {
-                            this.Log.Fail($"客户端调用服务方法参数转换发生错误:{ex3}");
+                            Log.Fail($"客户端调用服务方法参数转换发生错误:{ex3}");
                             serverResponse.StateCode = RequestStateCode.ParamterTypeError;
                             serverResponse.RequestSuccess = false;
                             serverResponse.ErroMsg = ex3.GetInnerExceptionMessage();
@@ -180,7 +176,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
                 }
                 catch (Exception ex4)
                 {
-                    this.Log.Fail($"客户端调用服务方法发生错误:{ex4}");
+                    Log.Fail($"客户端调用服务方法发生错误:{ex4}");
                     serverResponse.StateCode = RequestStateCode.RequestMsgError;
                     serverResponse.RequestSuccess = false;
                     serverResponse.ErroMsg = ex4.GetInnerExceptionMessage();
@@ -188,7 +184,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
             }
             catch (Exception ex5)
             {
-                this.Log.Fail($"客户端调用服务方法发生未知错误:{ex5}");
+                Log.Fail($"客户端调用服务方法发生未知错误:{ex5}");
                 serverResponse.StateCode = RequestStateCode.UnknowError;
                 serverResponse.RequestSuccess = false;
                 serverResponse.ErroMsg = ex5.GetInnerExceptionMessage();
@@ -206,10 +202,10 @@ namespace GeneralTool.CoreLibrary.TaskLib
         {
             if (jsonConvert == null)
                 jsonConvert = new BaseJsonCovert();
-            var response = this.GetServerResponse(serverRequest, jsonConvert);
+            ServerResponse response = GetServerResponse(serverRequest, jsonConvert);
 
-            RequestAddressItem item = this.RequestRoute[serverRequest.Url];
-            var attr = item.MethodInfo.GetCustomAttribute<RouteAttribute>();
+            RequestAddressItem item = RequestRoute[serverRequest.Url];
+            RouteAttribute attr = item.MethodInfo.GetCustomAttribute<RouteAttribute>();
             if (attr != null)
             {
                 if (attr.ReReponse)
@@ -241,7 +237,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
         public virtual bool AddTypeConverter<T>(Func<string, object> converter)
         {
             Type typeFromHandle = typeof(T);
-            bool flag = this.ParamterConverters.ContainsKey(typeFromHandle.FullName);
+            bool flag = ParamterConverters.ContainsKey(typeFromHandle.FullName);
             bool result;
             if (flag)
             {
@@ -249,7 +245,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
             }
             else
             {
-                this.ParamterConverters.Add(typeFromHandle.FullName, new ParamterConvertItem
+                ParamterConverters.Add(typeFromHandle.FullName, new ParamterConvertItem
                 {
                     Type = typeFromHandle,
                     Converter = converter
@@ -275,8 +271,8 @@ namespace GeneralTool.CoreLibrary.TaskLib
         /// </returns>
         public bool RemoveRoute(string url)
         {
-            bool flag = !this.RequestRoute.ContainsKey(url);
-            return !flag && this.RequestRoute.Remove(url);
+            bool flag = !RequestRoute.ContainsKey(url);
+            return !flag && RequestRoute.Remove(url);
         }
 
         /// <summary>

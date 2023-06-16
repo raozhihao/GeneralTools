@@ -19,13 +19,13 @@ namespace GeneralTool.CoreLibrary.WPFHelper.UIEditorConverts
         public void ConvertTo(Grid gridParent, object instance, PropertyInfo propertyInfo, bool? sort, ref int Row, string header = null)
         {
             if (instance == null) return;
-            var left = new TextBlock()
+            TextBlock left = new TextBlock()
             {
                 Text = propertyInfo.Name,
                 Margin = new System.Windows.Thickness(5)
             };
 
-            if (PropertyGridControl.AttributesDic.TryGetValue(propertyInfo.PropertyType.FullName, out var attrValue))
+            if (PropertyGridControl.AttributesDic.TryGetValue(propertyInfo.PropertyType.FullName, out System.Attribute attrValue))
             {
                 if (attrValue is DescriptionAttribute d)
                 {
@@ -35,7 +35,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.UIEditorConverts
 
             Grid.SetRow(left, Row);
             Grid.SetColumn(left, 0);
-            var right = new TextBox()
+            TextBox right = new TextBox()
             {
                 Margin = new System.Windows.Thickness(5),
                 BorderThickness = new System.Windows.Thickness(0, 0, 0, 1),
@@ -53,12 +53,12 @@ namespace GeneralTool.CoreLibrary.WPFHelper.UIEditorConverts
                 bindingMode = BindingMode.OneWay;
             }
 
-            right.SetBinding(TextBox.TextProperty, new Binding(propertyInfo.Name) { Mode = bindingMode });
+            _ = right.SetBinding(TextBox.TextProperty, new Binding(propertyInfo.Name) { Mode = bindingMode });
 
             Grid.SetRow(right, Row++);
             Grid.SetColumn(right, 1);
-            gridParent.Children.Add(left);
-            gridParent.Children.Add(right);
+            _ = gridParent.Children.Add(left);
+            _ = gridParent.Children.Add(right);
         }
 
         #endregion Public 方法

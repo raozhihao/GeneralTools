@@ -28,7 +28,6 @@ namespace GeneralTool.CoreLibrary.DbHelper
         /// </summary>
         private DbCommand transCommand;
 
-
         #endregion
 
         #region 公共属性
@@ -48,7 +47,6 @@ namespace GeneralTool.CoreLibrary.DbHelper
         /// </summary>
         public string ConnectionString { get; set; }
 
-
         #endregion
 
         #region 构造器
@@ -60,17 +58,10 @@ namespace GeneralTool.CoreLibrary.DbHelper
         /// <param name="dbProvider">用于创建提供程序对数据源类的实现的实例</param>
         public DbManager(string connectionStr, DbProviderFactory dbProvider)
         {
-            this.ConnectionString = connectionStr;
+            ConnectionString = connectionStr;
             parameters = new List<DbParameter>();
 
-            if (dbProvider == null)
-            {
-                throw new ArgumentException($"未提供数据库访问实例..");
-            }
-            else
-            {
-                this.DbProvider = dbProvider;
-            }
+            DbProvider = dbProvider ?? throw new ArgumentException($"未提供数据库访问实例..");
         }
 
         /// <summary>
@@ -83,13 +74,9 @@ namespace GeneralTool.CoreLibrary.DbHelper
 
         }
 
-
-
-
         #endregion
 
         #region 公共方法
-
 
         /// <summary>
         /// 更改连接字符串
@@ -106,7 +93,7 @@ namespace GeneralTool.CoreLibrary.DbHelper
         /// <param name="newConnectionStr">新连接字符串</param>
         public void ChangeConnectionStr(string newConnectionStr)
         {
-            this.ConnectionString = newConnectionStr;
+            ConnectionString = newConnectionStr;
         }
 
         /// <summary>
@@ -115,7 +102,7 @@ namespace GeneralTool.CoreLibrary.DbHelper
         /// <param name="parameter">参数对象</param>
         public virtual void AddParameter(DbParameter parameter)
         {
-            this.parameters.Add(parameter);
+            parameters.Add(parameter);
         }
 
         /// <summary>
@@ -129,7 +116,7 @@ namespace GeneralTool.CoreLibrary.DbHelper
                 return;
             }
 
-            foreach (var item in list)
+            foreach (ParameterHelper item in list)
             {
                 AddParameter(item.Name, item.Value);
             }
@@ -146,7 +133,7 @@ namespace GeneralTool.CoreLibrary.DbHelper
                 return;
             }
 
-            foreach (var item in list)
+            foreach (ParameterHelper item in list)
             {
                 AddParameter(item.Name, item.Value);
             }
@@ -160,11 +147,11 @@ namespace GeneralTool.CoreLibrary.DbHelper
         /// <param name="direction">类型</param>
         public virtual void AddParameter(string name, object value, ParameterDirection direction)
         {
-            var par = DbProvider.CreateParameter();
+            DbParameter par = DbProvider.CreateParameter();
             par.ParameterName = name;
             par.Value = value;
             par.Direction = direction;
-            this.parameters.Add(par);
+            parameters.Add(par);
         }
 
         /// <summary>
@@ -174,9 +161,8 @@ namespace GeneralTool.CoreLibrary.DbHelper
         /// <param name="value">参数值</param>
         public virtual void AddParameter(string name, object value)
         {
-            this.AddParameter(name, value, ParameterDirection.Input);
+            AddParameter(name, value, ParameterDirection.Input);
         }
-
 
         /// <summary>
         /// 添加参数集合
@@ -184,7 +170,7 @@ namespace GeneralTool.CoreLibrary.DbHelper
         /// <param name="parameters">参数对象集合</param>
         public virtual void AddParameters(params DbParameter[] parameters)
         {
-            foreach (var item in parameters)
+            foreach (DbParameter item in parameters)
             {
                 AddParameter(item);
             }
@@ -196,7 +182,7 @@ namespace GeneralTool.CoreLibrary.DbHelper
         /// <param name="parameters">参数对象集合</param>
         public virtual void AddParameters(IEnumerable<DbParameter> parameters)
         {
-            foreach (var item in parameters)
+            foreach (DbParameter item in parameters)
             {
                 AddParameter(item);
             }
@@ -215,7 +201,7 @@ namespace GeneralTool.CoreLibrary.DbHelper
             {
                 command = CreateCommand(query, commandType);
 
-                command.ExecuteNonQuery();
+                _ = command.ExecuteNonQuery();
                 return true;
             }
             catch (Exception ex)
@@ -242,7 +228,7 @@ namespace GeneralTool.CoreLibrary.DbHelper
             try
             {
                 SetTransCommand(query, commandType);
-                transCommand.ExecuteNonQuery();
+                _ = transCommand.ExecuteNonQuery();
                 return true;
             }
             catch (Exception exc)
@@ -346,8 +332,8 @@ namespace GeneralTool.CoreLibrary.DbHelper
             if (adapter == null) return;
             try
             {
-                this.parameters.Clear();
-                this.DisposeCommand(adapter.SelectCommand);
+                parameters.Clear();
+                DisposeCommand(adapter.SelectCommand);
                 adapter.Dispose();
             }
             catch
@@ -362,7 +348,7 @@ namespace GeneralTool.CoreLibrary.DbHelper
         /// <param name="proName">存储过程或函数名</param>
         public void ExcuteProcedure(string proName)
         {
-            this.ExcuteSacler(proName, out _, CommandType.StoredProcedure);
+            _ = ExcuteSacler(proName, out _, CommandType.StoredProcedure);
         }
 
         /// <summary>
@@ -371,7 +357,7 @@ namespace GeneralTool.CoreLibrary.DbHelper
         /// <param name="proName">存储过程或函数名</param>
         public void TransctionExcuteProcedure(string proName)
         {
-            this.TransctionExcuteNonQuery(proName, CommandType.StoredProcedure);
+            _ = TransctionExcuteNonQuery(proName, CommandType.StoredProcedure);
         }
 
         /// <summary>
@@ -383,7 +369,7 @@ namespace GeneralTool.CoreLibrary.DbHelper
         /// <returns>返回调用之后的返回值</returns>
         public bool ExcuteProcedure(string proName, out object obj, CommandType commandType)
         {
-            return this.ExcuteSacler(proName, out obj, commandType);
+            return ExcuteSacler(proName, out obj, commandType);
         }
 
         /// <summary>
@@ -395,7 +381,7 @@ namespace GeneralTool.CoreLibrary.DbHelper
         /// <returns>返回调用之后的返回值</returns>
         public object TransctionExcuteProcedure(string proName, out object obj, CommandType commandType)
         {
-            return this.TransctionExcuteSacler(proName, out obj, commandType);
+            return TransctionExcuteSacler(proName, out obj, commandType);
         }
         /// <summary>
         /// 
@@ -408,12 +394,11 @@ namespace GeneralTool.CoreLibrary.DbHelper
         {
             DbCommand cmd = null;
             if (transtion)
-                this.SetTransCommand(query, commandType);
+                SetTransCommand(query, commandType);
             else
-                cmd = this.CreateCommand(query, commandType);
+                cmd = CreateCommand(query, commandType);
             return cmd.ExecuteReader();
         }
-
 
         /// <summary>
         /// 获取DataTable
@@ -438,7 +423,7 @@ namespace GeneralTool.CoreLibrary.DbHelper
 
                 adapter.SelectCommand = command;
 
-                adapter.Fill(dt);
+                _ = adapter.Fill(dt);
                 if (columnUpper)
                 {
                     for (int i = 0; i < dt.Columns.Count; i++)
@@ -482,9 +467,9 @@ namespace GeneralTool.CoreLibrary.DbHelper
             {
                 SetTransCommand(query);
                 DbDataAdapter adapter = DbProvider.CreateDataAdapter();
-                adapter.SelectCommand = this.transCommand;
+                adapter.SelectCommand = transCommand;
 
-                adapter.Fill(dt);
+                _ = adapter.Fill(dt);
                 if (columnUpper)
                 {
                     for (int i = 0; i < dt.Columns.Count; i++)
@@ -499,8 +484,8 @@ namespace GeneralTool.CoreLibrary.DbHelper
             catch (Exception ex)
             {
                 result = false;
-                this.ErroMsg = ex.GetInnerExceptionMessage();
-                this.TransctionRollBack();
+                ErroMsg = ex.GetInnerExceptionMessage();
+                TransctionRollBack();
             }
             finally
             {
@@ -508,7 +493,6 @@ namespace GeneralTool.CoreLibrary.DbHelper
             }
             return result;
         }
-
 
         /// <summary>
         /// 更新表格
@@ -541,7 +525,7 @@ namespace GeneralTool.CoreLibrary.DbHelper
                 builder.DataAdapter = adapter;
                 builder.SetAllValues = setAllValues;
                 builder.ConflictOption = conflictOption;
-                adapter.Update(dt);
+                _ = adapter.Update(dt);
                 dt.AcceptChanges();
                 return true;
             }
@@ -552,12 +536,10 @@ namespace GeneralTool.CoreLibrary.DbHelper
             }
             finally
             {
-                this.parameters.Clear();
+                parameters.Clear();
                 DisposeCommand(command);
             }
         }
-
-
 
         /// <summary>
         /// 事务更新
@@ -574,23 +556,22 @@ namespace GeneralTool.CoreLibrary.DbHelper
             {
                 SetTransCommand(query);
                 DbDataAdapter adapter = DbProvider.CreateDataAdapter();
-                adapter.SelectCommand = this.transCommand;
+                adapter.SelectCommand = transCommand;
                 DbCommandBuilder builder = DbProvider.CreateCommandBuilder();
                 builder.DataAdapter = adapter;
                 builder.SetAllValues = setAllValues;
                 builder.ConflictOption = conflictOption;
-                adapter.Update(dt);
+                _ = adapter.Update(dt);
                 result = true;
             }
             catch (Exception ex)
             {
                 result = false;
-                this.ErroMsg = ex.GetInnerExceptionMessage();
-                this.TransctionRollBack();
+                ErroMsg = ex.GetInnerExceptionMessage();
+                TransctionRollBack();
             }
             return result;
         }
-
 
         /// <summary>
         /// 根据DataTable创建一个强类型对象集合
@@ -600,7 +581,7 @@ namespace GeneralTool.CoreLibrary.DbHelper
         /// <returns>如果失败,将返回null</returns>
         public List<T> ToList<T>(DataTable dt)
         {
-            var values = new List<T>();
+            List<T> values = new List<T>();
 
             try
             {
@@ -629,7 +610,7 @@ namespace GeneralTool.CoreLibrary.DbHelper
         public List<object[]> GetObjects(string sql)
         {
             DbDataReader reader = null;
-            var values = new List<object[]>();
+            List<object[]> values = new List<object[]>();
             DbCommand command = null;
             try
             {
@@ -641,7 +622,7 @@ namespace GeneralTool.CoreLibrary.DbHelper
                     {
                         object[] objs = new object[reader.FieldCount];
 
-                        reader.GetValues(objs);
+                        _ = reader.GetValues(objs);
                         values.Add(objs);
                     }
                 }
@@ -658,7 +639,6 @@ namespace GeneralTool.CoreLibrary.DbHelper
             return values;
         }
 
-
         /// <summary>
         /// 将集合对象转为DataTable
         /// </summary>
@@ -667,26 +647,25 @@ namespace GeneralTool.CoreLibrary.DbHelper
         /// <returns>返回一个DataTable</returns>
         public DataTable ToDataTable<T>(IEnumerable<T> collection)
         {
-            var props = typeof(T).GetProperties();
-            var dt = new DataTable();
+            PropertyInfo[] props = typeof(T).GetProperties();
+            DataTable dt = new DataTable();
             dt.Columns.AddRange(props.Select(p => new DataColumn(p.Name, p.PropertyType)).ToArray());
             if (collection.Count() > 0)
             {
                 for (int i = 0; i < collection.Count(); i++)
                 {
-                    var tempList = new ArrayList();
-                    foreach (var pi in props)
+                    ArrayList tempList = new ArrayList();
+                    foreach (PropertyInfo pi in props)
                     {
                         object obj = pi.GetValue(collection.ElementAt(i), null);
-                        tempList.Add(obj);
+                        _ = tempList.Add(obj);
                     }
                     object[] array = tempList.ToArray();
-                    dt.LoadDataRow(array, true);
+                    _ = dt.LoadDataRow(array, true);
                 }
             }
             return dt;
         }
-
 
         /// <summary>
         /// 提交事务
@@ -714,7 +693,6 @@ namespace GeneralTool.CoreLibrary.DbHelper
             }
         }
 
-
         /// <summary>
         /// 获取单列的值,无返回值时返回null
         /// </summary>
@@ -723,14 +701,14 @@ namespace GeneralTool.CoreLibrary.DbHelper
         /// <returns></returns>
         public List<T> GetSingleColumnValue<T>(string query)
         {
-            var list = new List<T>();
-            bool re = this.GetDataTable(query, out DataTable dt);
+            List<T> list = new List<T>();
+            bool re = GetDataTable(query, out DataTable dt);
             if (!re)
             {
                 return null;
             }
 
-            var rows = dt.Rows;
+            DataRowCollection rows = dt.Rows;
             int count = rows.Count;
             if (count == 0)
             {
@@ -759,19 +737,19 @@ namespace GeneralTool.CoreLibrary.DbHelper
             {
                 if (transtion)
                 {
-                    this.SetTransCommand(query);
-                    cmd = this.transCommand;
+                    SetTransCommand(query);
+                    cmd = transCommand;
                 }
                 else
                     cmd = CreateCommand(query, CommandType.Text);
-                using (var reader = cmd.ExecuteReader())
+                using (DbDataReader reader = cmd.ExecuteReader())
                 {
                     if (!reader.HasRows)
                     {
                         return new List<T>();
                     }
 
-                    var list = new List<T>();
+                    List<T> list = new List<T>();
                     while (reader.Read())
                     {
                         T tobj = Activator.CreateInstance<T>();//创建一个对象
@@ -781,7 +759,7 @@ namespace GeneralTool.CoreLibrary.DbHelper
                         {
                             //判断当前的属性是否实现了对应的特性
                             DataColumnPropertyAttribute attr = null;
-                            var attrs = property.GetCustomAttributes(typeof(DataColumnPropertyAttribute), false);
+                            object[] attrs = property.GetCustomAttributes(typeof(DataColumnPropertyAttribute), false);
                             if (null != attrs && attrs.Length > 0)
                             {
                                 attr = (DataColumnPropertyAttribute)attrs[0];
@@ -820,7 +798,7 @@ namespace GeneralTool.CoreLibrary.DbHelper
                                     }
                                     catch
                                     {
-                                        this.ErroMsg = $"{value} 的类型为 {colType},但在希望将其转成 {itemType} 时无法转换,请更正!";
+                                        ErroMsg = $"{value} 的类型为 {colType},但在希望将其转成 {itemType} 时无法转换,请更正!";
                                         return null;
                                     }
 
@@ -849,12 +827,12 @@ namespace GeneralTool.CoreLibrary.DbHelper
             }
             catch (Exception ex)
             {
-                this.ErroMsg = ex.GetInnerExceptionMessage();
+                ErroMsg = ex.GetInnerExceptionMessage();
                 return null;
             }
             finally
             {
-                this.DisposeCommand(cmd);
+                DisposeCommand(cmd);
             }
         }
 
@@ -868,10 +846,7 @@ namespace GeneralTool.CoreLibrary.DbHelper
         /// <param name="command"></param>
         protected void DisposeCommand(DbCommand command)
         {
-            if (command != null)
-            {
-                command.Dispose();
-            }
+            command?.Dispose();
         }
 
         /// <summary>
@@ -887,7 +862,7 @@ namespace GeneralTool.CoreLibrary.DbHelper
             try
             {
                 DbConnection connection = DbProvider.CreateConnection();
-                connection.ConnectionString = this.ConnectionString;
+                connection.ConnectionString = ConnectionString;
                 connection.Open();
                 command = connection.CreateCommand();
                 command.CommandText = query;
@@ -907,7 +882,6 @@ namespace GeneralTool.CoreLibrary.DbHelper
             }
         }
 
-
         /// <summary>
         /// 设置事务属性
         /// </summary>
@@ -918,8 +892,8 @@ namespace GeneralTool.CoreLibrary.DbHelper
             ErroMsg = "";
             if (transCommand == null)
             {
-                var connection = DbProvider.CreateConnection();
-                connection.ConnectionString = this.ConnectionString;
+                DbConnection connection = DbProvider.CreateConnection();
+                connection.ConnectionString = ConnectionString;
                 try
                 {
                     connection.Open();
@@ -967,7 +941,7 @@ namespace GeneralTool.CoreLibrary.DbHelper
                     //判断当前的属性是否实现了对应的特性
                     DataColumnPropertyAttribute attr = null;
 
-                    var attrs = item.GetCustomAttributes(typeof(DataColumnPropertyAttribute), false);
+                    object[] attrs = item.GetCustomAttributes(typeof(DataColumnPropertyAttribute), false);
                     if (null != attrs && attrs.Length > 0)
                     {
                         attr = (DataColumnPropertyAttribute)attrs[0];
@@ -983,7 +957,7 @@ namespace GeneralTool.CoreLibrary.DbHelper
                     if (currentName.Equals(dt.Columns[i].ColumnName.ToLower()))
                     {
                         //将当前的行列值设置到对象中
-                        var value = dt.Rows[index][i];
+                        object value = dt.Rows[index][i];
                         //获取当前列类型
                         Type colType = dt.Columns[i].DataType;
                         //获取当前字段类型
@@ -1029,7 +1003,6 @@ namespace GeneralTool.CoreLibrary.DbHelper
             T t = tobj;
             return t;
         }
-
 
         #endregion
 

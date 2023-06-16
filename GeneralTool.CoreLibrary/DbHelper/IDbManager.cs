@@ -123,8 +123,6 @@ namespace GeneralTool.CoreLibrary.DbHelper
         /// <returns>返回成功与否</returns>
         bool GetDataTable(string query, out DataTable dt, string tableName = "", bool columnUpper = true);
 
-
-
         /// <summary>
         /// 获取对象集合
         /// </summary>

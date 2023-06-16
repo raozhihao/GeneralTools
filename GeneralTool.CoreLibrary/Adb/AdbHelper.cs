@@ -18,7 +18,7 @@ namespace GeneralTool.CoreLibrary.Adb
     /// </summary>
     public class AdbHelper
     {
-        readonly string adbPath;
+        private readonly string adbPath;
 
         /// <summary>
         /// 构造函数初始化
@@ -29,7 +29,7 @@ namespace GeneralTool.CoreLibrary.Adb
             if (string.IsNullOrWhiteSpace(adbExePath))
                 adbExePath = "adb";//尝试使用环境变量中的adb
 
-            this.adbPath = adbExePath;
+            adbPath = adbExePath;
         }
 
         /// <summary>
@@ -48,11 +48,11 @@ namespace GeneralTool.CoreLibrary.Adb
             if (args.Trim() == "shell")
                 return "非正确的命令";
 
-            var cmd = new Process();
+            Process cmd = new Process();
 
             try
             {
-                var startInfo = new ProcessStartInfo()
+                ProcessStartInfo startInfo = new ProcessStartInfo()
                 {
                     FileName = adbPath,
                     Arguments = args,
@@ -66,8 +66,8 @@ namespace GeneralTool.CoreLibrary.Adb
                 };
                 cmd.EnableRaisingEvents = true;
                 cmd.StartInfo = startInfo;
-                cmd.Start();
-                var result = cmd.StandardOutput.ReadToEnd();
+                _ = cmd.Start();
+                string result = cmd.StandardOutput.ReadToEnd();
                 cmd.Close();
                 cmd.Dispose();
                 cmd = null;
@@ -79,7 +79,6 @@ namespace GeneralTool.CoreLibrary.Adb
             }
         }
 
-
         /// <summary>
         /// 关闭所有adb连接
         /// </summary>
@@ -87,10 +86,10 @@ namespace GeneralTool.CoreLibrary.Adb
         {
             while (true)
             {
-                var ps = Process.GetProcessesByName("adb");
+                Process[] ps = Process.GetProcessesByName("adb");
                 if (ps.Length == 0)
                     break;
-                foreach (var item in ps)
+                foreach (Process item in ps)
                 {
                     try
                     {
@@ -143,12 +142,10 @@ namespace GeneralTool.CoreLibrary.Adb
         {
             get
             {
-                var result = Command("adb shell \"dumpsys battery | grep level\"");
-                if (string.IsNullOrWhiteSpace(result))
-                    return -1;
-                if (!result.Contains("level:"))
-                    return -1;
-                return Convert.ToInt32(result.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries)[1]);
+                string result = Command("adb shell \"dumpsys battery | grep level\"");
+                return string.IsNullOrWhiteSpace(result)
+                    ? -1
+                    : !result.Contains("level:") ? -1 : Convert.ToInt32(result.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries)[1]);
             }
         }
 
@@ -157,14 +154,14 @@ namespace GeneralTool.CoreLibrary.Adb
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public string CommandKey(AdbKey key) => this.Command($"adb shell input keyevent {(int)key}");
+        public string CommandKey(AdbKey key) => Command($"adb shell input keyevent {(int)key}");
 
         /// <summary>
         /// 解锁/点亮手机屏幕
         /// </summary>
         public void UnlockScreen()
         {
-            Command("adb shell input keyevent 224");
+            _ = Command("adb shell input keyevent 224");
         }
 
         /// <summary>
@@ -172,7 +169,7 @@ namespace GeneralTool.CoreLibrary.Adb
         /// </summary>
         public void LockScreen()
         {
-            Command("adb shell input keyevent 223");
+            _ = Command("adb shell input keyevent 223");
         }
 
         /// <summary>
@@ -181,9 +178,9 @@ namespace GeneralTool.CoreLibrary.Adb
         /// <returns></returns>
         public string CaptureCurrentScreen(string savePath)
         {
-            var message = new StringBuilder();
-            message.AppendLine(Command("adb shell screencap -p /sdcard/screen.png"));
-            message.AppendLine(Command($"adb pull /sdcard/screen.png {savePath}\\screen.png"));
+            StringBuilder message = new StringBuilder();
+            _ = message.AppendLine(Command("adb shell screencap -p /sdcard/screen.png"));
+            _ = message.AppendLine(Command($"adb pull /sdcard/screen.png {savePath}\\screen.png"));
             return message.ToString();
         }
 
@@ -194,8 +191,8 @@ namespace GeneralTool.CoreLibrary.Adb
         {
             get
             {
-                var result = this.Command("devices -l");
-                var arr = result.Split(new string[2]
+                string result = Command("devices -l");
+                string[] arr = result.Split(new string[2]
                    {
                         "\r\n",
                         "\n"
@@ -206,7 +203,7 @@ namespace GeneralTool.CoreLibrary.Adb
                     return new List<AdbDeviceData>();
                 }
 
-                var list = new List<AdbDeviceData>();
+                List<AdbDeviceData> list = new List<AdbDeviceData>();
                 for (int i = 1; i < arr.Length; i++)
                 {
                     list.Add(AdbDeviceData.CreateFromAdbData(arr[i]));
@@ -223,7 +220,7 @@ namespace GeneralTool.CoreLibrary.Adb
         {
             get
             {
-                return this.AdbDeviceDatas.FirstOrDefault();
+                return AdbDeviceDatas.FirstOrDefault();
             }
         }
 
@@ -231,7 +228,7 @@ namespace GeneralTool.CoreLibrary.Adb
         {
             if (string.IsNullOrWhiteSpace(deviceSerial))
             {
-                var device = this.FirstDevice;
+                AdbDeviceData device = FirstDevice;
                 return device == null ? throw new Exception("Cant find device") : device.Serial;
             }
             return deviceSerial;
@@ -245,12 +242,12 @@ namespace GeneralTool.CoreLibrary.Adb
         /// <returns></returns>
         public Result<string> InstallApp(string appPath, string deviceSerial = "")
         {
-            var result = new Result<string>();
+            Result<string> result = new Result<string>();
             try
             {
-                deviceSerial = this.LoadSerial(deviceSerial);
+                deviceSerial = LoadSerial(deviceSerial);
 
-                var reStr = this.Command($"adb -s {deviceSerial} install -t \"" + appPath + "\"");
+                string reStr = Command($"adb -s {deviceSerial} install -t \"" + appPath + "\"");
 
                 result.ResultBool = true;
                 result.ResultItem = reStr;
@@ -266,7 +263,6 @@ namespace GeneralTool.CoreLibrary.Adb
             }
         }
 
-
         /// <summary>
         /// 卸载app
         /// </summary>
@@ -275,12 +271,12 @@ namespace GeneralTool.CoreLibrary.Adb
         /// <returns></returns>
         public Result<string> UninstallApp(string appPackageName, string deviceSerial = "")
         {
-            var result = new Result<string>();
+            Result<string> result = new Result<string>();
             try
             {
-                deviceSerial = this.LoadSerial(deviceSerial);
+                deviceSerial = LoadSerial(deviceSerial);
 
-                var reStr = this.Command($"adb -s {deviceSerial} uninstall \"" + appPackageName + "\"");
+                string reStr = Command($"adb -s {deviceSerial} uninstall \"" + appPackageName + "\"");
 
                 result.ResultBool = true;
                 result.ResultItem = reStr;
@@ -305,12 +301,12 @@ namespace GeneralTool.CoreLibrary.Adb
         /// <returns></returns>
         public Result<string> PushFile(string filePath, string remotePath, string deviceSerial = "")
         {
-            var result = new Result<string>();
+            Result<string> result = new Result<string>();
             try
             {
-                deviceSerial = this.LoadSerial(deviceSerial);
+                deviceSerial = LoadSerial(deviceSerial);
 
-                var reStr = this.Command($"adb -s {deviceSerial} push " + filePath + " " + remotePath);
+                string reStr = Command($"adb -s {deviceSerial} push " + filePath + " " + remotePath);
 
                 result.ResultBool = true;
                 result.ResultItem = reStr;
@@ -318,7 +314,7 @@ namespace GeneralTool.CoreLibrary.Adb
             }
             catch (Exception ex)
             {
-                var message = ex.GetInnerExceptionMessage();
+                string message = ex.GetInnerExceptionMessage();
                 result.ResultBool = false;
                 result.ResultItem = message;
                 result.LastErroMsg = message;
@@ -335,12 +331,12 @@ namespace GeneralTool.CoreLibrary.Adb
         /// <returns></returns>
         public Result<string> PullFile(string localPath, string remotePath, string deviceSerial = "")
         {
-            var result = new Result<string>();
+            Result<string> result = new Result<string>();
             try
             {
-                deviceSerial = this.LoadSerial(deviceSerial);
+                deviceSerial = LoadSerial(deviceSerial);
 
-                var reStr = this.Command($"adb -s {deviceSerial} pull {remotePath} {localPath}");
+                string reStr = Command($"adb -s {deviceSerial} pull {remotePath} {localPath}");
 
                 result.ResultBool = true;
                 result.ResultItem = reStr;
@@ -348,7 +344,7 @@ namespace GeneralTool.CoreLibrary.Adb
             }
             catch (Exception ex)
             {
-                var message = ex.GetInnerExceptionMessage();
+                string message = ex.GetInnerExceptionMessage();
                 result.ResultBool = false;
                 result.ResultItem = message;
                 result.LastErroMsg = message;
@@ -363,16 +359,16 @@ namespace GeneralTool.CoreLibrary.Adb
         /// <returns></returns>
         public Result<XmlDocument> DumpScreen(string deviceSerial = "")
         {
-            var result = new Result<XmlDocument>();
+            Result<XmlDocument> result = new Result<XmlDocument>();
             try
             {
-                deviceSerial = this.LoadSerial(deviceSerial);
-                var remotePath = "/sdcard/ui.xml";
+                deviceSerial = LoadSerial(deviceSerial);
+                string remotePath = "/sdcard/ui.xml";
                 //adb获取
-                var reStr = this.Command($"adb -s {deviceSerial} shell uiautomator dump {remotePath}");
+                string reStr = Command($"adb -s {deviceSerial} shell uiautomator dump {remotePath}");
                 //读取文件
-                var localTmp = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ui.xml");
-                var re = this.PullFile(localTmp, remotePath, deviceSerial);//拉到本地来
+                string localTmp = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "ui.xml");
+                Result<string> re = PullFile(localTmp, remotePath, deviceSerial);//拉到本地来
                 if (!re.ResultBool)
                 {
                     result.ResultBool = re.ResultBool;
@@ -387,9 +383,9 @@ namespace GeneralTool.CoreLibrary.Adb
                     return result;
                 }
 
-                var text = File.ReadAllText(localTmp);
+                string text = File.ReadAllText(localTmp);
                 //获取从xml开头的字符串,因为可能会在小米机型上有错误
-                var index = text.IndexOf("<?xml version='1.0'");
+                int index = text.IndexOf("<?xml version='1.0'");
                 if (index < 0)
                 {
                     result.ResultBool = false;
@@ -398,7 +394,7 @@ namespace GeneralTool.CoreLibrary.Adb
                 }
                 text = text.Substring(index);
 
-                var xmlDocument = new XmlDocument();
+                XmlDocument xmlDocument = new XmlDocument();
                 try
                 {
                     xmlDocument.LoadXml(text);
@@ -417,7 +413,7 @@ namespace GeneralTool.CoreLibrary.Adb
                     try
                     {
                         File.Delete(localTmp);
-                        this.Command("adb shell rm -rf /sdcard/ui.xml");
+                        _ = Command("adb shell rm -rf /sdcard/ui.xml");
                     }
                     catch
                     {
@@ -441,7 +437,7 @@ namespace GeneralTool.CoreLibrary.Adb
         /// <returns></returns>
         public Result<Element> FindElemeteForText(string text, TimeSpan timeout = default, string deviceSerial = "")
         {
-            return this.FindElement($"//node[@text='{text}']", timeout, deviceSerial);
+            return FindElement($"//node[@text='{text}']", timeout, deviceSerial);
         }
 
         /// <summary>
@@ -453,13 +449,13 @@ namespace GeneralTool.CoreLibrary.Adb
         /// <returns></returns>
         public Result<Element> FindElement(string xpath, TimeSpan timeout = default, string deviceSerial = "")
         {
-            var result = new Result<Element>();
-            var resultXml = new Result<XmlDocument>();
-            var stopwatch = new Stopwatch();
+            Result<Element> result = new Result<Element>();
+            Result<XmlDocument> resultXml = new Result<XmlDocument>();
+            Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
             while (timeout == TimeSpan.Zero || stopwatch.Elapsed < timeout)
             {
-                resultXml = this.DumpScreen(deviceSerial);
+                resultXml = DumpScreen(deviceSerial);
                 if (!resultXml.ResultBool)
                 {
                     result.ResultBool = false;
@@ -480,13 +476,13 @@ namespace GeneralTool.CoreLibrary.Adb
                                 .Split(',')
                                 .Select(int.Parse)
                                 .ToArray();
-                            var dictionary = new Dictionary<string, string>();
+                            Dictionary<string, string> dictionary = new Dictionary<string, string>();
                             foreach (XmlAttribute attribute in xmlNode.Attributes)
                             {
                                 dictionary.Add(attribute.Name, attribute.Value);
                             }
 
-                            var cords = new Element((array[0] + array[2]) / 2, (array[1] + array[3]) / 2, dictionary);
+                            Element cords = new Element((array[0] + array[2]) / 2, (array[1] + array[3]) / 2, dictionary);
 
                             result.ResultItem = cords;
                             result.ResultBool = true;
@@ -513,10 +509,10 @@ namespace GeneralTool.CoreLibrary.Adb
         /// <returns></returns>
         public Result<Element[]> FindElementsCords(string xpath, TimeSpan timeout = default, string deviceSerial = "")
         {
-            var result = new Result<Element[]>() { ResultBool = false };
+            Result<Element[]> result = new Result<Element[]>() { ResultBool = false };
             try
             {
-                deviceSerial = this.LoadSerial(deviceSerial);
+                deviceSerial = LoadSerial(deviceSerial);
             }
             catch (Exception ex)
             {
@@ -526,7 +522,7 @@ namespace GeneralTool.CoreLibrary.Adb
             }
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
-            var reXml = new Result<XmlDocument>();
+            Result<XmlDocument> reXml = new Result<XmlDocument>();
             while (timeout == TimeSpan.Zero || stopwatch.Elapsed < timeout)
             {
                 reXml = DumpScreen(deviceSerial);
@@ -542,7 +538,7 @@ namespace GeneralTool.CoreLibrary.Adb
                     XmlNodeList xmlNodeList = xmlDocument.SelectNodes(xpath);
                     if (xmlNodeList != null)
                     {
-                        var array = new Element[xmlNodeList.Count];
+                        Element[] array = new Element[xmlNodeList.Count];
                         for (int i = 0; i < array.Length; i++)
                         {
                             string value = xmlNodeList[i].Attributes["bounds"].Value;
@@ -555,13 +551,13 @@ namespace GeneralTool.CoreLibrary.Adb
                                 .Split(',')
                                 .Select(int.Parse)
                                 .ToArray();
-                            var dictionary = new Dictionary<string, string>();
+                            Dictionary<string, string> dictionary = new Dictionary<string, string>();
                             foreach (XmlAttribute attribute in xmlNodeList[i].Attributes)
                             {
                                 dictionary.Add(attribute.Name, attribute.Value);
                             }
 
-                            var cords = new Element((array2[0] + array2[2]) / 2, (array2[1] + array2[3]) / 2, dictionary);
+                            Element cords = new Element((array2[0] + array2[2]) / 2, (array2[1] + array2[3]) / 2, dictionary);
                             array[i] = cords;
                         }
 
@@ -597,11 +593,11 @@ namespace GeneralTool.CoreLibrary.Adb
         /// <returns></returns>
         public Result<string> Click(int x, int y, string deviceSerail = "")
         {
-            var result = new Result<string>();
+            Result<string> result = new Result<string>();
             try
             {
-                deviceSerail = this.LoadSerial(deviceSerail);
-                result.ResultItem = this.Command($"adb -s {deviceSerail} shell input tap {x} {y}");
+                deviceSerail = LoadSerial(deviceSerail);
+                result.ResultItem = Command($"adb -s {deviceSerail} shell input tap {x} {y}");
                 result.ResultBool = true;
                 return result;
             }
@@ -620,18 +616,18 @@ namespace GeneralTool.CoreLibrary.Adb
         /// <returns></returns>
         public Result<Image> GetScreen(string deviceSerail = "")
         {
-            var result = new Result<Image>() { ResultBool = false };
+            Result<Image> result = new Result<Image>() { ResultBool = false };
             try
             {
                 deviceSerail = LoadSerial(deviceSerail);
-                var remoPath = "/sdcard/screen.png";
-                var localPath = "screen.png";
+                string remoPath = "/sdcard/screen.png";
+                string localPath = "screen.png";
                 //获取当前屏幕
-                var message = new StringBuilder();
-                message.AppendLine(Command($"adb -s {deviceSerail} shell screencap -p {remoPath}"));
-                message.AppendLine(Command($"adb -s {deviceSerail} pull {remoPath} {localPath}"));
+                StringBuilder message = new StringBuilder();
+                _ = message.AppendLine(Command($"adb -s {deviceSerail} shell screencap -p {remoPath}"));
+                _ = message.AppendLine(Command($"adb -s {deviceSerail} pull {remoPath} {localPath}"));
                 //读取
-                var image = Image.FromFile(localPath);
+                Image image = Image.FromFile(localPath);
                 result.ResultBool = true;
                 result.ResultItem = image;
                 return result;
@@ -654,11 +650,11 @@ namespace GeneralTool.CoreLibrary.Adb
         /// <returns></returns>
         public Result<string> Swipe(int x1, int y1, int x2, int y2, string deviceSerial = "")
         {
-            var result = new Result<string>() { ResultBool = false };
+            Result<string> result = new Result<string>() { ResultBool = false };
             try
             {
-                deviceSerial = this.LoadSerial(deviceSerial);
-                this.Command($"adb shell  input swipe {x1} {y1} {x2} {y2}");
+                deviceSerial = LoadSerial(deviceSerial);
+                _ = Command($"adb shell  input swipe {x1} {y1} {x2} {y2}");
                 result.ResultBool = true;
                 return result;
             }

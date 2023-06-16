@@ -25,7 +25,6 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Models
         /// </summary>
         public ConnectionChangeType ConnectionChangeType { get; set; }
 
-
     }
 
     /// <summary>

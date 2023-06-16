@@ -19,8 +19,8 @@ namespace GeneralTool.CoreLibrary.Models
         /// </param>
         public SocketReceiveArgs(Socket clinetSocket, List<byte> buffer)
         {
-            this.ClinetSocket = clinetSocket;
-            this.Buffer = buffer;
+            ClinetSocket = clinetSocket;
+            Buffer = buffer;
         }
 
         #endregion Public 构造函数
@@ -52,7 +52,7 @@ namespace GeneralTool.CoreLibrary.Models
         {
             try
             {
-                this.ClinetSocket.Send(buffer);
+                _ = ClinetSocket.Send(buffer);
                 return true;
             }
             catch

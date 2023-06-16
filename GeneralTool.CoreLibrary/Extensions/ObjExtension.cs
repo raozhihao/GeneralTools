@@ -71,7 +71,6 @@ namespace GeneralTool.CoreLibrary.Extensions
         /// <returns></returns>
         public static bool TryToBool(this object obj, out bool result) => bool.TryParse(obj.ToString(), out result);
 
-
         /// <summary>
         /// 复制
         /// </summary>
@@ -81,7 +80,7 @@ namespace GeneralTool.CoreLibrary.Extensions
         /// <returns></returns>
         public static T Copy<T>(this T obj, bool consturctorInvoke = true)
         {
-            return (T)obj.CopyObject(consturctorInvoke);
+            return obj == null ? default : (T)obj.CopyObject(consturctorInvoke);
         }
 
         /// <summary>
@@ -92,14 +91,15 @@ namespace GeneralTool.CoreLibrary.Extensions
         /// <param name="right"></param>
         public static void Copy<T>(this T left, T right)
         {
-            var type = right.GetType();
-            var properties = type.GetProperties();
+            if (left == null || right == null) return;
+            Type type = right.GetType();
+            System.Reflection.PropertyInfo[] properties = type.GetProperties();
             for (int i = 0; i < properties.Length; i++)
             {
-                var property = properties[i];
+                System.Reflection.PropertyInfo property = properties[i];
                 if (property.GetMethod != null && property.SetMethod != null)
                 {
-                    var value = property.GetMethod.Invoke(right, null);
+                    object value = property.GetMethod.Invoke(right, null);
                     property.SetValue(left, value);
                 }
             }
@@ -113,12 +113,13 @@ namespace GeneralTool.CoreLibrary.Extensions
         /// <param name="consturctorInvoke">是否先执行构造函数,只会执行无参构造函数</param>
         public static object CopyObject(this object obj, bool consturctorInvoke = true)
         {
-            var objInstance = obj.Serialize().Desrialize();
+            if (obj == null) return obj;
+            object objInstance = obj.Serialize().Desrialize();
             //查看构造函数,找无参构造函数
-            var constructor = objInstance.GetType().GetConstructors().FirstOrDefault(c => c.GetParameters().Length == 0);
+            System.Reflection.ConstructorInfo constructor = objInstance.GetType().GetConstructors().FirstOrDefault(c => c.GetParameters().Length == 0);
 
             if (constructor != null && !consturctorInvoke)
-                constructor.Invoke(objInstance, null);
+                _ = constructor.Invoke(objInstance, null);
 
             return objInstance;
         }

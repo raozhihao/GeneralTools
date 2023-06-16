@@ -23,18 +23,17 @@ namespace GeneralTool.CoreLibrary.Models
 
         }
 
-
         /// <summary>
         /// 初始化语言库
         /// </summary>
         public void InitLangKey()
         {
-            if (string.IsNullOrWhiteSpace(this.LangKey))
+            if (string.IsNullOrWhiteSpace(LangKey))
                 return;
             //设置默认库
-            if (!LangProvider.LangProviderInstance.DefaultResource.ContainsKey(this.LangKey))
+            if (!LangProvider.LangProviderInstance.DefaultResource.ContainsKey(LangKey))
             {
-                LangProvider.LangProviderInstance.DefaultResource.Add(this.LangKey, this.defaultText);
+                LangProvider.LangProviderInstance.DefaultResource.Add(LangKey, defaultText);
             }
 
             LangProviderInstance_LangChanged(LangProvider.LangProviderInstance.CurrentResource);
@@ -43,15 +42,15 @@ namespace GeneralTool.CoreLibrary.Models
 
         private void LangProviderInstance_LangChanged(System.Windows.ResourceDictionary obj)
         {
-            if (string.IsNullOrWhiteSpace(this.LangKey))
+            if (string.IsNullOrWhiteSpace(LangKey))
                 return;
 
-            var value = LangProvider.LangProviderInstance.GetLangValue(this.LangKey);
+            string value = LangProvider.LangProviderInstance.GetLangValue(LangKey);
             if (string.IsNullOrWhiteSpace(value))
             {
                 return;
             }
-            this.Explanation = value;
+            Explanation = value;
         }
         #region Private 字段
 
@@ -66,25 +65,24 @@ namespace GeneralTool.CoreLibrary.Models
 
         #region Public 属性
 
-
         /// <summary>
         /// 返回字符串
         /// </summary>
-        public string ReturnString { get => this.returnString; set => this.RegisterProperty(ref this.returnString, value); }
+        public string ReturnString { get => returnString; set => RegisterProperty(ref returnString, value); }
 
         /// <summary>
         /// 提示信息
         /// </summary>
         public string Explanation
         {
-            get => this.explanation;
+            get => explanation;
             set
             {
                 if (string.IsNullOrWhiteSpace(defaultText))
                 {
-                    this.defaultText = value;
+                    defaultText = value;
                 }
-                this.RegisterProperty(ref this.explanation, value);
+                RegisterProperty(ref explanation, value);
             }
         }
 
@@ -94,8 +92,8 @@ namespace GeneralTool.CoreLibrary.Models
         /// </summary>
         public string LangKey
         {
-            get => this.langKey;
-            set => this.RegisterProperty(ref this.langKey, value);
+            get => langKey;
+            set => RegisterProperty(ref langKey, value);
         }
         /// <summary>
         /// 方法对象
@@ -111,18 +109,18 @@ namespace GeneralTool.CoreLibrary.Models
         /// </summary>
         public ObservableCollection<ParameterItem> Paramters
         {
-            get => this.parameters;
+            get => parameters;
             set
             {
                 if (value != null)
                 {
-                    foreach (var item in value)
+                    foreach (ParameterItem item in value)
                     {
-                        item.ValueChanged -= this.Item_ValueChanged;
-                        item.ValueChanged += this.Item_ValueChanged;
+                        item.ValueChanged -= Item_ValueChanged;
+                        item.ValueChanged += Item_ValueChanged;
                     }
                 }
-                this.RegisterProperty(ref this.parameters, value);
+                RegisterProperty(ref parameters, value);
             }
         }
 
@@ -147,13 +145,11 @@ namespace GeneralTool.CoreLibrary.Models
         {
             get
             {
-                if (string.IsNullOrWhiteSpace(this.socketArgs))
-                    return this.GetArgs();
-                return this.socketArgs;
+                return string.IsNullOrWhiteSpace(socketArgs) ? GetArgs() : socketArgs;
             }
             set
             {
-                this.RegisterProperty(ref this.socketArgs, value);
+                RegisterProperty(ref socketArgs, value);
             }
         }
 
@@ -171,8 +167,8 @@ namespace GeneralTool.CoreLibrary.Models
         /// </summary>
         public string Url
         {
-            get => this.url;
-            set => this.RegisterProperty(ref this.url, value);
+            get => url;
+            set => RegisterProperty(ref url, value);
         }
 
         #endregion Public 属性
@@ -212,10 +208,10 @@ namespace GeneralTool.CoreLibrary.Models
         /// </summary>
         public void ReloadParameters()
         {
-            var parameters = this.Method.GetParameters();
-            foreach (var item in parameters)
+            ParameterInfo[] parameters = Method.GetParameters();
+            foreach (ParameterInfo item in parameters)
             {
-                this.Paramters[item.Position].Value = item.DefaultValue;
+                Paramters[item.Position].Value = item.DefaultValue;
             }
         }
         #endregion Public 方法
@@ -224,26 +220,26 @@ namespace GeneralTool.CoreLibrary.Models
 
         private string GetArgs()
         {
-            var builder = new StringBuilder();
-            builder.Append("{\"Url\":\"" + this.Url + "\",\"" + nameof(ServerRequest.Parameters) + "\":");
+            StringBuilder builder = new StringBuilder();
+            _ = builder.Append("{\"Url\":\"" + Url + "\",\"" + nameof(ServerRequest.Parameters) + "\":");
 
-            var list = this.Paramters;
+            ObservableCollection<ParameterItem> list = Paramters;
             if (list.Count == 0)
-                builder.Append("null}");
+                _ = builder.Append("null}");
             else
             {
-                var listStr = list.Select(p =>
+                System.Collections.Generic.IEnumerable<string> listStr = list.Select(p =>
                 {
                     return string.Format("\"{0}\":\"{1}\"", p.ParameterName, p.Value);
                 });
-                builder.Append("{" + string.Join(",", listStr) + "}}");
+                _ = builder.Append("{" + string.Join(",", listStr) + "}}");
             }
             return builder.ToString();
         }
 
         private void Item_ValueChanged()
         {
-            this.SocketArgs = GetArgs();
+            SocketArgs = GetArgs();
         }
 
         #endregion Private 方法

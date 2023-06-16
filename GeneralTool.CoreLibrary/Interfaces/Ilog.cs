@@ -77,7 +77,6 @@ namespace GeneralTool.CoreLibrary.Interfaces
         /// </returns>
         void Waring(string msg);
 
-
         /// <summary>
         /// 
         /// </summary>
@@ -115,7 +114,6 @@ namespace GeneralTool.CoreLibrary.Interfaces
         /// <param name="msg"></param>
         void Fail(object msg);
 
-
         /// <summary>
         /// 
         /// </summary>
@@ -131,7 +129,6 @@ namespace GeneralTool.CoreLibrary.Interfaces
         /// <param name="objects"></param>
         void Debug(string msg, params object[] objects);
 
-
         /// <summary>
         /// 
         /// </summary>
@@ -139,14 +136,12 @@ namespace GeneralTool.CoreLibrary.Interfaces
         /// <param name="objects"></param>
         void Info(string msg, params object[] objects);
 
-
         /// <summary>
         /// 
         /// </summary>
         /// <param name="msg"></param>
         /// <param name="objects"></param>
         void Waring(string msg, params object[] objects);
-
 
         /// <summary>
         /// 

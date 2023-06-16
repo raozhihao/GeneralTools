@@ -26,8 +26,6 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         /// </summary>
         public static readonly DependencyProperty SelectedObjectProperty = DependencyProperty.Register(nameof(SelectedObject), typeof(object), typeof(PropertyGridControl), new PropertyMetadata(null, PropertyChangedMethod));
 
-
-
         /// <summary>
         /// 排序依赖属性
         /// </summary>
@@ -57,8 +55,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         /// </summary>
         public string Header
         {
-            get => (string)this.GetValue(HeaderProperty);
-            set => this.SetValue(HeaderProperty, value);
+            get => (string)GetValue(HeaderProperty);
+            set => SetValue(HeaderProperty, value);
         }
 
         /// <summary>
@@ -66,8 +64,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         /// </summary>
         public object SelectedObject
         {
-            get => this.GetValue(SelectedObjectProperty);
-            set => this.SetValue(SelectedObjectProperty, value);
+            get => GetValue(SelectedObjectProperty);
+            set => SetValue(SelectedObjectProperty, value);
         }
 
         /// <summary>
@@ -75,8 +73,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         /// </summary>
         public bool? Sort
         {
-            get => (bool)this.GetValue(SortProperty);
-            set => this.SetValue(SortProperty, value);
+            get => (bool)GetValue(SortProperty);
+            set => SetValue(SortProperty, value);
         }
 
         #endregion Public 属性
@@ -86,8 +84,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         /// <inheritdoc/>
         public override void OnApplyTemplate()
         {
-            this.GridContent = this.GetTemplateChild(nameof(this.GridContent)) as Grid;
-            this.InitSelectedObject();
+            GridContent = GetTemplateChild(nameof(GridContent)) as Grid;
+            InitSelectedObject();
         }
 
         /// <summary>
@@ -145,33 +143,26 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
 
         private void InitSelectedObject(bool? sort = null)
         {
-            if (this.SelectedObject == null)
+            if (SelectedObject == null)
             {
-                this.GridContent?.Children.Clear();
+                GridContent?.Children.Clear();
                 return;
             }
-            else if (this.GridContent == null)
+            else if (GridContent == null)
             {
                 return;
             }
 
-
-            this.GridContent.Children.Clear();
-            var objType = this.SelectedObject.GetType();
-            var attrs = objType.GetCustomAttributes(typeof(UIEditorAttribute), false);
-            UIEditorAttribute attribute = null;
-            if (attrs.Length == 1)
-                attribute = attrs[0] as UIEditorAttribute;
-            else
-                attribute = new UIEditorAttribute(typeof(ObjectExpandeUIEditor));
-
+            GridContent.Children.Clear();
+            Type objType = SelectedObject.GetType();
+            object[] attrs = objType.GetCustomAttributes(typeof(UIEditorAttribute), false);
+            UIEditorAttribute attribute = attrs.Length == 1 ? attrs[0] as UIEditorAttribute : new UIEditorAttribute(typeof(ObjectExpandeUIEditor));
             int row = 0;
 
-            var type = this.SelectedObject.GetType();
-            var propertys = type.GetProperties();
+            Type type = SelectedObject.GetType();
+            _ = type.GetProperties();
 
-
-            attribute.GetConvert().ConvertTo(this.GridContent, this.SelectedObject, null, sort, ref row, this.Header);
+            attribute.GetConvert().ConvertTo(GridContent, SelectedObject, null, sort, ref row, Header);
         }
 
         #endregion Private 方法

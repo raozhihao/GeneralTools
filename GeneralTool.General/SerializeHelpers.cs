@@ -192,7 +192,7 @@ namespace GeneralTool.General
                 BinaryReader formart = new BinaryReader(stream);
                 int len = formart.ReadInt32();//获取数据的长度
                                               //生成数组
-                obj = FormatterServices.GetUninitializedObject(type);//Activator.CreateInstance(type, len) as Array;
+                obj = Activator.CreateInstance(type, len) as Array;
                 Type elType = type.GetElementType();
                 MethodInfo method = type.GetMethod("SetValue", new Type[] { typeof(object), typeof(int) });//添加方法SetValue
                                                                                                            //获取每一项
@@ -222,6 +222,13 @@ namespace GeneralTool.General
                 PropertyInfo[] properties = type.GetProperties();
                 foreach (PropertyInfo property in properties)
                 {
+                    //将当前属性加入进去
+                    MethodInfo method = property.SetMethod;
+                    if (method == null)
+                    {
+                        //没有set方法,直接跳过
+                        continue;
+                    }
                     //先获取当前属性类型
 
                     //反序列化,获取当前属性的值
@@ -232,13 +239,7 @@ namespace GeneralTool.General
                     }
                     byte[] cdata = binary.ReadBytes(plen);
                     object proObj = Desrialize(cdata);
-                    //将当前属性加入进去
-                    MethodInfo method = type.GetMethod("set_" + property.Name);
-                    if (method == null)
-                    {
-                        //没有set方法,直接跳过
-                        continue;
-                    }
+
                     //有,则加入
                     method.Invoke(obj, new object[] { proObj });
 
@@ -255,7 +256,7 @@ namespace GeneralTool.General
             if (inter != null)
             {
                 //生成泛型
-                obj = FormatterServices.GetUninitializedObject(type); //Activator.CreateInstance(type);
+                obj = Activator.CreateInstance(type);
                 using (MemoryStream stream = new MemoryStream(data))
                 {
                     BinaryReader formart = new BinaryReader(stream);
@@ -483,6 +484,8 @@ namespace GeneralTool.General
             PropertyInfo[] properties = type.GetProperties();
             foreach (PropertyInfo item in properties)//循环类的每一个属性
             {
+                if (item.SetMethod == null)
+                    continue;
                 //获取属性值
                 object value = item.GetValue(param, null);
                 byte[] cdata;

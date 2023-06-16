@@ -16,36 +16,36 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
     {
         public ResizeThumb()
         {
-            this.DragStarted += ResizeThumb_DragStarted;
-            this.DragDelta += ResizeThumb_DragDelta;
-            this.DragCompleted += ResizeThumb_DragCompleted;
+            DragStarted += ResizeThumb_DragStarted;
+            DragDelta += ResizeThumb_DragDelta;
+            DragCompleted += ResizeThumb_DragCompleted;
         }
 
         private Size? prevSize;
         private void ResizeThumb_DragCompleted(object sender, DragCompletedEventArgs e)
         {
-            if (this.DataContext is BlockItem item && VisualTreeHelper.GetParent(item) is Canvas canvas && this.prevSize != null)
+            if (DataContext is BlockItem item && VisualTreeHelper.GetParent(item) is Canvas && prevSize != null)
             {
-                var currentSize = item.DesiredSize;
-                if (currentSize != this.prevSize.Value)
+                Size currentSize = item.DesiredSize;
+                if (currentSize != prevSize.Value)
                 {
-                    var x = Canvas.GetLeft(item);
-                    var y = Canvas.GetTop(item);
+                    double x = Canvas.GetLeft(item);
+                    double y = Canvas.GetTop(item);
 
-                    var currPoint = new Point(x, y);
+                    Point currPoint = new Point(x, y);
 
                     item.RaiseResizeChanged(currPoint, currentSize);
 
                 }
             }
-            this.prevSize = null;
+            prevSize = null;
         }
 
         private void ResizeThumb_DragStarted(object sender, DragStartedEventArgs e)
         {
-            if (this.DataContext is BlockItem item && VisualTreeHelper.GetParent(item) is Canvas canvas)
+            if (DataContext is BlockItem item && VisualTreeHelper.GetParent(item) is Canvas)
             {
-                this.prevSize = item.DesiredSize;
+                prevSize = item.DesiredSize;
             }
         }
 
@@ -53,7 +53,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
         private void ResizeThumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
             //获取当前附加的控件
-            if (this.DataContext is BlockItem item && VisualTreeHelper.GetParent(item) is Canvas canvas)
+            if (DataContext is BlockItem item && VisualTreeHelper.GetParent(item) is Canvas canvas)
             {
                 if (item.Content == null)
                 {
@@ -61,13 +61,13 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
                 }
                 double deltaVertical, deltaHorizontal;
 
-                var resizeArg = new ResizeArg();
-                var oldX = Canvas.GetLeft(item);
-                var oldY = Canvas.GetTop(item);
-                var oldPoint = new Point(oldX, oldY);
+                ResizeArg resizeArg = new ResizeArg();
+                double oldX = Canvas.GetLeft(item);
+                double oldY = Canvas.GetTop(item);
+                Point oldPoint = new Point(oldX, oldY);
                 resizeArg.OldCanvasPoint = oldPoint;
 
-                switch (this.VerticalAlignment)
+                switch (VerticalAlignment)
                 {
                     case System.Windows.VerticalAlignment.Bottom:
                         deltaVertical = Math.Min(-e.VerticalChange,
@@ -81,7 +81,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
                             item.ActualHeight - item.MinHeight);
 
                         //查看top是否会达到0
-                        var top = Canvas.GetTop(item) + deltaVertical;
+                        double top = Canvas.GetTop(item) + deltaVertical;
                         if (top <= 0)
                             return;
                         Canvas.SetTop(item, top);
@@ -96,7 +96,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
                         deltaHorizontal = Math.Min(e.HorizontalChange,
                             item.ActualWidth - item.MinWidth);
                         //查看左边是否超出
-                        var left = Canvas.GetLeft(item) + deltaHorizontal;
+                        double left = Canvas.GetLeft(item) + deltaHorizontal;
                         if (left <= 0)
                             return;
                         Canvas.SetLeft(item, Canvas.GetLeft(item) + deltaHorizontal);
@@ -115,16 +115,15 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
                 }
                 resizeArg.BlockItem = item;
                 resizeArg.NewCanvasPoint = new Point(Canvas.GetLeft(item), Canvas.GetTop(item));
-                this.ResizeChanged?.Invoke(this, resizeArg);
+                ResizeChanged?.Invoke(this, resizeArg);
             }
-
 
             e.Handled = true;
         }
 
         private void SetWidth(Control item, double deltaHorizontal, Canvas canvas)
         {
-            var tmpWidth = item.ActualWidth - deltaHorizontal;
+            double tmpWidth = item.ActualWidth - deltaHorizontal;
             //查看width是否会大于等于容器的宽
             if (tmpWidth >= canvas.ActualWidth)
                 tmpWidth = canvas.ActualWidth;
@@ -134,7 +133,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
 
         private void SetHeight(Control item, double deltaVertical, Canvas canvas)
         {
-            var tmpHeight = item.ActualHeight - deltaVertical;
+            double tmpHeight = item.ActualHeight - deltaVertical;
 
             //查看height是否会大于等于容器的高
             if (tmpHeight >= canvas.ActualHeight)
@@ -162,9 +161,9 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
         /// </summary>
         public ResizeArg(Point oldPoint, Point newPoint, Direction direction)
         {
-            this.OldCanvasPoint = oldPoint;
-            this.NewCanvasPoint = newPoint;
-            this.Direction = direction;
+            OldCanvasPoint = oldPoint;
+            NewCanvasPoint = newPoint;
+            Direction = direction;
         }
 
         /// <summary>

@@ -24,10 +24,10 @@
         public SqlServerConStrBuilder(string host, string dataBase, string userId = "", string password = "", bool useLocal = true)
         {
             base.Host = host;
-            this.DataBase = dataBase;
+            DataBase = dataBase;
             base.Uid = userId;
             base.Pwd = password;
-            this.UseLocal = useLocal;
+            UseLocal = useLocal;
         }
 
         /// <summary>
@@ -41,21 +41,16 @@
         /// <returns>返回对象的字符串</returns>
         public override string ToString()
         {
-            if (UseLocal)
-            {
-                return $"Data Source={base.Host};Initial Catalog={this.DataBase};Integrated Security=True";
-            }
-            else
-            {
-                return $"Data Source = {base.Host}; Initial Catalog = {this.DataBase}; User Id = {base.Uid}; Password = {base.Pwd}";
-            }
+            return UseLocal
+                ? $"Data Source={base.Host};Initial Catalog={DataBase};Integrated Security=True"
+                : $"Data Source = {base.Host}; Initial Catalog = {DataBase}; User Id = {base.Uid}; Password = {base.Pwd}";
 
         }
 
         /// <inheritdoc/>
         public string CreateConnectionString()
         {
-            return this.ToString();
+            return ToString();
         }
     }
 }

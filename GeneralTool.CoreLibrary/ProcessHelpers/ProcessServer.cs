@@ -29,10 +29,10 @@ namespace GeneralTool.CoreLibrary.ProcessHelpers
         /// </summary>
         /// <param name="exePath">应用程序路径</param>
         /// <param name="args">参数</param>
-        public void Run(string exePath, string workDir = null,string args = "")
+        public void Run(string exePath, string workDir = null, string args = "")
         {
-            var process = new Process();
-            var startInfo = new ProcessStartInfo()
+            Process process = new Process();
+            ProcessStartInfo startInfo = new ProcessStartInfo()
             {
                 FileName = exePath,
                 Arguments = args,
@@ -54,14 +54,14 @@ namespace GeneralTool.CoreLibrary.ProcessHelpers
             process.StartInfo = startInfo;
             try
             {
-                process.Start();
+                _ = process.Start();
                 process.BeginOutputReadLine();
                 process.BeginErrorReadLine();
-                this._process = process;
+                _process = process;
             }
             catch (Exception ex)
             {
-                this.ErroReceived(process, ex.GetInnerExceptionMessage());
+                ErroReceived(process, ex.GetInnerExceptionMessage());
             }
         }
 
@@ -72,36 +72,36 @@ namespace GeneralTool.CoreLibrary.ProcessHelpers
         {
             try
             {
-                if (this._process.HasExited)
-                    this._process.Close();
+                if (_process.HasExited)
+                    _process.Close();
                 else
-                    this._process.Kill();
+                    _process.Kill();
 
-                this._process.Dispose();
+                _process.Dispose();
             }
             catch (Exception ex)
             {
-                this.ErrorHandler?.Invoke(this._process, ex.GetInnerExceptionMessage());
+                ErrorHandler?.Invoke(_process, ex.GetInnerExceptionMessage());
             }
         }
 
         private void ErroReceived(object sender, string e)
         {
-            this.ErrorHandler?.Invoke(sender, e);
+            ErrorHandler?.Invoke(sender, e);
         }
         private void Process_ErrorDataReceived(object sender, DataReceivedEventArgs e)
         {
-            this.ErrorHandler?.Invoke(sender, e.Data);
+            ErrorHandler?.Invoke(sender, e.Data);
         }
 
         private void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
-            this.ReceivedHandler?.Invoke(sender, e.Data);
+            ReceivedHandler?.Invoke(sender, e.Data);
         }
 
         private void Process_Exited(object sender, EventArgs e)
         {
-            this.Exited?.Invoke(sender, e);
+            Exited?.Invoke(sender, e);
         }
     }
 

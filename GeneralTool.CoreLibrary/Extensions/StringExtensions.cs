@@ -24,7 +24,7 @@ namespace GeneralTool.CoreLibrary.Extensions
         /// <returns></returns>
         public static string TrimAll(this string str, params char[] removeCharArr)
         {
-            foreach (var item in removeCharArr)
+            foreach (char item in removeCharArr)
             {
                 str = str.Replace(item + "", "");
             }
@@ -124,16 +124,14 @@ namespace GeneralTool.CoreLibrary.Extensions
         /// <returns></returns>
         public static string ToChinese(this string text)
         {
-            var c = "";
-            foreach (var ch in text)
+            string c = "";
+            foreach (char ch in text)
             {
                 if (Regex.IsMatch(ch.ToString(), @"[\u4e00-\u9fbb]+"))
                     c += ch.ToString();
             }
             return c;
         }
-
-
 
     }
 }

@@ -41,11 +41,7 @@ namespace GeneralTool.CoreLibrary
         /// </returns>
         public bool Equals(T x, T y)
         {
-            if (predicate != null)
-            {
-                return predicate(x, y);
-            }
-            return x.Equals(y);
+            return predicate != null ? predicate(x, y) : x.Equals(y);
         }
 
         /// <summary>

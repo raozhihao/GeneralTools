@@ -33,13 +33,13 @@ namespace GeneralTool.CoreLibrary.Models
         /// 设置属性值
         /// </summary>
         /// <param name="value">值</param>
-        public void SetValue(object value) => this.PropertyInfo.SetValue(this.Dependency, value);
+        public void SetValue(object value) => PropertyInfo.SetValue(Dependency, value);
 
         /// <summary>
         /// 获取属性值
         /// </summary>
         /// <returns></returns>
-        public object GetValue() => this.PropertyInfo.GetValue(Dependency);
+        public object GetValue() => PropertyInfo.GetValue(Dependency);
 
         /// <summary>
         /// 
@@ -48,7 +48,7 @@ namespace GeneralTool.CoreLibrary.Models
         /// <returns></returns>
         public bool CompareTo(PropertyLangStruct langStruct)
         {
-            return langStruct.Dependency.GetHashCode() == this.GetHashCode();
+            return langStruct.Dependency.GetHashCode() == GetHashCode();
         }
     }
 

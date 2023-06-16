@@ -19,9 +19,9 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Models
         /// </summary>
         public void AddItem(BlockItem item)
         {
-            if (!this.SelectionBlockItems.Contains(item))
+            if (!SelectionBlockItems.Contains(item))
             {
-                this.SelectionBlockItems.Add(item);
+                SelectionBlockItems.Add(item);
             }
             item.IsSelected = true;
         }
@@ -32,15 +32,15 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Models
         public void RemoveItem(BlockItem item)
         {
             item.IsSelected = false;
-            if (this.SelectionBlockItems.Contains(item))
+            if (SelectionBlockItems.Contains(item))
             {
-                this.SelectionBlockItems.Remove(item);
+                _ = SelectionBlockItems.Remove(item);
             }
         }
 
         /// <summary>
         /// 
         /// </summary>
-        public void Clear() => this.SelectionBlockItems.Clear();
+        public void Clear() => SelectionBlockItems.Clear();
     }
 }

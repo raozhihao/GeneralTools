@@ -8,7 +8,6 @@ namespace GeneralTool.CoreLibrary.MVS
     public class Errors
     {
 
-
         /// <summary>错误或无效句柄</summary>
         [Description("错误或无效句柄")]
         public const int MV_E_HANDLE = -2147483648;
@@ -155,8 +154,6 @@ namespace GeneralTool.CoreLibrary.MVS
 
         /// <summary>升级过程中出现未知错误</summary>
         [Description("升级过程中出现未知错误")] public const int MV_E_UPG_UNKNOW = -2147482369;
-
-
 
         /// <summary>不确定类型错误</summary>
         [Description("不确定类型错误")] public const int MV_ALG_ERR = 268435456;

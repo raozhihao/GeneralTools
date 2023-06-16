@@ -200,7 +200,7 @@ namespace GeneralTool.CoreLibrary.IPCHelper
                 CmdProcess.StartInfo.RedirectStandardError = true;  // 重定向错误输出
 
                 CmdProcess.StartInfo.Arguments = Process.GetCurrentProcess().Id.ToString();
-                CmdProcess.Start();//执行
+                _ = CmdProcess.Start();//执行
             }
             catch (Exception ex)
             {

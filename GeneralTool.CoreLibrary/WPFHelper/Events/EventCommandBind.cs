@@ -84,7 +84,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Events
                 {
                     cmd.SetObject(control);
 
-                    var eventName = GetEventName(d);
+                    string eventName = GetEventName(d);
                     if (string.IsNullOrWhiteSpace(eventName))
                     {
                         throw new ArgumentNullException($"依赖属性 EventName 必须要设置");
@@ -99,21 +99,17 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Events
         {
             eventName += "Event";
 
-            var property = typeof(UIElement).GetField(eventName);
-            if (property != null)
-            {
-                return (RoutedEvent)property.GetValue(b);
-            }
-            return null;
+            System.Reflection.FieldInfo property = typeof(UIElement).GetField(eventName);
+            return property != null ? (RoutedEvent)property.GetValue(b) : null;
         }
 
         private static void RegisterEvent(UIElement d, string eventName, IEventCommand cmd)
         {
-            var action = cmd.ActionEventHandler;
-            var @event = d.GetType().GetEvent(eventName) ?? throw new ArgumentNullException($"事件名称 {eventName} 不存在元素 {d} 中,请检查");
-            var handler = Delegate.CreateDelegate(@event.EventHandlerType, action.Target, action.Method);
+            EventHandler action = cmd.ActionEventHandler;
+            System.Reflection.EventInfo @event = d.GetType().GetEvent(eventName) ?? throw new ArgumentNullException($"事件名称 {eventName} 不存在元素 {d} 中,请检查");
+            Delegate handler = Delegate.CreateDelegate(@event.EventHandlerType, action.Target, action.Method);
 
-            var routeEvent = GetRouteEvent(d, eventName);
+            RoutedEvent routeEvent = GetRouteEvent(d, eventName);
             if (routeEvent != null)
                 d.AddHandler(routeEvent, handler, true);
             else

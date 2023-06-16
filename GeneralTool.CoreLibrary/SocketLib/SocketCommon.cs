@@ -17,7 +17,7 @@ namespace GeneralTool.CoreLibrary.SocketLib
         public static byte[] GetBytesAndHeader(string msg)
         {
             //获取数据字节数组
-            var buffer = Encoding.UTF8.GetBytes(msg);
+            byte[] buffer = Encoding.UTF8.GetBytes(msg);
             return GetBytesAndHeader(buffer);
         }
 
@@ -27,11 +27,11 @@ namespace GeneralTool.CoreLibrary.SocketLib
         /// <returns></returns>
         public static byte[] GetBytesAndHeader(byte[] buffer)
         {
-            var blen = buffer.Length;
+            int blen = buffer.Length;
             //组织数据长度写入包头
-            var bitLen = GetHeadBytes(blen);
+            byte[] bitLen = GetHeadBytes(blen);
             //2.组织数据
-            var sendBytes = new byte[blen + 4];
+            byte[] sendBytes = new byte[blen + 4];
             bitLen.CopyTo(sendBytes, 0);
             Array.Copy(buffer, 0, sendBytes, 4, buffer.Length);
             return sendBytes;
@@ -68,16 +68,16 @@ namespace GeneralTool.CoreLibrary.SocketLib
         {
             //循环发送
             //设定已发送长度
-            var sendedLen = 0;
+            int sendedLen = 0;
             //设定需要发送长度
-            var needSendLen = sendBytes.Length;
+            int needSendLen = sendBytes.Length;
             //当需要发送长度大于0时需要一直发送
             while (needSendLen > 0)
             {
                 //获取到已发送长度
                 //在此处将循环发送,偏移量就是已发送的长度,该值将会一直叠加
                 //同时需要发送长度会一直减少,直至减为0
-                var len = client.Send(sendBytes, sendedLen, needSendLen, SocketFlags.None);
+                int len = client.Send(sendBytes, sendedLen, needSendLen, SocketFlags.None);
                 if (len == 0)
                 {
                     //未发送成功,则继续发送
@@ -88,7 +88,6 @@ namespace GeneralTool.CoreLibrary.SocketLib
                     //发送失败,则返回
                     return false;
                 }
-
 
                 //重置已发送长度
                 needSendLen -= len;
@@ -108,8 +107,8 @@ namespace GeneralTool.CoreLibrary.SocketLib
         {
             buffer = default;
             //3.得到包头
-            var headBuffer = new byte[4];
-            var reBool = ReceiveBytes(headBuffer, client);
+            byte[] headBuffer = new byte[4];
+            bool reBool = ReceiveBytes(headBuffer, client);
             if (!reBool)
             {
                 //没有接收成功
@@ -117,7 +116,7 @@ namespace GeneralTool.CoreLibrary.SocketLib
             }
             //4.解包数据
             //得到接收长度
-            var bufferSize = BitConverter.ToInt32(headBuffer, 0);
+            int bufferSize = BitConverter.ToInt32(headBuffer, 0);
             Console.WriteLine("接收到数据长度为:" + bufferSize);
             buffer = new byte[bufferSize];
             reBool = ReceiveBytes(buffer, client);
@@ -134,13 +133,13 @@ namespace GeneralTool.CoreLibrary.SocketLib
         {
             //循环接收
             //设定已接收长度
-            var reLen = 0;
+            int reLen = 0;
             //设定需要接收长度
-            var needLen = bitLen.Length;
+            int needLen = bitLen.Length;
             //循环接收
             while (needLen > 0)
             {
-                var len = client.Receive(bitLen, reLen, needLen, SocketFlags.None);
+                int len = client.Receive(bitLen, reLen, needLen, SocketFlags.None);
                 if (len == 0)
                 {
                     //未接收完成,继续接收

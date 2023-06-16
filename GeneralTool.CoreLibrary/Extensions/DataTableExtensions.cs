@@ -329,10 +329,10 @@ namespace GeneralTool.CoreLibrary.Extensions
         /// </returns>
         public static DataTable ToDataTable(this string xmlString)
         {
-            var reader = new StringReader(xmlString);
-            var xr = new XmlTextReader(reader);
-            var table = new DataTable();
-            table.ReadXml(xr);
+            StringReader reader = new StringReader(xmlString);
+            XmlTextReader xr = new XmlTextReader(reader);
+            DataTable table = new DataTable();
+            _ = table.ReadXml(xr);
             reader.Dispose();
             xr.Dispose();
             return table;
@@ -361,10 +361,10 @@ namespace GeneralTool.CoreLibrary.Extensions
                 //如果不为空,则一定要删除它的命名空间
                 dt.Namespace = null;
             }
-            var stream = new MemoryStream();
-            var xs = new XmlSerializer(dt.GetType());
+            MemoryStream stream = new MemoryStream();
+            XmlSerializer xs = new XmlSerializer(dt.GetType());
 
-            var settings = new XmlWriterSettings()
+            XmlWriterSettings settings = new XmlWriterSettings()
             {
                 CheckCharacters = true,
                 CloseOutput = true,
@@ -377,7 +377,7 @@ namespace GeneralTool.CoreLibrary.Extensions
                 OmitXmlDeclaration = false,
                 WriteEndDocumentOnClose = true
             };
-            using (var writer = XmlWriter.Create(stream, settings))
+            using (XmlWriter writer = XmlWriter.Create(stream, settings))
             {
                 xs.Serialize(stream, dt);
             }
@@ -386,24 +386,24 @@ namespace GeneralTool.CoreLibrary.Extensions
             stream.Dispose();
 
             //下面还需要做一些其它的事情,所以装载到xmldocument中
-            var xml = new XmlDocument();
+            XmlDocument xml = new XmlDocument();
             xml.LoadXml(xmlStr);
 
             //给根路径添加命名空间,这是必须的
             xml.DocumentElement.SetAttribute("xmlns", "http://schemas.datacontract.org/2004/07/System.Data");
             //创建一个空的命名空间,这也是必须的
-            var attr = xml.CreateAttribute("xmlns");
+            XmlAttribute attr = xml.CreateAttribute("xmlns");
             attr.Value = "";
             //找到第一个子节点下的DocumentElement子节点(因为DataTable序列化后是固定的,所以直接下标获取)
-            var element = xml.DocumentElement.ChildNodes[1].ChildNodes[0];
+            XmlNode element = xml.DocumentElement.ChildNodes[1].ChildNodes[0];
             //设置命名空间
-            element.Attributes.SetNamedItem(attr);
+            _ = element.Attributes.SetNamedItem(attr);
             //找到所有的diffgr:before节点下的子节点
-            var elements = xml.DocumentElement.ChildNodes[1].ChildNodes[1].ChildNodes;
+            XmlNodeList elements = xml.DocumentElement.ChildNodes[1].ChildNodes[1].ChildNodes;
             foreach (XmlNode node in elements)
             {
                 //循环添加空命名空间,这是必须的
-                node.Attributes.SetNamedItem(attr);
+                _ = node.Attributes.SetNamedItem(attr);
             }
 
             return xml;
@@ -451,7 +451,7 @@ namespace GeneralTool.CoreLibrary.Extensions
         /// <returns></returns>
         public static List<T> ToList<T>(this DataTable dt)
         {
-            var values = new List<T>();
+            List<T> values = new List<T>();
             int count = dt.Rows.Count;
             for (int i = 0; i < count; i++)
             {
@@ -484,7 +484,7 @@ namespace GeneralTool.CoreLibrary.Extensions
                     if (currentName.Equals(dt.Columns[i].ColumnName.ToLower()))
                     {
                         //将当前的行列值设置到对象中
-                        var value = dt.Rows[rowIndex][i];
+                        object value = dt.Rows[rowIndex][i];
                         //获取当前列类型
                         Type colType = dt.Columns[i].DataType;
                         //获取当前字段类型
@@ -539,21 +539,21 @@ namespace GeneralTool.CoreLibrary.Extensions
         /// <returns>返回一个DataTable</returns>
         public static DataTable ToDataTable<T>(this IEnumerable<T> collection)
         {
-            var props = typeof(T).GetProperties();
-            var dt = new DataTable() { TableName = typeof(T).Name };
+            PropertyInfo[] props = typeof(T).GetProperties();
+            DataTable dt = new DataTable() { TableName = typeof(T).Name };
             dt.Columns.AddRange(props.Select(p => new DataColumn(p.Name, p.PropertyType)).ToArray());
             if (collection.Any())
             {
                 for (int i = 0; i < collection.Count(); i++)
                 {
-                    var tempList = new ArrayList();
+                    ArrayList tempList = new ArrayList();
                     foreach (PropertyInfo pi in props)
                     {
                         object obj = pi.GetValue(collection.ElementAt(i), null);
-                        tempList.Add(obj);
+                        _ = tempList.Add(obj);
                     }
                     object[] array = tempList.ToArray();
-                    dt.LoadDataRow(array, true);
+                    _ = dt.LoadDataRow(array, true);
                 }
             }
             return dt;

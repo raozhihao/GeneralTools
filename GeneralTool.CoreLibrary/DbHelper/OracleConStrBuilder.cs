@@ -34,8 +34,8 @@
             base.Host = host;
             base.Uid = userId;
             base.Pwd = password;
-            this.Sid = sid;
-            this.Port = port;
+            Sid = sid;
+            Port = port;
         }
 
         /// <summary>
@@ -44,13 +44,13 @@
         /// <returns>返回对象的字符串</returns>
         public override string ToString()
         {
-            return $"Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST={base.Host})(PORT={this.Port})))(CONNECT_DATA=(sid ={this.Sid})));User Id={base.Uid};Password={base.Pwd}";
+            return $"Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST={base.Host})(PORT={Port})))(CONNECT_DATA=(sid ={Sid})));User Id={base.Uid};Password={base.Pwd}";
         }
 
         /// <inheritdoc/>
         public string CreateConnectionString()
         {
-            return this.ToString();
+            return ToString();
         }
     }
 }

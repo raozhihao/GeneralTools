@@ -15,7 +15,7 @@ namespace GeneralTool.CoreLibrary.Models
         /// </param>
         public ImageScaleEventArgs(double scale)
         {
-            this.ScaleValue = scale;
+            ScaleValue = scale;
         }
 
         #endregion Public 构造函数

@@ -34,14 +34,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DialogHelper
         {
             get => caption; set
             {
-                if (string.IsNullOrWhiteSpace(value))
-                {
-                    captionVisible = Visibility.Collapsed;
-                }
-                else
-                {
-                    captionVisible = Visibility.Visible;
-                }
+                captionVisible = string.IsNullOrWhiteSpace(value) ? Visibility.Collapsed : Visibility.Visible;
                 RegisterProperty(ref caption, value);
             }
         }

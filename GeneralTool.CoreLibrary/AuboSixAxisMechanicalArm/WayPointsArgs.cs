@@ -17,7 +17,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="wayPoints"></param>
         public WayPointsArgs(MetaData.WayPoint_S wayPoints)
         {
-            this.WayPoints = wayPoints;
+            WayPoints = wayPoints;
         }
     }
 }

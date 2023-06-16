@@ -21,7 +21,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(BlockItem), new FrameworkPropertyMetadata(typeof(BlockItem)));
 
-            var md = new PropertyMetadata()
+            PropertyMetadata md = new PropertyMetadata()
             {
                 DefaultValue = Guid.NewGuid(),
             };
@@ -33,10 +33,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// </summary>
         public BlockItem()
         {
-            this.ID = Guid.NewGuid();
+            ID = Guid.NewGuid();
         }
-
-
 
         #region 字段
 
@@ -45,7 +43,6 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         #endregion
 
         #region 附加属性
-
 
         /// <summary>
         /// 
@@ -57,12 +54,10 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// </summary>
         public static readonly DependencyProperty IsBreakPointProperty = DependencyProperty.Register(nameof(IsBreakPoint), typeof(bool), typeof(BlockItem), new PropertyMetadata(false));
 
-
         /// <summary>
         /// 
         /// </summary>
         public static readonly DependencyProperty IsShowConnectorProperty = DependencyProperty.Register(nameof(ConnectorVisibility), typeof(Visibility), typeof(BlockItem), new PropertyMetadata(Visibility.Collapsed));
-
 
         /// <summary>
         /// 
@@ -83,8 +78,6 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// 
         /// </summary>
         public static readonly DependencyProperty IDProperty;
-
-
 
         /// <summary>
         /// 
@@ -156,11 +149,10 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
                     b.HeaderCornerRadius = new CornerRadius(10, 10, 0, 0);//更新边框
                 }
 
-
                 //b.ConnectorVisibility = Visibility.Visible;
-                var x = Canvas.GetLeft(b);
-                var y = Canvas.GetTop(b);
-                var point = new Point(x, y);
+                double x = Canvas.GetLeft(b);
+                double y = Canvas.GetTop(b);
+                Point point = new Point(x, y);
                 b.Width = double.NaN;
                 b.Height = double.NaN;
 
@@ -182,11 +174,10 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
                     b.HeaderCornerRadius = new CornerRadius(10, 10, 0, 0);//更新边框
                 }
 
-
                 //b.ConnectorVisibility = Visibility.Visible;
-                var x = Canvas.GetLeft(b);
-                var y = Canvas.GetTop(b);
-                var point = new Point(x, y);
+                double x = Canvas.GetLeft(b);
+                double y = Canvas.GetTop(b);
+                Point point = new Point(x, y);
                 b.Width = double.NaN;
                 b.Height = double.NaN;
 
@@ -203,8 +194,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// </summary>
         public bool IsBreakPoint
         {
-            get => (bool)this.GetValue(IsBreakPointProperty);
-            set => this.SetValue(IsBreakPointProperty, value);
+            get => (bool)GetValue(IsBreakPointProperty);
+            set => SetValue(IsBreakPointProperty, value);
         }
 
         /// <summary>
@@ -212,8 +203,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// </summary>
         public bool IsDebugMode
         {
-            get => (bool)this.GetValue(IsDebugModeProperty);
-            set => this.SetValue(IsDebugModeProperty, value);
+            get => (bool)GetValue(IsDebugModeProperty);
+            set => SetValue(IsDebugModeProperty, value);
         }
 
         /// <summary>
@@ -221,8 +212,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// </summary>
         public Guid ID
         {
-            get => (Guid)this.GetValue(IDProperty);
-            set => this.SetValue(IDProperty, value);
+            get => (Guid)GetValue(IDProperty);
+            set => SetValue(IDProperty, value);
         }
 
         /// <summary>
@@ -230,8 +221,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// </summary>
         public bool IsStart
         {
-            get => (bool)this.GetValue(IsStartProperty);
-            set => this.SetValue(IsStartProperty, value);
+            get => (bool)GetValue(IsStartProperty);
+            set => SetValue(IsStartProperty, value);
         }
 
         /// <summary>
@@ -239,8 +230,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// </summary>
         public bool IsEnd
         {
-            get => (bool)this.GetValue(IsEndProperty);
-            set => this.SetValue(IsEndProperty, value);
+            get => (bool)GetValue(IsEndProperty);
+            set => SetValue(IsEndProperty, value);
         }
 
         /// <summary>
@@ -248,8 +239,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// </summary>
         public bool IsBreakBlock
         {
-            get => (bool)this.GetValue(IsBreakBlockProperty);
-            set => this.SetValue(IsBreakBlockProperty, value);
+            get => (bool)GetValue(IsBreakBlockProperty);
+            set => SetValue(IsBreakBlockProperty, value);
         }
 
         /// <summary>
@@ -257,8 +248,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// </summary>
         public string ResultVaraible
         {
-            get => this.GetValue(ResultVaraibleProperty) + "";
-            set => this.SetValue(ResultVaraibleProperty, value);
+            get => GetValue(ResultVaraibleProperty) + "";
+            set => SetValue(ResultVaraibleProperty, value);
         }
 
         /// <summary>
@@ -266,16 +257,16 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// </summary>
         public Visibility ResultVisibility
         {
-            get => (Visibility)this.GetValue(ResultVisibilityProperty);
-            set => this.SetValue(ResultVisibilityProperty, value);
+            get => (Visibility)GetValue(ResultVisibilityProperty);
+            set => SetValue(ResultVisibilityProperty, value);
         }
         /// <summary>
         /// 是否可以多次拖入画布
         /// </summary>
         public bool CanRepeatToCanvas
         {
-            get => (bool)this.GetValue(CanRepeatToCanvasProperty);
-            set => this.SetValue(CanRepeatToCanvasProperty, value);
+            get => (bool)GetValue(CanRepeatToCanvasProperty);
+            set => SetValue(CanRepeatToCanvasProperty, value);
         }
 
         /// <summary>
@@ -283,8 +274,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// </summary>
         public object Content
         {
-            get => this.GetValue(ContentProperty);
-            set => this.SetValue(ContentProperty, value);
+            get => GetValue(ContentProperty);
+            set => SetValue(ContentProperty, value);
         }
 
         /// <summary>
@@ -292,8 +283,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// </summary>
         public Visibility ConnectorVisibility
         {
-            get => (Visibility)this.GetValue(IsShowConnectorProperty);
-            set => this.SetValue(IsShowConnectorProperty, value);
+            get => (Visibility)GetValue(IsShowConnectorProperty);
+            set => SetValue(IsShowConnectorProperty, value);
         }
 
         /// <summary>
@@ -301,8 +292,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// </summary>
         public Visibility ContentVisibility
         {
-            get => (Visibility)this.GetValue(ContentVisibilityProperty);
-            set => this.SetValue(ContentVisibilityProperty, value);
+            get => (Visibility)GetValue(ContentVisibilityProperty);
+            set => SetValue(ContentVisibilityProperty, value);
         }
 
         /// <summary>
@@ -310,8 +301,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// </summary>
         public Visibility ResizeVisibility
         {
-            get => (Visibility)this.GetValue(ResizeVisibilityProperty);
-            set => this.SetValue(ResizeVisibilityProperty, value);
+            get => (Visibility)GetValue(ResizeVisibilityProperty);
+            set => SetValue(ResizeVisibilityProperty, value);
         }
 
         /// <summary>
@@ -319,19 +310,17 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// </summary>
         public CornerRadius HeaderCornerRadius
         {
-            get => (CornerRadius)this.GetValue(HeaderCornerRadiusProperty);
-            set => this.SetValue(HeaderCornerRadiusProperty, value);
+            get => (CornerRadius)GetValue(HeaderCornerRadiusProperty);
+            set => SetValue(HeaderCornerRadiusProperty, value);
         }
-
-
 
         /// <summary>
         /// 
         /// </summary>
         public Visibility HeaderVisibility
         {
-            get => (Visibility)this.GetValue(HeaderVisibilityProperty);
-            set => this.SetValue(HeaderVisibilityProperty, value);
+            get => (Visibility)GetValue(HeaderVisibilityProperty);
+            set => SetValue(HeaderVisibilityProperty, value);
         }
 
         /// <summary>
@@ -339,19 +328,17 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// </summary>
         public string Header
         {
-            get => this.GetValue(HeaderProperty) + "";
-            set => this.SetValue(HeaderProperty, value);
+            get => GetValue(HeaderProperty) + "";
+            set => SetValue(HeaderProperty, value);
         }
-
-
 
         /// <summary>
         /// 是否选中
         /// </summary>
         public bool IsSelected
         {
-            get => (bool)this.GetValue(IsSelectedProperty);
-            set => this.SetValue(IsSelectedProperty, value);
+            get => (bool)GetValue(IsSelectedProperty);
+            set => SetValue(IsSelectedProperty, value);
         }
 
         /// <summary>
@@ -367,8 +354,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// </summary>
         public bool IsInCanvas
         {
-            get => (bool)this.GetValue(IsInCanvasProperty);
-            set => this.SetValue(IsInCanvasProperty, value);
+            get => (bool)GetValue(IsInCanvasProperty);
+            set => SetValue(IsInCanvasProperty, value);
         }
 
         ///// <summary>
@@ -389,11 +376,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// </summary>
         public DesignerCanvas ParentCanvas { get; private set; }
 
-
-
         #endregion
-
-
 
     }
 }

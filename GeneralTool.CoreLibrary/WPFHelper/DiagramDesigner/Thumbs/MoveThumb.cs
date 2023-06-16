@@ -19,53 +19,64 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
         /// </summary>
         public MoveThumb()
         {
-            this.DragStarted += MoveThumb_DragStarted;
-            this.DragDelta += MoveThumb_DragDelta;
-            this.DragCompleted += MoveThumb_DragCompleted;
+            DragStarted += MoveThumb_DragStarted;
+            DragDelta += MoveThumb_DragDelta;
+            DragCompleted += MoveThumb_DragCompleted;
         }
 
         private Point? startPoint;
         private void MoveThumb_DragStarted(object sender, DragStartedEventArgs e)
         {
-            if (!(this.TemplatedParent is BlockItem block))
+
+            /* 项目“GeneralTool.CoreLibrary (net452)”的未合并的更改
+            在此之前:
+                        if (!(this.TemplatedParent is BlockItem block))
+            在此之后:
+                        if (!(TemplatedParent is BlockItem block))
+            */
+            if (!(TemplatedParent is  BlockItem block))
                 return;
-            if (!(block.Parent is DesignerCanvas))
+            if (!(block.Parent is  DesignerCanvas))
             {
                 return;
             }
 
-            var x = Canvas.GetLeft(block);
-            var y = Canvas.GetTop(block);
-            this.startPoint = new Point(x, y);
+            double x = Canvas.GetLeft(block);
+            double y = Canvas.GetTop(block);
+            startPoint = new Point(x, y);
         }
 
         private void MoveThumb_DragCompleted(object sender, DragCompletedEventArgs e)
         {
 
-            if (!(this.TemplatedParent is BlockItem block))
+            /* 项目“GeneralTool.CoreLibrary (net452)”的未合并的更改
+            在此之前:
+                        if (!(this.TemplatedParent is BlockItem block))
+            在此之后:
+                        if (!(TemplatedParent is BlockItem block))
+            */
+             if (!(this.TemplatedParent is BlockItem block))
                 return;
-            if (!(block.Parent is DesignerCanvas canvas))
+            if (!(block.Parent is  DesignerCanvas canvas))
             {
                 return;
             }
 
-
-            if (this.startPoint != null)
+            if (startPoint != null)
             {
-                var x = Canvas.GetLeft(block);
-                var y = Canvas.GetTop(block);
+                double x = Canvas.GetLeft(block);
+                double y = Canvas.GetTop(block);
 
-                var currPoint = new Point(x, y);
-                if (this.startPoint.Value != currPoint)
+                Point currPoint = new Point(x, y);
+                if (startPoint.Value != currPoint)
                 {
                     canvas.ClearSection();
                     block.RaiseUpdatePosition(currPoint);
                 }
             }
 
-            this.startPoint = null;
+            startPoint = null;
         }
-
 
         /// <summary>
         /// 
@@ -77,16 +88,16 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
         public const double MinLeft = 20;
         private void MoveThumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            if (this.TemplatedParent is BlockItem designerItem && VisualTreeHelper.GetParent(designerItem) is Canvas designer)
+            if (TemplatedParent is BlockItem designerItem && VisualTreeHelper.GetParent(designerItem) is Canvas designer)
             {
                 // we only move DesignerItems
-                var designerItems = designer.Children.OfType<BlockItem>().Where(b => b.IsSelected);
+                System.Collections.Generic.IEnumerable<BlockItem> designerItems = designer.Children.OfType<BlockItem>().Where(b => b.IsSelected);
 
                 if (designerItems.Count() > 0)
                 {
                     double minLeft = double.MaxValue;
                     double minTop = double.MaxValue;
-                    foreach (var item in designerItems)
+                    foreach (BlockItem item in designerItems)
                     {
                         double left = Canvas.GetLeft(item);
                         double top = Canvas.GetTop(item);
@@ -98,14 +109,13 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
                     double deltaHorizontal = Math.Max(-minLeft, e.HorizontalChange);
                     double deltaVertical = Math.Max(-minTop, e.VerticalChange);
 
-                    foreach (var item in designerItems)
+                    foreach (BlockItem item in designerItems)
                     {
                         double left = Canvas.GetLeft(item);
                         double top = Canvas.GetTop(item);
 
                         if (double.IsNaN(left)) left = 0;
                         if (double.IsNaN(top)) top = 0;
-
 
                         Canvas.SetLeft(item, Math.Round(left + deltaHorizontal, 0));
                         Canvas.SetTop(item, Math.Round(top + deltaVertical, 0));
@@ -117,7 +127,6 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
                 {
                     Move(designerItem, e);
                 }
-
 
                 designer.InvalidateMeasure();
 

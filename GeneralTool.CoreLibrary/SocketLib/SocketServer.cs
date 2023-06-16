@@ -5,7 +5,6 @@ using System.Net.Sockets;
 using GeneralTool.CoreLibrary.Interfaces;
 using GeneralTool.CoreLibrary.SocketLib.Models;
 
-
 namespace GeneralTool.CoreLibrary.SocketLib
 {
     /// <summary>
@@ -43,18 +42,22 @@ namespace GeneralTool.CoreLibrary.SocketLib
         /// <param name="port"></param>
         public override void Startup(IPAddress address, int port)
         {
-            this.Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            this.Socket.Bind(new IPEndPoint(address, port));
-            this.Socket.Listen(10);
+            Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
+            {
+                SendBufferSize = 1024 * 1024 * 10,
+                ReceiveBufferSize = 1024 * 1024 * 10
+            };
+            Socket.Bind(new IPEndPoint(address, port));
+            Socket.Listen(10);
             Console.WriteLine("开始异步接收连接");
-            this.Socket.BeginAccept(AcceptCallback, this.Socket);
-            this.IsConnected = true;
+            _ = Socket.BeginAccept(AcceptCallback, Socket);
+            IsConnected = true;
         }
 
         private void AcceptCallback(IAsyncResult ar)
         {
             //接收到连接
-            var serverSocket = ar.AsyncState as Socket;
+            Socket serverSocket = ar.AsyncState as Socket;
             Socket client = null;
             try
             {
@@ -66,11 +69,11 @@ namespace GeneralTool.CoreLibrary.SocketLib
                 return;
             }
 
-            serverSocket.BeginAccept(AcceptCallback, serverSocket);
+            _ = serverSocket.BeginAccept(AcceptCallback, serverSocket);
 
-            this.ClientConnctedEvent?.Invoke(this, new SocketArg(client));
+            ClientConnctedEvent?.Invoke(this, new SocketArg(client));
 
-            this.BeginReceive(client);
+            BeginReceive(client);
         }
     }
 }

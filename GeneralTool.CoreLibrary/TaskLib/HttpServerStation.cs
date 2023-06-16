@@ -39,9 +39,10 @@ namespace GeneralTool.CoreLibrary.TaskLib
         public HttpServerStation(ILog log = null, IJsonConvert json = null) : base(log)
         {
             if (json == null) json = new BaseJsonCovert();
-            this.JsonConvert = json;
+            JsonConvert = json;
         }
-        HttpListener httpListener;
+
+        private HttpListener httpListener;
 
         /// <summary>
         /// 关闭
@@ -49,9 +50,9 @@ namespace GeneralTool.CoreLibrary.TaskLib
         /// <returns></returns>
         public override bool Close()
         {
-            this.httpListener?.Stop();
-            this.httpListener?.Close();
-            this.httpListener = null;
+            httpListener?.Stop();
+            httpListener?.Close();
+            httpListener = null;
             return true;
         }
 
@@ -71,7 +72,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
             //开始监听
             httpListener.Start();
             Log.Debug("开始监听...");
-            httpListener.BeginGetContext(BeginCall, httpListener);
+            _ = httpListener.BeginGetContext(BeginCall, httpListener);
             return true;
         }
         private void BeginCall(IAsyncResult ar)
@@ -91,13 +92,12 @@ namespace GeneralTool.CoreLibrary.TaskLib
                 return;
             }
 
-
-            httpListener.BeginGetContext(BeginCall, httpListener);
+            _ = httpListener.BeginGetContext(BeginCall, httpListener);
 
             //取得请求的对象
             HttpListenerRequest request = context.Request;
             Log.Debug($"{request.HttpMethod} ,{request.RawUrl} ,{request.ProtocolVersion}");
-            var reader = new StreamReader(request.InputStream, Encoding.UTF8);
+            StreamReader reader = new StreamReader(request.InputStream, Encoding.UTF8);
             string msg = string.Empty;
             try
             {
@@ -109,7 +109,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
                 return;
             }
 
-            var reponseString = "";
+            string reponseString = "";
             try
             {
                 //将响应对象进行处理
@@ -124,7 +124,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
 
             if (reponseString == null) return;
 
-            var response = context.Response;
+            HttpListenerResponse response = context.Response;
             // 设置回应头部内容，长度，编码
             response.ContentEncoding = Encoding.UTF8;
 
@@ -134,39 +134,39 @@ namespace GeneralTool.CoreLibrary.TaskLib
         }
         private string ExcuteRequest(HttpListenerContext context, string msg)
         {
-            if (this.HalderContext != null)
+            if (HalderContext != null)
             {
                 HandlerContextMethod(context);
                 return null;
             }
 
             // 取得回应对象
-            var response = context.Response;
-            var url = context.Request.Url.LocalPath;
+            HttpListenerResponse response = context.Response;
+            string url = context.Request.Url.LocalPath;
             url = url.Substring(1);//将前面的/去除
             //判断url是否存在
-            if (!this.RequestRoute.ContainsKey(url))
+            if (!RequestRoute.ContainsKey(url))
             {
                 //不存在,返回
-                var erro = $"不存在所请示的 [url] - [{url}]";
-                this.Log.Error(erro);
+                string erro = $"不存在所请示的 [url] - [{url}]";
+                Log.Error(erro);
                 return erro;
             }
 
-            var cmd = new ServerRequest();
+            ServerRequest cmd = new ServerRequest();
 
             //获取参数
-            var method = context.Request.HttpMethod;
-            var queryString = WebUtility.UrlDecode(context.Request.Url.Query);
-            var dic = queryString.ParseUrlToQueryDictionary();
+            string method = context.Request.HttpMethod;
+            string queryString = WebUtility.UrlDecode(context.Request.Url.Query);
+            Dictionary<string, string> dic = queryString.ParseUrlToQueryDictionary();
             if (method.Equals("POST", StringComparison.InvariantCultureIgnoreCase))
             {
-                var executed = false;
-                var parameters = this.RequestRoute[url].MethodInfo.GetParameters();
+                bool executed = false;
+                ParameterInfo[] parameters = RequestRoute[url].MethodInfo.GetParameters();
                 if (parameters.Length == 1)
                 {
-                    var pa = parameters[0];
-                    var wa = pa.GetCustomAttribute<WaterMarkAttribute>();
+                    ParameterInfo pa = parameters[0];
+                    WaterMarkAttribute wa = pa.GetCustomAttribute<WaterMarkAttribute>();
                     if (wa != null && wa.IsJson)
                     {
                         //如果是Json类型,则直接设置了
@@ -183,7 +183,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
                 {
                     try
                     {
-                        dic = this.JsonConvert.DeserializeObject<Dictionary<string, string>>(msg);
+                        dic = JsonConvert.DeserializeObject<Dictionary<string, string>>(msg);
                         if (dic == null) dic = new Dictionary<string, string>();
                     }
                     catch (Exception ex)
@@ -192,43 +192,41 @@ namespace GeneralTool.CoreLibrary.TaskLib
                     }
                 }
 
-
             }
 
-            foreach (var item in dic)
+            foreach (KeyValuePair<string, string> item in dic)
             {
                 cmd.Parameters.Add(item.Key, item.Value);
             }
             cmd.Url = url;
 
             //如果有事件,则交给用户去处理
-            if (this.HandlerRequest != null)
+            if (HandlerRequest != null)
             {
                 //判断请求方法是否正确
-                var item = this.RequestRoute[url];
+                RequestAddressItem item = RequestRoute[url];
                 if (item.HttpMethod.ToString().ToLower() != context.Request.HttpMethod.ToLower())
                 {
                     return $"远程请示的Http Metod与接口不一致,请示的 url : {url} ,请示的Http Method : {context.Request.HttpMethod}";
                 }
 
-                var info = new RequestInfo(cmd, response, item);
-                this.HandlerRequestMethod(info);
+                RequestInfo info = new RequestInfo(cmd, response, item);
+                HandlerRequestMethod(info);
                 return null;
             }
 
             Log.Debug($"Request:{msg}");
 
-            string responseString = this.GetReponseString(cmd, this.JsonConvert);
+            string responseString = GetReponseString(cmd, JsonConvert);
 
             Log.Log($"Response:{responseString}" + Environment.NewLine);
 
             return responseString;
         }
 
-
         private void HandlerContextMethod(HttpListenerContext context)
         {
-            this.HalderContext?.Invoke(this, new ContextRequest(context));
+            HalderContext?.Invoke(this, new ContextRequest(context));
         }
 
         /// <summary>
@@ -236,7 +234,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
         /// </summary>
         protected virtual void HandlerRequestMethod(RequestInfo requestInfo)
         {
-            this.HandlerRequest?.Invoke(this, requestInfo);
+            HandlerRequest?.Invoke(this, requestInfo);
         }
 
         private void WriteResponse(HttpListenerResponse response, string responseString)

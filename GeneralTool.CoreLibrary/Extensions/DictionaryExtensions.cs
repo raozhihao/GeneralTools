@@ -33,10 +33,7 @@ namespace GeneralTool.CoreLibrary.Extensions
         /// <returns></returns>
         public static TValue GetValueOrDefault<TKey, TValue>(this Dictionary<TKey, TValue> keyValues, TKey key)
         {
-            if (keyValues.ContainsKey(key))
-                return keyValues[key];
-            else
-                return default;
+            return keyValues.ContainsKey(key) ? keyValues[key] : default;
         }
 
         /// <summary>
@@ -49,10 +46,7 @@ namespace GeneralTool.CoreLibrary.Extensions
         /// <returns></returns>
         public static KeyValuePair<TKey, TValue> GetKeyValuePairOrDefault<TKey, TValue>(this Dictionary<TKey, TValue> keyValues, TKey key)
         {
-            if (keyValues.ContainsKey(key))
-                return new KeyValuePair<TKey, TValue>(key, keyValues[key]);
-            else
-                return default;
+            return keyValues.ContainsKey(key) ? new KeyValuePair<TKey, TValue>(key, keyValues[key]) : default;
         }
     }
 }

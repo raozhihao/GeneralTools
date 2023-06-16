@@ -19,7 +19,7 @@ namespace GeneralTool.CoreLibrary.Attributes
         /// </param>
         public UIEditorAttribute(Type convert)
         {
-            this.Convert = convert;
+            Convert = convert;
         }
 
         #endregion Public 构造函数
@@ -42,7 +42,7 @@ namespace GeneralTool.CoreLibrary.Attributes
         /// </returns>
         public IUIEditorConvert GetConvert()
         {
-            return Activator.CreateInstance(this.Convert) as IUIEditorConvert;
+            return Activator.CreateInstance(Convert) as IUIEditorConvert;
         }
 
         #endregion Public 方法

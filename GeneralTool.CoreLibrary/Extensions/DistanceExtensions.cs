@@ -32,20 +32,17 @@ namespace GeneralTool.CoreLibrary.Extensions
         public static double Distance(this System.Drawing.Point point1, System.Drawing.PointF point2)
             => Distance(point1.X, point1.Y, point2.X, point2.Y);
 
-
         /// <summary>
         /// 求两个点之间的距离
         /// </summary>
         public static double Distance(this System.Drawing.Point point1, System.Windows.Point point2)
             => Distance(point1.X, point1.Y, point2.X, point2.Y);
 
-
         /// <summary>
         /// 求两个点之间的距离
         /// </summary>
         public static double Distance(this System.Drawing.PointF point1, System.Drawing.PointF point2)
             => Distance(point1.X, point1.Y, point2.X, point2.Y);
-
 
         /// <summary>
         /// 求两个点之间的距离
@@ -79,16 +76,15 @@ namespace GeneralTool.CoreLibrary.Extensions
         public static double Distance(this System.Windows.Point point1, System.Drawing.Point point2)
             => Distance(point1.X, point1.Y, point2.X, point2.Y);
 
-
         /// <summary>
         /// 求一组点之间的距离
         /// </summary>
         public static double Distance(this IEnumerable<System.Drawing.Point> points)
         {
-            var sum = 0d;
-            var index = 0;
-            var first = default(System.Drawing.Point);
-            foreach (var point in points)
+            double sum = 0d;
+            int index = 0;
+            System.Drawing.Point first = default(System.Drawing.Point);
+            foreach (System.Drawing.Point point in points)
             {
                 if (index == 0)
                 {
@@ -108,10 +104,10 @@ namespace GeneralTool.CoreLibrary.Extensions
         /// </summary>
         public static double Distance(this IEnumerable<System.Drawing.PointF> points)
         {
-            var sum = 0d;
-            var index = 0;
-            var first = default(System.Drawing.PointF);
-            foreach (var point in points)
+            double sum = 0d;
+            int index = 0;
+            System.Drawing.PointF first = default(System.Drawing.PointF);
+            foreach (System.Drawing.PointF point in points)
             {
                 if (index == 0)
                 {
@@ -131,10 +127,10 @@ namespace GeneralTool.CoreLibrary.Extensions
         /// </summary>
         public static double Distance(this IEnumerable<System.Windows.Point> points)
         {
-            var sum = 0d;
-            var index = 0;
-            var first = default(System.Windows.Point);
-            foreach (var point in points)
+            double sum = 0d;
+            int index = 0;
+            System.Windows.Point first = default(System.Windows.Point);
+            foreach (System.Windows.Point point in points)
             {
                 if (index == 0)
                 {
@@ -157,12 +153,12 @@ namespace GeneralTool.CoreLibrary.Extensions
         public static double MaxDistance(this IList<System.Windows.Point> points)
         {
             if (points == null || points.Count <= 1) return 0;
-            var prev = points.First();
-            var disMax = 0d;
+            System.Windows.Point prev = points.First();
+            double disMax = 0d;
             for (int i = 1; i < points.Count; i++)
             {
-                var curr = points[i];
-                var disTmp = curr.Distance(prev);
+                System.Windows.Point curr = points[i];
+                double disTmp = curr.Distance(prev);
                 if (disTmp > disMax)
                 {
                     disMax = disTmp;
@@ -180,12 +176,12 @@ namespace GeneralTool.CoreLibrary.Extensions
         public static double MinDistance(this IList<System.Windows.Point> points)
         {
             if (points == null || points.Count <= 1) return 0;
-            var prev = points.First();
-            var disMin = 99990d;
+            System.Windows.Point prev = points.First();
+            double disMin = 99990d;
             for (int i = 1; i < points.Count; i++)
             {
-                var curr = points[i];
-                var disTmp = curr.Distance(prev);
+                System.Windows.Point curr = points[i];
+                double disTmp = curr.Distance(prev);
                 if (disTmp < disMin)
                 {
                     disMin = disTmp;

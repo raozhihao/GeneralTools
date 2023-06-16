@@ -23,7 +23,7 @@ namespace GeneralTool.CoreLibrary.Attributes
             T t = default;
             object[] customAttributes = value.GetType().GetCustomAttributes(inherit: false);
 
-            customAttributes.Foreach(a =>
+            _ = customAttributes.Foreach(a =>
             {
                 if (a is T t1)
                 {

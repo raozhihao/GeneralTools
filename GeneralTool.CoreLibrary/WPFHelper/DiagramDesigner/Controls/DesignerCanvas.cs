@@ -21,20 +21,19 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// </summary>
         public DesignerCanvas()
         {
-            this.PreviewMouseWheel += DesignerCanvas_PreviewMouseWheel;
+            PreviewMouseWheel += DesignerCanvas_PreviewMouseWheel;
 
             MiddleController.Controller.OnDragBlockItemEvent += Controller_OnDragBlockItemEvent;
 
             AddHandler(Keyboard.KeyDownEvent, (KeyEventHandler)HandleKeyDownEvent);
-            this.Loaded += DesignerCanvas_Loaded;
+            Loaded += DesignerCanvas_Loaded;
         }
 
         private ScrollViewer ParentScrollView;
         private void DesignerCanvas_Loaded(object sender, RoutedEventArgs e)
         {
-            this.ParentScrollView = this.GetUIParentCore() as ScrollViewer;
+            ParentScrollView = GetUIParentCore() as ScrollViewer;
         }
-
 
         /// <summary>
         /// 
@@ -47,26 +46,26 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         {
             if (e.Key == Key.C && (Keyboard.Modifiers & (ModifierKeys.Control)) == (ModifierKeys.Control))
             {
-                var block = this.Children.OfType<BlockItem>().Where(b => b.IsSelected).FirstOrDefault();
+                BlockItem block = Children.OfType<BlockItem>().Where(b => b.IsSelected).FirstOrDefault();
                 if (block != null)
                 {
-                    this.currentObj = block.GetDragObject();
-                    this.currentObj.DragItem = block;
-                    this.currentObj.IsDoubleClickAdd = true;
+                    currentObj = block.GetDragObject();
+                    currentObj.DragItem = block;
+                    currentObj.IsDoubleClickAdd = true;
                 }
             }
             else if (e.Key == Key.V && (Keyboard.Modifiers & (ModifierKeys.Control)) == (ModifierKeys.Control))
             {
-                if (this.currentObj != null)
+                if (currentObj != null)
                 {
-                    this.AddDragObject(this.currentObj, null);
+                    AddDragObject(currentObj, null);
                 }
             }
             else if (e.Key == Key.Delete)
             {
-                if (this.CanOperation)
+                if (CanOperation)
                 {
-                    this.RemoveList();
+                    RemoveList();
                 }
 
             }
@@ -80,40 +79,39 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         private void RemoveList()
         {
             //多选
-            var items = this.Children.OfType<BlockItem>().Where(b => b.IsSelected).ToList();
+            List<BlockItem> items = Children.OfType<BlockItem>().Where(b => b.IsSelected).ToList();
 
-            if (this.RemoveItemsEvent != null && items.Count > 0)
+            if (RemoveItemsEvent != null && items.Count > 0)
             {
-                var re = this.RemoveItemsEvent(items);
+                bool re = RemoveItemsEvent(items);
                 if (!re)
                     return;
             }
-            this.RemoveBlocks(items.ToArray());
-            this.ClearSection();
+            RemoveBlocks(items.ToArray());
+            ClearSection();
 
             //单个
-            var hit = this.InputHitTest(Mouse.GetPosition(this));
+            IInputElement hit = InputHitTest(Mouse.GetPosition(this));
 
             if (hit == null)
             {
                 return;
             }
 
-
             while (hit != null)
             {
                 if (hit is Connection t)
                 {
-                    this.RemoveConnection(t);
+                    RemoveConnection(t);
                     break;
                 }
                 else if (hit is BlockItem b)
                 {
-                    this.RemoveBlocks(b);
+                    RemoveBlocks(b);
                     break;
                 }
 
-                if (!(hit is FrameworkElement tmp))
+                if (!(hit is  FrameworkElement tmp))
                     break;
                 hit = tmp.TemplatedParent as IInputElement;
             }
@@ -127,23 +125,23 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         {
             #region new
 
-            var sourceItems = new List<BlockItem>();//源集合
-            var sinkItems = new List<BlockItem>();//目标集合
+            List<BlockItem> sourceItems = new List<BlockItem>();//源集合
+            List<BlockItem> sinkItems = new List<BlockItem>();//目标集合
             //循环集合
-            foreach (var item in blocks)
+            foreach (BlockItem item in blocks)
             {
                 if (item.IsStart) continue;
 
                 // sourceItems.AddRange(item.SourceItems);
                 sinkItems.AddRange(item.SinkItems);
                 //删除自身
-                this.RemoveItem(item);
+                RemoveItem(item);
             }
 
             BlockItem previaSource = null;
-            foreach (var item in sourceItems)
+            foreach (BlockItem item in sourceItems)
             {
-                if (this.Children.Contains(item))
+                if (Children.Contains(item))
                 {
                     previaSource = item;
                     break;
@@ -153,9 +151,9 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
             if (previaSource == null)
                 return;
             BlockItem nextSource = null;
-            foreach (var item in sinkItems)
+            foreach (BlockItem item in sinkItems)
             {
-                if (this.Children.Contains(item))
+                if (Children.Contains(item))
                 {
                     nextSource = item;
                     break;
@@ -166,12 +164,10 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
             if (nextSource == previaSource) return;
             previaSource.AddSinkItem(nextSource);
             // nextSource.AddSourceItem(prevSource);
-            var connection = new Connection(previaSource.ConnectorThumbs[Direction.Bottom], nextSource.ConnectorThumbs[Direction.Top]);
-            this.AddConnection(connection);
+            Connection connection = new Connection(previaSource.ConnectorThumbs[Direction.Bottom], nextSource.ConnectorThumbs[Direction.Top]);
+            AddConnection(connection);
             #endregion
         }
-
-
 
         #region 附加/依赖属性
         /// <summary>
@@ -185,21 +181,17 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// </summary>
         public static readonly DependencyProperty MaxScaleValueProperty = DependencyProperty.Register(nameof(MaxScaleValue), typeof(double), typeof(DesignerCanvas), new PropertyMetadata(5.0));
 
-
-
-
         #endregion
 
         #region 属性
-
 
         /// <summary>
         /// 缩放的最小值
         /// </summary>
         public double MinScaleValue
         {
-            get => Convert.ToDouble(this.GetValue(MinScaleValueProperty));
-            set => this.SetValue(MinScaleValueProperty, value);
+            get => Convert.ToDouble(GetValue(MinScaleValueProperty));
+            set => SetValue(MinScaleValueProperty, value);
         }
 
         /// <summary>
@@ -207,8 +199,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// </summary>
         public double MaxScaleValue
         {
-            get => Convert.ToDouble(this.GetValue(MaxScaleValueProperty));
-            set => this.SetValue(MaxScaleValueProperty, value);
+            get => Convert.ToDouble(GetValue(MaxScaleValueProperty));
+            set => SetValue(MaxScaleValueProperty, value);
         }
 
         /// <summary>
@@ -232,10 +224,10 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         protected override void OnPreviewMouseLeftButtonDown(MouseButtonEventArgs e)
         {
             base.OnPreviewMouseLeftButtonDown(e);
-            Focus();
+            _ = Focus();
             if (e.Source == this)
             {
-                this.rubberbandSelectionStartPoint = new Point?(e.GetPosition(this));
+                rubberbandSelectionStartPoint = new Point?(e.GetPosition(this));
             }
         }
 
@@ -246,7 +238,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         protected override void OnPreviewMouseRightButtonDown(MouseButtonEventArgs e)
         {
             base.OnPreviewMouseRightButtonDown(e);
-            this.rightMouseDownStartPoint = e.GetPosition(this);
+            rightMouseDownStartPoint = e.GetPosition(this);
         }
         /// <summary>
         /// 
@@ -254,7 +246,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         protected override void OnPreviewMouseMove(MouseEventArgs e)
         {
             base.OnPreviewMouseMove(e);
-            if (e.Source == this && this.rubberbandSelectionStartPoint.HasValue && e.LeftButton == MouseButtonState.Pressed)
+            if (e.Source == this && rubberbandSelectionStartPoint.HasValue && e.LeftButton == MouseButtonState.Pressed)
             {
                 // create rubberband adorner
                 AdornerLayer adornerLayer = AdornerLayer.GetAdornerLayer(this);
@@ -268,14 +260,14 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
                 }
                 e.Handled = true;
             }
-            else if (e.RightButton == MouseButtonState.Pressed && this.rightMouseDownStartPoint != null)
+            else if (e.RightButton == MouseButtonState.Pressed && rightMouseDownStartPoint != null)
             {
-                var curr = e.GetPosition(this);
-                var v = curr - this.rightMouseDownStartPoint.Value;
-                if (this.ParentScrollView != null)
+                Point curr = e.GetPosition(this);
+                Vector v = curr - rightMouseDownStartPoint.Value;
+                if (ParentScrollView != null)
                 {
-                    this.ParentScrollView.ScrollToVerticalOffset(this.ParentScrollView.VerticalOffset - v.Y);
-                    this.ParentScrollView.ScrollToHorizontalOffset(this.ParentScrollView.HorizontalOffset - v.X);
+                    ParentScrollView.ScrollToVerticalOffset(ParentScrollView.VerticalOffset - v.Y);
+                    ParentScrollView.ScrollToHorizontalOffset(ParentScrollView.HorizontalOffset - v.X);
                 }
 
             }
@@ -289,11 +281,11 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
             base.OnMouseLeftButtonUp(e);
             if (e.Source == this)
             {
-                this.rubberbandSelectionStartPoint = null;
-                this.ReleaseMouseCapture();
+                rubberbandSelectionStartPoint = null;
+                ReleaseMouseCapture();
                 e.Handled = true;
             }
-            this.Focus();
+            _ = Focus();
         }
 
         /// <summary>
@@ -302,7 +294,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         protected override void OnPreviewMouseRightButtonUp(MouseButtonEventArgs e)
         {
             base.OnPreviewMouseRightButtonUp(e);
-            this.ClearSection();
+            ClearSection();
         }
 
         /// <summary>
@@ -310,21 +302,20 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// </summary>
         public void ClearSection()
         {
-            foreach (var item in this.Children.OfType<BlockItem>())
+            foreach (BlockItem item in Children.OfType<BlockItem>())
             {
                 item.IsSelected = false;
             }
         }
 
-
         internal void RaiseSelectionChanged()
         {
-            this.ReleaseMouseCapture();
-            this.rubberbandSelectionStartPoint = null;
-            this.Focus();
+            ReleaseMouseCapture();
+            rubberbandSelectionStartPoint = null;
+            _ = Focus();
         }
 
-        void DesignerCanvas_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        private void DesignerCanvas_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
         {
             //处理缩放
 
@@ -344,9 +335,9 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
 
                 //}
 
-                if (this.LayoutTransform is TransformGroup group)
+                if (LayoutTransform is TransformGroup group)
                 {
-                    var scaleTransform = group.Children[0] as ScaleTransform;
+                    ScaleTransform scaleTransform = group.Children[0] as ScaleTransform;
 
                     //Point zoomCenter = e.GetPosition(this);//参数必须是this.mCanvas, e.GetPosition和RenderTransform有关?
                     //var translate = group.Children[1] as TranslateTransform;
@@ -354,7 +345,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
                     //translate.X = (zoomCenter.X - pt.X) * scaleTransform.ScaleX;
                     //translate.Y = (zoomCenter.Y - pt.Y) * scaleTransform.ScaleY;
 
-                    var scale = e.Delta * 0.001 + scaleTransform.ScaleX;
+                    double scale = e.Delta * 0.001 + scaleTransform.ScaleX;
                     scale = scale < 0.05 ? 0.05 : scale;
                     scale = scale > 5 ? 5 : scale;
 
@@ -364,8 +355,6 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
                     e.Handled = true;
                     ScaleChanged?.Invoke(scale * 100);
 
-
-
                 }
             }
 
@@ -374,7 +363,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
 
         internal ConnectorThumb HitConnectorItem(MouseButtonEventArgs e)
         {
-            var dest = this.InputHitTest(e.GetPosition(this));
+            IInputElement dest = InputHitTest(e.GetPosition(this));
             if (dest is System.Windows.Shapes.Ellipse el)
             {
                 if (el.TemplatedParent is ConnectorThumb thumbTmp)
@@ -442,13 +431,10 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
             //return thumb;
         }
 
-
         private void Controller_OnDragBlockItemEvent(DragObject dragObject)
         {
             AddDragObject(dragObject, null);
         }
-
-
 
         /// <summary>
         /// 
@@ -457,10 +443,9 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         {
             connection.Dispose();
             connection.SourceBlock.RemoveConnection(connection);
-            this.Children.Remove(connection);
+            Children.Remove(connection);
             connection.SourceThumb.SinkBlock = null;
         }
-
 
         /// <summary>
         /// 
@@ -468,15 +453,13 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         public void AddConnection(Connection connection)
         {
             connection.SourceBlock.AddConnection(connection);
-            this.Children.Add(connection);
+            _ = Children.Add(connection);
         }
-
 
         /// <summary>
         /// 复制时事件
         /// </summary>
         public event EventHandler<BlockCopyArgs> CopyEvent;
-
 
         /// <summary>
         /// 
@@ -487,13 +470,13 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
                 return;
             if (!dragObject.CanRepeatToCanvas)
             {
-                if (this.Children.OfType<BlockItem>().FirstOrDefault(t => t.GetType() == dragObject.DragType) != null)
+                if (Children.OfType<BlockItem>().FirstOrDefault(t => t.GetType() == dragObject.DragType) != null)
                 {
                     return;
                 }
             }
 
-            var block = Activator.CreateInstance(dragObject.DragType) as BlockItem;
+            BlockItem block = Activator.CreateInstance(dragObject.DragType) as BlockItem;
             block.FontSize = dragObject.FontSize;
             block.Background = dragObject.BackGround;
             block.Foreground = dragObject.ForceGround;
@@ -503,22 +486,20 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
             block.IsStart = dragObject.IsStart;
 
             BlockCopyArgs copyValue = new BlockCopyArgs() { DragItem = dragObject, DestBlock = block };
-            this.CopyEvent?.Invoke(this, copyValue);
+            CopyEvent?.Invoke(this, copyValue);
 
             if (copyValue.Block) return;
 
             //设置位置
             Connection connection = null;
 
-
-
-            this.Children.Add(block);
+            _ = Children.Add(block);
 
             block.IsInCanvas = true;
-            block.ApplyTemplate();
+            _ = block.ApplyTemplate();
             AddTempelte(block);
             block.Apply();
-            var last = this.HitSourceBlock(e);
+            Tuple<BlockItem, ConnectorThumb, bool> last = HitSourceBlock(e);
             if (last == null)
             {
                 Point point = default;
@@ -529,21 +510,21 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
             }
             else
             {
-                var lastX = Canvas.GetLeft(last.Item1);
-                var lastY = Canvas.GetTop(last.Item1);
-                var lastWidth = last.Item1.ActualWidth;
-                var lastHeight = last.Item1.ActualHeight;
+                double lastX = Canvas.GetLeft(last.Item1);
+                double lastY = Canvas.GetTop(last.Item1);
+                double lastWidth = last.Item1.ActualWidth;
+                double lastHeight = last.Item1.ActualHeight;
                 //将新的放在上一个的正下方
-                var lastBottomMiddlePoint = last.Item1.TranslatePoint(new Point(0, lastHeight), this);
-                var newX = lastBottomMiddlePoint.X;
+                Point lastBottomMiddlePoint = last.Item1.TranslatePoint(new Point(0, lastHeight), this);
+                double newX = lastBottomMiddlePoint.X;
                 if (newX <= 0)
                 {
                     newX = MoveThumb.MinLeft;
                 }
-                var left = newX;
+                double left = newX;
 
-                var newY = lastBottomMiddlePoint.Y + 30;
-                var top = newY;
+                double newY = lastBottomMiddlePoint.Y + 30;
+                double top = newY;
                 if (!dragObject.IsDoubleClickAdd)
                 {
 
@@ -570,9 +551,9 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
                 Canvas.SetTop(block, top);
 
                 //创建连接线
-                var sourceThumb = last.Item2;//last.ConnectorThumbs[Direction.Bottom];
-                var sinkThumb = block.ConnectorThumbs[Direction.Top];
-                var bottomConnector = block.ConnectorThumbs[Direction.Bottom];
+                ConnectorThumb sourceThumb = last.Item2;//last.ConnectorThumbs[Direction.Bottom];
+                ConnectorThumb sinkThumb = block.ConnectorThumbs[Direction.Top];
+                ConnectorThumb bottomConnector = block.ConnectorThumbs[Direction.Bottom];
                 if (sinkThumb.Visibility == Visibility.Visible
                     && sourceThumb.Visibility == Visibility.Visible)
                 {
@@ -585,22 +566,22 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
                     sourceThumb.SourceBlock = last.Item1;
                     //放上去后,检查当前放置的连接点有没有占用情况,如果有,则将其挤开,没有,则正常连接
                     //获取当前的放置到的块的目标块
-                    var lastSinkBlock = last.Item1.SinkItems.FirstOrDefault();
+                    BlockItem lastSinkBlock = last.Item1.SinkItems.FirstOrDefault();
                     //如果目标块存在
                     if (lastSinkBlock != null && last.Item3)
                     {
                         //找出连接线
-                        var oldConnection = this.Children.OfType<Connection>().FirstOrDefault(c => c.SourceBlock == last.Item1 && c.SinkBlock == lastSinkBlock);
+                        Connection oldConnection = Children.OfType<Connection>().FirstOrDefault(c => c.SourceBlock == last.Item1 && c.SinkBlock == lastSinkBlock);
                         //查看其源连接点是否与当前连接点一致
                         if (oldConnection != null && last.Item2 == oldConnection.SourceThumb)
                         {
                             //如果一致,则将其挤到后面
                             //去除旧有连接线
-                            this.RemoveConnection(oldConnection);
+                            RemoveConnection(oldConnection);
 
                             //先添加新的连接线,此线为新放上的块与要放上的块的连接线
                             connection = new Connection(sourceThumb, sinkThumb);
-                            this.Children.Add(connection);
+                            _ = Children.Add(connection);
                             //设置目标点
                             last.Item1.SinkItems.Add(block);
                             // block.SourceItems.Add(last.Item1);
@@ -608,14 +589,14 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
 
                             //添加旧目标点与当前块的连接线
                             //获取旧的目标点连接点
-                            var oldSinkThumb = oldConnection.SinkThumb;
+                            ConnectorThumb oldSinkThumb = oldConnection.SinkThumb;
 
                             //获取当前块的对应连接点
-                            var newSourceThumb = block.ConnectorThumbs[last.Item2.Direction];
+                            ConnectorThumb newSourceThumb = block.ConnectorThumbs[last.Item2.Direction];
                             newSourceThumb.SourceBlock = block;
                             //添加
                             connection = new Connection(newSourceThumb, oldSinkThumb);
-                            this.Children.Add(connection);
+                            _ = Children.Add(connection);
                             //设置目标点
                             block.SinkItems.Add(oldSinkThumb.SourceBlock);
                             //oldSinkThumb.SourceBlock.SourceItems.Add(block);
@@ -625,7 +606,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
                         {
                             //不存在,则直接添加
                             connection = new Connection(sourceThumb, sinkThumb);
-                            this.Children.Add(connection);
+                            _ = Children.Add(connection);
                             //设置目标点
                             last.Item1.SinkItems.Add(block);
                             // block.SourceItems.Add(last.Item1);
@@ -636,12 +617,11 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
                     {
                         //不存在,则直接添加
                         connection = new Connection(sourceThumb, sinkThumb);
-                        this.Children.Add(connection);
+                        _ = Children.Add(connection);
                         //设置目标点
                         last.Item1.SinkItems.Add(block);
                         //block.SourceItems.Add(last.Item1);
                     }
-
 
                 }
             }
@@ -659,29 +639,27 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// </summary>
         public void AddTempelte(BlockItem block)
         {
-            var temptele = new ResourceDictionary { Source = new Uri("pack://application:,,,/GeneralTool.CoreLibrary;component/WPFHelper/DiagramDesigner/Resources/CommonTemplate.xaml", UriKind.RelativeOrAbsolute) };
+            ResourceDictionary temptele = new ResourceDictionary { Source = new Uri("pack://application:,,,/GeneralTool.CoreLibrary;component/WPFHelper/DiagramDesigner/Resources/CommonTemplate.xaml", UriKind.RelativeOrAbsolute) };
 
             if (temptele != null)
             {
-                var resizeTempelte = temptele["ResizeControl"] as ControlTemplate;
+                ControlTemplate resizeTempelte = temptele["ResizeControl"] as ControlTemplate;
                 if (block.Template.FindName("PART_Resize", block) is Control resize)
                 {
                     resize.Template = resizeTempelte;
-                    resize.ApplyTemplate();
+                    _ = resize.ApplyTemplate();
                 }
 
-
-                var connectorTempelte = temptele["RectConnectorControlTemplete"] as ControlTemplate;
+                ControlTemplate connectorTempelte = temptele["RectConnectorControlTemplete"] as ControlTemplate;
                 if (block.Template.FindName("PART_Connectors", block) is Control connector)
                 {
                     connector.Template = connectorTempelte;
-                    connector.ApplyTemplate();
+                    _ = connector.ApplyTemplate();
                 }
 
             }
 
         }
-
 
         /// <summary>
         /// 
@@ -690,31 +668,24 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         {
             #region 以Bottom为下标
 
-            var sourceThumb = connection.SourceThumb;
-            if (sourceThumb.Direction == Direction.Bottom)
-            {
-                connection.Stroke = Brushes.Green;
-            }
-            else
-                connection.Stroke = Brushes.DarkGoldenrod;
-
+            ConnectorThumb sourceThumb = connection.SourceThumb;
+            connection.Stroke = sourceThumb.Direction == Direction.Bottom ? Brushes.Green : (Brush)Brushes.DarkGoldenrod;
 
             #endregion
         }
 
-
         private Tuple<BlockItem, ConnectorThumb, bool> HitSourceBlock(DragEventArgs e)
         {
             BlockItem item = default;
-            var re = false;
+            bool re = false;
             if (e == null)
             {
-                var block = this.GetBlockLastOrDefault();
+                BlockItem block = GetBlockLastOrDefault();
                 return new Tuple<BlockItem, ConnectorThumb, bool>(block, block.ConnectorThumbs[Direction.Bottom], re);
             }
-            var point = e.GetPosition(this);
-            var obj = this.InputHitTest(point);
-            var fram = obj as FrameworkElement;
+            Point point = e.GetPosition(this);
+            IInputElement obj = InputHitTest(point);
+            FrameworkElement fram = obj as FrameworkElement;
             ConnectorThumb thumb = null;
             while (fram != null)
             {
@@ -738,7 +709,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
 
             if (item == null)
             {
-                item = this.GetBlockLastOrDefault();
+                item = GetBlockLastOrDefault();
                 // item = this.Children.OfType<BlockItem>().LastOrDefault();
                 thumb = item.ConnectorThumbs[Direction.Bottom];
                 re = false;
@@ -748,12 +719,12 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
 
         private BlockItem GetBlockLastOrDefault()
         {
-            var blocks = this.Children.OfType<BlockItem>();
-            var first = blocks.FirstOrDefault(s => s.ConnectorThumbs[Direction.Bottom].Visibility == Visibility.Visible && s.ConnectorThumbs[Direction.Bottom].SinkBlock == null);
+            IEnumerable<BlockItem> blocks = Children.OfType<BlockItem>();
+            BlockItem first = blocks.FirstOrDefault(s => s.ConnectorThumbs[Direction.Bottom].Visibility == Visibility.Visible && s.ConnectorThumbs[Direction.Bottom].SinkBlock == null);
 
             if (first != null) return first;
             //直接先获取最后一个
-            var last = blocks.ElementAt(blocks.Count() - 2);
+            BlockItem last = blocks.ElementAt(blocks.Count() - 2);
             if (last != null)
             {
                 if (last.SinkItems.Count == 0)
@@ -763,9 +734,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
                 }
             }
 
-
-            var count = blocks.Count();
-            var start = blocks.FirstOrDefault(f => f.IsStart);
+            int count = blocks.Count();
+            BlockItem start = blocks.FirstOrDefault(f => f.IsStart);
             do
             {
                 //查看是否已有
@@ -779,7 +749,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
                     break;
                 }
 
-                var tmp = start.SinkItems.FirstOrDefault();
+                BlockItem tmp = start.SinkItems.FirstOrDefault();
                 if (tmp == null)
                 {
                     break;
@@ -789,11 +759,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
                 start = tmp;
             } while (true);
 
-
             return start;
         }
-
-
 
         #endregion
 
@@ -808,14 +775,12 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
 
         #region 公共方法
 
-
-
         /// <summary>
         /// 添加块
         /// </summary>
         public void AddItem(BlockItem item, bool isDrop)
         {
-            this.Children.Add(item);
+            _ = Children.Add(item);
 
             item.IsInCanvas = true;
             if (!isDrop)
@@ -828,17 +793,17 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// </summary>
         public void ClearChildren()
         {
-            var removeList = new List<BlockItem>();
-            foreach (var item in this.Children)
+            List<BlockItem> removeList = new List<BlockItem>();
+            foreach (object item in Children)
             {
                 if (item is BlockItem b)
                 {
                     removeList.Add(b);
                 }
             }
-            foreach (var item in removeList)
+            foreach (BlockItem item in removeList)
             {
-                this.RemoveItem(item);
+                RemoveItem(item);
                 item.IsInCanvas = false;
                 item.ContentVisibility = Visibility.Collapsed;
             }
@@ -850,7 +815,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         public void SetTop(UIElement element)
         {
 
-            foreach (UIElement item in this.Children)
+            foreach (UIElement item in Children)
             {
 
                 if (item is BlockItem || item.Equals(element))
@@ -867,7 +832,6 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
             }
         }
 
-
         /// <summary>
         /// 移除块
         /// </summary>
@@ -878,10 +842,10 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
                 return;
             if (blockItem != null)
             {
-                this.Removes.Add(blockItem);
-                var removeList = new List<Connection>();
+                Removes.Add(blockItem);
+                List<Connection> removeList = new List<Connection>();
                 //移除其上的线条,作为源的,作为目标的
-                foreach (var item in this.Children)
+                foreach (object item in Children)
                 {
                     if (item is Connection c)
                     {
@@ -897,13 +861,13 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
 
                 }
 
-                foreach (var item in removeList)
+                foreach (Connection item in removeList)
                 {
                     item.Dispose();
-                    this.RemoveConnection(item);
+                    RemoveConnection(item);
                 }
                 blockItem.Delete();
-                this.Children.Remove(blockItem);
+                Children.Remove(blockItem);
             }
 
         }
@@ -913,9 +877,9 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// </summary>
         public void DragArrary()
         {
-            if (this.DragEndArrary)
+            if (DragEndArrary)
             {
-                this.Arrary();
+                Arrary();
             }
         }
 
@@ -924,7 +888,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// </summary>
         public void Arrary()
         {
-            this.Array(this.Children.OfType<BlockItem>());
+            Array(Children.OfType<BlockItem>());
         }
 
         private double minLeft = 30;
@@ -935,59 +899,59 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// </summary>
         public void Array(IEnumerable<BlockItem> blockItems)
         {
-            this.minLeft = 30;
-            var list = blockItems.ToList();
+            minLeft = 30;
+            List<BlockItem> list = blockItems.ToList();
             while (true)
             {
                 // 返回所有放空的块(就是没有顶点连接块)
-                var result = this.LayoutBlocks(list);
+                Tuple<List<BlockItem>, double> result = LayoutBlocks(list);
                 list = result.Item1;
                 if (list.Count == 0)
                     break;
-                this.minLeft = result.Item2;
+                minLeft = result.Item2;
             }
 
-            this.InvalidateMeasure();
-            this.InvalidateVisual();
+            InvalidateMeasure();
+            InvalidateVisual();
         }
 
         private Tuple<List<BlockItem>, double> LayoutBlocks(List<BlockItem> blockItems)
         {
 
-            var caches = new List<BlockItem>(blockItems);
+            List<BlockItem> caches = new List<BlockItem>(blockItems);
             //找出第一列
-            var colBlocks = new List<BlockItem>();
-            var cur = blockItems.FirstOrDefault(s => s.IsStart) ?? blockItems.FirstOrDefault();
+            List<BlockItem> colBlocks = new List<BlockItem>();
+            BlockItem cur = blockItems.FirstOrDefault(s => s.IsStart) ?? blockItems.FirstOrDefault();
 
             //找出最下边的块,第一列已排序完成
-            var nextResult = this.GetNextItems(cur, caches, minLeft, minTop);
-            var nextBlocks = nextResult.Item1;
-            var rMaxRight = nextResult.Item2;
+            Tuple<List<BlockItem>, double, double> nextResult = GetNextItems(cur, caches, minLeft, minTop);
+            List<BlockItem> nextBlocks = nextResult.Item1;
+            double rMaxRight = nextResult.Item2;
             if (nextBlocks.Count != 0)
             {
 
-                var right = nextResult.Item2;
+                double right = nextResult.Item2;
 
                 while (true)
                 {
-                    var startTop = minTop;//开始的高度,一轮完成后
+                    double startTop = minTop;//开始的高度,一轮完成后
                     if (nextBlocks.Count == 0) break;
                     //循环其块,找出所有的右节点
-                    var blocks = new List<BlockItem>();
-                    var curMaxRight = right;//当前列的最大右边距
-                    foreach (var block in nextBlocks)
+                    List<BlockItem> blocks = new List<BlockItem>();
+                    double curMaxRight = right;//当前列的最大右边距
+                    foreach (BlockItem block in nextBlocks)
                     {
-                        var rightNext = block.ConnectorThumbs[Direction.Right].SinkBlock;
+                        BlockItem rightNext = block.ConnectorThumbs[Direction.Right].SinkBlock;
                         if (rightNext != null && caches.Contains(rightNext))
                         {
-                            caches.Remove(rightNext);
+                            _ = caches.Remove(rightNext);
                             blocks.Add(rightNext);
                             ////设置坐标
                             //Canvas.SetLeft(rightNext, right);
                             //Canvas.SetTop(rightNext, startTop);
                             //设置其下方的
 
-                            var result = this.GetNextItems(rightNext, caches, right, startTop);
+                            Tuple<List<BlockItem>, double, double> result = GetNextItems(rightNext, caches, right, startTop);
                             if (result.Item1.Count > 0)
                             {
                                 result.Item1.RemoveAt(0);//把第一个去掉,会将当前项又加入
@@ -997,7 +961,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
                             if (result.Item3 > startTop)
                                 startTop = result.Item3;
 
-                            var nextRight = right + rightNext.ActualWidth + MARGIN;
+                            double nextRight = right + rightNext.ActualWidth + MARGIN;
                             if (nextRight > curMaxRight)
                                 curMaxRight = nextRight;
 
@@ -1022,30 +986,30 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// <returns>返回找到的块,右边距,上边距</returns>
         private Tuple<List<BlockItem>, double, double> GetNextItems(BlockItem cur, List<BlockItem> caches, double left, double top)
         {
-            var nextColBlocks = new List<BlockItem>();
-            var right = left;
+            List<BlockItem> nextColBlocks = new List<BlockItem>();
+            double right = left;
             while (true)
             {
                 if (cur == null)
                     break;
                 nextColBlocks.Add(cur);
-                caches.Remove(cur);
+                _ = caches.Remove(cur);
 
                 Canvas.SetLeft(cur, left);
                 Canvas.SetTop(cur, top);
 
-                var curLeft = Canvas.GetLeft(cur);
-                var curRight = curLeft + cur.ActualWidth + MARGIN;//当前块的宽度
+                double curLeft = Canvas.GetLeft(cur);
+                double curRight = curLeft + cur.ActualWidth + MARGIN;//当前块的宽度
                 if (right < curRight)
                     right = curRight;//更新最大宽度
 
                 top = top + cur.ActualHeight + MARGIN;
 
-                var next = cur.ConnectorThumbs[Direction.Bottom].SinkBlock;
+                BlockItem next = cur.ConnectorThumbs[Direction.Bottom].SinkBlock;
                 if (next != null && (!nextColBlocks.Contains(next) && caches.Contains(next)))
                 {
                     nextColBlocks.Add(next);
-                    caches.Remove(next);
+                    _ = caches.Remove(next);
                     //设置当前的右边距
                     if (next.ActualWidth < cur.ActualWidth)
                     {
@@ -1081,8 +1045,6 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
 
         //}
 
-
-
         #endregion
 
         #region 重写
@@ -1095,7 +1057,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
 
             Size size = new Size();
 
-            foreach (UIElement element in this.InternalChildren)
+            foreach (UIElement element in InternalChildren)
             {
 
                 double left = Canvas.GetLeft(element);
@@ -1132,14 +1094,13 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
             return base.ArrangeOverride(arrangeSize);
         }
 
-
         /// <summary>
         /// 
         /// </summary>
         protected override void OnDrop(DragEventArgs e)
         {
             base.OnDrop(e);
-            var dragObject = e.Data.GetData(typeof(DragObject)) as DragObject;
+            DragObject dragObject = e.Data.GetData(typeof(DragObject)) as DragObject;
             AddDragObject(dragObject, e);
 
         }

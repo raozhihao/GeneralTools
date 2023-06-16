@@ -35,7 +35,7 @@ namespace GeneralTool.CoreLibrary.SocketLib
         /// <param name="port"></param>
         public override void Startup(int port)
         {
-            this.Startup(IPAddress.Parse("127.0.0.1"), port);
+            Startup(IPAddress.Parse("127.0.0.1"), port);
         }
 
         /// <summary>
@@ -45,13 +45,15 @@ namespace GeneralTool.CoreLibrary.SocketLib
         /// <param name="port"></param>
         public override void Startup(IPAddress address, int port)
         {
-            this.Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp)
+            {
+                ReceiveBufferSize = 1024 * 1024 * 10
+            };
+            Socket.Connect(new IPEndPoint(address, port));
 
-            this.Socket.Connect(new IPEndPoint(address, port));
+            BeginReceive(Socket);
 
-            this.BeginReceive(this.Socket);
-
-            this.IsConnected = true;
+            IsConnected = true;
         }
 
         /// <summary>
@@ -61,7 +63,7 @@ namespace GeneralTool.CoreLibrary.SocketLib
         /// <returns></returns>
         public bool Send(byte[] buffer)
         {
-            return base.Send(buffer, this.Socket);
+            return base.Send(buffer, Socket);
         }
 
         /// <summary>
@@ -71,24 +73,23 @@ namespace GeneralTool.CoreLibrary.SocketLib
         /// <returns></returns>
         public bool Send(string msg)
         {
-            return base.Send(msg, this.Socket);
+            return base.Send(msg, Socket);
         }
-
 
         /// <summary>
         /// 关闭连接
         /// </summary>
         public override void Close()
         {
-            this.Log.Debug($"关闭 {this} 的连接");
-            this.IsConnected = false;
-            if (this.Socket == null) return;
+            Log.Debug($"关闭 {this} 的连接");
+            IsConnected = false;
+            if (Socket == null) return;
             try
             {
-                this.Socket.Close();
-                this.Socket.Dispose();
+                Socket.Close();
+                Socket.Dispose();
 
-                this.CurrentSockets.Clear();
+                CurrentSockets.Clear();
             }
             catch
             {

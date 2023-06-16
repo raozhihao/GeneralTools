@@ -1,6 +1,4 @@
-﻿
-
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -17,6 +15,8 @@ using GeneralTool.CoreLibrary.SocketLib.Packages;
 
 namespace GeneralTool.CoreLibrary.SocketLib
 {
+    #region New
+
     /// <summary>
     /// 
     /// </summary>
@@ -28,7 +28,7 @@ namespace GeneralTool.CoreLibrary.SocketLib
         /// <summary>
         /// 指示的解包程序,如果为null,则不进行解包,直接原样接收原样发送
         /// </summary>
-        public Func<IPackage<T>> Package { get; set; }
+        public Func<IPackage<T>> PackageFunc { get; set; }
 
         /// <summary>
         /// 
@@ -59,10 +59,15 @@ namespace GeneralTool.CoreLibrary.SocketLib
         public ConcurrentDictionary<string, Socket> CurrentSockets = new ConcurrentDictionary<string, Socket>();
 
         /// <summary>
+        /// 接收区数据大小
+        /// </summary>
+        public int ReceiveBufferSize { get; set; } = 8192;
+
+        /// <summary>
         /// 开启
         /// </summary>
         /// <param name="port"></param>
-        public virtual void Startup(int port) => this.Startup(IPAddress.Any, port);
+        public virtual void Startup(int port) => Startup(IPAddress.Any, port);
         /// <summary>
         /// 开启
         /// </summary>
@@ -82,7 +87,7 @@ namespace GeneralTool.CoreLibrary.SocketLib
         {
             if (log == null)
                 log = new ConsoleLogInfo();
-            this.Log = log;
+            Log = log;
         }
 
         /// <summary>
@@ -91,49 +96,56 @@ namespace GeneralTool.CoreLibrary.SocketLib
         /// <param name="client"></param>
         protected virtual void BeginReceive(Socket client)
         {
-            this.Log.Debug($"获取到 {client.RemoteEndPoint} 的连接");
+            Log.Debug($"获取到 {client.RemoteEndPoint} 的连接");
             ReceiveState state = null;
             //开始异步接收数据
-            if (this.Package == null)
+            if (PackageFunc == null)
             {
-                this.Package = new Func<IPackage<T>>(() => new NoPackage<T>());
-                state = this.Package().State;
+                PackageFunc = new Func<IPackage<T>>(() => new NoPackage<T>());
+                state = PackageFunc().State;
             }
             else
             {
-                state = this.Package().State;
+                state = PackageFunc().State;
                 if (state == null)
                 {
-                    this.CloseClient(client, new Exception("State不可为null"));
+                    CloseClient(client, new Exception("State不可为null"));
                     return;
                 }
             }
 
             state.WorkSocket = client;
+            state.BufferSize = ReceiveBufferSize;
             try
             {
-                this.CurrentSockets.TryAdd(client.RemoteEndPoint.ToString(), client);
-                this.Log.Debug($"开始异步读取 {client.RemoteEndPoint} 的数据");
-                client.BeginReceive(state.Buffer, 0, state.BufferSize, SocketFlags.None, ReceiveCallBack, state);
+                _ = CurrentSockets.TryAdd(client.RemoteEndPoint.ToString(), client);
+                Log.Debug($"开始异步读取 {client.RemoteEndPoint} 的数据");
+                _ = client.BeginReceive(state.Buffer, 0, state.BufferSize, SocketFlags.None, ReceiveCallBack, state);
             }
             catch (Exception ex)
             {
-                this.Log.Debug($"异步读取 {client.RemoteEndPoint} 失败:{ex}");
-                this.CloseClient(client, ex);
+                Log.Debug($"异步读取 {client.RemoteEndPoint} 失败:{ex}");
+                CloseClient(client, ex);
             }
         }
 
         private void ReceiveCallBack(IAsyncResult ar)
         {
-            var state = ar.AsyncState as T;
-            var client = state.WorkSocket;
+            T state = ar.AsyncState as T;
+            Socket client = state.WorkSocket;
             int read = 0;
             //获取已读取数据
             try
             {
+                if (!client.IsClientConnected())
+                {
+                    Trace.WriteLine("EndReceive DisConnected");
+                    CloseClient(client, new Exception("已断开连接"));
+                    return;
+                }
                 read = client.EndReceive(ar);
                 if (read != 0)
-                    this.Log.Debug($"读取到 {client.RemoteEndPoint} 的数据长度为 {read}");
+                    Log.Debug($"读取到 {client.RemoteEndPoint} 的数据长度为 {read}");
             }
             catch (Exception ex)
             {
@@ -154,8 +166,8 @@ namespace GeneralTool.CoreLibrary.SocketLib
                 //分包处理
                 try
                 {
-                    this.Log.Debug($"{client.RemoteEndPoint} 进行分包,分包程序:{this.Package}");
-                    this.Package().Subpackage(state, this.ExecutePackage);
+                    Log.Debug($"{client.RemoteEndPoint} 进行分包,分包程序:{PackageFunc}");
+                    PackageFunc().Subpackage(state, ExecutePackage);
                 }
                 catch (Exception ex)
                 {
@@ -170,11 +182,11 @@ namespace GeneralTool.CoreLibrary.SocketLib
                 return;
             }
 
-            this.Log.Debug($"{client.RemoteEndPoint} 继续接收");
+            Log.Debug($"{client.RemoteEndPoint} 继续接收");
             //继续接收
             try
             {
-                client.BeginReceive(state.Buffer, 0, state.BufferSize, SocketFlags.None, ReceiveCallBack, state);
+                _ = client.BeginReceive(state.Buffer, 0, state.BufferSize, SocketFlags.None, ReceiveCallBack, state);
             }
             catch (Exception ex)
             {
@@ -191,20 +203,19 @@ namespace GeneralTool.CoreLibrary.SocketLib
         /// <param name="client"></param>
         protected virtual void ExecutePackage(IEnumerable<byte> packBuffer, Socket client)
         {
-            this.Log.Debug($"{client.RemoteEndPoint} 返回消息,长度:{packBuffer.Count()}");
+            Log.Debug($"{client.RemoteEndPoint} 返回消息,长度:{packBuffer.Count()}");
             try
             {
-                this.ReceiveEvent?.Invoke(this, new ReceiveArg(packBuffer, client));
+                ReceiveEvent?.Invoke(this, new ReceiveArg(packBuffer, client));
             }
             catch (Exception e)
             {
-                var msg = "处理包过程中未捕获的异常错误:" + e;
-                this.Log.Fail(msg);
-                this.ErrorEvent?.Invoke(this, new SocketErrorArg(client, new Exception(msg)));
-                this.CloseClient(client, new Exception(msg));
+                string msg = "处理包过程中未捕获的异常错误:" + e;
+                Log.Fail(msg);
+                ErrorEvent?.Invoke(this, new SocketErrorArg(client, new Exception(msg)));
+                CloseClient(client, new Exception(msg));
             }
         }
-
 
         /// <summary>
         /// 发送信息
@@ -215,9 +226,9 @@ namespace GeneralTool.CoreLibrary.SocketLib
         public virtual bool Send(string msg, Socket socket)
         {
 
-            var buffer = Encoding.UTF8.GetBytes(msg);
+            byte[] buffer = Encoding.UTF8.GetBytes(msg);
 
-            return this.Send(buffer, socket);
+            return Send(buffer, socket);
         }
 
         /// <summary>
@@ -233,8 +244,8 @@ namespace GeneralTool.CoreLibrary.SocketLib
             try
             {
 
-                this.Log.Debug($"向 {socket.RemoteEndPoint} 发送消息,压包程序:{this.Package}");
-                var newBuffer = this.Package().Package(buffer);
+                Log.Debug($"向 {socket.RemoteEndPoint} 发送消息,压包程序:{PackageFunc}");
+                byte[] newBuffer = PackageFunc().Package(buffer);
                 if (!socket.IsClientConnected())
                 {
                     CloseClient(socket, new Exception("已断开连接"));
@@ -244,10 +255,10 @@ namespace GeneralTool.CoreLibrary.SocketLib
             }
             catch (Exception ex)
             {
-                var msg = $"向 {socket.RemoteEndPoint} 发送消息失败:{ex}";
-                this.Log.Fail(msg);
-                this.ErrorEvent?.Invoke(this, new SocketErrorArg(socket, new Exception(msg)));
-                this.CloseClient(socket, new Exception(msg));
+                string msg = $"向 {socket.RemoteEndPoint} 发送消息失败:{ex}";
+                Log.Fail(msg);
+                ErrorEvent?.Invoke(this, new SocketErrorArg(socket, new Exception(msg)));
+                CloseClient(socket, new Exception(msg));
                 return false;
             }
         }
@@ -263,12 +274,12 @@ namespace GeneralTool.CoreLibrary.SocketLib
             {
                 if (client == null)
                     return;
-                this.CurrentSockets.TryRemove(client.RemoteEndPoint.ToString(), out _);
-                this.Log.Debug($"关闭 {client.RemoteEndPoint} 的连接");
+                _ = CurrentSockets.TryRemove(client.RemoteEndPoint.ToString(), out _);
+                Log.Debug($"关闭 {client.RemoteEndPoint} 的连接");
 
-                this.DisconnectEvent?.Invoke(this, new SocketErrorArg(client, ex));
-                client.Close();
-                client.Dispose();
+                DisconnectEvent?.Invoke(this, new SocketErrorArg(client, ex));
+                client?.Close();
+                client?.Dispose();
 
                 client = null;
             }
@@ -283,14 +294,14 @@ namespace GeneralTool.CoreLibrary.SocketLib
         /// </summary>
         public virtual void Close()
         {
-            this.Log.Debug($"关闭 {this} 的连接");
-            this.IsConnected = false;
-            if (this.Socket == null) return;
+            Log.Debug($"关闭 {this} 的连接");
+            IsConnected = false;
+            if (Socket == null) return;
             try
             {
-                this.Socket.Close();
-                this.Socket.Dispose();
-                foreach (var item in this.CurrentSockets)
+                Socket.Close();
+                Socket.Dispose();
+                foreach (KeyValuePair<string, Socket> item in CurrentSockets)
                 {
                     try
                     {
@@ -304,7 +315,7 @@ namespace GeneralTool.CoreLibrary.SocketLib
                     }
                 }
 
-                this.CurrentSockets.Clear();
+                CurrentSockets.Clear();
             }
             catch
             {
@@ -323,7 +334,7 @@ namespace GeneralTool.CoreLibrary.SocketLib
                 if (disposing)
                 {
                     // TODO: 释放托管状态(托管对象)
-                    this.Close();
+                    Close();
                 }
 
                 // TODO: 释放未托管的资源(未托管的对象)并重写终结器
@@ -352,4 +363,6 @@ namespace GeneralTool.CoreLibrary.SocketLib
             GC.SuppressFinalize(this);
         }
     }
+
+    #endregion
 }

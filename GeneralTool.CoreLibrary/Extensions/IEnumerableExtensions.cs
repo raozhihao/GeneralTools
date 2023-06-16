@@ -55,15 +55,50 @@ namespace GeneralTool.CoreLibrary.Extensions
         /// <returns></returns>
         public static IEnumerable<Tout> ConvertAll<Tin, Tout>(this IEnumerable<Tin> enumables, Converter<Tin, Tout> converter = null)
         {
-            foreach (var item in enumables)
+            foreach (Tin item in enumables)
             {
-                if (converter != null)
-                {
-                    yield return converter(item);
-                }
-                else
-                    yield return (Tout)Convert.ChangeType(item, typeof(Tout));
+                yield return converter != null ? converter(item) : (Tout)Convert.ChangeType(item, typeof(Tout));
             }
+        }
+
+        public static IEnumerable<Tout> Converts<Tin, Tout>(this IEnumerable<Tin> enumables) where Tin : IConvertible
+        {
+            foreach (Tin item in enumables)
+            {
+                yield return (Tout)Convert.ChangeType(item, typeof(Tout));
+            }
+        }
+
+        public static IEnumerable<object> Converts<Tin>(this IEnumerable<Tin> enumables, Type convertType)
+        {
+            foreach (Tin item in enumables)
+            {
+                yield return Convert.ChangeType(item, convertType);
+            }
+        }
+
+        /// <summary>
+        /// 找到对应的
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="enumables"></param>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        public static int FindIndexEx<T>(this IEnumerable<T> enumables, Predicate<T> predicate)
+        {
+            int index = -1;
+            foreach (T item in enumables)
+            {
+                if (predicate != null)
+                {
+                    if (!predicate(item))
+                    {
+                        return index + 1;
+                    }
+                }
+
+            }
+            return index;
         }
 
         /// <summary>
@@ -81,7 +116,7 @@ namespace GeneralTool.CoreLibrary.Extensions
             if (startIndex + 1 == enumables.Count() || startIndex == 0)
                 return enumables.ElementAtOrDefault(startIndex);
 
-            var index = RandomEx.Next(startIndex, enumables.Count());
+            int index = RandomEx.Next(startIndex, enumables.Count());
             return enumables.ElementAtOrDefault(index);
         }
         #endregion Public 方法

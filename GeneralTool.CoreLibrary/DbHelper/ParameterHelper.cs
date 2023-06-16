@@ -23,8 +23,8 @@
         /// <param name="value">参数值</param>
         public ParameterHelper(string name, object value)
         {
-            this.Name = name;
-            this.Value = value;
+            Name = name;
+            Value = value;
         }
 
         /// <summary>

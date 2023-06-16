@@ -5,7 +5,7 @@ using GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Models;
 
 namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Common
 {
-    partial class PathExecute
+    public partial class PathExecute
     {
         private void CreateSourceTopPoints(ConnectorInfo sourceInfo, ConnectorInfo sinkInfo, List<Point> points)
         {
@@ -34,7 +34,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Common
             if (sourceInfo.Point.Y < sinkInfo.Point.Y)
             {
                 //目标点在源点的下方,则查看目标点是否在右方,为右下方
-                var p2X = sourceInfo.Size.Width / 2 + sourceInfo.Point.X;
+                double p2X = sourceInfo.Size.Width / 2 + sourceInfo.Point.X;
                 if (p2X < (sinkInfo.Size.Width / 2 + sinkInfo.Point.X))
                 {
                     //且在源点右方,则为下右
@@ -47,7 +47,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Common
                     }
                     else
                     {
-                        var tmpY = sinkInfo.Point.Y - sinkInfo.Size.Height / 2 - 5;
+                        double tmpY = sinkInfo.Point.Y - sinkInfo.Size.Height / 2 - 5;
                         points.Add(new Point(x, tmpY));
                         points.Add(new Point(sinkInfo.Point.X, tmpY));
                     }
@@ -62,7 +62,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Common
                     }
                     else
                     {
-                        var tmpX = sourceInfo.Point.X - sourceInfo.Size.Width / 2 - 5;
+                        double tmpX = sourceInfo.Point.X - sourceInfo.Size.Width / 2 - 5;
                         points.Add(new Point(tmpX, sourceInfo.Point.Y));
                         points.Add(new Point(tmpX, sinkInfo.Point.Y));
                     }
@@ -91,7 +91,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Common
             if (sourceInfo.Point.Y < sinkInfo.Point.Y)
             {
                 //目标在下
-                var tmpSourceX = sourceInfo.Point.X - sourceInfo.Size.Width / 2;
+                double tmpSourceX = sourceInfo.Point.X - sourceInfo.Size.Width / 2;
                 if (tmpSourceX > sinkInfo.Point.X)
                 {
                     //目标在左
@@ -135,14 +135,14 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Common
             if (sourceInfo.Point.Y < sinkInfo.Point.Y)
             {
                 //目标在源的下方
-                var tmpSinkX = (sinkInfo.Point.X - sinkInfo.Size.Width / 2);
+                double tmpSinkX = (sinkInfo.Point.X - sinkInfo.Size.Width / 2);
                 if (sourceInfo.Point.X > tmpSinkX)
                 {
                     //且目标处于源的左方
-                    var tmpSourceX = (sourceInfo.Point.X - sourceInfo.Size.Width / 2);
+                    double tmpSourceX = (sourceInfo.Point.X - sourceInfo.Size.Width / 2);
                     if (tmpSourceX < tmpSinkX)
                     {
-                        var tmpX = tmpSourceX - 5;
+                        double tmpX = tmpSourceX - 5;
                         points.Add(new Point(tmpX, sourceInfo.Point.Y));
                         points.Add(new Point(tmpX, sinkInfo.Point.Y));
                     }
@@ -155,7 +155,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Common
                 else
                 {
                     //目标在右方
-                    var tmpSourceX = sourceInfo.Point.X + sourceInfo.Size.Width / 2;
+                    double tmpSourceX = sourceInfo.Point.X + sourceInfo.Size.Width / 2;
                     double x;
                     //在右方且源块右边比目标块左边要大
                     if (tmpSourceX > tmpSinkX)
@@ -184,7 +184,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Common
             if (sourceInfo.Point.Y < sinkInfo.Point.Y)
             {
                 //目标点在源点下方
-                var p2X = sourceInfo.Size.Width / 2 + sourceInfo.Point.X;
+                double p2X = sourceInfo.Size.Width / 2 + sourceInfo.Point.X;
                 double x;
                 if (p2X < (sinkInfo.Size.Width / 2 + sinkInfo.Point.X))
                 {
@@ -206,7 +206,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Common
             {
                 //目标点在源点上方
                 //判断目标点是在右还是左,则判断目标点所处的x坐标是否大于
-                var tmpX = sinkInfo.Point.X - sinkInfo.Size.Width / 2;
+                double tmpX = sinkInfo.Point.X - sinkInfo.Size.Width / 2;
                 if (sourceInfo.Point.X > tmpX)
                 {
                     //目标点在左上方

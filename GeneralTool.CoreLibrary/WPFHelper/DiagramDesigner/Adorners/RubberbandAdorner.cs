@@ -26,7 +26,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Adorners
             : base(designerCanvas)
         {
             this.designerCanvas = designerCanvas;
-            this.startPoint = dragStartPoint;
+            startPoint = dragStartPoint;
             rubberbandPen = new Pen(Brushes.LightSlateGray, 1)
             {
                 DashStyle = new DashStyle(new double[] { 2 }, 1)
@@ -40,16 +40,16 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Adorners
         {
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                if (!this.IsMouseCaptured)
-                    this.CaptureMouse();
+                if (!IsMouseCaptured)
+                    _ = CaptureMouse();
 
                 endPoint = e.GetPosition(this);
                 UpdateSelection();
-                this.InvalidateVisual();
+                InvalidateVisual();
             }
             else
             {
-                if (this.IsMouseCaptured) this.ReleaseMouseCapture();
+                if (IsMouseCaptured) ReleaseMouseCapture();
             }
 
             e.Handled = true;
@@ -61,10 +61,10 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Adorners
         protected override void OnMouseUp(System.Windows.Input.MouseButtonEventArgs e)
         {
             // release mouse capture
-            if (this.IsMouseCaptured) this.ReleaseMouseCapture();
+            if (IsMouseCaptured) ReleaseMouseCapture();
 
             // remove this adorner from adorner layer
-            AdornerLayer adornerLayer = AdornerLayer.GetAdornerLayer(this.designerCanvas);
+            AdornerLayer adornerLayer = AdornerLayer.GetAdornerLayer(designerCanvas);
             adornerLayer?.Remove(this);
             designerCanvas.RaiseSelectionChanged();
             e.Handled = true;
@@ -79,8 +79,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Adorners
 
             dc.DrawRectangle(Brushes.Transparent, null, new Rect(RenderSize));
 
-            if (this.startPoint.HasValue && this.endPoint.HasValue)
-                dc.DrawRectangle(Brushes.Transparent, rubberbandPen, new Rect(this.startPoint.Value, this.endPoint.Value));
+            if (startPoint.HasValue && endPoint.HasValue)
+                dc.DrawRectangle(Brushes.Transparent, rubberbandPen, new Rect(startPoint.Value, endPoint.Value));
         }
 
         private void UpdateSelection()

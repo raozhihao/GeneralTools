@@ -70,7 +70,7 @@ namespace GeneralTool.CoreLibrary.MVS
 
         internal Rectangle ToRectangle()
         {
-            return new Rectangle(this.OffsetX, this.OffsetY, this.CurrentWidth, this.CurrentHeight);
+            return new Rectangle(OffsetX, OffsetY, CurrentWidth, CurrentHeight);
         }
     }
 }

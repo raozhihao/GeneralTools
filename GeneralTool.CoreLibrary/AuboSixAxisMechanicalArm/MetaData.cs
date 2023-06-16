@@ -194,7 +194,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
             /// <summary>
             /// 关节错误码
             /// </summary>
-            public UInt16 jointErrorNum;
+            public ushort jointErrorNum;
         }
 
         /// <summary>
@@ -312,11 +312,11 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
             /// <summary>
             /// mac缓冲器长度
             /// </summary>
-            public UInt16 macTargetPosBufferSize;
+            public ushort macTargetPosBufferSize;
             /// <summary>
             /// mac缓冲器有效数据长度
             /// </summary>
-            public UInt16 macTargetPosDataSize;
+            public ushort macTargetPosDataSize;
             /// <summary>
             /// /mac数据中断
             /// </summary>
@@ -916,8 +916,6 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
              *     使用时尽量用枚举变量　　枚举变量值只是为了查看日志方便
              *
              **/
-
-
             /// <summary>
             /// 关节运动属性配置错误
             /// </summary>
@@ -1103,7 +1101,6 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
             /// </summary>
             [RobotEvent("运动进入到stop阶段", false, "Movement enters the stop state")]
             RobotEventMoveEnterStopState = 1300,  //  
-
 
             /**
              * RobotHardwareErrorEvent  来自硬件反馈的异常事件 2001~2999
@@ -1652,7 +1649,6 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
             RobotModeReal       //
         }
 
-
         /// <summary>
         /// 机械臂事件
         /// </summary>
@@ -1690,7 +1686,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
             /// </summary>
             public EnumDescriptionAttribute(string description)
             {
-                this.Description = description;
+                Description = description;
             }
         }
 
@@ -1708,9 +1704,9 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
             /// <param name="enDescription"></param>
             public RobotEventAttribute(string description, bool isWaring = false, string enDescription = "")
             {
-                this.IsWaring = isWaring;
-                this.ZhCnDescription = description;
-                this.EnDescription = enDescription;
+                IsWaring = isWaring;
+                ZhCnDescription = description;
+                EnDescription = enDescription;
             }
 
             /// <summary>
@@ -1730,7 +1726,6 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
 
         }
 
-
         /// <summary>
         /// 
         /// </summary>
@@ -1741,7 +1736,6 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
             /// 成功
             /// </summary>
             ErrnoSucc = 0,  /** 成功　**/
-
             /// <summary>
             /// 
             /// </summary>
@@ -1843,8 +1837,6 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
             /// 真实机械臂不存在，因为有些接口只有在真是机械臂存在的情况下才可以被调用
             /// </summary>
             ErrCode_RealRobotNoExist,                /** 真实机械臂不存在，因为有些接口只有在真是机械臂存在的情况下才可以被调用　**/
-
-
             /// <summary>
             /// 
             /// </summary>
@@ -2016,14 +2008,11 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
             if (enumType == null)
                 enumType = typeof(EnumDescriptionAttribute);
             RetunCode retunCode = (RetunCode)code;
-            var re = retunCode.GetType().GetField(retunCode.ToString());
+            System.Reflection.FieldInfo re = retunCode.GetType().GetField(retunCode.ToString());
             if (re == null)
                 return "未知错误";
-            var datas = re.GetCustomAttributes(enumType, false); ;
-            if (datas.Length == 0)
-                return "未知错误";
-            else
-                return ((EnumDescriptionAttribute)datas[0]).Description;
+            object[] datas = re.GetCustomAttributes(enumType, false); ;
+            return datas.Length == 0 ? "未知错误" : ((EnumDescriptionAttribute)datas[0]).Description;
         }
 
         /// <summary>

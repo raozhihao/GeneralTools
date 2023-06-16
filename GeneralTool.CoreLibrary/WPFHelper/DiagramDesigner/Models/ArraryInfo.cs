@@ -51,7 +51,7 @@
         /// </summary>
         public override string ToString()
         {
-            return $"{(int)this.Left} - {(int)this.Top} - {(int)this.Right} - {(int)this.Bottom}";
+            return $"{(int)Left} - {(int)Top} - {(int)Right} - {(int)Bottom}";
         }
     }
 }

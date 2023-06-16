@@ -17,7 +17,6 @@
         public static System.Windows.Point Center(this System.Windows.Rect rect)
             => Center(rect.X, rect.Y, rect.Width, rect.Height);
 
-
         /// <summary>
         /// 获取中心点
         /// </summary>

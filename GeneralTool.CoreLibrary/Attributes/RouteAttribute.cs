@@ -25,12 +25,11 @@ namespace GeneralTool.CoreLibrary.Attributes
         {
             Url = url;
             Explanation = explanation;
-            this.Method = method;
+            Method = method;
         }
 
         /// <inheritdoc/>
         public event PropertyChangedEventHandler PropertyChanged;
-
 
         #endregion Public 构造函数
 
@@ -42,10 +41,9 @@ namespace GeneralTool.CoreLibrary.Attributes
         /// </summary>
         public string ReturnString
         {
-            get => this.returnString;
-            set => this.RegisterProperty(ref this.returnString, value);
+            get => returnString;
+            set => RegisterProperty(ref returnString, value);
         }
-
 
         private string explantion;
         /// <summary>
@@ -53,8 +51,8 @@ namespace GeneralTool.CoreLibrary.Attributes
         /// </summary>
         public string Explanation
         {
-            get => this.explantion;
-            set => this.RegisterProperty(ref this.explantion, value);
+            get => explantion;
+            set => RegisterProperty(ref explantion, value);
         }
 
         private string url;
@@ -63,8 +61,8 @@ namespace GeneralTool.CoreLibrary.Attributes
         /// </summary>
         public string Url
         {
-            get => this.url;
-            set => this.RegisterProperty(ref this.url, value);
+            get => url;
+            set => RegisterProperty(ref url, value);
         }
 
         private HttpMethod method;
@@ -73,8 +71,8 @@ namespace GeneralTool.CoreLibrary.Attributes
         /// </summary>
         public HttpMethod Method
         {
-            get => this.method;
-            set => this.RegisterProperty(ref this.method, value);
+            get => method;
+            set => RegisterProperty(ref method, value);
         }
 
         private string langKey;
@@ -83,8 +81,8 @@ namespace GeneralTool.CoreLibrary.Attributes
         /// </summary>
         public string LangKey
         {
-            get => this.langKey;
-            set => this.RegisterProperty(ref this.langKey, value);
+            get => langKey;
+            set => RegisterProperty(ref langKey, value);
         }
 
         private int sortIndex;
@@ -93,8 +91,8 @@ namespace GeneralTool.CoreLibrary.Attributes
         /// </summary>
         public int SortIndex
         {
-            get => this.sortIndex;
-            set => this.RegisterProperty(ref this.sortIndex, value);
+            get => sortIndex;
+            set => RegisterProperty(ref sortIndex, value);
         }
 
         private bool reReponse;
@@ -103,8 +101,8 @@ namespace GeneralTool.CoreLibrary.Attributes
         /// </summary>
         public bool ReReponse
         {
-            get => this.reReponse;
-            set => this.RegisterProperty(ref this.reReponse, value);
+            get => reReponse;
+            set => RegisterProperty(ref reReponse, value);
         }
 
         private string reReponseFomartErroString;
@@ -113,12 +111,11 @@ namespace GeneralTool.CoreLibrary.Attributes
         /// </summary>
         public string ReReponseErroFomartString
         {
-            get => this.reReponseFomartErroString;
-            set => this.RegisterProperty(ref this.reReponseFomartErroString, value);
+            get => reReponseFomartErroString;
+            set => RegisterProperty(ref reReponseFomartErroString, value);
         }
 
         #endregion Public 属性
-
 
         /// <summary>
         /// 向组件注册属性更改 <example>

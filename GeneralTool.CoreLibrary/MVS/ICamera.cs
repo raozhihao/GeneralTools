@@ -22,7 +22,6 @@ namespace GeneralTool.CoreLibrary.MVS
         /// </summary>
         Size MaxSize { get; }
 
-
         /// <summary>
         /// 关闭相机
         /// </summary>
@@ -40,7 +39,6 @@ namespace GeneralTool.CoreLibrary.MVS
         /// <returns></returns>
         CameraRectangleInfo GetCurrentAOISize();
 
-
         /// <summary>
         /// 打开指定的相机
         /// </summary>
@@ -48,7 +46,6 @@ namespace GeneralTool.CoreLibrary.MVS
         /// <param name="exposureTime">相机的初始设置曝光</param>
         /// <returns></returns>
         bool Open(string ip, double exposureTime);
-
 
         /// <summary>
         /// 打开指定的相机
@@ -64,7 +61,6 @@ namespace GeneralTool.CoreLibrary.MVS
         /// <returns></returns>
         CameraExposureTimeInfo GetExposureTime();
 
-
         /// <summary>
         /// 设置曝光
         /// </summary>
@@ -77,7 +73,6 @@ namespace GeneralTool.CoreLibrary.MVS
         /// <param name="rect">需要设置的范围</param>
         /// <returns>返回设置成功与否以及设置完后的真正范围</returns>
         bool SetAOI(ref Rectangle rect);
-
 
         /// <summary>
         /// 开始采集

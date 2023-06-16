@@ -58,9 +58,9 @@ namespace GeneralTool.CoreLibrary.WPFHelper
                 return;
             }
 
-            if (this.PropertyChaningEvent != null)
+            if (PropertyChaningEvent != null)
             {
-                value = (T)this.PropertyChaningEvent(new PropertyChangArg(fieldValue, value, propertyName));
+                value = (T)PropertyChaningEvent(new PropertyChangArg(fieldValue, value, propertyName));
             }
 
             if (fieldValue != null && fieldValue.Equals(value))
@@ -78,15 +78,12 @@ namespace GeneralTool.CoreLibrary.WPFHelper
         /// <param name="propertyName"></param>
         public virtual void OnPropertyChanged(string propertyName = null)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         #endregion Public 方法
 
-
     }
-
-
 
     /// <summary>
     /// 属性更新信息
@@ -101,9 +98,9 @@ namespace GeneralTool.CoreLibrary.WPFHelper
         /// <param name="propertyName"></param>
         public PropertyChangArg(object oldValue, object newValue, string propertyName)
         {
-            this.OldValue = oldValue;
-            this.NewValue = newValue;
-            this.PropertyName = propertyName;
+            OldValue = oldValue;
+            NewValue = newValue;
+            PropertyName = propertyName;
         }
 
         /// <summary>

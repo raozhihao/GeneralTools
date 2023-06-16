@@ -39,7 +39,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
                 serverStation = new ServerStation(jsonConvert, log);
 
             this.log = log;
-            this.ServerStation = serverStation;
+            ServerStation = serverStation;
         }
 
         #endregion Public 构造函数
@@ -83,22 +83,22 @@ namespace GeneralTool.CoreLibrary.TaskLib
             RouteAttribute attributeByClass = target.GetAttributeByClass<RouteAttribute>();
             if (attributeByClass == null)
             {
-                this.log.Debug($"类型 {target} 没有添加特性 {nameof(RouteAttribute)} ,跳过不执行");
+                log.Debug($"类型 {target} 没有添加特性 {nameof(RouteAttribute)} ,跳过不执行");
                 return false;
             }
 
             string rootPath = attributeByClass.Url;
             MethodInfo[] methods = target.GetType().GetMethods();
 
-            var ms = from m in methods
-                     where m.GetCustomAttribute<RouteAttribute>() != null
-                     select m;
+            System.Collections.Generic.IEnumerable<MethodInfo> ms = from m in methods
+                                                                    where m.GetCustomAttribute<RouteAttribute>() != null
+                                                                    select m;
 
             ms.Foreach(m =>
            {
-               var route = m.GetCustomAttribute<RouteAttribute>();
+               RouteAttribute route = m.GetCustomAttribute<RouteAttribute>();
 
-               ServerStation.AddRoute(rootPath + route.Url, target, m, route.Method);
+               _ = ServerStation.AddRoute(rootPath + route.Url, target, m, route.Method);
            });
 
             return true;
@@ -108,7 +108,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
         /// </summary>
         public void Close()
         {
-            ServerStation.Close();
+            _ = ServerStation.Close();
             log.Debug("已关闭服务");
         }
 

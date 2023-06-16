@@ -20,7 +20,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Common
         /// </summary>
         public List<Point> GetPoints(ConnectorInfo sourceInfo, ConnectorInfo sinkInfo)
         {
-            var points = new List<Point>
+            List<Point> points = new List<Point>
             {
                 sourceInfo.Point//起点
             };
@@ -48,7 +48,6 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Common
                     CreateSourceLeftPoints(sourceInfo, sinkInfo, points);
                     break;
             }
-
 
         }
 

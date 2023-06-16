@@ -19,14 +19,11 @@ namespace GeneralTool.CoreLibrary.Extensions
         /// <returns>返回该属性的值</returns>
         public static OutType GetEnumCustomAttributeInfo<OutType, EnumAttributeType>(this Enum @enum, string property) where EnumAttributeType : Attribute
         {
-            var en = @enum.GetEnumCustomAttribute<EnumAttributeType>();
+            EnumAttributeType en = @enum.GetEnumCustomAttribute<EnumAttributeType>();
             if (en == null)
                 return default;
-            var p = en.GetType().GetProperty(property);
-            if (p == null)
-                return default;
-
-            return (OutType)p.GetValue(en);
+            System.Reflection.PropertyInfo p = en.GetType().GetProperty(property);
+            return p == null ? default : (OutType)p.GetValue(en);
         }
 
         /// <summary>
@@ -37,16 +34,16 @@ namespace GeneralTool.CoreLibrary.Extensions
         /// <returns>返回获取到的特性</returns>
         public static T GetEnumCustomAttribute<T>(this Enum @enum) where T : Attribute
         {
-            var type = @enum.GetType();
-            var field = type.GetField(@enum.ToString());
+            Type type = @enum.GetType();
+            System.Reflection.FieldInfo field = type.GetField(@enum.ToString());
             if (field == null)
                 return default;
 
-            var datas = field.GetCustomAttributes(typeof(T), false);
+            object[] datas = field.GetCustomAttributes(typeof(T), false);
             if (datas.Length == 0)
                 return default;
 
-            var en = (T)datas[0];
+            T en = (T)datas[0];
             return en;
         }
 
@@ -60,7 +57,7 @@ namespace GeneralTool.CoreLibrary.Extensions
         {
             if (code is string codeStr)
             {
-                Enum.TryParse<T>(codeStr, true, out var result);
+                _ = Enum.TryParse<T>(codeStr, true, out T result);
                 return result;
             }
             return (T)Enum.ToObject(typeof(T), code);

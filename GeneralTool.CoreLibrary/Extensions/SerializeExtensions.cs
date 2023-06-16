@@ -24,7 +24,7 @@ namespace GeneralTool.CoreLibrary.Extensions
         public static T DeserializeJsonToObject<T>(this string jsonStr)
         {
 #if NET452
-            var serialize = new System.Web.Script.Serialization.JavaScriptSerializer() { MaxJsonLength = int.MaxValue, RecursionLimit = int.MaxValue };
+            System.Web.Script.Serialization.JavaScriptSerializer serialize = new System.Web.Script.Serialization.JavaScriptSerializer() { MaxJsonLength = int.MaxValue, RecursionLimit = int.MaxValue };
             return serialize.Deserialize<T>(jsonStr);
 #else
             return JsonSerializer.Deserialize<T>(jsonStr);
@@ -43,7 +43,7 @@ namespace GeneralTool.CoreLibrary.Extensions
         public static object DeserializeJsonToObject(this string jsonStr, Type type)
         {
 #if NET452
-            var serialize = new System.Web.Script.Serialization.JavaScriptSerializer() { MaxJsonLength = int.MaxValue, RecursionLimit = int.MaxValue };
+            System.Web.Script.Serialization.JavaScriptSerializer serialize = new System.Web.Script.Serialization.JavaScriptSerializer() { MaxJsonLength = int.MaxValue, RecursionLimit = int.MaxValue };
             return serialize.Deserialize(jsonStr, type);
 #else
             return JsonSerializer.Deserialize(jsonStr, type);
@@ -111,7 +111,7 @@ namespace GeneralTool.CoreLibrary.Extensions
         public static string SerializeToJsonString(this object obj)
         {
 #if NET452
-            var serialize = new System.Web.Script.Serialization.JavaScriptSerializer() { MaxJsonLength = int.MaxValue, RecursionLimit = int.MaxValue };
+            System.Web.Script.Serialization.JavaScriptSerializer serialize = new System.Web.Script.Serialization.JavaScriptSerializer() { MaxJsonLength = int.MaxValue, RecursionLimit = int.MaxValue };
             return serialize.Serialize(obj);
 #else
             return JsonSerializer.Serialize(obj);

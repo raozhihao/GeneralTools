@@ -6,7 +6,7 @@ namespace GeneralTool.CoreLibrary.Ioc
     /// <summary>
     /// 定义类
     /// </summary>
-    class DefinedClass
+    internal class DefinedClass
     {
         /// <summary>
         /// 实例

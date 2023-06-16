@@ -34,8 +34,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
         private static readonly List<PropertyLangStruct> propertyStructs = new List<PropertyLangStruct>();
         private static void LangKeyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var langKey = e.NewValue + "";
-            var propertyName = GetBindingProperty(d);
+            string langKey = e.NewValue + "";
+            string propertyName = GetBindingProperty(d);
             AddLangListener(d, e, langKey, propertyName);
         }
 
@@ -47,12 +47,11 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
             }
             if (!string.IsNullOrWhiteSpace(e.NewValue + ""))
             {
-                var pro = new PropertyLangStruct
+                PropertyLangStruct pro = new PropertyLangStruct
                 {
                     Dependency = d,
                     LangKey = langKey
                 };
-
 
                 if (propertyStructs.Contains(pro, new LangStructEqualityComparer()))
                 {
@@ -74,7 +73,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
                 }
                 LangProvider.LangProviderInstance.LangChanged += LangProviderInstance_LangChanged;
                 LangProvider.LangProviderInstance.LoadLang();
-                var window = Window.GetWindow(d);
+                Window window = Window.GetWindow(d);
 
                 //如果有父窗体,则绑定父窗体的显示事件
                 if (!BindingStaticClass.BindingLangWindow.Contains(window))
@@ -89,7 +88,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
         private static void Window_Closing(object sender, CancelEventArgs e)
         {
             LangProvider.LangProviderInstance.LangChanged -= LangProviderInstance_LangChanged;
-            BindingStaticClass.BindingLangWindow.Remove(sender as Window);
+            _ = BindingStaticClass.BindingLangWindow.Remove(sender as Window);
         }
 
         private static void Window_Loaded(object sender, RoutedEventArgs e)
@@ -100,7 +99,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
 
         private static void LangProviderInstance_LangChanged(ResourceDictionary resx)
         {
-            foreach (var item in propertyStructs)
+            foreach (PropertyLangStruct item in propertyStructs)
             {
                 //object value = null;
                 //if (resx == null)
@@ -109,7 +108,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
                 //    value = resx[item.LangKey]; //获取对应的值
                 //                                //赋值
 
-                var value = LangProvider.LangProviderInstance.GetLangValue(item.LangKey);
+                string value = LangProvider.LangProviderInstance.GetLangValue(item.LangKey);
                 if (string.IsNullOrEmpty(value))
                     value = item.DefaultLabel + "";
                 item.SetValue(value ?? item.DefaultLabel);
@@ -123,11 +122,10 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
 
         private static void LangBindingChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var langKey = GetLangKey(d);
-            var propertyName = e.NewValue + "";
+            string langKey = GetLangKey(d);
+            string propertyName = e.NewValue + "";
             AddLangListener(d, e, langKey, propertyName);
         }
-
 
         /// <summary>
         /// 

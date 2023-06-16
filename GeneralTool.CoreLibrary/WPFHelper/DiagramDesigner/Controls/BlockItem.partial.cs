@@ -11,7 +11,7 @@ using GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs;
 
 namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
 {
-    partial class BlockItem
+    public partial class BlockItem
     {
         #region 私有方法
 
@@ -22,15 +22,15 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         {
             return new DragObject()
             {
-                BackGround = this.Background,
-                ForceGround = this.Foreground,
-                Content = this.Content,
-                FontSize = this.FontSize,
-                Padding = this.Padding,
-                CanRepeatToCanvas = this.CanRepeatToCanvas,
-                DragType = this.GetType(),
-                Header = this.Header,
-                IsStart = this.IsStart
+                BackGround = Background,
+                ForceGround = Foreground,
+                Content = Content,
+                FontSize = FontSize,
+                Padding = Padding,
+                CanRepeatToCanvas = CanRepeatToCanvas,
+                DragType = GetType(),
+                Header = Header,
+                IsStart = IsStart
             };
         }
 
@@ -71,7 +71,6 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         {
 
         }
-
 
         /// <summary>
         /// 在双击时
@@ -122,8 +121,6 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
 
         }
 
-
-
         /// <summary>
         /// 控件大小变更完成
         /// </summary>
@@ -138,39 +135,36 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         public virtual void Dispose()
         {
             //this.SourceItems.Clear();
-            this.SinkItems.Clear();
+            SinkItems.Clear();
         }
 
         #endregion
 
         #region 重写方法
 
-
         /// <summary>
         /// 
         /// </summary>
         public void Apply()
         {
-            var control = this.GetTemplateChild("PART_Connectors") as Control;
-            var grid = control.Template.FindName("PART_ControlGrid", control) as Grid;
-            var thumbs = grid.Children.OfType<ConnectorThumb>();
-            this.ConnectorThumbs = new ConnectorThumbCollection(thumbs);
-            this.ParentCanvas = this.Parent as DesignerCanvas;
+            Control control = GetTemplateChild("PART_Connectors") as Control;
+            Grid grid = control.Template.FindName("PART_ControlGrid", control) as Grid;
+            IEnumerable<ConnectorThumb> thumbs = grid.Children.OfType<ConnectorThumb>();
+            ConnectorThumbs = new ConnectorThumbCollection(thumbs);
+            ParentCanvas = Parent as DesignerCanvas;
 
-
-            if (this.ParentCanvas != null)
+            if (ParentCanvas != null)
             {
-                this.OnCreate();//在画布上显示了
+                OnCreate();//在画布上显示了
             }
         }
-
 
         /// <summary>
         /// 
         /// </summary>
         public override string ToString()
         {
-            return this.Header + "";
+            return Header + "";
         }
 
         /// <summary>
@@ -180,21 +174,21 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         {
             base.OnPreviewMouseDown(e);
 
-            if (this.ParentCanvas == null)
+            if (ParentCanvas == null)
             {
                 //prevPoint = e.GetPosition(this);
-                this.CaptureMouse();
+                _ = CaptureMouse();
 
                 return;
             }
 
             if (e.RightButton == MouseButtonState.Pressed)
             {
-                this.OnRightDownClick(e);
+                OnRightDownClick(e);
                 return;
             }
 
-            this.ParentCanvas.SelectedBlockItem = this;
+            ParentCanvas.SelectedBlockItem = this;
             SetTop();
             if (!IsBreakBlock)
             {
@@ -204,11 +198,11 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
                     //不属于调试模式时
                     if (Keyboard.Modifiers != ModifierKeys.Control)
                     {
-                        this.ParentCanvas.ClearSection();
+                        ParentCanvas.ClearSection();
                     }
                 }
 
-                this.IsSelected = true;
+                IsSelected = true;
                 return;
             }
             else
@@ -216,10 +210,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
                 //属于调试模式时, 不预处理
             }
 
-
         }
-
-
 
         /// <summary>
         /// 
@@ -227,12 +218,12 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         protected override void OnPreviewMouseMove(MouseEventArgs e)
         {
             base.OnPreviewMouseMove(e);
-            if (this.ParentCanvas == null && this.IsMouseCaptured)
+            if (ParentCanvas == null && IsMouseCaptured)
             {
 
-                var dragObj = GetDragObject();
+                DragObject dragObj = GetDragObject();
 
-                DragDrop.DoDragDrop(this, dragObj, DragDropEffects.Copy);
+                _ = DragDrop.DoDragDrop(this, dragObj, DragDropEffects.Copy);
 
                 System.Diagnostics.Trace.WriteLine("Send drop");
 
@@ -247,17 +238,17 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         protected override void OnPreviewMouseDoubleClick(MouseButtonEventArgs e)
         {
             base.OnPreviewMouseDoubleClick(e);
-            if (this.ParentCanvas == null)
+            if (ParentCanvas == null)
             {
                 //将其发送给画布
-                var obj = this.GetDragObject();
+                DragObject obj = GetDragObject();
                 obj.IsDoubleClickAdd = true;
                 MiddleController.Controller.DragBlockItemToCanvas(obj);
             }
             else
             {
-                this.OnDoubleClickInCanvas(e);
-                this.ParentCanvas.ClearSection();
+                OnDoubleClickInCanvas(e);
+                ParentCanvas.ClearSection();
             }
             // this.ReleaseMouseCapture();
         }
@@ -269,12 +260,9 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         {
             base.OnMouseLeave(e);
 
-            if (this.ParentCanvas == null) return;
-            this.ConnectorVisibility = Visibility.Collapsed;
+            if (ParentCanvas == null) return;
+            ConnectorVisibility = Visibility.Collapsed;
         }
-
-
-
 
         #endregion
 
@@ -286,7 +274,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// <param name="connection"></param>
         public void AddConnection(Connection connection)
         {
-            this.OnAddConnection(connection);
+            OnAddConnection(connection);
         }
 
         /// <summary>
@@ -295,7 +283,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// <param name="connection"></param>
         public void RemoveConnection(Connection connection)
         {
-            this.OnRemoveConnection(connection);
+            OnRemoveConnection(connection);
         }
 
         /// <summary>
@@ -303,8 +291,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// </summary>
         public virtual void Delete()
         {
-            this.Dispose();
-            this.OnDelete();
+            Dispose();
+            OnDelete();
         }
 
         /// <summary>
@@ -312,19 +300,19 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// </summary>
         public void Remove()
         {
-            if (this.IsStart)
+            if (IsStart)
                 return;
             //1.调用数据库相关删除逻辑
-            this.OnDelete();
+            OnDelete();
             //清除自身连接线
-            this.RemoveAllConnection();
+            RemoveAllConnection();
         }
 
         private void RemoveAllConnection()
         {
-            var removeList = new List<Connection>();
+            List<Connection> removeList = new List<Connection>();
             //移除其上的线条,作为源的,作为目标的
-            foreach (var item in this.ParentCanvas.Children)
+            foreach (object item in ParentCanvas.Children)
             {
                 if (item is Connection c)
                 {
@@ -340,13 +328,12 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
 
             }
 
-            foreach (var item in removeList)
+            foreach (Connection item in removeList)
             {
                 item.Dispose();
-                this.RemoveConnection(item);
+                RemoveConnection(item);
             }
         }
-
 
         /// <summary>
         /// 通知将自身已拖拽至画布
@@ -354,7 +341,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// <param name="connection">连接线</param>
         public void RaiseDragToCanvas(Connection connection)
         {
-            this.OnDragToCanvas(connection);
+            OnDragToCanvas(connection);
         }
 
         /// <summary>
@@ -362,7 +349,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// </summary>
         public void SetTop()
         {
-            if (this.Parent is DesignerCanvas canvas)
+            if (Parent is DesignerCanvas canvas)
             {
                 canvas.SetTop(this);
 
@@ -376,7 +363,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// <param name="parameters">内容集合</param>
         public void SetShowText(params object[] parameters)
         {
-            this.Content = string.Join(Environment.NewLine, parameters);
+            Content = string.Join(Environment.NewLine, parameters);
         }
 
         /// <summary>
@@ -386,7 +373,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// <returns></returns>
         internal bool ContainsSink(BlockItem sinkBlock)
         {
-            return this.SinkItems.Contains(sinkBlock);
+            return SinkItems.Contains(sinkBlock);
         }
 
         ///// <summary>
@@ -406,9 +393,9 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// <param name="sinkItem"></param>
         internal void AddSinkItem(BlockItem sinkItem)
         {
-            if (this.SinkItems.Contains(sinkItem))
-                this.SinkItems.Remove(sinkItem);
-            this.SinkItems.Add(sinkItem);
+            if (SinkItems.Contains(sinkItem))
+                _ = SinkItems.Remove(sinkItem);
+            SinkItems.Add(sinkItem);
         }
 
         /// <summary>
@@ -417,9 +404,9 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// <param name="keyValuePairs"></param>
         public void SetCanConnectSinkDirections(Dictionary<Direction, Direction[]> keyValuePairs)
         {
-            foreach (var item in keyValuePairs)
+            foreach (KeyValuePair<Direction, Direction[]> item in keyValuePairs)
             {
-                this.ConnectorThumbs[item.Key].SetCanSinkDirections(item.Value);
+                ConnectorThumbs[item.Key].SetCanSinkDirections(item.Value);
             }
 
         }

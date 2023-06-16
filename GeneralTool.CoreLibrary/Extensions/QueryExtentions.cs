@@ -37,7 +37,7 @@ namespace GeneralTool.CoreLibrary.Extensions
             }
 
             List<string> list = new List<string>();
-            foreach (var item in queryDictionary)
+            foreach (KeyValuePair<string, object> item in queryDictionary)
             {
                 list.Add($"{item.Key}={item.Value.SerializeToJsonString()}");
             }
@@ -56,12 +56,12 @@ namespace GeneralTool.CoreLibrary.Extensions
         public static Dictionary<string, string> ParseQueryToDictionary(this string queryStrings)
         {
             Dictionary<string, string> dic = new Dictionary<string, string>();
-            var split = queryStrings.Split(new char[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
-            foreach (var item in split)
+            string[] split = queryStrings.Split(new char[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (string item in split)
             {
-                var tmpArr = item.Split(new char[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
-                var key = tmpArr[0];
-                var val = tmpArr[1];
+                string[] tmpArr = item.Split(new char[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
+                string key = tmpArr[0];
+                string val = tmpArr[1];
                 if (!dic.ContainsKey(key))
                 {
                     dic.Add(key, val);

@@ -36,14 +36,23 @@ namespace GeneralTool.CoreLibrary.SocketLib
                 {
                     if (c.LocalEndPoint.Equals(socket.LocalEndPoint) && c.RemoteEndPoint.Equals(socket.RemoteEndPoint))
                     {
-                        if (stateOfConnection == TcpState.Closed || stateOfConnection == TcpState.CloseWait)
-                        {
-                            return false;
-                        }
-                        else
-                        {
-                            return true;
-                        }
+
+                        /* 项目“GeneralTool.CoreLibrary (net452)”的未合并的更改
+                        在此之前:
+                                                if (stateOfConnection == TcpState.Closed || stateOfConnection == TcpState.CloseWait)
+                                                {
+                                                    return false;
+                                                }
+                                                else
+                                                {
+                                                    return true;
+                                                }
+                                            }
+                        在此之后:
+                                                if (stateOfConnection != TcpState.Closed && stateOfConnection != TcpState.CloseWait;
+                                            }
+                        */
+                        return stateOfConnection != TcpState.Closed && stateOfConnection !=  TcpState.CloseWait;
                     }
                 }
                 catch
@@ -68,7 +77,7 @@ namespace GeneralTool.CoreLibrary.SocketLib
             BitConverter.GetBytes((uint)3000).CopyTo(inOptionValues, Marshal.SizeOf(dummy));//keep-alive间隔
             BitConverter.GetBytes((uint)500).CopyTo(inOptionValues, Marshal.SizeOf(dummy) * 2);// 尝试间隔
 
-            socket.IOControl(IOControlCode.KeepAliveValues, inOptionValues, null);
+            _ = socket.IOControl(IOControlCode.KeepAliveValues, inOptionValues, null);
             socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
         }
 

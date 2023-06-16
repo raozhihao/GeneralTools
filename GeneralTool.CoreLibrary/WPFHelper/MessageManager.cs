@@ -30,9 +30,9 @@ namespace GeneralTool.CoreLibrary.WPFHelper
         /// <param name="body">消息内容</param>
         public void SendMessage<Pameter>(string token, Pameter body)
         {
-            if (this.actionTokens.TryGetValue(token, out var list))
+            if (actionTokens.TryGetValue(token, out ConcurrentDictionary<object, object> list))
             {
-                foreach (var item in list)
+                foreach (System.Collections.Generic.KeyValuePair<object, object> item in list)
                 {
                     (item.Value as Action<Pameter>)?.Invoke(body);
                 }
@@ -49,13 +49,11 @@ namespace GeneralTool.CoreLibrary.WPFHelper
         /// <returns>返回注册方所返回的值</returns>
         public Result SendMessage<Result, Pameter>(string token, Pameter body)
         {
-            if (this.funcTokens.TryGetValue(token, out var list))
+            if (funcTokens.TryGetValue(token, out ConcurrentDictionary<object, object> list))
             {
-                foreach (var item in list)
+                foreach (System.Collections.Generic.KeyValuePair<object, object> item in list)
                 {
-                    if (item.Value == null)
-                        return default;
-                    return (item.Value as Func<Pameter, Result>)(body);
+                    return item.Value == null ? default : (item.Value as Func<Pameter, Result>)(body);
                 }
             }
             return default;
@@ -70,17 +68,17 @@ namespace GeneralTool.CoreLibrary.WPFHelper
         /// <param name="action">要注册的处理方法</param>
         public void RegisterMessage<Pameter>(object register, string token, Action<Pameter> action)
         {
-            if (!this.actionTokens.TryGetValue(token, out var list))
+            if (!actionTokens.TryGetValue(token, out ConcurrentDictionary<object, object> list))
             {
                 if (list == null)
                     list = new ConcurrentDictionary<object, object>();
-                list.TryAdd(register, action);
-                this.actionTokens.TryAdd(token, list);
+                _ = list.TryAdd(register, action);
+                _ = actionTokens.TryAdd(token, list);
             }
             else
             {
                 //如果已存在,则尝试添加
-                list.TryAdd(register, action);
+                _ = list.TryAdd(register, action);
             }
         }
 
@@ -94,17 +92,17 @@ namespace GeneralTool.CoreLibrary.WPFHelper
         /// <param name="func">要注册的处理方法</param>
         public void RegisterMessage<Result, Pameter>(object register, string token, Func<Pameter, Result> func)
         {
-            if (!this.funcTokens.TryGetValue(token, out var list))
+            if (!funcTokens.TryGetValue(token, out ConcurrentDictionary<object, object> list))
             {
                 if (list == null)
                     list = new ConcurrentDictionary<object, object>();
-                list.TryAdd(register, func);
-                this.funcTokens.TryAdd(token, list);
+                _ = list.TryAdd(register, func);
+                _ = funcTokens.TryAdd(token, list);
             }
             else
             {
                 //如果已存在,则尝试添加
-                list.TryAdd(register, func);
+                _ = list.TryAdd(register, func);
             }
         }
 
@@ -117,35 +115,35 @@ namespace GeneralTool.CoreLibrary.WPFHelper
         {
             if (token == null)
             {
-                foreach (var item in this.actionTokens)
+                foreach (System.Collections.Generic.KeyValuePair<string, ConcurrentDictionary<object, object>> item in actionTokens)
                 {
-                    foreach (var value in item.Value)
+                    foreach (System.Collections.Generic.KeyValuePair<object, object> value in item.Value)
                     {
                         if (value.Key == register)
                         {
-                            item.Value.TryRemove(value.Key, out _);
+                            _ = item.Value.TryRemove(value.Key, out _);
                         }
                     }
                 }
-                foreach (var item in this.funcTokens)
+                foreach (System.Collections.Generic.KeyValuePair<string, ConcurrentDictionary<object, object>> item in funcTokens)
                 {
-                    foreach (var value in item.Value)
+                    foreach (System.Collections.Generic.KeyValuePair<object, object> value in item.Value)
                     {
                         if (value.Key == register)
                         {
-                            item.Value.TryRemove(value.Key, out _);
+                            _ = item.Value.TryRemove(value.Key, out _);
                         }
                     }
                 }
                 return;
             }
-            if (this.actionTokens.TryGetValue(token, out var listAction))
+            if (actionTokens.TryGetValue(token, out ConcurrentDictionary<object, object> listAction))
             {
-                listAction.TryRemove(register, out _);
+                _ = listAction.TryRemove(register, out _);
             }
-            if (this.funcTokens.TryGetValue(token, out var listFunc))
+            if (funcTokens.TryGetValue(token, out ConcurrentDictionary<object, object> listFunc))
             {
-                listFunc.TryRemove(register, out _);
+                _ = listFunc.TryRemove(register, out _);
             }
         }
     }

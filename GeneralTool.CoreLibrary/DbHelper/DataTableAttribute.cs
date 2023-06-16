@@ -18,7 +18,7 @@ namespace GeneralTool.CoreLibrary.DbHelper
         /// <param name="tableName">表名称</param>
         public DataTableAttribute(string tableName)
         {
-            this.DataTableName = tableName.ToLower();
+            DataTableName = tableName.ToLower();
         }
     }
 }

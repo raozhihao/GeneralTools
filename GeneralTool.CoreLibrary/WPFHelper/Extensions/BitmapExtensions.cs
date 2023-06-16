@@ -27,10 +27,10 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
         /// </returns>
         public static BitmapImage ToBitmapImage(this System.Drawing.Bitmap srcImg, int scale = 1)
         {
-            var stream = new System.IO.MemoryStream();
+            System.IO.MemoryStream stream = new System.IO.MemoryStream();
 
             srcImg.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
-            var image = new BitmapImage();
+            BitmapImage image = new BitmapImage();
             image.BeginInit();
             image.DecodePixelWidth = srcImg.Width / (scale < 1 ? 1 : scale);
             image.CacheOption = BitmapCacheOption.OnLoad;

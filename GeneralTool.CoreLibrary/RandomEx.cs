@@ -19,7 +19,7 @@ namespace GeneralTool.CoreLibrary
         {
             get
             {
-                var inst = _local;
+                Random inst = _local;
                 if (inst == null)
                 {
                     int seed;

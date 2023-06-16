@@ -14,7 +14,7 @@ namespace GeneralTool.CoreLibrary.SocketLib.Models
         /// <param name="client"></param>
         public SocketArg(Socket client)
         {
-            this.Client = client;
+            Client = client;
         }
 
         /// <summary>

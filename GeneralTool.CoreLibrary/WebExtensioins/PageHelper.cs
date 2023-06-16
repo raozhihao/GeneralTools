@@ -40,7 +40,6 @@ namespace GeneralTool.CoreLibrary.WebExtensioins
         /// </returns>
         public static Tuple<int, int> GetPages(int pageIndex, int pageSum, int pageCount = 5)
         {
-            int left = 1, right = 1;
 
             //针对要显示的页码数量比总页码数量还要大的情况
             if (pageSum < pageCount)
@@ -48,6 +47,8 @@ namespace GeneralTool.CoreLibrary.WebExtensioins
                 pageCount = pageSum;
             }
 
+            int left;
+            int right;
             //如果当前页码为1
             if (pageIndex <= 1)
             {
@@ -112,7 +113,7 @@ namespace GeneralTool.CoreLibrary.WebExtensioins
                 if (right - left + 1 < pageCount)
                 {
                     //没有达到,查看缺少多少
-                    var sum = pageCount - (right + left - 1);
+                    int sum = pageCount - (right + left - 1);
                     right += sum;
                 }
             }
@@ -121,11 +122,11 @@ namespace GeneralTool.CoreLibrary.WebExtensioins
                 //右边不充足
                 right = pageSum;
                 //查看最终页码数量是否达到预期数量
-                var sum = right - left + 1;//当前总条数
+                int sum = right - left + 1;//当前总条数
                 if (sum < pageCount)
                 {
                     //没有达到,查看缺少多少
-                    var tmpLeft = pageCount - sum;
+                    int tmpLeft = pageCount - sum;
                     if (left - tmpLeft > 0)
                     {
                         left -= tmpLeft;

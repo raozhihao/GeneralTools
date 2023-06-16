@@ -18,14 +18,14 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes
         {
             get
             {
-                if (this.PixelPoints == null || this.PixelPoints.Count <= 1)
+                if (PixelPoints == null || PixelPoints.Count <= 1)
                     return default;
 
-                var first = this.PixelPoints[0];
-                var builder = new StringBuilder($"M{first}");
-                foreach (var item in this.PixelPoints)
+                Point first = PixelPoints[0];
+                StringBuilder builder = new StringBuilder($"M{first}");
+                foreach (Point item in PixelPoints)
                 {
-                    builder.Append($"L{item}");
+                    _ = builder.Append($"L{item}");
                 }
 
                 return Geometry.Parse(builder.ToString()).Bounds;

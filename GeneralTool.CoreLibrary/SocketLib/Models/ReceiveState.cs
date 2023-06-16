@@ -14,11 +14,11 @@ namespace GeneralTool.CoreLibrary.SocketLib.Models
         /// </summary>
         public int BufferSize
         {
-            get => this.bufferSize;
+            get => bufferSize;
             set
             {
-                this.bufferSize = value;
-                this.Buffer = new byte[bufferSize];
+                bufferSize = value;
+                Buffer = new byte[bufferSize];
             }
         }
         /// <summary>
@@ -39,7 +39,7 @@ namespace GeneralTool.CoreLibrary.SocketLib.Models
         /// </summary>
         public ReceiveState()
         {
-            this.BufferSize = 8192;
+            BufferSize = 8192;
         }
     }
 }

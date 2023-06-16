@@ -31,8 +31,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes
         /// </summary>
         public bool AutoScale
         {
-            get => this.autoScale;
-            set => this.RegisterProperty(ref this.autoScale, value);
+            get => autoScale;
+            set => RegisterProperty(ref autoScale, value);
         }
 
         private bool canMoveShape = true;
@@ -42,8 +42,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes
         /// </summary>
         public bool CanMoveShape
         {
-            get => this.canMoveShape;
-            set => this.RegisterProperty(ref this.canMoveShape, value);
+            get => canMoveShape;
+            set => RegisterProperty(ref canMoveShape, value);
         }
 
         private bool canMoveOutBound = false;
@@ -53,10 +53,9 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes
         /// </summary>
         public bool CanMoveOutBound
         {
-            get => this.canMoveOutBound;
-            set => this.RegisterProperty(ref this.canMoveOutBound, value);
+            get => canMoveOutBound;
+            set => RegisterProperty(ref canMoveOutBound, value);
         }
-
 
         private double strokeThickness = 0;
 
@@ -65,8 +64,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes
         /// </summary>
         internal double StrokeThickness
         {
-            get => this.strokeThickness;
-            set => this.RegisterProperty(ref this.strokeThickness, value);
+            get => strokeThickness;
+            set => RegisterProperty(ref strokeThickness, value);
         }
 
         /// <summary>
@@ -99,43 +98,39 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes
         private ResizeRectAdorner rectAdorner;
         private AdornerLayer adornerLayer;
 
-
-
         internal void Init(ImageViewControl viewControl)
         {
-            this.ImageView = viewControl;
-            this.Path.IsHitTestVisible = true;
+            ImageView = viewControl;
+            Path.IsHitTestVisible = true;
 
-            this.adornerLayer = AdornerLayer.GetAdornerLayer(this.Path);
-            this.rectAdorner = new ResizeRectAdorner(this);
+            adornerLayer = AdornerLayer.GetAdornerLayer(Path);
+            rectAdorner = new ResizeRectAdorner(this);
 
-            this.ImageView.PreviewMouseDown += PathGeometry_PreviewMouseDown;
-            this.ImageView.PreviewMouseMove += PathGeometry_PreviewMouseMove;
-            this.ImageView.PreviewMouseUp += PathGeometry_PreviewMouseUp;
-            this.ImageView.CanvasSizeChanged += ViewControl_CanvasSizeChanged;
-            this.Path.MouseEnter += Path_MouseEnter;
-            this.Path.MouseLeave += Path_MouseLeave;
-            this.rectAdorner.ResizeChingingEventHandler += RectAdorner_ResizeChingingEventHandler;
+            ImageView.PreviewMouseDown += PathGeometry_PreviewMouseDown;
+            ImageView.PreviewMouseMove += PathGeometry_PreviewMouseMove;
+            ImageView.PreviewMouseUp += PathGeometry_PreviewMouseUp;
+            ImageView.CanvasSizeChanged += ViewControl_CanvasSizeChanged;
+            Path.MouseEnter += Path_MouseEnter;
+            Path.MouseLeave += Path_MouseLeave;
+            rectAdorner.ResizeChingingEventHandler += RectAdorner_ResizeChingingEventHandler;
         }
-
 
         private void Path_MouseLeave(object sender, MouseEventArgs e)
         {
-            this.Path.StrokeThickness = this.StrokeThickness / this.ImageView.ImageScale;
-            this.Path.Cursor = null;
+            Path.StrokeThickness = StrokeThickness / ImageView.ImageScale;
+            Path.Cursor = null;
         }
 
         private void Path_MouseEnter(object sender, MouseEventArgs e)
         {
-            this.Path.StrokeThickness = (this.StrokeThickness + 2) / this.ImageView.ImageScale;
-            this.Path.Cursor = Cursors.SizeAll;
+            Path.StrokeThickness = (StrokeThickness + 2) / ImageView.ImageScale;
+            Path.Cursor = Cursors.SizeAll;
         }
 
         private void RectAdorner_ResizeChingingEventHandler(object sender, ResizeEventArgs e)
         {
-            this.ResizeChingingEventHandler?.Invoke(sender, e);
+            ResizeChingingEventHandler?.Invoke(sender, e);
         }
-
 
         /// <summary>
         /// 创建图形
@@ -144,22 +139,22 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes
 
         private void PathGeometry_PreviewMouseUp(object sender, MouseButtonEventArgs e)
         {
-            this.Path.Cursor = null;
+            Path.Cursor = null;
 
-            this.Path.ReleaseMouseCapture();
-            if (e.OriginalSource != this.Path) return;
+            Path.ReleaseMouseCapture();
+            if (e.OriginalSource != Path) return;
 
-            this.Path.StrokeThickness = this.StrokeThickness / this.ImageView.ImageScale;
-            this.MouseUp?.Invoke(sender, e);
+            Path.StrokeThickness = StrokeThickness / ImageView.ImageScale;
+            MouseUp?.Invoke(sender, e);
             if (e.Handled) return;
 
-            if (this.mouseDownPoint.HasValue && this.CanMoveShape)
+            if (mouseDownPoint.HasValue && CanMoveShape)
             {
-                this.mouseDownPoint = null;
+                mouseDownPoint = null;
                 //更新坐标
-                for (int i = 0; i < this.movePoints.Count; i++)
+                for (int i = 0; i < movePoints.Count; i++)
                 {
-                    this.PixelPoints[i] = this.movePoints[i];
+                    PixelPoints[i] = movePoints[i];
                 }
                 e.Handled = true;
             }
@@ -167,20 +162,19 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes
 
         private void PathGeometry_PreviewMouseMove(object sender, MouseEventArgs e)
         {
-            if (e.OriginalSource != this.Path) return;
-            this.MouseMove?.Invoke(sender, e);
+            if (e.OriginalSource != Path) return;
+            MouseMove?.Invoke(sender, e);
             if (e.Handled) return;
-            if (e.LeftButton == MouseButtonState.Pressed && this.mouseDownPoint.HasValue && this.CanMoveShape
-                && this.Path.IsMouseCaptured)
+            if (e.LeftButton == MouseButtonState.Pressed && mouseDownPoint.HasValue && CanMoveShape
+                && Path.IsMouseCaptured)
             {
                 //移动
-                var curr = this.ImageView.GetCurrentPixelPoint(e);
+                Point curr = ImageView.GetCurrentPixelPoint(e);
                 //更改的距离
-                var vector = curr - this.mouseDownPoint.Value;
-                this.MovePoints(vector);
+                Vector vector = curr - mouseDownPoint.Value;
+                MovePoints(vector);
             }
         }
-
 
         /// <summary>
         /// 鼠标在图形上按下
@@ -188,21 +182,21 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes
         private Point? mouseDownPoint;
         private void PathGeometry_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
-            if (e.OriginalSource != this.Path) return;
-            this.MouseDown?.Invoke(sender, e);
+            if (e.OriginalSource != Path) return;
+            MouseDown?.Invoke(sender, e);
             if (e.Handled) return;
-            if (e.LeftButton == MouseButtonState.Pressed && this.CanMoveShape && e.OriginalSource == this.Path)
+            if (e.LeftButton == MouseButtonState.Pressed && CanMoveShape && e.OriginalSource == Path)
             {
-                this.Path.Cursor = Cursors.SizeAll;
-                this.mouseDownPoint = this.ImageView.GetCurrentPixelPoint(e);
-                this.Path.CaptureMouse();
+                Path.Cursor = Cursors.SizeAll;
+                mouseDownPoint = ImageView.GetCurrentPixelPoint(e);
+                _ = Path.CaptureMouse();
 
-                this.Path.StrokeThickness = (this.StrokeThickness + 2) / this.ImageView.ImageScale;
-                if (this.PixelPoints.Count > 1)
+                Path.StrokeThickness = (StrokeThickness + 2) / ImageView.ImageScale;
+                if (PixelPoints.Count > 1)
                 {
-                    if (this.adornerLayer == null)
-                        this.adornerLayer = AdornerLayer.GetAdornerLayer(this.Path);
-                    if (this.adornerLayer.GetAdorners(this.Path) == null || !this.adornerLayer.GetAdorners(this.Path).Contains(this.rectAdorner))
+                    if (adornerLayer == null)
+                        adornerLayer = AdornerLayer.GetAdornerLayer(Path);
+                    if (adornerLayer.GetAdorners(Path) == null || !adornerLayer.GetAdorners(Path).Contains(rectAdorner))
                     {
                         adornerLayer.Add(rectAdorner);
                     }
@@ -212,14 +206,12 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes
             }
         }
 
-
-
         private void ViewControl_CanvasSizeChanged(object sender, SizeChangedEventArgs e)
         {
-            this.MovePoints(new Vector());
+            MovePoints(new Vector());
             //更新大小
 
-            this.UpdateScaleSize(this.ImageView.ImageScale);
+            UpdateScaleSize(ImageView.ImageScale);
             e.Handled = true;
         }
 
@@ -229,11 +221,11 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes
         /// <param name="imageScale"></param>
         public virtual void UpdateScaleSize(double imageScale)
         {
-            if (!this.AutoScale) return;
+            if (!AutoScale) return;
 
             //更新大小
-            var scale = this.StrokeThickness / imageScale;
-            this.Path.StrokeThickness = scale;
+            double scale = StrokeThickness / imageScale;
+            Path.StrokeThickness = scale;
         }
 
         /// <summary>
@@ -243,21 +235,21 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes
         public void UpdateShapePoints(List<Point> canvasPoints)
         {
             //将当前的点都转为canvas点
-            var tmpMovePoints = new List<Point>();
+            List<Point> tmpMovePoints = new List<Point>();
 
             for (int i = 0; i < canvasPoints.Count; i++)
             {
-                var item = canvasPoints[i];
-                var p = this.ImageView.TranslateToPixelPoint(item);
+                Point item = canvasPoints[i];
+                Point p = ImageView.TranslateToPixelPoint(item);
                 //查看是否越过图像边界
-                if (!this.CanMoveOutBound)
+                if (!CanMoveOutBound)
                 {
                     if (p.X < 0 || p.Y < 0)
                     {
                         return;
                     }
 
-                    var img = this.ImageView.ImageSource;
+                    System.Windows.Media.ImageSource img = ImageView.ImageSource;
                     if (img != null)
                     {
                         if (img.Width < p.X || img.Height < p.Y)
@@ -269,9 +261,9 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes
                 }
                 tmpMovePoints.Add(p);
             }
-            this.movePoints = tmpMovePoints;
+            movePoints = tmpMovePoints;
 
-            this.UpdateShape(canvasPoints);
+            UpdateShape(canvasPoints);
         }
 
         /// <summary>
@@ -280,9 +272,9 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes
         public void UpdatePixelpoints()
         {
             //更新坐标
-            for (int i = 0; i < this.movePoints.Count; i++)
+            for (int i = 0; i < movePoints.Count; i++)
             {
-                this.PixelPoints[i] = this.movePoints[i];
+                PixelPoints[i] = movePoints[i];
             }
         }
 
@@ -293,23 +285,23 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes
         public void MovePoints(Vector vector)
         {
             //将当前的点都转为canvas点
-            var tmpMovePoints = new List<Point>();
-            var canvasPoints = new List<Point>();
-            for (int i = 0; i < this.PixelPoints.Count; i++)
+            List<Point> tmpMovePoints = new List<Point>();
+            List<Point> canvasPoints = new List<Point>();
+            for (int i = 0; i < PixelPoints.Count; i++)
             {
-                var point = this.PixelPoints[i];
-                var p = point;
+                Point point = PixelPoints[i];
+                Point p = point;
                 p.X += vector.X;
                 p.Y += vector.Y;
                 //查看是否越过图像边界
-                if (!this.CanMoveOutBound)
+                if (!CanMoveOutBound)
                 {
                     if (p.X < 0 || p.Y < 0)
                     {
                         return;
                     }
 
-                    var img = this.ImageView.ImageSource;
+                    System.Windows.Media.ImageSource img = ImageView.ImageSource;
                     if (img != null)
                     {
                         if (img.Width < p.X || img.Height < p.Y)
@@ -321,12 +313,12 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes
                 }
 
                 tmpMovePoints.Add(p);
-                p = this.ImageView.TranslateToCanvasPoint(p);
+                p = ImageView.TranslateToCanvasPoint(p);
                 canvasPoints.Add(p);
             }
 
-            this.movePoints = tmpMovePoints;
-            this.UpdateShape(canvasPoints);
+            movePoints = tmpMovePoints;
+            UpdateShape(canvasPoints);
         }
 
         /// <summary>
@@ -340,8 +332,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes
         /// </summary>
         public virtual void ReDrawShape()
         {
-            this.ImageView.RemoveCustomeShape(this);
-            this.CreateShape();
+            ImageView.RemoveCustomeShape(this);
+            CreateShape();
         }
 
         /// <summary>
@@ -349,14 +341,14 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes
         /// </summary>
         public void Dispose()
         {
-            this.ImageView.PreviewMouseDown -= PathGeometry_PreviewMouseDown;
-            this.ImageView.PreviewMouseMove -= PathGeometry_PreviewMouseMove;
-            this.ImageView.PreviewMouseUp -= PathGeometry_PreviewMouseUp;
-            this.ImageView.CanvasSizeChanged += ViewControl_CanvasSizeChanged;
-            this.Path.MouseEnter -= Path_MouseEnter;
-            this.Path.MouseLeave -= Path_MouseLeave;
-            this.rectAdorner.ResizeChingingEventHandler -= RectAdorner_ResizeChingingEventHandler;
-            this.ClearResizeRectAdorner();
+            ImageView.PreviewMouseDown -= PathGeometry_PreviewMouseDown;
+            ImageView.PreviewMouseMove -= PathGeometry_PreviewMouseMove;
+            ImageView.PreviewMouseUp -= PathGeometry_PreviewMouseUp;
+            ImageView.CanvasSizeChanged += ViewControl_CanvasSizeChanged;
+            Path.MouseEnter -= Path_MouseEnter;
+            Path.MouseLeave -= Path_MouseLeave;
+            rectAdorner.ResizeChingingEventHandler -= RectAdorner_ResizeChingingEventHandler;
+            ClearResizeRectAdorner();
         }
 
         /// <summary>
@@ -364,17 +356,17 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes
         /// </summary>
         public void ClearResizeRectAdorner()
         {
-            if (this.adornerLayer != null)
+            if (adornerLayer != null)
             {
-                var adorners = this.adornerLayer.GetAdorners(this.Path);
+                Adorner[] adorners = adornerLayer.GetAdorners(Path);
                 if (adorners == null || adorners.Length == 0)
                 {
                     return;
                 }
 
-                foreach (var item in adorners)
+                foreach (Adorner item in adorners)
                 {
-                    this.adornerLayer.Remove(item);
+                    adornerLayer.Remove(item);
                 }
             }
         }

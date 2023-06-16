@@ -1,15 +1,11 @@
 ﻿using System.Windows;
 
-namespace LanguageSwitch
+namespace SocketApplication
 {
     /// <summary>
-    /// App.xaml 的交互逻辑
+    /// Interaction logic for App.xaml
     /// </summary>
     public partial class App : Application
     {
-        public App()
-        {
-
-        }
     }
 }

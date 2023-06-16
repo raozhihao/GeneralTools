@@ -9,26 +9,24 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes
     /// </summary>
     public class PolygonShape : BaseShape
     {
-       
 
         /// <inheritdoc/>
         public override void UpdateShape(List<Point> canvasPoints)
         {
-            var startPoint = canvasPoints[0];
-            var segs = new PathSegmentCollection();
+            Point startPoint = canvasPoints[0];
+            PathSegmentCollection segs = new PathSegmentCollection();
             for (int i = 1; i < canvasPoints.Count; i++)
             {
-                var p = canvasPoints[i];
+                Point p = canvasPoints[i];
                 segs.Add(new LineSegment(p, true));
             }
 
-            var geo = this.Path.Data as PathGeometry;
-            var figures = geo.Figures;
-            var figure = figures[0];
+            PathGeometry geo = Path.Data as PathGeometry;
+            PathFigureCollection figures = geo.Figures;
+            PathFigure figure = figures[0];
             figure.StartPoint = startPoint;
             figure.Segments = segs;
         }
-
 
         /// <summary>
         /// 是否闭合
@@ -38,18 +36,18 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes
         /// <inheritdoc/>
         public override void CreateShape()
         {
-            var startPoint = this.ImageView.TranslateToCanvasPoint(this.PixelPoints[0]);
+            Point startPoint = ImageView.TranslateToCanvasPoint(PixelPoints[0]);
 
-            var segs = new PathSegmentCollection();
-            for (int i = 1; i < this.PixelPoints.Count; i++)
+            PathSegmentCollection segs = new PathSegmentCollection();
+            for (int i = 1; i < PixelPoints.Count; i++)
             {
-                var p = this.PixelPoints[i];
-                var canvasPoint = this.ImageView.TranslateToCanvasPoint(p);
+                Point p = PixelPoints[i];
+                Point canvasPoint = ImageView.TranslateToCanvasPoint(p);
                 segs.Add(new LineSegment(canvasPoint, true));
             }
 ;
 
-            this.Path.Data = new PathGeometry()
+            Path.Data = new PathGeometry()
             {
                 Figures = new PathFigureCollection()
                  {
@@ -63,7 +61,6 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes
             };
 
         }
-
 
     }
 }

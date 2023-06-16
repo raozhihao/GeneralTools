@@ -102,21 +102,21 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DialogHelper
                 return null;
             }
 
-            window.Dispatcher.BeginInvoke(new Action(() =>
+            _ = window.Dispatcher.BeginInvoke(new Action(() =>
             {
-                var layer = new WaitView
+                WaitView layer = new WaitView
                 {
                     DataContext = vm
                 }; //遮罩层
-                var content = window.Content as UIElement;//原有的content
+                UIElement content = window.Content as UIElement;//原有的content
                 window.Content = null;
 
                 int zindex = Panel.GetZIndex(content);
                 Panel.SetZIndex(layer, zindex + 1);
 
                 mainGrid = new Grid();
-                mainGrid.Children.Add(layer);
-                mainGrid.Children.Add(content);
+                _ = mainGrid.Children.Add(layer);
+                _ = mainGrid.Children.Add(content);
                 window.Content = mainGrid;
                 window.UpdateLayout();
                 parentWindow = window;

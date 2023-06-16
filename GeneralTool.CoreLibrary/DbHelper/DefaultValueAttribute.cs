@@ -17,7 +17,7 @@ namespace GeneralTool.CoreLibrary.DbHelper
         /// <param name="defaultValue"></param>
         public DefaultValueAttribute(string defaultValue)
         {
-            this.DefaultValue = defaultValue;
+            DefaultValue = defaultValue;
         }
     }
 }

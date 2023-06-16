@@ -24,8 +24,8 @@ namespace GeneralTool.CoreLibrary.Models
         /// <param name="canvasPoint"></param>
         public ImageMouseEventArgs(MouseDevice mouse, int timestamp, StylusDevice stylusDevice, Point point, Point canvasPoint) : base(mouse, timestamp, stylusDevice)
         {
-            this.CurrentPixelPoint = point;
-            this.CanvasPoint = canvasPoint;
+            CurrentPixelPoint = point;
+            CanvasPoint = canvasPoint;
         }
 
         #endregion Public 构造函数

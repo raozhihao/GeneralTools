@@ -18,7 +18,7 @@
         /// <inheritdoc/>
         public string CreateConnectionString()
         {
-            return $"Data Source = {this.FileName}; Version = {Version};";
+            return $"Data Source = {FileName}; Version = {Version};";
         }
     }
 }

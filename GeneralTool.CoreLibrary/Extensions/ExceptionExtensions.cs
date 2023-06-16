@@ -19,11 +19,9 @@ namespace GeneralTool.CoreLibrary.Extensions
         /// </returns>
         public static string GetInnerExceptionMessage(this Exception exception)
         {
-            if (exception.InnerException != null)
-            {
-                return exception.Message + Environment.NewLine + exception.InnerException.GetInnerExceptionMessage();
-            }
-            return exception.Message;
+            return exception.InnerException != null
+                ? exception.Message + Environment.NewLine + exception.InnerException.GetInnerExceptionMessage()
+                : exception.Message;
         }
 
         #endregion Public 方法

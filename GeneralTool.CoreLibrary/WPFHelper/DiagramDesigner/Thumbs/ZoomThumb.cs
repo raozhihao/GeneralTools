@@ -32,75 +32,72 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
         /// </summary>
         public ZoomThumb()
         {
-            this.DragStarted += ZoomThumb_DragStarted;
-            this.DragCompleted += ZoomThumb_DragCompleted;
-            this.DragDelta += ZoomThumb_DragDelta;
-            this.Loaded += ZoomThumb_Loaded;
+            DragStarted += ZoomThumb_DragStarted;
+            DragCompleted += ZoomThumb_DragCompleted;
+            DragDelta += ZoomThumb_DragDelta;
+            Loaded += ZoomThumb_Loaded;
         }
 
         private void ZoomThumb_Loaded(object sender, RoutedEventArgs e)
         {
-            this.width = this.DragObject.ActualWidth;
+            width = DragObject.ActualWidth;
         }
 
         private void ZoomThumb_DragCompleted(object sender, DragCompletedEventArgs e)
         {
-            var margin = this.DragObject.Margin;
-            var right = margin.Right;
-            var bottom = margin.Bottom;
-            if (this.parentControl != null)
+            Thickness margin = DragObject.Margin;
+            double right = margin.Right;
+            double bottom = margin.Bottom;
+            if (parentControl != null)
             {
                 //不能超过父控件的left
-                var xtmp = margin.Right + this.DragObject.ActualWidth;
-                right = xtmp > this.parentControl.ActualWidth ? this.parentControl.ActualWidth - this.DragObject.ActualWidth : right;
+                double xtmp = margin.Right + DragObject.ActualWidth;
+                right = xtmp > parentControl.ActualWidth ? parentControl.ActualWidth - DragObject.ActualWidth : right;
 
                 right = right < 0 ? 0 : right;
 
-                var ytmp = margin.Bottom + this.DragObject.ActualHeight;
-                bottom = ytmp > this.parentControl.ActualHeight ? this.parentControl.ActualHeight - this.DragObject.ActualHeight : bottom;
+                double ytmp = margin.Bottom + DragObject.ActualHeight;
+                bottom = ytmp > parentControl.ActualHeight ? parentControl.ActualHeight - DragObject.ActualHeight : bottom;
                 //bottom = bottom < 0 ? 0 : bottom;
                 bottom = bottom < -144 ? -144 : bottom;
 
             }
 
-            this.DragObject.Margin = new Thickness(0, 0, right, bottom);
+            DragObject.Margin = new Thickness(0, 0, right, bottom);
 
         }
 
         private void ZoomThumb_DragStarted(object sender, DragStartedEventArgs e)
         {
-            this.parentControl = this.DragObject.Parent as FrameworkElement;
-            this.parentControl.SizeChanged -= ParentControl_SizeChanged;
-            this.parentControl.SizeChanged += ParentControl_SizeChanged;
+            parentControl = DragObject.Parent as FrameworkElement;
+            parentControl.SizeChanged -= ParentControl_SizeChanged;
+            parentControl.SizeChanged += ParentControl_SizeChanged;
         }
 
         private void ParentControl_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            var newSize = e.NewSize;
-            var oldSize = e.PreviousSize;
-            var widthScale = newSize.Width / oldSize.Width;
-            var heightScale = newSize.Height / oldSize.Height;
+            Size newSize = e.NewSize;
+            Size oldSize = e.PreviousSize;
+            double widthScale = newSize.Width / oldSize.Width;
+            double heightScale = newSize.Height / oldSize.Height;
             //根据比例进行位置缩放
-            var oldMargin = this.DragObject.Margin;
-            var right = oldMargin.Right * widthScale;
-            var bottom = oldMargin.Bottom * heightScale;
-            this.DragObject.Margin = new Thickness(0, 0, right, bottom);
+            Thickness oldMargin = DragObject.Margin;
+            double right = oldMargin.Right * widthScale;
+            double bottom = oldMargin.Bottom * heightScale;
+            DragObject.Margin = new Thickness(0, 0, right, bottom);
         }
-
-
 
         private void ZoomThumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            var margin = this.DragObject.Margin;
-            var x = margin.Right - e.HorizontalChange;
-            var y = margin.Bottom - e.VerticalChange;
+            Thickness margin = DragObject.Margin;
+            double x = margin.Right - e.HorizontalChange;
+            double y = margin.Bottom - e.VerticalChange;
 
-            if (margin.Right + this.width >= this.parentControl.ActualWidth && e.HorizontalChange < 0)
+            if (margin.Right + width >= parentControl.ActualWidth && e.HorizontalChange < 0)
                 return;
-            this.DragObject.Margin = new Thickness(0, 0, x, y);
+            DragObject.Margin = new Thickness(0, 0, x, y);
 
         }
-
 
     }
 }

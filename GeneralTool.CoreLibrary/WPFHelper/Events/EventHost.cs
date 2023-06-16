@@ -46,7 +46,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Events
         /// <summary>
         /// 设置或获取事件名称
         /// </summary>
-        public String EventName { get; set; }
+        public string EventName { get; set; }
 
         #endregion Public 属性
 
@@ -59,11 +59,11 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Events
         /// </param>
         public void RegisterEvent(DependencyObject d)
         {
-            var cmd = this.Command as IEventCommand;
-            var action = cmd.ActionEventHandler;
-            var @event = d.GetType().GetEvent(this.EventName);
+            IEventCommand cmd = Command;
+            EventHandler action = cmd.ActionEventHandler;
+            System.Reflection.EventInfo @event = d.GetType().GetEvent(EventName);
 
-            var handler = Delegate.CreateDelegate(@event.EventHandlerType, action.Target, action.Method);
+            Delegate handler = Delegate.CreateDelegate(@event.EventHandlerType, action.Target, action.Method);
             @event.AddEventHandler(d, handler);
         }
 

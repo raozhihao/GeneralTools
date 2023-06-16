@@ -31,7 +31,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
         public BaseClientTask(string ip, int port, string url, ILog log = null, IJsonConvert jsonConvert = null)
         {
             if (log == null) log = new ConsoleLogInfo();
-            this.Log = log;
+            Log = log;
 
             if (jsonConvert == null) jsonConvert = new BaseJsonCovert();
             this.jsonConvert = jsonConvert;
@@ -53,9 +53,9 @@ namespace GeneralTool.CoreLibrary.TaskLib
         /// </summary>
         public object InvokeResult(string methodName, params object[] datas)
         {
-            var request = this.Parse(methodName, datas);
+            ServerRequest request = Parse(methodName, datas);
 
-            return this.InvokeRequest(request);
+            return InvokeRequest(request);
         }
 
         /// <summary>
@@ -65,32 +65,31 @@ namespace GeneralTool.CoreLibrary.TaskLib
         /// <returns></returns>
         public object InvokeRequest(ServerRequest request)
         {
-            using (var client = new FixedHeadSocketClient(this.Log, this.jsonConvert))
+            using (FixedHeadSocketClient client = new FixedHeadSocketClient(Log, jsonConvert))
             {
-                client.Startup(this.ip, this.port);
+                client.Startup(ip, port);
                 return client.SendResultObject(request.Url, request.Parameters);
             }
         }
 
-
         private ServerRequest Parse(string methodName, object[] datas)
         {
             //获取方法
-            var parameters = new System.Diagnostics.StackFrame(2).GetMethod().GetParameters();
+            System.Reflection.ParameterInfo[] parameters = new System.Diagnostics.StackFrame(2).GetMethod().GetParameters();
             if (parameters.Length != datas.Length)
                 throw new Exception("传递的参数个数与顺序应与方法一致");
 
-            var dic = new Dictionary<string, string>();
+            Dictionary<string, string> dic = new Dictionary<string, string>();
             for (int i = 0; i < parameters.Length; i++)
             {
-                var parameterInfo = parameters[i];
+                System.Reflection.ParameterInfo parameterInfo = parameters[i];
 
-                var value = datas[i];
-                var stringValue = this.converter.Convert(value, null, null, null) + "";
+                object value = datas[i];
+                string stringValue = converter.Convert(value, null, null, null) + "";
                 dic.Add(parameterInfo.Name, stringValue);
             }
 
-            var requestUrl = url + methodName;
+            string requestUrl = url + methodName;
 
             return new ServerRequest()
             {
@@ -104,8 +103,8 @@ namespace GeneralTool.CoreLibrary.TaskLib
         /// </summary>
         public T InvokeResult<T>(string methodName, params object[] datas)
         {
-            var request = this.Parse(methodName, datas);
-            return (T)this.InvokeRequest(request);
+            ServerRequest request = Parse(methodName, datas);
+            return (T)InvokeRequest(request);
         }
 
         /// <summary>
@@ -113,10 +112,9 @@ namespace GeneralTool.CoreLibrary.TaskLib
         /// </summary>
         public void Invoke(string methodName, params object[] datas)
         {
-            var request = this.Parse(methodName, datas);
-            this.InvokeRequest(request);
+            ServerRequest request = Parse(methodName, datas);
+            _ = InvokeRequest(request);
         }
-
 
     }
 }

@@ -21,10 +21,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.UIEditorConverts
         /// </returns>
         public static T GetCusomAttr<T>(System.Reflection.MemberInfo memberInfo) where T : Attribute
         {
-            var attrs = memberInfo.GetCustomAttributes(typeof(T), false);
-            if (attrs.Length == 1)
-                return attrs[0] as T;
-            return null;
+            object[] attrs = memberInfo.GetCustomAttributes(typeof(T), false);
+            return attrs.Length == 1 ? attrs[0] as T : null;
         }
 
         /// <summary>
@@ -36,7 +34,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.UIEditorConverts
         /// </returns>
         public static bool GetReadOnly(System.Reflection.PropertyInfo propertyInfo)
         {
-            var attr = GetCusomAttr<System.ComponentModel.ReadOnlyAttribute>(propertyInfo);
+            System.ComponentModel.ReadOnlyAttribute attr = GetCusomAttr<System.ComponentModel.ReadOnlyAttribute>(propertyInfo);
             if (attr != null)
             {
                 if (!attr.IsReadOnly)//可读状态
@@ -61,12 +59,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.UIEditorConverts
         /// </returns>
         public static Visibility GetVisibility(System.Reflection.PropertyInfo propertyInfo)
         {
-            var visibleAttr = GetCusomAttr<System.ComponentModel.BrowsableAttribute>(propertyInfo);
-            if (visibleAttr != null)
-            {
-                return visibleAttr.Browsable ? Visibility.Visible : Visibility.Collapsed;
-            }
-            return Visibility.Visible;
+            System.ComponentModel.BrowsableAttribute visibleAttr = GetCusomAttr<System.ComponentModel.BrowsableAttribute>(propertyInfo);
+            return visibleAttr != null ? visibleAttr.Browsable ? Visibility.Visible : Visibility.Collapsed : Visibility.Visible;
         }
 
         #endregion Public 方法

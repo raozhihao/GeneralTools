@@ -48,14 +48,13 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         public static readonly DependencyProperty CanMoveImageProperty = DependencyProperty.Register(nameof(CanMoveImage),
             typeof(bool), typeof(ImageViewControl));
 
-
         /// <summary>
         /// 设置或获取是否允许拖动画布
         /// </summary>
         public bool CanMoveImage
         {
-            get => (bool)this.GetValue(CanMoveImageProperty);
-            set => this.SetValue(CanMoveImageProperty, value);
+            get => (bool)GetValue(CanMoveImageProperty);
+            set => SetValue(CanMoveImageProperty, value);
         }
 
         /// <summary>
@@ -63,8 +62,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         /// </summary>
         public Size CutPanelMinSize
         {
-            get => (Size)this.GetValue(CutPanelMinSizeProperty);
-            set => this.SetValue(CutPanelMinSizeProperty, value);
+            get => (Size)GetValue(CutPanelMinSizeProperty);
+            set => SetValue(CutPanelMinSizeProperty, value);
         }
 
         /// <summary>
@@ -72,8 +71,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         /// </summary>
         public Size CutPanelMaxSize
         {
-            get => (Size)this.GetValue(CutPanelMaxSizeProperty);
-            set => this.SetValue(CutPanelMaxSizeProperty, value);
+            get => (Size)GetValue(CutPanelMaxSizeProperty);
+            set => SetValue(CutPanelMaxSizeProperty, value);
         }
 
         /// <summary>
@@ -81,8 +80,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         /// </summary>
         public bool DoubleClickRaiseImage
         {
-            get => (bool)this.GetValue(DoubleClickRaiseImageProperty);
-            set => this.SetValue(DoubleClickRaiseImageProperty, value);
+            get => (bool)GetValue(DoubleClickRaiseImageProperty);
+            set => SetValue(DoubleClickRaiseImageProperty, value);
         }
 
         /// <summary>
@@ -90,8 +89,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         /// </summary>
         public ObservableCollection<BaseShape> CustomeShapes
         {
-            get => this.GetValue(CustomeShapesProperty) as ObservableCollection<BaseShape>;
-            set => this.SetValue(CustomeShapesProperty, value);
+            get => GetValue(CustomeShapesProperty) as ObservableCollection<BaseShape>;
+            set => SetValue(CustomeShapesProperty, value);
         }
 
         /// <summary>
@@ -105,7 +104,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
             {
                 if (e.NewValue is ObservableCollection<BaseShape> s)
                 {
-                    foreach (var item in s)
+                    foreach (BaseShape item in s)
                     {
                         item.CreateShape();
                     }
@@ -122,11 +121,11 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         /// </summary>
         public void ClearCustomShapes()
         {
-            if (this.CustomeShapes != null)
+            if (CustomeShapes != null)
             {
-                foreach (var item in this.CustomeShapes)
+                foreach (BaseShape item in CustomeShapes)
                 {
-                    this.RemoveCustomeShape(item);
+                    RemoveCustomeShape(item);
                 }
             }
         }
@@ -216,7 +215,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
             if (d is ImageViewControl v)
             {
                 (e.OldValue as System.Drawing.Bitmap)?.Dispose();
-                var value = e.NewValue as System.Drawing.Bitmap;
+                System.Drawing.Bitmap value = e.NewValue as System.Drawing.Bitmap;
                 if (e.NewValue == null)
                 {
                     //清除原有
@@ -243,7 +242,6 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
                 {
                     v.CutPanelMaxSize = new Size(value.Width, value.Height);
                 }
-
 
             }
         }
@@ -415,8 +413,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         /// </summary>
         public bool CanImageDraw
         {
-            get => (bool)this.GetValue(CanImageDrawProperty);
-            set => this.SetValue(CanImageDrawProperty, value);
+            get => (bool)GetValue(CanImageDrawProperty);
+            set => SetValue(CanImageDrawProperty, value);
         }
 
         /// <summary>
@@ -440,8 +438,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         [Description("右侧工具条截图按钮显示状态"), Category("自定义属性")]
         public Visibility CutButtonVisibility
         {
-            get => (Visibility)this.GetValue(CutButtonVisibilityProperty);
-            set => this.SetValue(CutButtonVisibilityProperty, value);
+            get => (Visibility)GetValue(CutButtonVisibilityProperty);
+            set => SetValue(CutButtonVisibilityProperty, value);
         }
 
         /// <summary>
@@ -449,7 +447,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         /// </summary>
         public double? ImageActualHeight
         {
-            get => this.Img?.ActualHeight;
+            get => Img?.ActualHeight;
         }
 
         /// <summary>
@@ -457,7 +455,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         /// </summary>
         public double? ImageActualWidth
         {
-            get => this.Img?.ActualWidth;
+            get => Img?.ActualWidth;
         }
 
         /// <summary>
@@ -466,8 +464,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         [Description("截图框Tooltip"), Category("自定义属性")]
         public object CutPanelToolTip
         {
-            get => this.GetValue(CutPanelToolTipProperty);
-            set => this.SetValue(CutPanelToolTipProperty, value);
+            get => GetValue(CutPanelToolTipProperty);
+            set => SetValue(CutPanelToolTipProperty, value);
         }
 
         /// <summary>
@@ -476,13 +474,13 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         [Description("最大缩放倍数"), Category("自定义属性")]
         public double ImageMaxScaleValue
         {
-            get => Convert.ToInt32(this.GetValue(ImageMaxScaleValueProperty));
+            get => Convert.ToInt32(GetValue(ImageMaxScaleValueProperty));
 
             set
             {
                 if (value < 1.0)
                     value = 1.0;
-                this.SetValue(ImageMaxScaleValueProperty, value);
+                SetValue(ImageMaxScaleValueProperty, value);
             }
         }
 
@@ -492,7 +490,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         [Description("当前缩放倍数"), Category("自定义属性")]
         public double ImageScale
         {
-            get => Convert.ToDouble(this.GetValue(ImageScaleProperty));
+            get => Convert.ToDouble(GetValue(ImageScaleProperty));
 
             set
             {
@@ -501,7 +499,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
                     value = 1.0;
                 }
 
-                this.SetValue(ImageScaleProperty, value);
+                SetValue(ImageScaleProperty, value);
             }
         }
 
@@ -513,57 +511,55 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         {
             get
             {
-                if (this.Img == null)
+                if (Img == null)
                     return null;
-                var source = this.GetValue(ImageSourceProperty);
-                if (source == null)
-                    return null;
-                return (ImageSource)source;
+                object source = GetValue(ImageSourceProperty);
+                return source == null ? null : (ImageSource)source;
             }
             set
             {
                 if (value == null) return;
-                if (this.Img != null)
-                    BindingOperations.ClearBinding(this.Img, Image.SourceProperty);
+                if (Img != null)
+                    BindingOperations.ClearBinding(Img, Image.SourceProperty);
                 //初始化最大尺寸
-                if (value != null && this.CutPanelMaxSize.IsEmpty)
+                if (value != null && CutPanelMaxSize.IsEmpty)
                 {
-                    this.CutPanelMaxSize = new Size(value.Width, value.Height);
+                    CutPanelMaxSize = new Size(value.Width, value.Height);
                     //this.ImageSource = null;
                 }
 
-                this.Img?.ClearValue(Image.SourceProperty);
-                this.SetValue(ImageSourceProperty, null);
+                Img?.ClearValue(Image.SourceProperty);
+                SetValue(ImageSourceProperty, null);
 
-                this.Img?.SetValue(Image.SourceProperty, null);
-                this.SetValue(ImageSourceProperty, value);
+                Img?.SetValue(Image.SourceProperty, null);
+                SetValue(ImageSourceProperty, value);
 
-                if (value == this.writeable)
+                if (value == writeable)
                 {
                 }
                 else if (value != null)
                 {
                     if (value is BitmapSource b)
                     {
-                        using (var m = new System.IO.MemoryStream())
+                        using (System.IO.MemoryStream m = new System.IO.MemoryStream())
                         {
-                            var encoder = new BmpBitmapEncoder();
+                            BmpBitmapEncoder encoder = new BmpBitmapEncoder();
                             encoder.Frames.Add(BitmapFrame.Create(b));
                             encoder.Save(m);
 
-                            using (var map = new System.Drawing.Bitmap(m))
+                            using (System.Drawing.Bitmap map = new System.Drawing.Bitmap(m))
                             {
-                                var reload = false;
-                                if (this.writeable == null || this.writeable.PixelWidth != map.Width || this.writeable.PixelHeight != map.Height)
+                                bool reload = false;
+                                if (writeable == null || writeable.PixelWidth != map.Width || writeable.PixelHeight != map.Height)
                                     reload = true;
-                                map.WriteBitmap(ref this.writeable, reload);
+                                map.WriteBitmap(ref writeable, reload);
                             }
 
                         }
                     }
                 }
 
-                this.Img?.SetValue(Image.SourceProperty, this.writeable);
+                Img?.SetValue(Image.SourceProperty, writeable);
             }
         }
 
@@ -572,14 +568,13 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         /// </summary>
         public string SourcePath
         {
-            get => this.GetValue(SourcePathProperty) + "";
+            get => GetValue(SourcePathProperty) + "";
             set
             {
-                this.SetValue(SourcePathProperty, value);
+                SetValue(SourcePathProperty, value);
 
             }
         }
-
 
         /// <summary>
         /// Bitmap图片
@@ -588,17 +583,15 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         {
             get
             {
-                if (this.Img == null)
+                if (Img == null)
                     return null;
-                var source = this.GetValue(BitmapProperty);
-                if (source == null)
-                    return null;
-                return (System.Drawing.Bitmap)source;
+                object source = GetValue(BitmapProperty);
+                return source == null ? null : (System.Drawing.Bitmap)source;
             }
             set
             {
 
-                this.SetValue(BitmapProperty, value);
+                SetValue(BitmapProperty, value);
             }
         }
 
@@ -608,8 +601,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         [Description("右侧工具条是否展开"), Category("自定义属性")]
         public bool IsToolExpanderExpanded
         {
-            get => (bool)this.GetValue(IsToolExpanderExpandedProperty);
-            set => this.SetValue(IsToolExpanderExpandedProperty, value);
+            get => (bool)GetValue(IsToolExpanderExpandedProperty);
+            set => SetValue(IsToolExpanderExpandedProperty, value);
         }
 
         /// <summary>
@@ -618,8 +611,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         [Description("取消截图按钮样式"), Category("自定义属性")]
         public Style MenuCancelStyle
         {
-            get => (Style)this.GetValue(MenuCancelStyleProperty);
-            set => this.SetValue(MenuCancelStyleProperty, value);
+            get => (Style)GetValue(MenuCancelStyleProperty);
+            set => SetValue(MenuCancelStyleProperty, value);
         }
 
         /// <summary>
@@ -628,15 +621,15 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         [Description("确定截图按钮样式"), Category("自定义属性")]
         public Style MenuOkStyle
         {
-            get => (Style)this.GetValue(MenuOkStyleProperty);
-            set => this.SetValue(MenuOkStyleProperty, value);
+            get => (Style)GetValue(MenuOkStyleProperty);
+            set => SetValue(MenuOkStyleProperty, value);
         }
 
         /// <summary>
         /// 鼠标在图像上移动时当前的像素点位置
         /// </summary>
         [Description("鼠标在图像上移动时当前的像素点位置"), Category("自定义属性")]
-        public Point MouseOverPoint => this.Img.IsMouseOver ? this.GetCurrentPixelPoint(new MouseEventArgs(Mouse.PrimaryDevice, 1)) : new Point();
+        public Point MouseOverPoint => Img.IsMouseOver ? GetCurrentPixelPoint(new MouseEventArgs(Mouse.PrimaryDevice, 1)) : new Point();
 
         /// <summary>
         /// 左侧滚动条样式
@@ -644,8 +637,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         [Description("左侧滚动条样式"), Category("自定义属性")]
         public Style SliderStyle
         {
-            get => (Style)this.GetValue(SliderStyleProperty);
-            set => this.SetValue(SliderStyleProperty, value);
+            get => (Style)GetValue(SliderStyleProperty);
+            set => SetValue(SliderStyleProperty, value);
         }
 
         /// <summary>
@@ -654,8 +647,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         [Description("缩放条的显示状态"), Category("自定义属性")]
         public Visibility SliderVisibility
         {
-            get => (Visibility)this.GetValue(SliderVisibilityProperty);
-            set { this.SetValue(SliderVisibilityProperty, value); }
+            get => (Visibility)GetValue(SliderVisibilityProperty);
+            set { SetValue(SliderVisibilityProperty, value); }
         }
 
         /// <summary>
@@ -664,8 +657,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         [Description("右侧工具条截图按钮样式"), Category("自定义属性")]
         public Style ToolCutButtonStyle
         {
-            get => (Style)this.GetValue(ToolCutButtonStyleProperty);
-            set => this.SetValue(ToolCutButtonStyleProperty, value);
+            get => (Style)GetValue(ToolCutButtonStyleProperty);
+            set => SetValue(ToolCutButtonStyleProperty, value);
         }
 
         /// <summary>
@@ -674,8 +667,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         [Description("右侧工具条样式"), Category("自定义属性")]
         public Style ToolExpanderStyle
         {
-            get => (Style)this.GetValue(ToolExpanderStyleProperty);
-            set => this.SetValue(ToolExpanderStyleProperty, value);
+            get => (Style)GetValue(ToolExpanderStyleProperty);
+            set => SetValue(ToolExpanderStyleProperty, value);
         }
 
         /// <summary>
@@ -684,8 +677,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         [Description("右侧工具条显示状态"), Category("自定义属性")]
         public Visibility ToolExpanderVisibility
         {
-            get => (Visibility)this.GetValue(ToolExpanderVisibilityProperty);
-            set => this.SetValue(ToolExpanderVisibilityProperty, value);
+            get => (Visibility)GetValue(ToolExpanderVisibilityProperty);
+            set => SetValue(ToolExpanderVisibilityProperty, value);
         }
 
         #endregion Public 属性
@@ -696,14 +689,14 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         {
             get
             {
-                var ims = (BitmapSource)this.Img.Source;
+                BitmapSource ims = (BitmapSource)Img.Source;
                 if (ims == null)
                 {
                     return new PixelTrans();
                 }
-                this.w = ims.PixelWidth / this.Img.ActualWidth;
-                this.h = ims.PixelHeight / this.Img.ActualHeight;
-                return new PixelTrans(this.w, this.h);
+                w = ims.PixelWidth / Img.ActualWidth;
+                h = ims.PixelHeight / Img.ActualHeight;
+                return new PixelTrans(w, h);
             }
         }
 

@@ -5,7 +5,7 @@ using GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Models;
 
 namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Common
 {
-    partial class PathExecute
+    public partial class PathExecute
     {
 
         private void CreateSourceLeftPoints(ConnectorInfo sourceInfo, ConnectorInfo sinkInfo, List<Point> points)
@@ -13,16 +13,16 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Common
             switch (sinkInfo.Direction)
             {
                 case Direction.Top:
-                    this.CreateLeftTopPoints(sourceInfo, sinkInfo, points);
+                    CreateLeftTopPoints(sourceInfo, sinkInfo, points);
                     break;
                 case Direction.Bottom:
-                    this.CreateLeftBottomPoints(sourceInfo, sinkInfo, points);
+                    CreateLeftBottomPoints(sourceInfo, sinkInfo, points);
                     break;
                 case Direction.Right:
-                    this.CreateLeftRightPoints(sourceInfo, sinkInfo, points);
+                    CreateLeftRightPoints(sourceInfo, sinkInfo, points);
                     break;
                 case Direction.Left:
-                    this.CreateLeftLeftPoints(sourceInfo, sinkInfo, points);
+                    CreateLeftLeftPoints(sourceInfo, sinkInfo, points);
                     break;
             }
         }
@@ -35,14 +35,14 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Common
                 if (sourceInfo.Point.X > sinkInfo.Point.X)
                 {
                     //目标在左
-                    var x = sinkInfo.Point.X - sinkInfo.Size.Width / 2 - 5;
+                    double x = sinkInfo.Point.X - sinkInfo.Size.Width / 2 - 5;
                     points.Add(new Point(x, sourceInfo.Point.Y));
                     points.Add(new Point(x, sinkInfo.Point.Y));
                 }
                 else
                 {
                     //目标在右
-                    var x = sourceInfo.Point.X;
+                    double x = sourceInfo.Point.X;
                     points.Add(new Point(x, sourceInfo.Point.Y));
                     points.Add(new Point(x, sinkInfo.Point.Y));
                 }
@@ -53,14 +53,14 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Common
                 if (sourceInfo.Point.X > sinkInfo.Point.X)
                 {
                     //目标在左
-                    var x = sinkInfo.Point.X;
+                    double x = sinkInfo.Point.X;
                     points.Add(new Point(x, sourceInfo.Point.Y));
                     points.Add(new Point(x, sinkInfo.Point.Y));
                 }
                 else
                 {
                     //目标在右
-                    var y = sourceInfo.Point.Y - sourceInfo.Size.Height / 2 - 5;
+                    double y = sourceInfo.Point.Y - sourceInfo.Size.Height / 2 - 5;
                     points.Add(new Point(sourceInfo.Point.X, y));
                     points.Add(new Point(sinkInfo.Point.X, y));
                 }
@@ -79,7 +79,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Common
                 else
                 {
                     //目标在右
-                    var y = sourceInfo.Point.Y + sourceInfo.Size.Height / 2 + 5;
+                    double y = sourceInfo.Point.Y + sourceInfo.Size.Height / 2 + 5;
                     points.Add(new Point(sourceInfo.Point.X, y));
                     points.Add(new Point(sinkInfo.Point.X, y));
                 }
@@ -90,14 +90,14 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Common
                 if (sourceInfo.Point.X > sinkInfo.Point.X)
                 {
                     //目标在左
-                    var x = sinkInfo.Point.X;
+                    double x = sinkInfo.Point.X;
                     points.Add(new Point(x, sourceInfo.Point.Y));
                     points.Add(new Point(x, sinkInfo.Point.Y));
                 }
                 else
                 {
                     //目标在右
-                    var y = sourceInfo.Point.Y - sourceInfo.Size.Height / 2 - 5;
+                    double y = sourceInfo.Point.Y - sourceInfo.Size.Height / 2 - 5;
                     points.Add(new Point(sourceInfo.Point.X, y));
                     points.Add(new Point(sinkInfo.Point.X, y));
                 }
@@ -125,14 +125,14 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Common
                 if (sourceInfo.Point.X > sinkInfo.Point.X)
                 {
                     //目标在左
-                    var x = sinkInfo.Point.X;
+                    double x = sinkInfo.Point.X;
                     points.Add(new Point(x, sourceInfo.Point.Y));
                     points.Add(new Point(x, sinkInfo.Point.Y));
                 }
                 else
                 {
                     //目标在右
-                    var x = sourceInfo.Point.X;
+                    double x = sourceInfo.Point.X;
                     points.Add(new Point(x, sourceInfo.Point.Y));
                     points.Add(new Point(x, sinkInfo.Point.Y));
                 }
@@ -161,14 +161,14 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Common
                 if (sourceInfo.Point.X > sinkInfo.Point.X)
                 {
                     //目标在右
-                    var x = sinkInfo.Point.X - sinkInfo.Size.Width / 2 - 5;
+                    double x = sinkInfo.Point.X - sinkInfo.Size.Width / 2 - 5;
                     points.Add(new Point(x, sourceInfo.Point.Y));
                     points.Add(new Point(x, sinkInfo.Point.Y));
                 }
                 else
                 {
                     //目标在左
-                    var x = sourceInfo.Point.X;
+                    double x = sourceInfo.Point.X;
                     points.Add(new Point(x, sourceInfo.Point.Y));
                     points.Add(new Point(x, sinkInfo.Point.Y));
                 }

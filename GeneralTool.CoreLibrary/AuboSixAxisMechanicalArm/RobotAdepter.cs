@@ -10,18 +10,10 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
     /// </summary>
     public partial class RobotAdepter
     {
-        private string error;
-
         /// <summary>
         /// 错误消息
         /// </summary>
-        public string ErroMsg
-        {
-            get
-            {
-                return error;
-            }
-        }
+        public string ErroMsg { get; private set; }
 
         private REALTIME_ROADPOINT_CALLBACK RobotPosCallBack;
         private REALTIME_JOINT_STATUS_CALLBACK JointStatusCallBack;
@@ -60,21 +52,21 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <returns></returns>
         public bool Link(string ip, int port)
         {
-            this.IP = ip;
-            this.Port = port;
+            IP = ip;
+            Port = port;
             if (rs_initialize() == Util.RSERR_SUCC)
             {
                 int reCode = rs_create_context(ref Rshd);
                 if (reCode != Util.RSERR_SUCC)
                 {
-                    this.error = MetaData.GetRetunDescription<RetunCode>(reCode);
+                    ErroMsg = MetaData.GetRetunDescription<RetunCode>(reCode);
                     return false;
                 }
 
-                reCode = rs_login(this.Rshd, ip, port);
+                reCode = rs_login(Rshd, ip, port);
                 if (reCode != Util.RSERR_SUCC)
                 {
-                    this.error = MetaData.GetRetunDescription<LoginCode>(reCode);
+                    ErroMsg = MetaData.GetRetunDescription<LoginCode>(reCode);
                     return false;
                 }
 
@@ -85,12 +77,10 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
                 RobotPosCallBack = new REALTIME_ROADPOINT_CALLBACK(CurrentPositionCallback);
                 rs_setcallback_realtime_roadpoint(Rshd, RobotPosCallBack, IntPtr.Zero);
 
-
                 //机械臂事件回调
 
                 RobotEventCallbackPtr = new ROBOT_EVENT_CALLBACK(RobotEventCallback);
                 rs_setcallback_robot_event(Rshd, RobotEventCallbackPtr, IntPtr.Zero);
-
 
                 //设置是否允许实时关节角状态信息推送
                 _ = rs_enable_push_realtime_joint_status(Rshd, true);
@@ -104,11 +94,9 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
             return false;
         }
 
-
-
         private void JointStatusCallBackMethod(ref MetaData.JointStatus jointStatus, int size, IntPtr arg)
         {
-            this.JointStatusEventHandler?.Invoke(this, new JointStatusArgs(jointStatus));
+            JointStatusEventHandler?.Invoke(this, new JointStatusArgs(jointStatus));
         }
 
         /// <summary>
@@ -116,8 +104,8 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// </summary>
         public void Disctonnected()
         {
-            _ = rs_logout(this.Rshd);
-            _ = rs_destory_context(this.Rshd);
+            _ = rs_logout(Rshd);
+            _ = rs_destory_context(Rshd);
             _ = rs_uninitialize();
         }
 
@@ -129,19 +117,17 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
             _ = rs_uninitialize();
         }
 
-
         //回调函数
-        void CurrentPositionCallback(ref MetaData.WayPoint_S waypoint, IntPtr arg)
+        private void CurrentPositionCallback(ref MetaData.WayPoint_S waypoint, IntPtr arg)
         {
-            this.WayPointsEvent?.Invoke(this, new WayPointsArgs(waypoint));
+            WayPointsEvent?.Invoke(this, new WayPointsArgs(waypoint));
         }
 
-        void RobotEventCallback(ref MetaData.RobotEventInfo rs_event, IntPtr arg)
+        private void RobotEventCallback(ref MetaData.RobotEventInfo rs_event, IntPtr arg)
         {
-            var eventHandler = new RobotEventHandler((RobotEventType)rs_event.eventType, rs_event.eventCode, Marshal.PtrToStringAnsi(rs_event.eventContent));
-            this.RobotEventHandler?.Invoke(this, eventHandler);
+            RobotEventHandler eventHandler = new RobotEventHandler((RobotEventType)rs_event.eventType, rs_event.eventCode, Marshal.PtrToStringAnsi(rs_event.eventContent));
+            RobotEventHandler?.Invoke(this, eventHandler);
         }
-
 
     }
 }

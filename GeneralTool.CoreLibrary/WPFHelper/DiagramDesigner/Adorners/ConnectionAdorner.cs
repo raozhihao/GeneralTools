@@ -35,13 +35,13 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Adorners
             {
                 LineJoin = PenLineJoin.Round
             };
-            this.Cursor = Cursors.Cross;
-            this.IsHitTestVisible = true;
+            Cursor = Cursors.Cross;
+            IsHitTestVisible = true;
 
-            this.SourceItem = adornedElement as BlockItem;
-            this.SourceThumb = connectorThumb;
+            SourceItem = adornedElement as BlockItem;
+            SourceThumb = connectorThumb;
 
-            this.Start = startPoint;
+            Start = startPoint;
         }
 
         /// <inheritdoc/>
@@ -55,20 +55,19 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Adorners
         /// </summary>
         public ConnectorThumb DestThumb { get; set; }
 
-
         private Point? start;
         /// <summary>
         /// 
         /// </summary>
         public Point? Start
         {
-            get => this.start;
+            get => start;
             set
             {
-                if (this.start == value)
+                if (start == value)
                     return;
-                this.start = value;
-                this.InvalidateVisual();
+                start = value;
+                InvalidateVisual();
             }
         }
 
@@ -78,18 +77,18 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Adorners
         /// </summary>
         public Point? End
         {
-            get => this.end;
+            get => end;
             set
             {
                 if (end == value)
                     return;
-                this.end = value;
+                end = value;
 
-                this.InvalidateVisual();
+                InvalidateVisual();
             }
         }
 
-        readonly StreamGeometry streamGeometry = new StreamGeometry();
+        private readonly StreamGeometry streamGeometry = new StreamGeometry();
         /// <summary>
         /// 
         /// </summary>
@@ -97,23 +96,23 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Adorners
         {
             base.OnRender(drawingContext);
             //
-            if (this.Start == null || this.End == null) return;
+            if (Start == null || End == null) return;
 
             UpdateArrow();
             //UpdatePolygon();
             using (StreamGeometryContext geometryContext = streamGeometry.Open())
             {
-                geometryContext.BeginFigure(this.Start.Value, true, false);
+                geometryContext.BeginFigure(Start.Value, true, false);
 
-                geometryContext.PolyLineTo(this.Points, true, false);
+                geometryContext.PolyLineTo(Points, true, false);
 
             }
 
-            drawingContext.DrawGeometry(null, this.drawingPen, streamGeometry);
+            drawingContext.DrawGeometry(null, drawingPen, streamGeometry);
             if (DestThumb != null)
             {
                 //画个圈
-                drawingContext.DrawEllipse(Brushes.Red, this.drawingPen, this.End.Value, 5, 5);
+                drawingContext.DrawEllipse(Brushes.Red, drawingPen, End.Value, 5, 5);
             }
         }
 
@@ -123,10 +122,10 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Adorners
         /// </summary>
         public void UpdateArrow(double arrowAngle = Math.PI / 12, double arrowLength = 20)
         {
-            double x1 = this.Start.Value.X;
-            double y1 = this.Start.Value.Y;
-            double x2 = this.End.Value.X;
-            double y2 = this.End.Value.Y;
+            double x1 = Start.Value.X;
+            double y1 = Start.Value.Y;
+            double x2 = End.Value.X;
+            double y2 = End.Value.Y;
             Point point2 = new Point(x2, y2);     // 箭头终点
             double angleOri = Math.Atan((y2 - y1) / (x2 - x1));      // 起始点线段夹角
             double angleDown = angleOri - arrowAngle;   // 箭头扩张角度
@@ -140,7 +139,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Adorners
             Point point4 = new Point(x4, y4);   // 箭头第四个点
             Point[] points = new Point[] { point2, point3, point4, point2 };   // 多边形，起点 --> 终点 --> 第三点 --> 第四点 --> 终点
 
-            this.Points = new PointCollection(points);
+            Points = new PointCollection(points);
         }
     }
 }

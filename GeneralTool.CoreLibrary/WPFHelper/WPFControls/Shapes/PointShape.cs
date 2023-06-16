@@ -15,13 +15,12 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes
         /// </summary>
         /// <param name="centerPoint">中心点</param>
         /// <param name="radius">半径</param>
-        public PointShape( Point centerPoint, double radius) 
+        public PointShape(Point centerPoint, double radius)
         {
             this.centerPoint = centerPoint;
-            this.Raidus = radius;
-            this.PixelPoints.Add(centerPoint);
+            Raidus = radius;
+            PixelPoints.Add(centerPoint);
         }
-
 
         private Point centerPoint;
         /// <summary>
@@ -29,16 +28,15 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes
         /// </summary>
         public Point CenterImgPixelPoint
         {
-            get => this.centerPoint;
+            get => centerPoint;
             set
             {
                 //更新坐标
-                (this.Path.Data as EllipseGeometry).Center = value;
-                this.centerPoint = value;
-                this.PixelPoints[0] = centerPoint;
+                (Path.Data as EllipseGeometry).Center = value;
+                centerPoint = value;
+                PixelPoints[0] = centerPoint;
             }
         }
-
 
         /// <summary>
         /// 半径
@@ -48,37 +46,36 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes
         /// <inheritdoc/>
         public override void CreateShape()
         {
-            if (this.PixelPoints.Count > 0)
-                this.centerPoint = this.PixelPoints[0];
+            if (PixelPoints.Count > 0)
+                this.centerPoint = PixelPoints[0];
             //转换坐标
-            var centerPoint = this.ImageView.TranslateToCanvasPoint(this.centerPoint);
+            Point centerPoint = ImageView.TranslateToCanvasPoint(this.centerPoint);
             //生成
-            var ellipseGeometry = new EllipseGeometry(centerPoint, this.Raidus, this.Raidus);
+            EllipseGeometry ellipseGeometry = new EllipseGeometry(centerPoint, Raidus, Raidus);
 
-            this.Path.Data = ellipseGeometry;
+            Path.Data = ellipseGeometry;
         }
 
         /// <inheritdoc/>
         public override void UpdateShape(List<Point> canvasPoints)
         {
-            var p = canvasPoints[0];
-            (this.Path.Data as EllipseGeometry).Center = p;
-            this.centerPoint = this.ImageView.TranslateToPixelPoint(p);
+            Point p = canvasPoints[0];
+            (Path.Data as EllipseGeometry).Center = p;
+            centerPoint = ImageView.TranslateToPixelPoint(p);
         }
 
         /// <inheritdoc/>
         public override void UpdateScaleSize(double imageScale)
         {
-            if (this.Path.Data is EllipseGeometry e)
+            if (Path.Data is EllipseGeometry e)
             {
                 //更新大小
-                var scale = this.Raidus / imageScale;
+                double scale = Raidus / imageScale;
                 e.RadiusX = e.RadiusY
                     = scale;
 
             }
         }
-
 
     }
 }

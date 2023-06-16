@@ -20,19 +20,19 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
         {
             if (value is DoTaskParameterItem task)
             {
-                var builder = new StringBuilder();
-                builder.Append("{\"Url\":\"" + task.Url + "\",\"Paramters\":");
+                StringBuilder builder = new StringBuilder();
+                _ = builder.Append("{\"Url\":\"" + task.Url + "\",\"Paramters\":");
 
-                var list = task.Paramters;
+                System.Collections.ObjectModel.ObservableCollection<ParameterItem> list = task.Paramters;
                 if (list.Count == 0)
-                    builder.Append("null}");
+                    _ = builder.Append("null}");
                 else
                 {
-                    var listStr = list.Select(p =>
+                    System.Collections.Generic.IEnumerable<string> listStr = list.Select(p =>
                     {
                         return string.Format("\"{0}\":\"{1}\"", p.ParameterName, p.Value);
                     });
-                    builder.Append("{" + string.Join(",", listStr) + "}}");
+                    _ = builder.Append("{" + string.Join(",", listStr) + "}}");
                 }
                 return builder.ToString();
             }

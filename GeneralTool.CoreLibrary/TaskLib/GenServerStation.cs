@@ -23,11 +23,11 @@ namespace GeneralTool.CoreLibrary.TaskLib
     {
         private readonly SocketServer<T> server;
         /// <summary>
-        /// 返回消息
+        /// 返回消息,该事件需要设置 <see cref="ExecuteType"/> 为Buffer
         /// </summary>
         public event EventHandler<ReceiveArg> ReceiveEvent;
         /// <summary>
-        /// 返回消息
+        /// 返回消息,该事件需要设置 <see cref="ExecuteType"/> RequestInfo
         /// </summary>
         public event EventHandler<GenRequestRoute> RequestInfoEvent;
 
@@ -48,92 +48,92 @@ namespace GeneralTool.CoreLibrary.TaskLib
             if (jsonConvert == null)
                 jsonConvert = new BaseJsonCovert();
 
-            this.Log = log;
-            this.JsonConvert = jsonConvert;
-            this.server = new SocketServer<T>(log);
+            Log = log;
+            JsonConvert = jsonConvert;
+            server = new SocketServer<T>(log);
             if (package == null)
             {
                 package = new Func<IPackage<T>>(() => new NoPackage<T>());
             }
-            this.server.Package = package;
-            this.server.ClientConnctedEvent += Server_ClientConnctedEvent;
-            this.server.DisconnectEvent += Server_DisconnectEvent;
-            this.server.ErrorEvent += Server_ErrorEvent;
-            this.server.ReceiveEvent += Server_ReceiveEvent;
+            server.PackageFunc = package;
+            server.ClientConnctedEvent += Server_ClientConnctedEvent;
+            server.DisconnectEvent += Server_DisconnectEvent;
+            server.ErrorEvent += Server_ErrorEvent;
+            server.ReceiveEvent += Server_ReceiveEvent;
         }
 
         private void Server_ReceiveEvent(object sender, ReceiveArg e)
         {
-            if (this.ExecuteType == GenExecuteType.Buffer)
+            if (ExecuteType == GenExecuteType.Buffer)
             {
-                this.Log.Debug("直接将buffer交由开发人员处理");
-                this.ReceiveEvent?.Invoke(sender, e);
+                Log.Debug("直接将buffer交由开发人员处理");
+                ReceiveEvent?.Invoke(sender, e);
             }
             else
             {
-                var serverResponse = new ServerResponse
+                ServerResponse serverResponse = new ServerResponse
                 {
                     StateCode = RequestStateCode.OK
                 };
 
-                var receiveMsg = Encoding.UTF8.GetString(e.PackBuffer.ToArray());
+                string receiveMsg = Encoding.UTF8.GetString(e.PackBuffer.ToArray());
                 ServerRequest serverRequest = null;
                 try
                 {
-                    serverRequest = this.JsonConvert.DeserializeObject<ServerRequest>(receiveMsg);
-                    this.Log?.Debug($"获取到客户端调用:{serverRequest.Url}");
+                    serverRequest = JsonConvert.DeserializeObject<ServerRequest>(receiveMsg);
+                    Log?.Debug($"获取到客户端调用:{serverRequest.Url}");
                 }
                 catch (Exception ex)
                 {
-                    this.Log?.Fail($"客户端无法反序列化:{ex},传入为:{receiveMsg}");
+                    Log?.Fail($"客户端无法反序列化:{ex},传入为:{receiveMsg}");
                     serverResponse.StateCode = RequestStateCode.UrlError;
                     serverResponse.RequestSuccess = false;
                     serverResponse.ErroMsg = ex.GetInnerExceptionMessage();
-                    this.server.Send(this.JsonConvert.SerializeObject(serverResponse), e.Client);
+                    _ = server.Send(JsonConvert.SerializeObject(serverResponse), e.Client);
                     return;
                 }
 
-                if (this.RequestInfoEvent != null && this.ExecuteType == GenExecuteType.RequestInfo)
+                if (RequestInfoEvent != null && ExecuteType == GenExecuteType.RequestInfo)
                 {
                     //给定必要信息后由调用人员自行处理
                     try
                     {
-                        var route = this.RequestRoute[serverRequest.Url];
-                        this.Log.Debug($"由开发人员开始执行方法:{serverRequest.Url}");
-                        this.RequestInfoEvent?.Invoke(sender, new GenRequestRoute() { AddressItem = route, SendToClinet = this.SendToClient, Client = e.Client, ServerRequest = serverRequest });
+                        RequestAddressItem route = RequestRoute[serverRequest.Url];
+                        Log.Debug($"由开发人员开始执行方法:{serverRequest.Url}");
+                        RequestInfoEvent?.Invoke(sender, new GenRequestRoute() { AddressItem = route, SendToClinet = SendToClient, Client = e.Client, ServerRequest = serverRequest });
                     }
                     catch (Exception ex)
                     {
-                        this.Log?.Fail($"客户端调用服务方法发生未知错误:{ex}");
+                        Log?.Fail($"客户端调用服务方法发生未知错误:{ex}");
                         serverResponse.StateCode = RequestStateCode.UnknowError;
                         serverResponse.RequestSuccess = false;
                         serverResponse.ErroMsg = ex.GetInnerExceptionMessage();
-                        this.server.Send(this.JsonConvert.SerializeObject(serverResponse), e.Client);
+                        _ = server.Send(JsonConvert.SerializeObject(serverResponse), e.Client);
                     }
                     return;
                 }
-                else if (this.ExecuteType == GenExecuteType.Auto)
+                else if (ExecuteType == GenExecuteType.Auto)
                 {
                     //由本类自行处理
                     try
                     {
-                        this.Log.Debug($"由底层开始执行方法:{serverRequest.Url}");
-                        serverResponse = this.GetServerResponse(serverRequest, this.JsonConvert);
+                        Log.Debug($"由底层开始执行方法:{serverRequest.Url}");
+                        serverResponse = GetServerResponse(serverRequest, JsonConvert);
                     }
                     catch (Exception ex6)
                     {
-                        this.Log?.Fail($"客户端调用服务方法发生未知错误:{ex6}");
+                        Log?.Fail($"客户端调用服务方法发生未知错误:{ex6}");
                         serverResponse.StateCode = RequestStateCode.UnknowError;
                         serverResponse.RequestSuccess = false;
                         serverResponse.ErroMsg = ex6.GetInnerExceptionMessage();
                     }
                     finally
                     {
-                        this.Log.Debug($"底层执行方法:{serverRequest.Url} 完成,准备发送给客户端");
+                        Log.Debug($"底层执行方法:{serverRequest.Url} 完成,准备发送给客户端");
                         string result = "";
                         try
                         {
-                            result = this.JsonConvert.SerializeObject(serverResponse);
+                            result = JsonConvert.SerializeObject(serverResponse);
                         }
                         catch (Exception ex)
                         {
@@ -144,9 +144,9 @@ namespace GeneralTool.CoreLibrary.TaskLib
                                 ErroMsg = "方法调用成功,但返回时出错:" + result
                             };
 
-                            result = this.JsonConvert.SerializeObject(serverResponse);
+                            result = JsonConvert.SerializeObject(serverResponse);
                         }
-                        this.server.Send(result, e.Client);
+                        _ = server.Send(result, e.Client);
                     }
                 }
 
@@ -156,14 +156,14 @@ namespace GeneralTool.CoreLibrary.TaskLib
 
         private void SendToClient(byte[] buffer, Socket client)
         {
-            this.server.Send(buffer, client);
+            _ = server.Send(buffer, client);
         }
 
         private void Server_ErrorEvent(object sender, SocketErrorArg e)
         {
             try
             {
-                this.Log?.Fail($"{e.Client.RemoteEndPoint} Error : {e.Exception}");
+                Log?.Fail($"{e.Client.RemoteEndPoint} Error : {e.Exception}");
             }
             catch
             {
@@ -175,7 +175,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
         {
             try
             {
-                this.Log?.Debug($"{e.Client.RemoteEndPoint} Disconnect");
+                Log?.Debug($"{e.Client.RemoteEndPoint} Disconnect");
             }
             catch
             {
@@ -187,7 +187,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
         {
             try
             {
-                this.Log?.Debug($"{e.Client.RemoteEndPoint} Connect");
+                Log?.Debug($"{e.Client.RemoteEndPoint} Connect");
             }
             catch
             {
@@ -195,13 +195,12 @@ namespace GeneralTool.CoreLibrary.TaskLib
             }
         }
 
-
         /// <inheritdoc/>
         public override bool Close()
         {
             try
             {
-                this.server?.Close();
+                server?.Close();
             }
             catch
             {
@@ -209,7 +208,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
             }
             try
             {
-                this.server.Dispose();
+                server.Dispose();
             }
             catch (Exception)
             {
@@ -223,12 +222,12 @@ namespace GeneralTool.CoreLibrary.TaskLib
         {
             try
             {
-                this.server.Startup(IPAddress.Parse(ip), port);
+                server.Startup(IPAddress.Parse(ip), port);
                 return true;
             }
             catch (Exception ex)
             {
-                this.Log?.Fail($"Server startup error : {ex}");
+                Log?.Fail($"Server startup error : {ex}");
                 return false;
             }
 

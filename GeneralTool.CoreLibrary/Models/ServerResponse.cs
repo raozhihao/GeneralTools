@@ -13,7 +13,6 @@ namespace GeneralTool.CoreLibrary.Models
     {
         #region Public 属性
 
-
         /// <summary>
         /// </summary>
         public string ErroMsg { get; set; }
@@ -49,13 +48,13 @@ namespace GeneralTool.CoreLibrary.Models
         /// <returns></returns>
         public object ToResult(Type type)
         {
-            return new StringConverter().Convert(this.ResultString, type, null, null);
+            return new StringConverter().Convert(ResultString, type, null, null);
         }
 
         /// <summary>
         /// 将结果转换为指定类型
         /// </summary>
-        public T ToResult<T>() => (T)new StringConverter().Convert(this.ResultString, typeof(T), null, null);
+        public T ToResult<T>() => (T)new StringConverter().Convert(ResultString, typeof(T), null, null);
 
         /// <summary>
         /// </summary>

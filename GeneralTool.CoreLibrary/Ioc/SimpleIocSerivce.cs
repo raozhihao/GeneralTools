@@ -29,7 +29,7 @@ namespace GeneralTool.CoreLibrary.Ioc
         {
             get
             {
-                return from i in this.typeDics select i.Value;
+                return from i in typeDics select i.Value;
             }
         }
 
@@ -49,33 +49,33 @@ namespace GeneralTool.CoreLibrary.Ioc
         public void Start()
         {
             //赋值
-            foreach (var item in typeDics)
+            foreach (KeyValuePair<Type, DefinedClass> item in typeDics)
             {
-                var defindClass = item.Value;
+                DefinedClass defindClass = item.Value;
                 //获取所有属性
-                var pros = item.Key.GetProperties();
-                foreach (var pro in pros)
+                PropertyInfo[] pros = item.Key.GetProperties();
+                foreach (PropertyInfo pro in pros)
                 {
-                    var propertyType = pro.PropertyType;
+                    Type propertyType = pro.PropertyType;
                     //查看当前属性的类型是否已注册
-                    if (this.typeDics.ContainsKey(propertyType))
+                    if (typeDics.ContainsKey(propertyType))
                     {
                         //存在,则进行赋值
                         if (pro.SetMethod != null)
                         {
-                            var obj = this.typeDics[propertyType].Instance;
+                            object obj = typeDics[propertyType].Instance;
                             pro.SetValue(defindClass.Instance, obj);
                         }
                     }
                     else if (propertyType.IsInterface)
                     {
                         //如果是接口,则找到与其一致的
-                        if (this.interfaceDics.ContainsKey(propertyType))
+                        if (interfaceDics.ContainsKey(propertyType))
                         {
                             //存在,则进行赋值
                             if (pro.SetMethod != null)
                             {
-                                var obj = this.interfaceDics[propertyType].Instance;
+                                object obj = interfaceDics[propertyType].Instance;
                                 pro.SetValue(defindClass.Instance, obj);
                             }
                         }
@@ -84,37 +84,37 @@ namespace GeneralTool.CoreLibrary.Ioc
             }
 
             //调用构造函数
-            foreach (var item in typeDics)
+            foreach (KeyValuePair<Type, DefinedClass> item in typeDics)
             {
-                var defindClass = item.Value;
-                var attrs = defindClass.TType.GetCustomAttribute<InjectTypeAttribute>();
+                DefinedClass defindClass = item.Value;
+                InjectTypeAttribute attrs = defindClass.TType.GetCustomAttribute<InjectTypeAttribute>();
                 //进行构造函数调用
                 if (!item.Value.IsUninitializedObject)
                     continue;//非实例对象不用调用
 
-                var type = defindClass.Instance.GetType();
+                Type type = defindClass.Instance.GetType();
                 //没有构造函数的,则查找第一个构造函数
-                var constructors = type.GetConstructors();
+                ConstructorInfo[] constructors = type.GetConstructors();
                 if (constructors.Length == 0)
                     throw new Exception($"类型 : {type} 没有公共的构造函数");
 
                 //直接获取第一个
-                var constructor = constructors[0];
-                var parameters = constructor.GetParameters();
+                ConstructorInfo constructor = constructors[0];
+                ParameterInfo[] parameters = constructor.GetParameters();
 
-                var datas = new object[parameters.Length];
+                object[] datas = new object[parameters.Length];
                 int index = 0;
-                foreach (var pro in parameters)
+                foreach (ParameterInfo pro in parameters)
                 {
-                    var parameterType = pro.ParameterType;
+                    Type parameterType = pro.ParameterType;
                     //查看当前属性的类型是否已注册
-                    if (this.typeDics.ContainsKey(parameterType))
-                        datas[index] = this.typeDics[parameterType].Instance;
+                    if (typeDics.ContainsKey(parameterType))
+                        datas[index] = typeDics[parameterType].Instance;
                     else if (parameterType.IsInterface)
                     {
                         //如果是接口,则找到与其一致的
-                        if (this.interfaceDics.ContainsKey(parameterType))
-                            datas[index] = this.interfaceDics[parameterType].Instance;  //存在,则进行赋值
+                        if (interfaceDics.ContainsKey(parameterType))
+                            datas[index] = interfaceDics[parameterType].Instance;  //存在,则进行赋值
                         else
                             datas[index] = default;
                     }
@@ -122,15 +122,15 @@ namespace GeneralTool.CoreLibrary.Ioc
                         datas[index] = default;
                     index++;
                 }
-                constructor.Invoke(defindClass.Instance, datas);
+                _ = constructor.Invoke(defindClass.Instance, datas);
             }
 
             //调用函数
-            foreach (var item in typeDics)
+            foreach (KeyValuePair<Type, DefinedClass> item in typeDics)
             {
                 if (item.Value.Instance is IInitInterface t)
                     t.Init();
-                item.Value.InitMethod?.Invoke(item.Value.Instance, null);
+                _ = (item.Value.InitMethod?.Invoke(item.Value.Instance, null));
             }
         }
 
@@ -139,7 +139,7 @@ namespace GeneralTool.CoreLibrary.Ioc
         /// </summary>
         /// <param name="assembly">程序集</param>
         /// <param name="checkInjectTypeAttr">是否检查类型上有 InjectType 特性</param>
-        public void Inject(Assembly assembly, bool checkInjectTypeAttr = false) => this.Inject(checkInjectTypeAttr, assembly.ExportedTypes.ToArray());
+        public void Inject(Assembly assembly, bool checkInjectTypeAttr = false) => Inject(checkInjectTypeAttr, assembly.ExportedTypes.ToArray());
 
         /// <summary>
         /// 注册指定的类型集合
@@ -151,19 +151,19 @@ namespace GeneralTool.CoreLibrary.Ioc
             if (types == null)
                 return;
 
-            foreach (var type in types)
+            foreach (Type type in types)
             {
                 //查看是否有Route标记
                 if (checkInjectTypeAttr)
                 {
-                    var attr = type.GetCustomAttribute<InjectTypeAttribute>();
+                    InjectTypeAttribute attr = type.GetCustomAttribute<InjectTypeAttribute>();
                     if (attr == null)
                         continue;
                 }
 
                 try
                 {
-                    this.Inject(type);
+                    Inject(type);
                 }
                 catch (Exception ex)
                 {
@@ -179,9 +179,9 @@ namespace GeneralTool.CoreLibrary.Ioc
         public void Inject(params object[] Instances)
         {
             if (Instances == null) return;
-            foreach (var obj in Instances)
+            foreach (object obj in Instances)
             {
-                this.Inject(obj, null);
+                Inject(obj, null);
             }
         }
 
@@ -191,8 +191,8 @@ namespace GeneralTool.CoreLibrary.Ioc
         /// <typeparam name="T">实例类型</typeparam>
         public void Inject<T>() where T : class
         {
-            var type = typeof(T);
-            this.Inject(type);
+            Type type = typeof(T);
+            Inject(type);
         }
 
         /// <summary>
@@ -202,8 +202,8 @@ namespace GeneralTool.CoreLibrary.Ioc
         /// <param name="methodName"></param>
         public void Inject(Type type, string methodName = null)
         {
-            var obj = FormatterServices.GetUninitializedObject(type);
-            this.Inject(obj, true, methodName);
+            object obj = FormatterServices.GetUninitializedObject(type);
+            Inject(obj, true, methodName);
         }
 
         /// <summary>
@@ -211,7 +211,7 @@ namespace GeneralTool.CoreLibrary.Ioc
         /// </summary>
         /// <param name="obj">实例</param>
         /// <param name="methodName">需要调用的方法名称</param>
-        public void Inject(object obj, string methodName = null) => this.Inject(obj, false, methodName);
+        public void Inject(object obj, string methodName = null) => Inject(obj, false, methodName);
 
         /// <summary>
         /// 注册类型
@@ -219,7 +219,7 @@ namespace GeneralTool.CoreLibrary.Ioc
         /// <param name="obj">实例</param>
         /// <param name="isUninitializedObject"></param>
         /// <param name="methodName">需要调用的方法名称</param>
-        private void Inject(object obj, bool isUninitializedObject = false, string methodName = null) => this.Inject(null, obj, isUninitializedObject, methodName);
+        private void Inject(object obj, bool isUninitializedObject = false, string methodName = null) => Inject(null, obj, isUninitializedObject, methodName);
 
         /// <summary>
         /// 注册类型
@@ -229,8 +229,8 @@ namespace GeneralTool.CoreLibrary.Ioc
         /// <param name="methodName">需要调用的方法名称</param>
         public void Inject<TInterface>(object instance, string methodName = null) where TInterface : class
         {
-            var intefaceType = typeof(TInterface);
-            this.Inject(intefaceType, instance, false, methodName);
+            Type intefaceType = typeof(TInterface);
+            Inject(intefaceType, instance, false, methodName);
         }
 
         /// <summary>
@@ -242,7 +242,7 @@ namespace GeneralTool.CoreLibrary.Ioc
         /// <param name="methodName">需要调用的方法名称</param>
         private void Inject(Type intefaceType, object instance, bool isUninitializedObject, string methodName = null)
         {
-            var type = instance.GetType();
+            Type type = instance.GetType();
             if (intefaceType != null)
             {
                 //判断是否为接口
@@ -259,18 +259,18 @@ namespace GeneralTool.CoreLibrary.Ioc
             MethodInfo method = null;
             if (!string.IsNullOrWhiteSpace(methodName))
                 method = type.GetMethod(methodName);
-            var defined = new DefinedClass() { Instance = instance, InterfaceType = intefaceType, InitMethod = method, TType = type, IsUninitializedObject = isUninitializedObject };
-            if (!this.typeDics.ContainsKey(type))
+            DefinedClass defined = new DefinedClass() { Instance = instance, InterfaceType = intefaceType, InitMethod = method, TType = type, IsUninitializedObject = isUninitializedObject };
+            if (!typeDics.ContainsKey(type))
                 typeDics.Add(type, defined);
             else
                 typeDics[type] = defined;
 
             if (intefaceType != null)
             {
-                if (!this.interfaceDics.ContainsKey(intefaceType))
-                    this.interfaceDics.Add(intefaceType, defined);
+                if (!interfaceDics.ContainsKey(intefaceType))
+                    interfaceDics.Add(intefaceType, defined);
                 else
-                    this.interfaceDics[intefaceType] = defined;
+                    interfaceDics[intefaceType] = defined;
             }
 
         }
@@ -283,8 +283,8 @@ namespace GeneralTool.CoreLibrary.Ioc
         /// <param name="methodName">调用方法</param>
         public void Inject(Type intefaceType, Type type, string methodName = null)
         {
-            var instance = FormatterServices.GetUninitializedObject(type);
-            this.Inject(intefaceType, instance, true, methodName);
+            object instance = FormatterServices.GetUninitializedObject(type);
+            Inject(intefaceType, instance, true, methodName);
 
         }
 
@@ -294,7 +294,7 @@ namespace GeneralTool.CoreLibrary.Ioc
         /// <typeparam name="TInterface">接口类型</typeparam>
         /// <typeparam name="TType">实例类型</typeparam>
         /// <param name="methodName">实例化成功后调用的方法名称</param>
-        public void Inject<TInterface, TType>(string methodName = null) where TType : class => this.Inject(typeof(TInterface), typeof(TType), methodName);
+        public void Inject<TInterface, TType>(string methodName = null) where TType : class => Inject(typeof(TInterface), typeof(TType), methodName);
 
         /// <summary>
         /// 注册类型并确定实例化后调用的方法名称
@@ -303,8 +303,8 @@ namespace GeneralTool.CoreLibrary.Ioc
         /// <param name="methodName">实例化成功后调用的方法名称</param>
         public void Inject<T>(string methodName = null) where T : class
         {
-            var type = typeof(T);
-            this.Inject(type, methodName);
+            Type type = typeof(T);
+            Inject(type, methodName);
         }
 
         /// <summary>
@@ -312,7 +312,7 @@ namespace GeneralTool.CoreLibrary.Ioc
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public T Resolve<T>() where T : class => this.Resolve(typeof(T)) as T;
+        public T Resolve<T>() where T : class => Resolve(typeof(T)) as T;
 
         /// <summary>
         /// 获取类型
@@ -321,9 +321,7 @@ namespace GeneralTool.CoreLibrary.Ioc
         /// <returns></returns>
         public object Resolve(Type type)
         {
-            if (typeDics.ContainsKey(type))
-                return typeDics[type].Instance;
-            return null;
+            return typeDics.ContainsKey(type) ? typeDics[type].Instance : null;
         }
     }
 }

@@ -15,8 +15,8 @@ namespace GeneralTool.CoreLibrary.SocketLib.Models
         /// <param name="ex"></param>
         public SocketErrorArg(Socket client, Exception ex)
         {
-            this.Client = client;
-            this.Exception = ex;
+            Client = client;
+            Exception = ex;
         }
 
         /// <summary>

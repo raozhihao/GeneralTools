@@ -25,10 +25,10 @@
         public PostgreSqlConStrBuilder(string host, string port, string dataBase, string userId, string password)
         {
             base.Host = host;
-            this.DataBase = dataBase;
+            DataBase = dataBase;
             base.Uid = userId;
             base.Pwd = password;
-            this.Port = port;
+            Port = port;
         }
 
         /// <summary>
@@ -41,13 +41,13 @@
         /// <returns>返回对象的字符串</returns>
         public override string ToString()
         {
-            return $"Server={base.Host};Port={this.Port};Database={this.DataBase};User Id={base.Uid};Password={base.Pwd};";
+            return $"Server={base.Host};Port={Port};Database={DataBase};User Id={base.Uid};Password={base.Pwd};";
         }
 
         /// <inheritdoc/>
         public string CreateConnectionString()
         {
-            return this.ToString();
+            return ToString();
         }
     }
 }

@@ -46,7 +46,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
         /// <param name="name"></param>
         public NameExtension(string name)
         {
-            this.Name = name;
+            Name = name;
         }
 
         private DependencyObject obj;
@@ -54,7 +54,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
         /// <inheritdoc/>
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
-            var target = serviceProvider.GetService(typeof(IProvideValueTarget)) as IProvideValueTarget;
+            IProvideValueTarget target = serviceProvider.GetService(typeof(IProvideValueTarget)) as IProvideValueTarget;
             obj = target.TargetObject as DependencyObject;
             SetValue();
             return default;
@@ -62,15 +62,15 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
 
         private void SetValue()
         {
-            var context = obj.GetValue(FrameworkElement.DataContextProperty);
+            object context = obj.GetValue(FrameworkElement.DataContextProperty);
             if (context != null)
             {
                 if (context is ObjectDataProvider provider)
                     context = provider.ObjectInstance;
 
-                var contextType = context.GetType();
+                Type contextType = context.GetType();
 
-                var property = contextType.GetProperty(this.Name + "");
+                System.Reflection.PropertyInfo property = contextType.GetProperty(Name + "");
                 if (property != null)
                 {
                     if (property.SetMethod != null)
@@ -102,9 +102,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
         private void TargetObject_DataContextChanged(object sender, EventArgs e)
         {
             SetValue();
-            UnsubscribeFromDataContextChanged(this.obj);
+            UnsubscribeFromDataContextChanged(obj);
         }
     }
-
 
 }

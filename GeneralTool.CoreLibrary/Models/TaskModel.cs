@@ -23,15 +23,14 @@ namespace GeneralTool.CoreLibrary.Models
         /// </summary>
         public DoTaskParameterItem DoTaskParameterItem
         {
-            get => this.parameterItem;
-            set => this.RegisterProperty(ref this.parameterItem, value);
+            get => parameterItem;
+            set => RegisterProperty(ref parameterItem, value);
         }
 
         /// <summary>
         /// Url
         /// </summary>
-        public string Url { get => this.url; set => this.RegisterProperty(ref this.url, value); }
-
+        public string Url { get => url; set => RegisterProperty(ref url, value); }
 
         #endregion Public 属性
     }
@@ -53,12 +52,12 @@ namespace GeneralTool.CoreLibrary.Models
         /// </summary>
         public void InitLangKey()
         {
-            if (string.IsNullOrWhiteSpace(this.LangKey))
+            if (string.IsNullOrWhiteSpace(LangKey))
                 return;
             //设置默认库
-            if (!LangProvider.LangProviderInstance.DefaultResource.ContainsKey(this.LangKey))
+            if (!LangProvider.LangProviderInstance.DefaultResource.ContainsKey(LangKey))
             {
-                LangProvider.LangProviderInstance.DefaultResource.Add(this.LangKey, this.defaultText);
+                LangProvider.LangProviderInstance.DefaultResource.Add(LangKey, defaultText);
             }
 
             LangProviderInstance_LangChanged(LangProvider.LangProviderInstance.CurrentResource);
@@ -66,12 +65,12 @@ namespace GeneralTool.CoreLibrary.Models
         }
         private void LangProviderInstance_LangChanged(System.Windows.ResourceDictionary obj)
         {
-            if (string.IsNullOrWhiteSpace(this.LangKey))
+            if (string.IsNullOrWhiteSpace(LangKey))
                 return;
 
-            var value = LangProvider.LangProviderInstance.GetLangValue(this.LangKey);
+            string value = LangProvider.LangProviderInstance.GetLangValue(LangKey);
 
-            this.Explanation = string.IsNullOrWhiteSpace(value) ? this.defaultText : value;
+            Explanation = string.IsNullOrWhiteSpace(value) ? defaultText : value;
         }
 
         #region Private 字段
@@ -93,21 +92,21 @@ namespace GeneralTool.CoreLibrary.Models
         /// <summary>
         /// 任务类集合
         /// </summary>
-        public ObservableCollection<DoTaskModel> DoTaskModels { get => this.doTaskModels; set => this.RegisterProperty(ref this.doTaskModels, value); }
+        public ObservableCollection<DoTaskModel> DoTaskModels { get => doTaskModels; set => RegisterProperty(ref doTaskModels, value); }
 
         /// <summary>
         /// 任务类注解
         /// </summary>
         public string Explanation
         {
-            get => this.explanation;
+            get => explanation;
             set
             {
                 if (string.IsNullOrWhiteSpace(defaultText))
                 {
-                    this.defaultText = value;
+                    defaultText = value;
                 }
-                this.RegisterProperty(ref this.explanation, value);
+                RegisterProperty(ref explanation, value);
             }
         }
 
@@ -116,8 +115,8 @@ namespace GeneralTool.CoreLibrary.Models
         /// </summary>
         public string LangKey
         {
-            get => this.langKey;
-            set => this.RegisterProperty(ref this.langKey, value);
+            get => langKey;
+            set => RegisterProperty(ref langKey, value);
         }
 
         /// <summary>
@@ -127,11 +126,11 @@ namespace GeneralTool.CoreLibrary.Models
         {
             get
             {
-                this.hasItems = this.DoTaskModels.Count > 0;
-                return this.hasItems;
+                hasItems = DoTaskModels.Count > 0;
+                return hasItems;
             }
 
-            set => this.RegisterProperty(ref this.hasItems, value);
+            set => RegisterProperty(ref hasItems, value);
         }
 
         /// <summary>
@@ -139,10 +138,10 @@ namespace GeneralTool.CoreLibrary.Models
         /// </summary>
         public int SelectedIndex
         {
-            get => this.selectedIndex;
+            get => selectedIndex;
             set
             {
-                this.RegisterProperty(ref this.selectedIndex, value);
+                RegisterProperty(ref selectedIndex, value);
             }
         }
 
@@ -153,16 +152,15 @@ namespace GeneralTool.CoreLibrary.Models
         {
             get
             {
-                if (this.HasItems && this.SelectedIndex > -1 && this.selectedItem == null)
-                    this.selectedItem = this.DoTaskModels[this.SelectedIndex];
-                return this.selectedItem;
+                if (HasItems && SelectedIndex > -1 && selectedItem == null)
+                    selectedItem = DoTaskModels[SelectedIndex];
+                return selectedItem;
             }
             set
             {
-                this.RegisterProperty(ref selectedItem, value);
+                RegisterProperty(ref selectedItem, value);
             }
         }
-
 
         #endregion Public 属性
     }

@@ -14,8 +14,8 @@ namespace GeneralTool.CoreLibrary.Models
         /// </summary>
         public ImageCutRectEventArgs(Int32Rect rect, bool next = true)
         {
-            this.CutPixelRect = rect;
-            this.HandleToNext = next;
+            CutPixelRect = rect;
+            HandleToNext = next;
         }
 
         #endregion Public 构造函数

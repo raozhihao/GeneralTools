@@ -5,7 +5,7 @@ using GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Models;
 
 namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Common
 {
-    partial class PathExecute
+    public partial class PathExecute
     {
 
         private void CreateSourceRightPoints(ConnectorInfo sourceInfo, ConnectorInfo sinkInfo, List<Point> points)
@@ -13,16 +13,16 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Common
             switch (sinkInfo.Direction)
             {
                 case Direction.Top:
-                    this.CreateRightTopPoints(sourceInfo, sinkInfo, points);
+                    CreateRightTopPoints(sourceInfo, sinkInfo, points);
                     break;
                 case Direction.Bottom:
-                    this.CreateRightBottomPoints(sourceInfo, sinkInfo, points);
+                    CreateRightBottomPoints(sourceInfo, sinkInfo, points);
                     break;
                 case Direction.Right:
-                    this.CreateRightRightPoints(sourceInfo, sinkInfo, points);
+                    CreateRightRightPoints(sourceInfo, sinkInfo, points);
                     break;
                 case Direction.Left:
-                    this.CreateRightLeftPoints(sourceInfo, sinkInfo, points);
+                    CreateRightLeftPoints(sourceInfo, sinkInfo, points);
                     break;
             }
         }
@@ -35,7 +35,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Common
                 if (sourceInfo.Point.X > sinkInfo.Point.X)
                 {
                     //目标在左
-                    var y = sourceInfo.Point.Y + sourceInfo.Size.Height / 2 + 5;
+                    double y = sourceInfo.Point.Y + sourceInfo.Size.Height / 2 + 5;
                     points.Add(new Point(sourceInfo.Point.X, y));
                     points.Add(new Point(sinkInfo.Point.X, y));
                 }
@@ -51,14 +51,14 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Common
                 if (sourceInfo.Point.X > sinkInfo.Point.X)
                 {
                     //目标在左
-                    var y = sourceInfo.Point.Y - sourceInfo.Size.Height / 2 - 5;
+                    double y = sourceInfo.Point.Y - sourceInfo.Size.Height / 2 - 5;
                     points.Add(new Point(sourceInfo.Point.X, y));
                     points.Add(new Point(sinkInfo.Point.X, y));
                 }
                 else
                 {
                     //目标在右
-                    var x = sinkInfo.Point.X;
+                    double x = sinkInfo.Point.X;
                     points.Add(new Point(x, sourceInfo.Point.Y));
                     points.Add(new Point(x, sinkInfo.Point.Y));
                 }
@@ -91,7 +91,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Common
                 else
                 {
                     //目标在右
-                    var x = sinkInfo.Point.X;
+                    double x = sinkInfo.Point.X;
                     points.Add(new Point(x, sourceInfo.Point.Y));
                     points.Add(new Point(x, sinkInfo.Point.Y));
                 }
@@ -110,7 +110,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Common
                 else
                 {
                     //目标在右
-                    var x = sourceInfo.Point.X;
+                    double x = sourceInfo.Point.X;
                     points.Add(new Point(x, sourceInfo.Point.Y));
                     points.Add(new Point(x, sinkInfo.Point.Y));
                 }
@@ -126,7 +126,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Common
                 else
                 {
                     //目标在右
-                    var x = sourceInfo.Point.X;
+                    double x = sourceInfo.Point.X;
                     points.Add(new Point(x, sourceInfo.Point.Y));
                     points.Add(new Point(x, sinkInfo.Point.Y));
                 }
@@ -159,7 +159,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Common
                 else
                 {
                     //目标在右
-                    var x = sourceInfo.Point.X;
+                    double x = sourceInfo.Point.X;
                     points.Add(new Point(x, sourceInfo.Point.Y));
                     points.Add(new Point(x, sinkInfo.Point.Y));
                 }

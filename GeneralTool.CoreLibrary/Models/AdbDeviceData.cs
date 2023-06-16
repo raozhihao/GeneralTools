@@ -103,9 +103,8 @@ namespace GeneralTool.CoreLibrary.Models
         public static AdbDeviceData CreateFromAdbData(string data)
         {
             Match match = Regex.Match(data);
-            if (match.Success)
-            {
-                return new AdbDeviceData
+            return match.Success
+                ? new AdbDeviceData
                 {
                     Serial = match.Groups["serial"].Value,
                     State = GetStateFromString(match.Groups["state"].Value),
@@ -116,10 +115,8 @@ namespace GeneralTool.CoreLibrary.Models
                     Usb = match.Groups["usb"].Value,
                     TransportId = match.Groups["transport_id"].Value,
                     Message = match.Groups["message"].Value
-                };
-            }
-
-            throw new ArgumentException("Invalid device list data '" + data + "'");
+                }
+                : throw new ArgumentException("Invalid device list data '" + data + "'");
         }
 
         /// <summary>
@@ -138,7 +135,7 @@ namespace GeneralTool.CoreLibrary.Models
         /// <returns></returns>
         internal static AdbDeviceState GetStateFromString(string state)
         {
-            var result = AdbDeviceState.Unknown;
+            AdbDeviceState result;
             if (string.Equals(state, "device", StringComparison.OrdinalIgnoreCase))
             {
                 result = AdbDeviceState.Online;

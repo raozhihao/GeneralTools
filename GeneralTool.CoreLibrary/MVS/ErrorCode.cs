@@ -27,12 +27,12 @@ namespace GeneralTool.CoreLibrary.MVS
         public ErrorCode()
         {
             //初始化所有错误码
-            var fields = typeof(Errors).GetFields();
-            foreach (var item in fields)
+            System.Reflection.FieldInfo[] fields = typeof(Errors).GetFields();
+            foreach (System.Reflection.FieldInfo item in fields)
             {
                 if (Attribute.GetCustomAttribute(item, typeof(DescriptionAttribute)) as DescriptionAttribute != null)
                 {
-                    this.errorCodes.Add(Convert.ToInt32(item.GetValue(null)), (Attribute.GetCustomAttribute(item, typeof(DescriptionAttribute)) as DescriptionAttribute).Description);
+                    errorCodes.Add(Convert.ToInt32(item.GetValue(null)), (Attribute.GetCustomAttribute(item, typeof(DescriptionAttribute)) as DescriptionAttribute).Description);
                 }
             }
         }
@@ -46,14 +46,9 @@ namespace GeneralTool.CoreLibrary.MVS
         {
             get
             {
-                if (this.errorCodes.TryGetValue(code, out var codeString))
-                {
-                    return codeString;
-                }
-                return code + "";
+                return errorCodes.TryGetValue(code, out string codeString) ? codeString : code + "";
             }
         }
-
 
         /// <summary>
         /// 获取错误信息

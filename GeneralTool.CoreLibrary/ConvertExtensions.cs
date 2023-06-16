@@ -18,17 +18,8 @@ namespace GeneralTool.CoreLibrary
             if (value == null || targetType == null)
                 return false;
 
-            var valueType = value.GetType();
-            if (valueType == targetType)
-                return true;
-
-            if (valueType == typeof(object))
-                return true;
-
-            if (valueType.IsAssignableFrom(targetType))
-                return true;
-
-            return true;
+            Type valueType = value.GetType();
+            return valueType == targetType || valueType == typeof(object) || valueType.IsAssignableFrom(targetType) || true;
         }
     }
 }

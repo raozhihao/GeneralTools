@@ -11,10 +11,9 @@ namespace GeneralTool.CoreLibrary.MVS
     /// </summary>
     public class MVSCamera : ICamera
     {
-        MVSCameraProvider.MV_CC_DEVICE_INFO_LIST m_stDeviceList;
+        private MVSCameraProvider.MV_CC_DEVICE_INFO_LIST m_stDeviceList;
         private MVSCameraProvider m_MyCamera = new MVSCameraProvider();
-       
-        readonly IntPtr m_BufForDriver = IntPtr.Zero;
+        private readonly IntPtr m_BufForDriver = IntPtr.Zero;
         private static readonly object BufForDriverLock = new object();
 
         private string _ip;
@@ -28,8 +27,6 @@ namespace GeneralTool.CoreLibrary.MVS
         /// 相机列表
         /// </summary>
         public List<MVSCameraProvider.MV_GIGE_DEVICE_INFO> GigeDevices { get; private set; }
-
-
 
         private Bitmap renderBitmap;
 
@@ -54,9 +51,9 @@ namespace GeneralTool.CoreLibrary.MVS
         {
             System.GC.Collect();
 
-            var list = new List<string>();
+            List<string> list = new List<string>();
 
-            var m_stDeviceList = new MVSCameraProvider.MV_CC_DEVICE_INFO_LIST
+            MVSCameraProvider.MV_CC_DEVICE_INFO_LIST m_stDeviceList = new MVSCameraProvider.MV_CC_DEVICE_INFO_LIST
             {
                 nDeviceNum = 0
             };
@@ -74,22 +71,21 @@ namespace GeneralTool.CoreLibrary.MVS
                 {
                     MVSCameraProvider.MV_GIGE_DEVICE_INFO gigeInfo = (MVSCameraProvider.MV_GIGE_DEVICE_INFO)MVSCameraProvider.ByteToStruct(device.SpecialInfo.stGigEInfo, typeof(MVSCameraProvider.MV_GIGE_DEVICE_INFO));
 
-                    var ip = ParseToIp(gigeInfo.nCurrentIp);
+                    string ip = ParseToIp(gigeInfo.nCurrentIp);
 
                     list.Add(ip);
                 }
             }
-
 
             return list;
         }
 
         private static string ParseToIp(uint nCurrentIp)
         {
-            var i1 = ((nCurrentIp) & 0xff000000) >> 24;
-            var i2 = ((nCurrentIp) & 0x00ff0000) >> 16;
-            var i3 = ((nCurrentIp) & 0x0000ff00) >> 8;
-            var i4 = ((nCurrentIp) & 0x000000ff);
+            uint i1 = ((nCurrentIp) & 0xff000000) >> 24;
+            uint i2 = ((nCurrentIp) & 0x00ff0000) >> 16;
+            uint i3 = ((nCurrentIp) & 0x0000ff00) >> 8;
+            uint i4 = ((nCurrentIp) & 0x000000ff);
             return $"{i1}.{i2}.{i3}.{i4}";
         }
 
@@ -101,15 +97,15 @@ namespace GeneralTool.CoreLibrary.MVS
             // ch:创建设备列表 | en:Create Device List
             System.GC.Collect();
 
-            this.GigeDevices?.Clear();
-            this.GigeDevices = new List<MVSCameraProvider.MV_GIGE_DEVICE_INFO>();
+            GigeDevices?.Clear();
+            GigeDevices = new List<MVSCameraProvider.MV_GIGE_DEVICE_INFO>();
 
             m_stDeviceList.nDeviceNum = 0;
             int nRet = MVSCameraProvider.MV_CC_EnumDevices_NET(MVSCameraProvider.MV_GIGE_DEVICE | MVSCameraProvider.MV_USB_DEVICE, ref m_stDeviceList);
             if (0 != nRet)
             {
                 //this.ErroMsg = "Enumerate devices fail!:"+ErrorCode.ErrorCodeInstance.GetErrorString(nRet);
-                this.ShowErrorMsg("枚举设备列表时出错", nRet);
+                ShowErrorMsg("枚举设备列表时出错", nRet);
                 return -1;
             }
 
@@ -120,8 +116,8 @@ namespace GeneralTool.CoreLibrary.MVS
                 if (device.nTLayerType == MVSCameraProvider.MV_GIGE_DEVICE)
                 {
                     MVSCameraProvider.MV_GIGE_DEVICE_INFO gigeInfo = (MVSCameraProvider.MV_GIGE_DEVICE_INFO)MVSCameraProvider.ByteToStruct(device.SpecialInfo.stGigEInfo, typeof(MVSCameraProvider.MV_GIGE_DEVICE_INFO));
-                    this.GigeDevices.Add(gigeInfo);
-                    var pip = ParseToIp(gigeInfo.nCurrentIp);
+                    GigeDevices.Add(gigeInfo);
+                    string pip = ParseToIp(gigeInfo.nCurrentIp);
                     if (pip == ip)
                     {
                         return i;
@@ -130,7 +126,7 @@ namespace GeneralTool.CoreLibrary.MVS
                 }
             }
 
-            this.ErroMsg = $"没有找到IP为 [{ip}] 的相机";
+            ErroMsg = $"没有找到IP为 [{ip}] 的相机";
             return -1;
         }
 
@@ -143,23 +139,23 @@ namespace GeneralTool.CoreLibrary.MVS
 
         public bool Open(int index = 0, double exposureTime = -1)
         {
-            if (this.IsOpen )
+            if (IsOpen)
                 return true;
 
-            var devices = EnumableDeviceList();
+            List<string> devices = EnumableDeviceList();
             if (devices == null || devices.Count == 0)
             {
-                this.ErroMsg = "没有找到任何设备";
+                ErroMsg = "没有找到任何设备";
                 return false;
             }
 
             if (devices.Count <= index)
             {
-                this.ErroMsg = "找不到该下标的相机";
+                ErroMsg = "找不到该下标的相机";
                 return false;
             }
-            var first = devices[index];
-            return this.Open(first, exposureTime);
+            string first = devices[index];
+            return Open(first, exposureTime);
         }
 
         /// <summary>
@@ -172,26 +168,25 @@ namespace GeneralTool.CoreLibrary.MVS
         {
             if (string.IsNullOrWhiteSpace(ip))
             {
-                this.ErroMsg = "没有设置IP地址";
+                ErroMsg = "没有设置IP地址";
                 return false;
             }
-            if (this._ip != ip)
-                this.Close();
-            else if (this.IsOpen)
+            if (_ip != ip)
+                Close();
+            else if (IsOpen)
                 return true;
 
-            this._ip = ip;
+            _ip = ip;
 
-            if (this.GigeDevices == null)
-                this.GigeDevices = new List<MVSCameraProvider.MV_GIGE_DEVICE_INFO>();
+            if (GigeDevices == null)
+                GigeDevices = new List<MVSCameraProvider.MV_GIGE_DEVICE_INFO>();
 
-            var index = this.DeviceListAcq(ip);
+            int index = DeviceListAcq(ip);
 
             if (index < 0)
             {
                 return false;
             }
-
 
             // ch:获取选择的设备信息 | en:Get selected device information
             MVSCameraProvider.MV_CC_DEVICE_INFO device =
@@ -203,7 +198,7 @@ namespace GeneralTool.CoreLibrary.MVS
                 m_MyCamera = new MVSCameraProvider();
                 if (null == m_MyCamera)
                 {
-                    this.ErroMsg = "无法初始化相机对象";
+                    ErroMsg = "无法初始化相机对象";
                     return false;
                 }
             }
@@ -212,16 +207,16 @@ namespace GeneralTool.CoreLibrary.MVS
             if (MVSCameraProvider.MV_OK != nRet)
             {
                 //this.ErroMsg = "Can't CreateDevice";
-                this.ShowErrorMsg("无法创建相机设备对象", nRet);
+                ShowErrorMsg("无法创建相机设备对象", nRet);
                 return false;
             }
 
             nRet = m_MyCamera.MV_CC_OpenDevice_NET();
             if (MVSCameraProvider.MV_OK != nRet)
             {
-                m_MyCamera.MV_CC_DestroyDevice_NET();
+                _ = m_MyCamera.MV_CC_DestroyDevice_NET();
                 //this.ErroMsg = "Device open fail!" + nRet;
-                this.ShowErrorMsg("无法打开相机", nRet);
+                ShowErrorMsg("无法打开相机", nRet);
                 return false;
             }
 
@@ -235,34 +230,34 @@ namespace GeneralTool.CoreLibrary.MVS
                     if (nRet != MVSCameraProvider.MV_OK)
                     {
                         // this.ErroMsg = "Set Packet Size failed!" + nRet;
-                        this.ShowErrorMsg("设置PacketSize出错", nRet);
+                        ShowErrorMsg("设置PacketSize出错", nRet);
                         return false;
                     }
                 }
                 else
                 {
-                    this.ErroMsg = "获取 Packet Size 错误!" + nPacketSize;
+                    ErroMsg = "获取 Packet Size 错误!" + nPacketSize;
                     return false;
                 }
             }
 
             // ch:设置采集连续模式 | en:Set Continues Aquisition Mode
-            m_MyCamera.MV_CC_SetEnumValue_NET("AcquisitionMode", (uint)MVSCameraProvider.MV_CAM_ACQUISITION_MODE.MV_ACQ_MODE_CONTINUOUS);
-            m_MyCamera.MV_CC_SetEnumValue_NET("TriggerMode", (uint)MVSCameraProvider.MV_CAM_TRIGGER_MODE.MV_TRIGGER_MODE_OFF);
-            m_MyCamera.MV_CC_SetEnumValue_NET("TriggerMode", (uint)MVSCameraProvider.MV_CAM_TRIGGER_MODE.MV_TRIGGER_MODE_OFF);
+            _ = m_MyCamera.MV_CC_SetEnumValue_NET("AcquisitionMode", (uint)MVSCameraProvider.MV_CAM_ACQUISITION_MODE.MV_ACQ_MODE_CONTINUOUS);
+            _ = m_MyCamera.MV_CC_SetEnumValue_NET("TriggerMode", (uint)MVSCameraProvider.MV_CAM_TRIGGER_MODE.MV_TRIGGER_MODE_OFF);
+            _ = m_MyCamera.MV_CC_SetEnumValue_NET("TriggerMode", (uint)MVSCameraProvider.MV_CAM_TRIGGER_MODE.MV_TRIGGER_MODE_OFF);
 
-            var rect = this.GetCurrentAOISize();
+            CameraRectangleInfo rect = GetCurrentAOISize();
             if (rect.IsEmpty)
                 return false;
 
-            this.MaxSize = new Size(rect.MaxWidth, rect.MaxHeight);
+            MaxSize = new Size(rect.MaxWidth, rect.MaxHeight);
 
             if (exposureTime > 0)
             {
                 //设置曝光
-                this.m_MyCamera.MV_CC_SetExposureTime_NET(Convert.ToSingle(exposureTime));
+                _ = m_MyCamera.MV_CC_SetExposureTime_NET(Convert.ToSingle(exposureTime));
             }
-            return this.StartGrab();
+            return StartGrab();
         }
 
         /// <summary>
@@ -272,24 +267,21 @@ namespace GeneralTool.CoreLibrary.MVS
         public bool StartGrab()
         {
             // ch:标志位置位true | en:Set position bit true
-            
 
             // ch:开始采集 | en:Start Grabbing
             int nRet = m_MyCamera.MV_CC_StartGrabbing_NET();
             if (MVSCameraProvider.MV_OK != nRet)
             {
-                this.IsOpen = false;
+                IsOpen = false;
                 //this.ErroMsg = "Start Grabbing Fail!" + nRet;
-                this.ShowErrorMsg("采集出错", nRet);
-                this.Close();
+                ShowErrorMsg("采集出错", nRet);
+                Close();
                 return false;
             }
 
-
-            this.IsOpen = true;
+            IsOpen = true;
             return true;
         }
-
 
         /// <summary>
         /// 停止采集
@@ -297,7 +289,7 @@ namespace GeneralTool.CoreLibrary.MVS
         public void StopGrab()
         {
             // ch:标志位设为false | en:Set flag bit false
-           
+
             // ch:停止采集 | en:Stop Grabbing
             int nRet = m_MyCamera.MV_CC_StopGrabbing_NET();
             if (nRet != MVSCameraProvider.MV_OK)
@@ -305,7 +297,6 @@ namespace GeneralTool.CoreLibrary.MVS
                 //ShowErrorMsg("Stop Grabbing Fail!", nRet);
             }
         }
-
 
         private void CreateBitmap(ref Bitmap bitmap, int width, int height, PixelFormat format)
         {
@@ -363,58 +354,58 @@ namespace GeneralTool.CoreLibrary.MVS
         {
             #region New
 
-            if (!this.IsOpen)
+            if (!IsOpen)
             {
-                this.ErroMsg = "相机未开启或未开始采集";
+                ErroMsg = "相机未开启或未开始采集";
                 return null;
             }
             lock (m_MyCamera)
             {
 
-                this.ErroMsg = "";
+                ErroMsg = "";
                 MVSCameraProvider.MV_FRAME_OUT_INFO_EX stFrameInfoEx = new MVSCameraProvider.MV_FRAME_OUT_INFO_EX();
 
                 byte[] buffer = new byte[5500 * 4000 * 3];
 
                 try
                 {
-                    var PData = Marshal.UnsafeAddrOfPinnedArrayElement(buffer, 0);
-                    var nRet2 = m_MyCamera.MV_CC_GetImageForBGR_NET(PData, (uint)buffer.Length, ref stFrameInfoEx, 1000);
+                    IntPtr PData = Marshal.UnsafeAddrOfPinnedArrayElement(buffer, 0);
+                    int nRet2 = m_MyCamera.MV_CC_GetImageForBGR_NET(PData, (uint)buffer.Length, ref stFrameInfoEx, 1000);
 
                     if (nRet2 != MVSCameraProvider.MV_OK)
                     {
-                        if (this.DeviceListAcq(this._ip) < 0)
+                        if (DeviceListAcq(_ip) < 0)
                         {
                             //查看是否有设备
-                            this.IsOpen = false;
+                            IsOpen = false;
                         }
                         else
                         {
-                            this.ShowErrorMsg("没有找到图像", nRet2);
+                            ShowErrorMsg("没有找到图像", nRet2);
                         }
                         return null;
                     }
 
-                    var width = (int)stFrameInfoEx.nWidth;
-                    var height = (int)stFrameInfoEx.nHeight;
-                    var rgbColor = true;
-                    var stride = this.GetStride(width, rgbColor);
-                    var len = (int)stFrameInfoEx.nFrameLen;
-                    var pixelFomart = this.GetFormat(rgbColor);
-                    var bufferLen = stride * height;
+                    int width = stFrameInfoEx.nWidth;
+                    int height = stFrameInfoEx.nHeight;
+                    bool rgbColor = true;
+                    int stride = GetStride(width, rgbColor);
+                    int len = (int)stFrameInfoEx.nFrameLen;
+                    PixelFormat pixelFomart = GetFormat(rgbColor);
+                    int bufferLen = stride * height;
 
-                    if (this.renderBitmap == null || this.renderBitmap.Width != width || this.renderBitmap.Height != height)
-                        CreateBitmap(ref this.renderBitmap, width, height, pixelFomart);
-                    this.UpdateBitmap(renderBitmap, buffer, width, true, bufferLen);
+                    if (renderBitmap == null || renderBitmap.Width != width || renderBitmap.Height != height)
+                        CreateBitmap(ref renderBitmap, width, height, pixelFomart);
+                    UpdateBitmap(renderBitmap, buffer, width, true, bufferLen);
 
-                    var image = renderBitmap.Clone(new Rectangle(0, 0, width, height), pixelFomart);
+                    Bitmap image = renderBitmap.Clone(new Rectangle(0, 0, width, height), pixelFomart);
 
                     return image;
 
                 }
                 catch (Exception ex)
                 {
-                    this.ErroMsg = ex + "";
+                    ErroMsg = ex + "";
                 }
                 finally
                 {
@@ -427,7 +418,6 @@ namespace GeneralTool.CoreLibrary.MVS
             #endregion
         }
 
-
         /// <summary>
         /// 获取当前相机信息
         /// </summary>
@@ -435,47 +425,47 @@ namespace GeneralTool.CoreLibrary.MVS
         public CameraRectangleInfo GetCurrentAOISize()
         {
             MVSCameraProvider.MVCC_INTVALUE value = default;
-            var code = this.m_MyCamera.MV_CC_GetWidth_NET(ref value);
+            int code = m_MyCamera.MV_CC_GetWidth_NET(ref value);
             if (code != MVSCameraProvider.MV_OK)
             {
-                this.ShowErrorMsg("获取宽度信息错误", code);
+                ShowErrorMsg("获取宽度信息错误", code);
                 return new CameraRectangleInfo();
             }
 
-            var maxWidth = value.nMax;
-            var curWidth = value.nCurValue;
-            var widthInc = value.nInc;
+            uint maxWidth = value.nMax;
+            uint curWidth = value.nCurValue;
+            uint widthInc = value.nInc;
 
             code = m_MyCamera.MV_CC_GetHeight_NET(ref value);
             if (code != MVSCameraProvider.MV_OK)
             {
-                this.ShowErrorMsg("获取高度信息错误", code);
+                ShowErrorMsg("获取高度信息错误", code);
                 return new CameraRectangleInfo();
             }
 
-            var maxHeight = value.nMax;
-            var curHeight = value.nCurValue;
-            var heightInc = value.nInc;
+            uint maxHeight = value.nMax;
+            uint curHeight = value.nCurValue;
+            uint heightInc = value.nInc;
 
             code = m_MyCamera.MV_CC_GetAOIoffsetX_NET(ref value);
             if (code != MVSCameraProvider.MV_OK)
             {
-                this.ShowErrorMsg("获取AOI OffsetX信息错误", code);
+                ShowErrorMsg("获取AOI OffsetX信息错误", code);
                 return new CameraRectangleInfo();
             }
 
-            var curOffX = value.nCurValue;
-            var curOffXInc = value.nInc;
+            uint curOffX = value.nCurValue;
+            uint curOffXInc = value.nInc;
 
             code = m_MyCamera.MV_CC_GetAOIoffsetY_NET(ref value);
             if (code != MVSCameraProvider.MV_OK)
             {
-                this.ShowErrorMsg("获取AOI OffsetY信息错误", code);
+                ShowErrorMsg("获取AOI OffsetY信息错误", code);
                 return new CameraRectangleInfo();
             }
 
-            var curOffY = value.nCurValue;
-            var curOffYInc = value.nInc;
+            uint curOffY = value.nCurValue;
+            uint curOffYInc = value.nInc;
             maxWidth += curOffX;
             maxHeight += curOffY;
             return new CameraRectangleInfo()
@@ -498,7 +488,7 @@ namespace GeneralTool.CoreLibrary.MVS
         /// </summary>
         public void RestoryMaxROI()
         {
-            this.SetMaxAOI(true);
+            _ = SetMaxAOI(true);
         }
 
         /// <summary>
@@ -509,45 +499,44 @@ namespace GeneralTool.CoreLibrary.MVS
         public Rectangle ParseAOI(Rectangle rect)
         {
             //查看当前Rect的大小是否与最大值一样
-            if (rect.Width == this.MaxSize.Width && rect.Height == this.MaxSize.Height)
+            if (rect.Width == MaxSize.Width && rect.Height == MaxSize.Height)
             {
                 //已经OK了
                 return new Rectangle(0, 0, rect.Width, rect.Height);
             }
 
             #region New
-            var info = this.GetCurrentAOISize();
-            var p1 = new Point(rect.X, rect.Y);
-            var offXInc = info.OffXInc;
-            var offYInc = info.OffYInc;
+            CameraRectangleInfo info = GetCurrentAOISize();
+            Point p1 = new Point(rect.X, rect.Y);
+            int offXInc = info.OffXInc;
+            int offYInc = info.OffYInc;
 
             //将其扩大
             //计算左上角偏移点
-            var xResult = p1.X - p1.X % offXInc;
+            int xResult = p1.X - p1.X % offXInc;
             xResult = xResult < 0 ? 0 : xResult;
 
-            var yResult = p1.Y - p1.Y % offYInc;
+            int yResult = p1.Y - p1.Y % offYInc;
             yResult = yResult < 0 ? 0 : yResult;
 
-            var widthInc = info.WidthInc;
-            var heightInc = info.HeightInc;
-
+            int widthInc = info.WidthInc;
+            int heightInc = info.HeightInc;
 
             //计算宽
-            var width = rect.Width + p1.X % offXInc;//如果左顶点x往左偏移过,则可以加大点
-            var widthResult = width - width % widthInc + widthInc;
-            if (widthResult + xResult > this.MaxSize.Width)
+            int width = rect.Width + p1.X % offXInc;//如果左顶点x往左偏移过,则可以加大点
+            int widthResult = width - width % widthInc + widthInc;
+            if (widthResult + xResult > MaxSize.Width)
             {
                 //如果大于最大宽度,则将宽度减小
-                widthResult = this.MaxSize.Width - widthResult;
+                widthResult = MaxSize.Width - widthResult;
             }
 
             //计算高
-            var height = rect.Height + p1.Y % offYInc;
-            var heightResult = height - height % heightInc + heightInc;
-            if (heightResult + yResult > this.MaxSize.Height)
+            int height = rect.Height + p1.Y % offYInc;
+            int heightResult = height - height % heightInc + heightInc;
+            if (heightResult + yResult > MaxSize.Height)
             {
-                heightResult = this.MaxSize.Height - heightResult;
+                heightResult = MaxSize.Height - heightResult;
             }
 
             return new Rectangle(xResult, yResult, widthResult, heightResult);
@@ -564,19 +553,19 @@ namespace GeneralTool.CoreLibrary.MVS
         public bool SetAOI(ref Rectangle rect)
         {
             //查看当前Rect的大小是否与最大值一样
-            if (rect.Width == this.MaxSize.Width && rect.Height == this.MaxSize.Height)
+            if (rect.Width == MaxSize.Width && rect.Height == MaxSize.Height)
             {
                 //已经OK了
                 return true;
             }
 
             //先停止采集
-            this.StopGrab();
+            StopGrab();
             //将其设置到最大值
-            var re = this.SetMaxAOI();
+            bool re = SetMaxAOI();
             if (!re) return false;
 
-            rect = this.ParseAOI(rect);
+            rect = ParseAOI(rect);
 
             _ = m_MyCamera.MV_CC_SetWidth_NET((uint)rect.Width);
 
@@ -600,45 +589,40 @@ namespace GeneralTool.CoreLibrary.MVS
         /// <returns></returns>
         public bool SetMaxAOI(bool autoGrab = false)
         {
-            if (this.IsOpen)
+            if (IsOpen)
             {
-                this.StopGrab();
+                StopGrab();
             }
 
-            var code = m_MyCamera.MV_CC_SetAOIoffsetX_NET(0);
+            int code = m_MyCamera.MV_CC_SetAOIoffsetX_NET(0);
             if (code != MVSCameraProvider.MV_OK)
             {
-                this.ShowErrorMsg("重置OffsetX错误", code);
+                ShowErrorMsg("重置OffsetX错误", code);
                 return false;
             }
 
             code = m_MyCamera.MV_CC_SetAOIoffsetY_NET(0);
             if (code != MVSCameraProvider.MV_OK)
             {
-                this.ShowErrorMsg("重置OffsetY错误", code);
+                ShowErrorMsg("重置OffsetY错误", code);
                 return false;
             }
 
-            code = m_MyCamera.MV_CC_SetWidth_NET((uint)this.MaxSize.Width);
+            code = m_MyCamera.MV_CC_SetWidth_NET((uint)MaxSize.Width);
             if (code != MVSCameraProvider.MV_OK)
             {
-                this.ShowErrorMsg("重置Width错误", code);
+                ShowErrorMsg("重置Width错误", code);
                 return false;
             }
 
-            code = m_MyCamera.MV_CC_SetHeight_NET((uint)this.MaxSize.Height);
+            code = m_MyCamera.MV_CC_SetHeight_NET((uint)MaxSize.Height);
             if (code != MVSCameraProvider.MV_OK)
             {
-                this.ShowErrorMsg("重置Height错误", code);
+                ShowErrorMsg("重置Height错误", code);
                 return false;
             }
 
-
-            if (autoGrab)
-            {
-                return this.StartGrab();
-            }
-            return true;
+            return !autoGrab || StartGrab();
         }
 
         /// <summary>
@@ -646,7 +630,7 @@ namespace GeneralTool.CoreLibrary.MVS
         /// </summary>
         public void Close()
         {
-            this.ErroMsg = "";
+            ErroMsg = "";
             try
             {
 
@@ -654,44 +638,35 @@ namespace GeneralTool.CoreLibrary.MVS
                 {
                     if (m_BufForDriver != IntPtr.Zero)
                     {
-                        Marshal.Release(m_BufForDriver);
+                        _ = Marshal.Release(m_BufForDriver);
                     }
                 }
 
             }
             catch (Exception ex)
             {
-                this.ErroMsg = ex + "";
+                ErroMsg = ex + "";
             }
             // ch:关闭设备 | en:Close Device
             try
             {
-                m_MyCamera.MV_CC_CloseDevice_NET();
-                m_MyCamera.MV_CC_DestroyDevice_NET();
+                _ = m_MyCamera.MV_CC_CloseDevice_NET();
+                _ = m_MyCamera.MV_CC_DestroyDevice_NET();
             }
             catch (Exception)
             {
 
             }
-            this.renderBitmap?.Dispose();
-            this.renderBitmap = null;
-            this.IsOpen = false;
+            renderBitmap?.Dispose();
+            renderBitmap = null;
+            IsOpen = false;
         }
 
         private void ShowErrorMsg(string csMessage, int nErrorNum)
         {
-            string errorMsg;
-            if (nErrorNum == 0)
-            {
-                errorMsg = csMessage;
-            }
-            else
-            {
-                errorMsg = csMessage + ": Error =" + String.Format("{0:X}", nErrorNum);
-            }
-
+            string errorMsg = nErrorNum == 0 ? csMessage : csMessage + ": Error =" + string.Format("{0:X}", nErrorNum);
             errorMsg += ErrorCode.ErrorCodeInstance.GetErrorString(nErrorNum);
-            this.ErroMsg = errorMsg;
+            ErroMsg = errorMsg;
         }
 
         /// <summary>
@@ -700,9 +675,9 @@ namespace GeneralTool.CoreLibrary.MVS
         /// <returns></returns>
         public virtual CameraExposureTimeInfo GetExposureTime()
         {
-           var value = new MVSCameraProvider.MVCC_FLOATVALUE();
-            this.m_MyCamera.MV_CC_GetExposureTime_NET(ref value);
-            var info = new CameraExposureTimeInfo()
+            MVSCameraProvider.MVCC_FLOATVALUE value = new MVSCameraProvider.MVCC_FLOATVALUE();
+            _ = m_MyCamera.MV_CC_GetExposureTime_NET(ref value);
+            CameraExposureTimeInfo info = new CameraExposureTimeInfo()
             {
                 CurrentValue = value.fCurValue,
                 MaxValue = value.fMax,
@@ -718,9 +693,9 @@ namespace GeneralTool.CoreLibrary.MVS
         public virtual void SetExposureTime(double time)
         {
             //应对JAI的相机,曝光必须要先停止采集
-            this.StopGrab();
-            this.m_MyCamera.MV_CC_SetExposureTime_NET(Convert.ToSingle(time));
-            this.StartGrab();
+            StopGrab();
+            _ = m_MyCamera.MV_CC_SetExposureTime_NET(Convert.ToSingle(time));
+            _ = StartGrab();
         }
     }
 }

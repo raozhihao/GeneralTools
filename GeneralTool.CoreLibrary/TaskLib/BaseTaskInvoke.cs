@@ -33,15 +33,15 @@ namespace GeneralTool.CoreLibrary.TaskLib
             if (log == null)
                 log = new ConsoleLogInfo();
 
-            this.Log = log;
+            Log = log;
         }
 
         /// <summary>
         /// </summary>
         public BaseTaskInvoke()
         {
-            if (this.Log == null)
-                this.Log = new ConsoleLogInfo();
+            if (Log == null)
+                Log = new ConsoleLogInfo();
         }
 
         #endregion Public 构造函数

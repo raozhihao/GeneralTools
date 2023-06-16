@@ -38,7 +38,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
 
         private static void OnScrollViewerChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var ctl = d as ZoomBox;
+            ZoomBox ctl = d as ZoomBox;
             ctl.FindParts();
         }
 
@@ -65,76 +65,75 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         {
             if (eventsAdded)
             {
-                this.designerCanvas.LayoutUpdated -= this.DesignerCanvas_LayoutUpdated;
-                this.zoomThumb.DragDelta -= this.Thumb_DragDelta;
-                this.zoomSlider.ValueChanged -= this.ZoomSlider_ValueChanged;
-                this.resetLabel.MouseDoubleClick -= Reset_MouseDoubleClick;
+                designerCanvas.LayoutUpdated -= DesignerCanvas_LayoutUpdated;
+                zoomThumb.DragDelta -= Thumb_DragDelta;
+                zoomSlider.ValueChanged -= ZoomSlider_ValueChanged;
+                resetLabel.MouseDoubleClick -= Reset_MouseDoubleClick;
                 eventsAdded = false;
             }
-            if (this.ScrollViewer == null || !templateApplied)
+            if (ScrollViewer == null || !templateApplied)
                 return;
 
-            this.designerCanvas = this.ScrollViewer.Content as DesignerCanvas;
-            if (this.designerCanvas == null)
+            designerCanvas = ScrollViewer.Content as DesignerCanvas;
+            if (designerCanvas == null)
                 return;
 
-            this.zoomThumb = Template.FindName("PART_ZoomThumb", this) as Thumb;
-            if (this.zoomThumb == null)
+            zoomThumb = Template.FindName("PART_ZoomThumb", this) as Thumb;
+            if (zoomThumb == null)
                 throw new Exception("PART_ZoomThumb template is missing!");
 
-
-            this.dragThumb = Template.FindName("PART_DragThumb", this) as Thumb;
-            if (this.dragThumb == null)
+            dragThumb = Template.FindName("PART_DragThumb", this) as Thumb;
+            if (dragThumb == null)
                 throw new Exception("PART_DragThumb template is missing!");
 
-            this.zoomCanvas = Template.FindName("PART_ZoomCanvas", this) as Canvas;
-            if (this.zoomCanvas == null)
+            zoomCanvas = Template.FindName("PART_ZoomCanvas", this) as Canvas;
+            if (zoomCanvas == null)
                 throw new Exception("PART_ZoomCanvas template is missing!");
 
-            this.zoomSlider = Template.FindName("PART_ZoomSlider", this) as Slider;
-            if (this.zoomSlider == null)
+            zoomSlider = Template.FindName("PART_ZoomSlider", this) as Slider;
+            if (zoomSlider == null)
                 throw new Exception("PART_ZoomSlider template is missing!");
 
-            this.resetLabel = this.Template.FindName("PART_Reset", this) as Label;
-            if (this.resetLabel != null)
-                this.resetLabel.MouseDown += Reset_MouseDoubleClick;
+            resetLabel = Template.FindName("PART_Reset", this) as Label;
+            if (resetLabel != null)
+                resetLabel.MouseDown += Reset_MouseDoubleClick;
 
-            this.designerCanvas.LayoutUpdated += this.DesignerCanvas_LayoutUpdated;
-            this.zoomThumb.DragDelta += this.Thumb_DragDelta;
-            this.zoomSlider.ValueChanged += this.ZoomSlider_ValueChanged;
+            designerCanvas.LayoutUpdated += DesignerCanvas_LayoutUpdated;
+            zoomThumb.DragDelta += Thumb_DragDelta;
+            zoomSlider.ValueChanged += ZoomSlider_ValueChanged;
             eventsAdded = true;
 
-            this.scaleTransform = new ScaleTransform();
-            var group = new TransformGroup();
-            group.Children.Add(this.scaleTransform);
+            scaleTransform = new ScaleTransform();
+            TransformGroup group = new TransformGroup();
+            group.Children.Add(scaleTransform);
             group.Children.Add(new TranslateTransform());
 
-            this.designerCanvas.LayoutTransform = group;
-            this.designerCanvas.ScaleChanged += DesignerCanvas_ScaleChanged;
-            this.designerCanvas.ZoomPanelVisibilityChangedEvent += DesignerCanvas_ZoomPanelVisibilityChangedEvent;
+            designerCanvas.LayoutTransform = group;
+            designerCanvas.ScaleChanged += DesignerCanvas_ScaleChanged;
+            designerCanvas.ZoomPanelVisibilityChangedEvent += DesignerCanvas_ZoomPanelVisibilityChangedEvent;
 
-            var visual = new VisualBrush
+            VisualBrush visual = new VisualBrush
             {
-                Visual = this.ScrollViewer.Content as Visual
+                Visual = ScrollViewer.Content as Visual
             };
-            this.zoomCanvas.Background = visual;
+            zoomCanvas.Background = visual;
         }
 
         private void DesignerCanvas_ZoomPanelVisibilityChangedEvent(bool obj)
         {
-            this.Visibility = obj ? Visibility.Visible : Visibility.Collapsed;
+            Visibility = obj ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void Reset_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            if (this.zoomSlider != null)
+            if (zoomSlider != null)
             {
-                this.zoomSlider.Value = 100;
+                zoomSlider.Value = 100;
             }
             e.Handled = true;
             try
             {
-                this.SaveBitmap();
+                SaveBitmap();
             }
             catch (Exception)
             {
@@ -144,88 +143,88 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
 
         private void SaveBitmap()
         {
-            var targetBitmap = new RenderTargetBitmap(
-            (int)this.designerCanvas.DesiredSize.Width,
-            (int)this.designerCanvas.DesiredSize.Height,
+            RenderTargetBitmap targetBitmap = new RenderTargetBitmap(
+            (int)designerCanvas.DesiredSize.Width,
+            (int)designerCanvas.DesiredSize.Height,
             96,
             96,
             PixelFormats.Default
             );
 
-            targetBitmap.Render(this.designerCanvas);
-            var encoer = new BmpBitmapEncoder();
+            targetBitmap.Render(designerCanvas);
+            BmpBitmapEncoder encoer = new BmpBitmapEncoder();
             encoer.Frames.Add(BitmapFrame.Create(targetBitmap));
-            using (var fs = System.IO.File.Open("back.bmp", System.IO.FileMode.OpenOrCreate))
+            using (System.IO.FileStream fs = System.IO.File.Open("back.bmp", System.IO.FileMode.OpenOrCreate))
             {
                 encoer.Save(fs);
             }
         }
 
-        void DesignerCanvas_ScaleChanged(double scale)
+        private void DesignerCanvas_ScaleChanged(double scale)
         {
-            this.zoomSlider.ValueChanged -= this.ZoomSlider_ValueChanged;
+            zoomSlider.ValueChanged -= ZoomSlider_ValueChanged;
             zoomSlider.Value = scale;
-            this.zoomSlider.ValueChanged += this.ZoomSlider_ValueChanged;
+            zoomSlider.ValueChanged += ZoomSlider_ValueChanged;
         }
 
         private void ZoomSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            if (this.ScrollViewer != null)
+            if (ScrollViewer != null)
             {
                 double scale = e.NewValue / e.OldValue;
 
-                double halfViewportHeight = this.ScrollViewer.ViewportHeight / 2;
-                double newVerticalOffset = ((this.ScrollViewer.VerticalOffset + halfViewportHeight) * scale -
+                double halfViewportHeight = ScrollViewer.ViewportHeight / 2;
+                double newVerticalOffset = ((ScrollViewer.VerticalOffset + halfViewportHeight) * scale -
                                             halfViewportHeight);
 
-                double halfViewportWidth = this.ScrollViewer.ViewportWidth / 2;
-                double newHorizontalOffset = ((this.ScrollViewer.HorizontalOffset + halfViewportWidth) * scale -
+                double halfViewportWidth = ScrollViewer.ViewportWidth / 2;
+                double newHorizontalOffset = ((ScrollViewer.HorizontalOffset + halfViewportWidth) * scale -
                                               halfViewportWidth);
 
-                this.scaleTransform.ScaleX *= scale;
-                this.scaleTransform.ScaleY *= scale;
+                scaleTransform.ScaleX *= scale;
+                scaleTransform.ScaleY *= scale;
 
-                this.ScrollViewer.ScrollToHorizontalOffset(newHorizontalOffset);
-                this.ScrollViewer.ScrollToVerticalOffset(newVerticalOffset);
+                ScrollViewer.ScrollToHorizontalOffset(newHorizontalOffset);
+                ScrollViewer.ScrollToVerticalOffset(newVerticalOffset);
             }
         }
 
         private void Thumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            if (this.ScrollViewer != null)
+            if (ScrollViewer != null)
             {
-                this.InvalidateScale(out double scale, out _, out _);
+                InvalidateScale(out double scale, out _, out _);
 
-                this.ScrollViewer.ScrollToHorizontalOffset(this.ScrollViewer.HorizontalOffset + e.HorizontalChange / scale);
-                this.ScrollViewer.ScrollToVerticalOffset(this.ScrollViewer.VerticalOffset + e.VerticalChange / scale);
+                ScrollViewer.ScrollToHorizontalOffset(ScrollViewer.HorizontalOffset + e.HorizontalChange / scale);
+                ScrollViewer.ScrollToVerticalOffset(ScrollViewer.VerticalOffset + e.VerticalChange / scale);
             }
         }
 
         private void DesignerCanvas_LayoutUpdated(object sender, EventArgs e)
         {
-            if (this.ScrollViewer != null)
+            if (ScrollViewer != null)
             {
-                this.InvalidateScale(out double scale, out double xOffset, out double yOffset);
+                InvalidateScale(out double scale, out double xOffset, out double yOffset);
 
-                this.zoomThumb.Width = this.ScrollViewer.ViewportWidth * scale;
-                this.zoomThumb.Height = this.ScrollViewer.ViewportHeight * scale;
+                zoomThumb.Width = ScrollViewer.ViewportWidth * scale;
+                zoomThumb.Height = ScrollViewer.ViewportHeight * scale;
 
-                Canvas.SetLeft(this.zoomThumb, xOffset + this.ScrollViewer.HorizontalOffset * scale);
-                Canvas.SetTop(this.zoomThumb, yOffset + this.ScrollViewer.VerticalOffset * scale);
+                Canvas.SetLeft(zoomThumb, xOffset + ScrollViewer.HorizontalOffset * scale);
+                Canvas.SetTop(zoomThumb, yOffset + ScrollViewer.VerticalOffset * scale);
 
-                if (this.Parent is UIElement u)
+                if (Parent is UIElement u)
                 {
                     double bottom = Margin.Bottom;
                     double right = Margin.Right;
-                    if (this.Margin.Bottom + this.ActualHeight > u.DesiredSize.Height)
+                    if (Margin.Bottom + ActualHeight > u.DesiredSize.Height)
                     {
-                        bottom = u.DesiredSize.Height - this.ActualHeight;
+                        bottom = u.DesiredSize.Height - ActualHeight;
                     }
-                    if (this.Margin.Right + this.ActualWidth > u.DesiredSize.Width)
+                    if (Margin.Right + ActualWidth > u.DesiredSize.Width)
                     {
-                        right = u.DesiredSize.Width - this.ActualWidth;
+                        right = u.DesiredSize.Width - ActualWidth;
                     }
-                    this.Margin = new Thickness(0, 0, right, bottom);
+                    Margin = new Thickness(0, 0, right, bottom);
                 }
 
             }
@@ -234,12 +233,12 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         private void InvalidateScale(out double scale, out double xOffset, out double yOffset)
         {
             // designer canvas size
-            double w = this.designerCanvas.ActualWidth * this.scaleTransform.ScaleX;
-            double h = this.designerCanvas.ActualHeight * this.scaleTransform.ScaleY;
+            double w = designerCanvas.ActualWidth * scaleTransform.ScaleX;
+            double h = designerCanvas.ActualHeight * scaleTransform.ScaleY;
 
             // zoom canvas size
-            double x = this.zoomCanvas.ActualWidth;
-            double y = this.zoomCanvas.ActualHeight;
+            double x = zoomCanvas.ActualWidth;
+            double y = zoomCanvas.ActualHeight;
 
             double scaleX = x / w;
             double scaleY = y / h;

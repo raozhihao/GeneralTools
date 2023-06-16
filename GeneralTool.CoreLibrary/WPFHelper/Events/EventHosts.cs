@@ -57,7 +57,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Events
             //    hosts.SetValue(EventCommandsProerty, hosts);
             //}
 
-            var hosts = element.GetValue(EventCommandsProerty) as EventHostCollection;
+            EventHostCollection hosts = element.GetValue(EventCommandsProerty) as EventHostCollection;
             return hosts;
         }
 
@@ -88,10 +88,9 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Events
 
         #region Private 方法
 
-
         private static void Eve_Changed(object sender, EventArgs e)
         {
-            var eve = sender as EventHost;
+            EventHost eve = sender as EventHost;
 
             if (eve.Command == null)
                 return;

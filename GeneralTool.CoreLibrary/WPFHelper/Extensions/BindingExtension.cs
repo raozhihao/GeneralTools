@@ -32,10 +32,9 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
         /// 
         /// </summary>
         /// <param name="path"></param>
-        public BindingExtension(string path) => this.Path = path;
+        public BindingExtension(string path) => Path = path;
 
         #region Binding Properties
-
 
         /// <summary>
         /// 
@@ -115,7 +114,6 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
         [DefaultValue(null)]
         public string ElementName { get; set; }
 
-
         /// <summary>
         /// 
         /// </summary>
@@ -142,15 +140,14 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
 
         }
 
-
         /// <inheritdoc/>
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
-            var target = serviceProvider.GetService(typeof(IProvideValueTarget)) as IProvideValueTarget;
-            var obj = target.TargetObject as DependencyObject;
+            IProvideValueTarget target = serviceProvider.GetService(typeof(IProvideValueTarget)) as IProvideValueTarget;
+            DependencyObject obj = target.TargetObject as DependencyObject;
 
             //解析出各项属性
-            var parameters = this.ParseStrings(this.Path);
+            List<string> parameters = ParseStrings(Path);
 
             BindingBase bindingBase;
 
@@ -158,7 +155,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
             if (parameters.Count < 2)
             {
                 //单独绑定
-                var binding = new Binding
+                Binding binding = new Binding
                 {
                     //为0的时候,就是没有绑定Path,则为单项绑定
                     Mode = parameters.Count == 0 ? BindingMode.OneWay : BindingMode.TwoWay,
@@ -186,13 +183,13 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
                 if (StringFormat != null)
                     binding.StringFormat = StringFormat;
 
-                binding.Converter = this.Converter;
+                binding.Converter = Converter;
                 bindingBase = binding;
             }
             else
             {
                 //多值绑定
-                var multi = new MultiBinding()
+                MultiBinding multi = new MultiBinding()
                 {
                     ConverterCulture = ConverterCulture,
                     Mode = BindingMode.OneWay,
@@ -207,39 +204,38 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
                     ValidatesOnNotifyDataErrors = ValidatesOnNotifyDataErrors,
                 };
 
-                var window = Window.GetWindow(obj);
-                var list = new List<string>();
-                foreach (var item in parameters)
+                Window window = Window.GetWindow(obj);
+                List<string> list = new List<string>();
+                foreach (string item in parameters)
                 {
-                    var start = item[0] + "";
+                    string start = item[0] + "";
                     //绑定的属性名称是否符合以字母开头(因为解析出来的属性有可能是例如3ab这样的)
-                    var re = Regex.Match(start, "[a-z,A-Z]").Success;
+                    bool re = Regex.Match(start, "[a-z,A-Z]").Success;
                     if (!re)
                     {
                         continue;
                     }
-                    var binding = new Binding();
+                    Binding binding = new Binding();
                     if (Source != null)
                         binding.Source = Source;
 
-                    if (this.ElementName != null)
+                    if (ElementName != null)
                     {
                         if (window != null)
                         {
                             //查看当前绑定的对象是否存在
-                            var value = window.FindName(this.ElementName);
+                            object value = window.FindName(ElementName);
                             if (value != null)
                             {
                                 //查看对象上是否有对应的属性,没有的话,就不要绑定ElementName了,不然会去xaml中查找
                                 //而这个属性可能是在ViewModel中
-                                var pro = value.GetType().GetProperty(item);
+                                PropertyInfo pro = value.GetType().GetProperty(item);
                                 if (pro != null)
                                     binding.ElementName = ElementName;
                             }
                         }
 
                     }
-
 
                     if (RelativeSource != null)
                         binding.RelativeSource = RelativeSource;
@@ -251,7 +247,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
 
                 //解析工作交给了Converter
                 if (window != null)//没有window的话,就不要进行转换
-                    multi.Converter = new MultiValueConverter(list, this.Path, obj);
+                    multi.Converter = new MultiValueConverter(list, Path, obj);
                 bindingBase = multi;
             }
 
@@ -265,11 +261,11 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
             {
                 return new List<string>();
             }
-            var splitChar = new char[] { ',', ' ', '+', '-', '*', '/', '%', '(', ')', '[', ']', '?', ':', '\'', '\"', '^', '~', '!', '=' }.ToList();
-            if (this.SymbolParameters != null)
-                splitChar.AddRange(this.SymbolParameters); //将用户自定义的符号数组加入
-            var arr = path.Split(splitChar.ToArray(), StringSplitOptions.RemoveEmptyEntries);
-            var narr = arr.Distinct();
+            List<char> splitChar = new char[] { ',', ' ', '+', '-', '*', '/', '%', '(', ')', '[', ']', '?', ':', '\'', '\"', '^', '~', '!', '=' }.ToList();
+            if (SymbolParameters != null)
+                splitChar.AddRange(SymbolParameters); //将用户自定义的符号数组加入
+            string[] arr = path.Split(splitChar.ToArray(), StringSplitOptions.RemoveEmptyEntries);
+            IEnumerable<string> narr = arr.Distinct();
             return narr.ToList();
         }
     }
@@ -300,9 +296,9 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
         /// <param name="binding"></param>
         public MultiValueConverter(List<string> pros, string path, DependencyObject binding)
         {
-            this.propertyList = pros;
+            propertyList = pros;
             this.path = path;
-            this.BindingObject = binding;
+            BindingObject = binding;
         }
 
         /// <summary>
@@ -316,31 +312,31 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
 
             if (objMI != null)
             {
-                this.valueList.Clear();
+                valueList.Clear();
                 //更新数据
                 for (int i = 0; i < values.Length; i++)
                 {
-                    var value = values[i];
+                    object value = values[i];
                     //未解析正确的值
                     if (value == DependencyProperty.UnsetValue)
                         continue;
-                    this.valueList.Add(value);
+                    valueList.Add(value);
                 }
-                var re = objMI.Invoke(objDynamicCodeEval, this.valueList.ToArray());
+                object re = objMI.Invoke(objDynamicCodeEval, valueList.ToArray());
                 re = System.Convert.ChangeType(re, targetType);
                 return re;
             }
 
-            string npath = this.path;
-            var strs = new List<string>();
+            string npath = path;
+            List<string> strs = new List<string>();
             for (int i = 0; i < propertyList.Count; i++)
             {
-                var value = values[i];
+                object value = values[i];
                 //未解析正确的值
                 if (value == DependencyProperty.UnsetValue)
                     continue;
                 string pn = propertyList[i];
-                var rrrr = GetValueType(pn);
+                Type rrrr = GetValueType(pn);
                 if (rrrr == null)
                 {
                     continue;
@@ -352,12 +348,12 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
                     npath = npath.Replace(propertyList[i], pn);
                 }
 
-                this.valueList.Add(value);
+                valueList.Add(value);
                 strs.Add($"{rrrr.FullName} {pn}");
             }
 
-            var str = string.Join(",", strs);
-            var result = this.CsharpCalculate(npath, str, this.valueList.ToArray());
+            string str = string.Join(",", strs);
+            object result = CsharpCalculate(npath, str, valueList.ToArray());
             //将object类型转换成对应需要的类型
             result = System.Convert.ChangeType(result, targetType);
             return result;
@@ -391,7 +387,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
             //递归查找属性
             //分解出属性链条 例如 p.age
             PropertyInfo pro = null;
-            var splitArr = proName.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] splitArr = proName.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
             if (splitArr.Length > 0)
             {
                 //找出第一个
@@ -407,9 +403,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
                 }
             }
 
-            if (pro != null)
-                return pro.PropertyType;
-            return null;
+            return pro?.PropertyType;
         }
 
         /// <summary>
@@ -430,68 +424,66 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
         /// <returns></returns>
         protected PropertyInfo GetInstance(string proName)
         {
-            var window = Window.GetWindow(this.BindingObject);
+            Window window = Window.GetWindow(BindingObject);
             if (window != null)
             {
-                var pro = window.GetType().GetProperty(proName);
+                PropertyInfo pro = window.GetType().GetProperty(proName);
                 if (pro != null)
                     return pro;
             }
 
             //再从datacontext中查找
-            var context = this.BindingObject.GetValue(FrameworkElement.DataContextProperty) ?? this.BindingObject.GetValue(FrameworkContentElement.DataContextProperty);
+            object context = BindingObject.GetValue(FrameworkElement.DataContextProperty) ?? BindingObject.GetValue(FrameworkContentElement.DataContextProperty);
             if (context != null)
             {
                 if (context is ObjectDataProvider c)
                     context = c.ObjectInstance;
-                var pro = context.GetType().GetProperty(proName);
+                PropertyInfo pro = context.GetType().GetProperty(proName);
                 if (pro != null)
                     return pro;
             }
             return null;
         }
 
-
         private MethodInfo objMI;
         private object objDynamicCodeEval;
         private object CsharpCalculate(string expression, string parameterInfos, object[] values)
         {
-            var objCSharpCodePrivoder = new CSharpCodeProvider();
+            CSharpCodeProvider objCSharpCodePrivoder = new CSharpCodeProvider();
 
             // 2.ICodeComplier
             string lan = "CSharp";
-            var info = CodeDomProvider.GetCompilerInfo(lan);
-            var options = info.CreateDefaultCompilerParameters();
+            CompilerInfo info = CodeDomProvider.GetCompilerInfo(lan);
+            CompilerParameters options = info.CreateDefaultCompilerParameters();
             options.GenerateExecutable = false;
             options.GenerateInMemory = true;
             options.TreatWarningsAsErrors = false;
-
 
             options.ReferencedAssemblies.AddRange(TypeDescriptor.AssembliesLocation);
 
             //引用当前类型的dll
             // 这里为生成的动态代码
-            var sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
 
-            sb.Append("namespace DynamicCodeGenerate");
-            sb.Append(Environment.NewLine);
-            sb.Append("{ ");
-            sb.Append(Environment.NewLine);
-            sb.Append("public class DynamicCodeEval");
-            sb.Append(Environment.NewLine);
-            sb.Append("{");
-            sb.Append(Environment.NewLine);
-            sb.Append("public object Eval(" + parameterInfos + ")");
-            sb.Append(Environment.NewLine);
-            sb.Append("{");
-            sb.Append(Environment.NewLine);
-            sb.Append("return " + expression + ";");
-            sb.Append(Environment.NewLine);
-            sb.Append("}");
-            sb.Append(Environment.NewLine);
-            sb.Append("}");
-            sb.Append(Environment.NewLine);
-            sb.Append("}");
+            _ = sb.Append("namespace DynamicCodeGenerate");
+            _ = sb.Append(Environment.NewLine);
+            _ = sb.Append("{ ");
+            _ = sb.Append(Environment.NewLine);
+            _ = sb.Append("public class DynamicCodeEval");
+            _ = sb.Append(Environment.NewLine);
+            _ = sb.Append("{");
+            _ = sb.Append(Environment.NewLine);
+            _ = sb.Append("public object Eval(" + parameterInfos + ")");
+            _ = sb.Append(Environment.NewLine);
+            _ = sb.Append("{");
+            _ = sb.Append(Environment.NewLine);
+            _ = sb.Append("return " + expression + ";");
+            _ = sb.Append(Environment.NewLine);
+            _ = sb.Append("}");
+            _ = sb.Append(Environment.NewLine);
+            _ = sb.Append("}");
+            _ = sb.Append(Environment.NewLine);
+            _ = sb.Append("}");
 
             string code = sb.ToString();
 
@@ -500,19 +492,19 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
             //如果当前编译有错误
             if (cr.Errors.HasErrors)
             {
-                var builder = new StringBuilder();
+                StringBuilder builder = new StringBuilder();
                 foreach (CompilerError error in cr.Errors)
                 {
-                    builder.AppendLine($"Line position:{error.Line} , Message :{error.ErrorText}");
+                    _ = builder.AppendLine($"Line position:{error.Line} , Message :{error.ErrorText}");
                 }
                 throw new Exception(builder.ToString());
             }
             else
             {
-                var objAssembly = cr.CompiledAssembly;
+                Assembly objAssembly = cr.CompiledAssembly;
                 objDynamicCodeEval = objAssembly.CreateInstance("DynamicCodeGenerate.DynamicCodeEval");
                 objMI = objDynamicCodeEval.GetType().GetMethod("Eval");
-                var result = objMI.Invoke(objDynamicCodeEval, values);
+                object result = objMI.Invoke(objDynamicCodeEval, values);
                 return result;
             }
 
@@ -530,7 +522,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
         {
             throw new NotSupportedException();
         }
-        struct ParameterInfo
+
+        private struct ParameterInfo
         {
             public ParameterInfo(Type parameterType, string parameterName)
             {
@@ -544,7 +537,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
         }
     }
 
-    static class TypeDescriptor
+    internal static class TypeDescriptor
     {
         public static string[] AssembliesLocation { get; }
         static TypeDescriptor()
@@ -580,11 +573,9 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
         /// <inheritdoc/>
         public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {
-            var arr = (value + "").Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(s => Convert.ToChar(s)).ToArray();
+            char[] arr = (value + "").Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(s => Convert.ToChar(s)).ToArray();
             return arr;
         }
     }
-
-
 
 }

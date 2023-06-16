@@ -34,10 +34,10 @@ namespace GeneralTool.CoreLibrary.ProcessHelpers
         /// </returns>
         public static string Run(string exePath, string args = "", string workDir = null, int timeOut = -1)
         {
-            reciveEvent.Reset();
+            _ = reciveEvent.Reset();
             reciveList.Clear();
-            var process = new Process();
-            var startInfo = new ProcessStartInfo()
+            Process process = new Process();
+            ProcessStartInfo startInfo = new ProcessStartInfo()
             {
                 FileName = exePath,
                 Arguments = args,
@@ -59,10 +59,10 @@ namespace GeneralTool.CoreLibrary.ProcessHelpers
             process.StartInfo = startInfo;
             try
             {
-                process.Start();
+                _ = process.Start();
                 process.BeginOutputReadLine();
                 process.BeginErrorReadLine();
-                var re = reciveEvent.WaitOne(timeOut);
+                bool re = reciveEvent.WaitOne(timeOut);
 
                 //超时停止,不再接收
                 process.Exited -= Process_Exited;
@@ -110,7 +110,7 @@ namespace GeneralTool.CoreLibrary.ProcessHelpers
 
         private static void Process_Exited(object sender, EventArgs e)
         {
-            reciveEvent.Set();
+            _ = reciveEvent.Set();
         }
 
         #endregion Public 方法

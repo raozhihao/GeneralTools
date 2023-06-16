@@ -22,20 +22,20 @@ namespace GeneralTool.CoreLibrary.Maths
         {
             //先将起点与终点旋转到原图坐标点 
 
-            var rect = new System.Windows.Rect(startPoint, endPoint);
+            System.Windows.Rect rect = new System.Windows.Rect(startPoint, endPoint);
 
-            var width = rect.Width;
-            var height = rect.Height;
-            var top = rect.Top;
-            var left = rect.Left;
+            double width = rect.Width;
+            double height = rect.Height;
+            double top = rect.Top;
+            double left = rect.Left;
 
-            var points = new List<System.Windows.Point>();
+            List<System.Windows.Point> points = new List<System.Windows.Point>();
             //绘制
             for (double x = 0; x < width; x += 3)
             {
-                var y = (height / 2) * (Math.Cos(2 * Math.PI * num / width * x) + 1) + top;
-                var x1 = x + left;
-                var y1 = y;
+                double y = (height / 2) * (Math.Cos(2 * Math.PI * num / width * x) + 1) + top;
+                double x1 = x + left;
+                double y1 = y;
                 points.Add(new System.Windows.Point(x1, y1));
             }
 
@@ -50,9 +50,9 @@ namespace GeneralTool.CoreLibrary.Maths
         /// <returns></returns>
         public static List<System.Windows.Point> GetThreeDeg(System.Windows.Point startPoint, System.Windows.Point endPoint)
         {
-            var p1 = new System.Windows.Point((endPoint.X - startPoint.X) / 2f + startPoint.X, startPoint.Y);
-            var p2 = new System.Windows.Point(startPoint.X, endPoint.Y);
-            var p3 = new System.Windows.Point(endPoint.X, endPoint.Y);
+            System.Windows.Point p1 = new System.Windows.Point((endPoint.X - startPoint.X) / 2f + startPoint.X, startPoint.Y);
+            System.Windows.Point p2 = new System.Windows.Point(startPoint.X, endPoint.Y);
+            System.Windows.Point p3 = new System.Windows.Point(endPoint.X, endPoint.Y);
             return new List<System.Windows.Point>() { p1, p2, p3, p1 };
         }
 
@@ -65,16 +65,16 @@ namespace GeneralTool.CoreLibrary.Maths
         public static List<System.Windows.Point> GetPentagram(System.Windows.Point startPoint, System.Windows.Point endPoint)
         {
 
-            var p = GetCircileCenterPoint(startPoint, endPoint);
+            Tuple<System.Windows.Point, System.Windows.Point, double> p = GetCircileCenterPoint(startPoint, endPoint);
 
-            var cx = p.Item1.X;
-            var cy = p.Item1.Y;
-            var cr = p.Item3;
-            var p1 = new System.Windows.Point(cx, cy - cr);
-            var p2 = new System.Windows.Point(cx - cr * Math.Sin(0.2 * Math.PI), cy + cr * Math.Cos(Math.PI * 0.2));
-            var p3 = new System.Windows.Point(cx + cr * Math.Sin(0.4 * Math.PI), cy - cr * Math.Cos(Math.PI * 0.4));
-            var p4 = new System.Windows.Point(cx - cr * Math.Sin(0.4 * Math.PI), cy - cr * Math.Cos(Math.PI * 0.4));
-            var p5 = new System.Windows.Point(cx + cr * Math.Sin(0.2 * Math.PI), cy + cr * Math.Cos(Math.PI * 0.2));
+            double cx = p.Item1.X;
+            double cy = p.Item1.Y;
+            double cr = p.Item3;
+            System.Windows.Point p1 = new System.Windows.Point(cx, cy - cr);
+            System.Windows.Point p2 = new System.Windows.Point(cx - cr * Math.Sin(0.2 * Math.PI), cy + cr * Math.Cos(Math.PI * 0.2));
+            System.Windows.Point p3 = new System.Windows.Point(cx + cr * Math.Sin(0.4 * Math.PI), cy - cr * Math.Cos(Math.PI * 0.4));
+            System.Windows.Point p4 = new System.Windows.Point(cx - cr * Math.Sin(0.4 * Math.PI), cy - cr * Math.Cos(Math.PI * 0.4));
+            System.Windows.Point p5 = new System.Windows.Point(cx + cr * Math.Sin(0.2 * Math.PI), cy + cr * Math.Cos(Math.PI * 0.2));
             return new List<System.Windows.Point>()
             {
                 p1,p2,p3,p4,p5,p1
@@ -89,24 +89,24 @@ namespace GeneralTool.CoreLibrary.Maths
         /// <returns></returns>
         public static List<System.Windows.Point> GetSArcPoints(System.Windows.Point startPoint, System.Windows.Point endPoint)
         {
-            var rectLarge = new System.Windows.Rect(startPoint, endPoint);
+            System.Windows.Rect rectLarge = new System.Windows.Rect(startPoint, endPoint);
             //s形要分两半
-            var size = new System.Windows.Size(rectLarge.Width, rectLarge.Height / 2);
-            var topRect = new System.Windows.Rect(rectLarge.TopLeft, size);
-            var bottomRect = new System.Windows.Rect(new System.Windows.Point(rectLarge.Left, rectLarge.Top + rectLarge.Height / 2), size);
+            System.Windows.Size size = new System.Windows.Size(rectLarge.Width, rectLarge.Height / 2);
+            System.Windows.Rect topRect = new System.Windows.Rect(rectLarge.TopLeft, size);
+            System.Windows.Rect bottomRect = new System.Windows.Rect(new System.Windows.Point(rectLarge.Left, rectLarge.Top + rectLarge.Height / 2), size);
 
-            var center = new System.Windows.Point(topRect.Left + topRect.Width / 2, topRect.Top + topRect.Height / 2);
+            System.Windows.Point center = new System.Windows.Point(topRect.Left + topRect.Width / 2, topRect.Top + topRect.Height / 2);
             //获取数据
-            var yDis = topRect.Height / 2.0;
-            var xDis = topRect.Width / 2.0;
-            var points = CutCirclePoints(xDis, yDis, center, 90, 360, 90);
+            double yDis = topRect.Height / 2.0;
+            double xDis = topRect.Width / 2.0;
+            List<System.Windows.Point> points = CutCirclePoints(xDis, yDis, center, 90, 360, 90);
 
             points.RemoveAt(points.Count - 1);
             //S形,下方
             center = new System.Windows.Point(bottomRect.Left + bottomRect.Width / 2, bottomRect.Top + bottomRect.Height / 2);
             yDis = bottomRect.Height / 2.0;
             xDis = bottomRect.Width / 2.0;
-            var c2 = CutCirclePoints(xDis, yDis, center, 180, -90, 90);
+            List<System.Windows.Point> c2 = CutCirclePoints(xDis, yDis, center, 180, -90, 90);
             points.AddRange(c2);
 
             return points;
@@ -122,42 +122,42 @@ namespace GeneralTool.CoreLibrary.Maths
         {
             #region 再次更新
 
-            var rect = new System.Windows.Rect(startPoint, endPoint);
+            System.Windows.Rect rect = new System.Windows.Rect(startPoint, endPoint);
             //获取横半径
-            var d = (int)rect.Width;
-            var r = d / 2;//rect.Width;
-            var a = 1;//此值影响顶上的两个半球，值越大，半球越高
-            var l = -r;
+            int d = (int)rect.Width;
+            int r = d / 2;//rect.Width;
+            int a = 1;//此值影响顶上的两个半球，值越大，半球越高
+            int l = -r;
 
-            var leftTop = new List<System.Windows.Point>();
-            var leftBottom = new List<System.Windows.Point>();
+            List<System.Windows.Point> leftTop = new List<System.Windows.Point>();
+            List<System.Windows.Point> leftBottom = new List<System.Windows.Point>();
 
             double x;
 
             //起点绘制坐标
-            var startDrawPoint = new System.Windows.Point(rect.Left, rect.Top + rect.Height / 2);
+            System.Windows.Point startDrawPoint = new System.Windows.Point(rect.Left, rect.Top + rect.Height / 2);
 
-            var prevTopPoint = default(System.Windows.Point);
+            System.Windows.Point prevTopPoint = default(System.Windows.Point);
             //两点之间最小像素,是在最顶端点与旁边点之间的距离
-            var skip = 0.1;
+            double skip = 0.1;
 
-            var skipDis = 1.0;
-            var top1Point = GetHeartPoint(r + skipDis, d, a, -d, startDrawPoint);
+            double skipDis = 1.0;
+            System.Windows.Point top1Point = GetHeartPoint(r + skipDis, d, a, -d, startDrawPoint);
 
-            var skipMin = top1Point.Distance(top1Point);//两点之间间隔的最小像素
+            double skipMin = top1Point.Distance(top1Point);//两点之间间隔的最小像素
 
             //两点之间最大像素,是起始点与第2点之间的距离
-            var sp = GetHeartPoint(0, d, a, -d, startDrawPoint);
-            var sp1 = GetHeartPoint(skipDis, d, a, -d, startDrawPoint);
+            System.Windows.Point sp = GetHeartPoint(0, d, a, -d, startDrawPoint);
+            System.Windows.Point sp1 = GetHeartPoint(skipDis, d, a, -d, startDrawPoint);
 
-            var skipMax = sp.Distance(sp1);
+            double skipMax = sp.Distance(sp1);
             //Console.WriteLine("===========min : {0},max : {1}", skipMin, skipMax);
 
-            var prevBottomPoint = default(System.Windows.Point);
+            System.Windows.Point prevBottomPoint = default(System.Windows.Point);
             for (x = 0; x <= d; x += skip)
             {
-                var xtmp = x;
-                var currTop = GetHeartPoint(xtmp, r, a, l, startDrawPoint, true);
+                double xtmp = x;
+                System.Windows.Point currTop = GetHeartPoint(xtmp, r, a, l, startDrawPoint, true);
 
                 currTop = new System.Windows.Point(currTop.X, currTop.Y);
 
@@ -168,7 +168,7 @@ namespace GeneralTool.CoreLibrary.Maths
                 }
                 else
                 {
-                    var dis = prevTopPoint.Distance(currTop);
+                    double dis = prevTopPoint.Distance(currTop);
                     //Console.WriteLine(dis);
                     //修正两点之间的距离,在符合距离之中的点位进行写入
                     if (dis > skipMin && dis < skipMax)
@@ -183,7 +183,7 @@ namespace GeneralTool.CoreLibrary.Maths
                     }
                 }
 
-                var currBottom = GetHeartPoint(xtmp, r, a, l, startDrawPoint, false);
+                System.Windows.Point currBottom = GetHeartPoint(xtmp, r, a, l, startDrawPoint, false);
                 if (prevBottomPoint.X == 0 && prevBottomPoint.Y == 0)
                 {
                     leftBottom.Add(currBottom);
@@ -192,7 +192,7 @@ namespace GeneralTool.CoreLibrary.Maths
                 }
                 else
                 {
-                    var dis = prevBottomPoint.Distance(currBottom);
+                    double dis = prevBottomPoint.Distance(currBottom);
                     //修正两点之间的距离,在符合距离之中的点位进行写入
                     if (dis > skipMin && dis < skipMax)
                     {
@@ -208,9 +208,9 @@ namespace GeneralTool.CoreLibrary.Maths
             }
 
             //将上部最后一个点加上
-            var topLast = GetHeartPoint(d, r, a, l, startDrawPoint, true);
-            var topLast2 = leftTop.Last();
-            var distance = topLast.Distance(topLast2);
+            System.Windows.Point topLast = GetHeartPoint(d, r, a, l, startDrawPoint, true);
+            System.Windows.Point topLast2 = leftTop.Last();
+            double distance = topLast.Distance(topLast2);
             if (topLast != topLast2 && distance < skipMax && distance > skipMin)
             {
                 leftTop.Add(topLast);
@@ -223,11 +223,10 @@ namespace GeneralTool.CoreLibrary.Maths
             }
 
             leftBottom.Reverse();
-            var points = new List<System.Windows.Point>();
+            List<System.Windows.Point> points = new List<System.Windows.Point>();
 
             points.AddRange(leftTop);
             points.AddRange(leftBottom);
-
 
             //Console.WriteLine(points.Count);
 
@@ -238,14 +237,11 @@ namespace GeneralTool.CoreLibrary.Maths
 
         private static System.Windows.Point GetHeartPoint(double x, double r, double a, double l, System.Windows.Point topLeft, bool isY1 = true)
         {
-            var hh = (a * 2 + 0.5);//此值影响心形下的尖尖，值越小，尖尖就越长
-            var tmmTop = Math.Pow(x + l, 2);
-            double y;
-            if (isY1)
-                y = -(a * Math.Sqrt(r * Math.Sqrt(tmmTop) - tmmTop));
-            else
-                y = -(-a * (r / hh) * Math.Sqrt(Math.Sqrt(r) - Math.Sqrt(Math.Abs(x + l))));
-
+            double hh = (a * 2 + 0.5);//此值影响心形下的尖尖，值越小，尖尖就越长
+            double tmmTop = Math.Pow(x + l, 2);
+            double y = isY1
+                ? -(a * Math.Sqrt(r * Math.Sqrt(tmmTop) - tmmTop))
+                : -(-a * (r / hh) * Math.Sqrt(Math.Sqrt(r) - Math.Sqrt(Math.Abs(x + l))));
             x += topLeft.X;
             y += topLeft.Y;
             return new System.Windows.Point(x, y);
@@ -262,36 +258,33 @@ namespace GeneralTool.CoreLibrary.Maths
         /// <returns></returns>
         public static List<System.Windows.Point> ThreeArcPoints(System.Windows.Point startPoint, System.Windows.Point endPoint, System.Windows.Point s1, System.Windows.Point s2)
         {
-            var list = new List<System.Windows.Point>();
+            List<System.Windows.Point> list = new List<System.Windows.Point>();
             for (double i = 0; i <= 1; i += 0.03)
             {
-                var p = ThreeBezier(i, startPoint, endPoint, s1, s2);
+                System.Windows.Point p = ThreeBezier(i, startPoint, endPoint, s1, s2);
                 list.Add(p);
             }
             return list;
         }
 
-
-
-
         private static System.Windows.Point ThreeBezier(double t, System.Windows.Point sp, System.Windows.Point ep, System.Windows.Point cp1, System.Windows.Point cp2)
         {
-            var x1 = sp.X;
-            var y1 = sp.Y;
-            var x2 = ep.X;
-            var y2 = ep.Y;
-            var cx1 = cp1.X;
-            var cy1 = cp1.Y;
-            var cx2 = cp2.X;
-            var cy2 = cp2.Y;
+            double x1 = sp.X;
+            double y1 = sp.Y;
+            double x2 = ep.X;
+            double y2 = ep.Y;
+            double cx1 = cp1.X;
+            double cy1 = cp1.Y;
+            double cx2 = cp2.X;
+            double cy2 = cp2.Y;
 
-            var x =
+            double x =
                 x1 * (1 - t) * (1 - t) * (1 - t) +
                 3 * cx1 * t * (1 - t) * (1 - t) +
                 3 * cx2 * t * t * (1 - t) +
                 x2 * t * t * t;
 
-            var y =
+            double y =
                 y1 * (1 - t) * (1 - t) * (1 - t) +
                 3 * cy1 * t * (1 - t) * (1 - t) +
                 3 * cy2 * t * t * (1 - t) +
@@ -299,9 +292,6 @@ namespace GeneralTool.CoreLibrary.Maths
 
             return new System.Windows.Point(x, y);
         }
-
-
-
 
         /// <summary>
         /// 生成圆弧
@@ -315,23 +305,22 @@ namespace GeneralTool.CoreLibrary.Maths
         public static List<System.Windows.Point> CutCirclePoints(double xDistance, double yDistance, System.Windows.Point centerPoint, double startDeg = 0, double endDeg = 360, int pointCount = 90)
         {
             //绘制路径是从下中到右中
-            var radians = Math.PI / 180; //弧度
+            double radians = Math.PI / 180; //弧度
 
-            var sd = startDeg;
-            var ed = endDeg;
-            var skip = Math.Abs(sd - ed) / pointCount;
+            double sd = startDeg;
+            double ed = endDeg;
+            double skip = Math.Abs(sd - ed) / pointCount;
             double ox = centerPoint.X;
             double oy = centerPoint.Y;
 
-
             //反向绘制,从大到小去绘
-            var reveser = sd > ed;
+            bool reveser = sd > ed;
 
-            var points = new List<System.Windows.Point>();
+            List<System.Windows.Point> points = new List<System.Windows.Point>();
             //填充xy坐标
             if (reveser)
             {
-                var tmp = sd;
+                double tmp = sd;
                 sd = ed;
                 ed = tmp;
 
@@ -364,7 +353,6 @@ namespace GeneralTool.CoreLibrary.Maths
             return points;
         }
 
-
         /// <summary>
         /// 根据圆外接矩形两点求取
         /// </summary>
@@ -374,18 +362,17 @@ namespace GeneralTool.CoreLibrary.Maths
         public static Tuple<System.Windows.Point, System.Windows.Point, double> GetCircileCenterPoint(System.Windows.Point startPoint, System.Windows.Point endPoint)
         {
             //根据宽度来生成圆对应的坐标
-            var rect = new System.Windows.Rect(startPoint, endPoint);
+            System.Windows.Rect rect = new System.Windows.Rect(startPoint, endPoint);
 
             //半径长度,直径/2
-            var r = rect.Width / 2;
+            double r = rect.Width / 2;
             //圆心坐标
-            var centerPointX = rect.Location.X + r;
+            double centerPointX = rect.Location.X + r;
             //找出圆心的Y坐标
-            var centerPointY = rect.Location.Y + r;
+            double centerPointY = rect.Location.Y + r;
             //返回圆心坐标，圆上的一个点
             return new Tuple<System.Windows.Point, System.Windows.Point, double>(new System.Windows.Point(centerPointX, centerPointY), new System.Windows.Point(centerPointX, centerPointY - r), r);
         }
-
 
     }
 }

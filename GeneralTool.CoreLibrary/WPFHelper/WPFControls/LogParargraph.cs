@@ -74,8 +74,6 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
             }
         }
 
-
-
         /// <summary>
         /// 最大数量
         /// </summary>
@@ -103,47 +101,46 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
             logMessageInfos.CollectionChanged += Dp_CollectionChanged;
         }
 
-
         private void AddItems(System.Collections.IList addItems, NotifyCollectionChangedAction action)
         {
             if (addItems == null)
                 return;
             for (int index = 0; index < addItems.Count; index++)
             {
-                var msg = (LogMessageInfo)addItems[index];
-                var run = new Run(msg.Msg + Environment.NewLine)
+                LogMessageInfo msg = (LogMessageInfo)addItems[index];
+                Run run = new Run(msg.Msg + Environment.NewLine)
                 {
                     Tag = msg
                 };
                 Brush brush = null;
-                var visible = false;
+                bool visible = false;
                 switch (action)
                 {
                     case NotifyCollectionChangedAction.Add:
                         switch (msg.LogType)
                         {
-                            case Enums.LogType.Info when this.InfoVisible:
-                                brush = this.InfoForeground;
+                            case Enums.LogType.Info when InfoVisible:
+                                brush = InfoForeground;
                                 visible = true;
                                 break;
 
-                            case Enums.LogType.Debug when this.DebugVisible:
-                                brush = this.DebugForeground;
+                            case Enums.LogType.Debug when DebugVisible:
+                                brush = DebugForeground;
                                 visible = true;
                                 break;
 
                             case Enums.LogType.Error when ErroVisible:
-                                brush = this.ErrorForeground;
+                                brush = ErrorForeground;
                                 visible = true;
                                 break;
 
-                            case Enums.LogType.Waring when this.WaringVisible:
-                                brush = this.WaringForeground;
+                            case Enums.LogType.Waring when WaringVisible:
+                                brush = WaringForeground;
                                 visible = true;
                                 break;
 
-                            case Enums.LogType.Fail when this.FailVisible:
-                                brush = this.FailForeground;
+                            case Enums.LogType.Fail when FailVisible:
+                                brush = FailForeground;
                                 visible = true;
                                 break;
                         }
@@ -152,34 +149,34 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
                 if (brush != null)
                     run.Foreground = brush;
                 if (visible)
-                    this.Inlines.Add(run);
+                    Inlines.Add(run);
             }
         }
 
         private readonly object Locker = new object();
         private void Dp_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            this.Dispatcher.Invoke(new Action(() =>
+            Dispatcher.Invoke(new Action(() =>
             {
                 lock (Locker)
                 {
-                    var list = sender as ObservableCollection<LogMessageInfo>;
-                    if (this.Inlines.Count > this.MaxLineCount)
+                    ObservableCollection<LogMessageInfo> list = sender as ObservableCollection<LogMessageInfo>;
+                    if (Inlines.Count > MaxLineCount)
                     {
                         list.CollectionChanged -= Dp_CollectionChanged;
                         list.Clear();
-                        this.Inlines.Clear();
+                        Inlines.Clear();
 
                         list.CollectionChanged += Dp_CollectionChanged;
                     }
                     else if (e.Action == NotifyCollectionChangedAction.Remove)
                     {
                         list.CollectionChanged -= Dp_CollectionChanged;
-                        this.RemoveItem(e.OldItems);
+                        RemoveItem(e.OldItems);
                         list.CollectionChanged += Dp_CollectionChanged;
                     }
                     else if (list.Count == 0)
-                        this.Inlines.Clear();
+                        Inlines.Clear();
                     if (e.Action == NotifyCollectionChangedAction.Add)
                     {
                         AddItems(e.NewItems, e.Action);
@@ -198,15 +195,13 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
 
             for (int i = 0; i < oldItems.Count; i++)
             {
-                if (!(oldItems[i] is LogMessageInfo item)) continue;
-                var run = this.Inlines.FirstOrDefault(r => ((Run)r).Tag == item);
+                if (!(oldItems[i] is  LogMessageInfo item)) continue;
+                Inline run = Inlines.FirstOrDefault(r => ((Run)r).Tag == item);
                 if (run != null)
-                    this.Inlines.Remove(run);
+                    _ = Inlines.Remove(run);
             }
 
-
         }
-
 
         #region Public 属性
 
@@ -216,8 +211,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         /// <returns></returns>
         public Brush DebugForeground
         {
-            get => this.GetValue(DebugForegroundProperty) as Brush;
-            set => this.SetValue(DebugVisibleProperty, value);
+            get => GetValue(DebugForegroundProperty) as Brush;
+            set => SetValue(DebugVisibleProperty, value);
         }
 
         /// <summary>
@@ -225,8 +220,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         /// </summary>
         public bool DebugVisible
         {
-            get => (bool)this.GetValue(DebugVisibleProperty);
-            set => this.SetValue(DebugVisibleProperty, value);
+            get => (bool)GetValue(DebugVisibleProperty);
+            set => SetValue(DebugVisibleProperty, value);
         }
 
         /// <summary>
@@ -235,8 +230,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         /// <returns></returns>
         public Brush ErrorForeground
         {
-            get => this.GetValue(ErrorForegroundProperty) as Brush;
-            set => this.SetValue(ErrorForegroundProperty, value);
+            get => GetValue(ErrorForegroundProperty) as Brush;
+            set => SetValue(ErrorForegroundProperty, value);
         }
 
         /// <summary>
@@ -245,7 +240,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         public bool ErroVisible
         {
             get => (bool)GetValue(ErroVisibleProperty);
-            set => this.SetValue(ErroVisibleProperty, value);
+            set => SetValue(ErroVisibleProperty, value);
         }
 
         /// <summary>
@@ -253,8 +248,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         /// </summary>
         public Brush FailForeground
         {
-            get => this.GetValue(FailForegroundProperty) as Brush;
-            set => this.SetValue(FailForegroundProperty, value);
+            get => GetValue(FailForegroundProperty) as Brush;
+            set => SetValue(FailForegroundProperty, value);
         }
 
         /// <summary>
@@ -262,8 +257,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         /// </summary>
         public bool FailVisible
         {
-            get => (bool)this.GetValue(FailVisibleProperty);
-            set => this.SetValue(FailVisibleProperty, value);
+            get => (bool)GetValue(FailVisibleProperty);
+            set => SetValue(FailVisibleProperty, value);
         }
 
         /// <summary>
@@ -271,8 +266,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         /// </summary>
         public Brush InfoForeground
         {
-            get => this.GetValue(InfoForegroundProperty) as Brush;
-            set => this.SetValue(InfoForegroundProperty, value);
+            get => GetValue(InfoForegroundProperty) as Brush;
+            set => SetValue(InfoForegroundProperty, value);
         }
 
         /// <summary>
@@ -280,8 +275,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         /// </summary>
         public bool InfoVisible
         {
-            get => (bool)this.GetValue(InfoVisibleProperty);
-            set => this.SetValue(InfoVisibleProperty, value);
+            get => (bool)GetValue(InfoVisibleProperty);
+            set => SetValue(InfoVisibleProperty, value);
         }
 
         /// <summary>
@@ -291,8 +286,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         /// </returns>
         public ObservableCollection<LogMessageInfo> Lines
         {
-            get => this.GetValue(LinesProperty) as ObservableCollection<LogMessageInfo>;
-            set => this.SetValue(LinesProperty, value);
+            get => GetValue(LinesProperty) as ObservableCollection<LogMessageInfo>;
+            set => SetValue(LinesProperty, value);
         }
 
         /// <summary>
@@ -302,8 +297,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         /// </returns>
         public int MaxLineCount
         {
-            get => Convert.ToInt32(this.GetValue(MaxLineCountProperty));
-            set => this.SetValue(MaxLineCountProperty, value);
+            get => Convert.ToInt32(GetValue(MaxLineCountProperty));
+            set => SetValue(MaxLineCountProperty, value);
         }
 
         /// <summary>
@@ -312,8 +307,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         /// <returns></returns>
         public Brush WaringForeground
         {
-            get => this.GetValue(WaringForegroundProperty) as Brush;
-            set => this.SetValue(WaringForegroundProperty, value);
+            get => GetValue(WaringForegroundProperty) as Brush;
+            set => SetValue(WaringForegroundProperty, value);
         }
 
         /// <summary>
@@ -322,10 +317,9 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         /// 
         public bool WaringVisible
         {
-            get => (bool)this.GetValue(WaringVisibleProperty);
-            set => this.SetValue(WaringVisibleProperty, value);
+            get => (bool)GetValue(WaringVisibleProperty);
+            set => SetValue(WaringVisibleProperty, value);
         }
-
 
         #endregion Public 方法
     }

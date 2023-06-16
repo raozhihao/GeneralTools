@@ -21,7 +21,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         {
             get
             {
-                return this.RobotEventType.GetEnumCustomAttribute<RobotEventAttribute>();
+                return RobotEventType.GetEnumCustomAttribute<RobotEventAttribute>();
             }
         }
 
@@ -43,9 +43,9 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="content"></param>
         public RobotEventHandler(RobotEventType eventType, int code, string content)
         {
-            this.RobotEventType = eventType;
-            this.EventCode = code;
-            this.EventContent = content;
+            RobotEventType = eventType;
+            EventCode = code;
+            EventContent = content;
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <returns></returns>
         public override string ToString()
         {
-            return $"EventCode: {this.EventCode}\tRobotEventType: {this.RobotEventType}\tEventContent: {this.EventContent}\tEventDescription: {this.EventDescription.ZhCnDescription}";
+            return $"EventCode: {EventCode}\tRobotEventType: {RobotEventType}\tEventContent: {EventContent}\tEventDescription: {EventDescription.ZhCnDescription}";
         }
     }
 }

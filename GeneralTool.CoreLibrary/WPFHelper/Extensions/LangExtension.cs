@@ -23,18 +23,18 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
         /// </summary>
         public string LangKey { get; set; }
 
-        readonly PropertyLangStruct property = new PropertyLangStruct();
+        private readonly PropertyLangStruct property = new PropertyLangStruct();
 
         /// <inheritdoc/>
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
-            var target = serviceProvider.GetService(typeof(IProvideValueTarget)) as IProvideValueTarget;
+            IProvideValueTarget target = serviceProvider.GetService(typeof(IProvideValueTarget)) as IProvideValueTarget;
             property.LangKey = LangKey;
             property.Dependency = target.TargetObject as DependencyObject;
             if (property.Dependency == null)
                 throw new Exception("无法绑定此项,只能在DependencyObject上进行绑定");
 
-            property.PropertyInfo = target.TargetObject.GetType().GetProperty(this.BindingProperty);
+            property.PropertyInfo = target.TargetObject.GetType().GetProperty(BindingProperty);
             if (property.PropertyInfo == null)
                 // throw new Exception("无法绑定此项,因为 BindingProperty 设置不正确,应该设置为需要被绑定的属性名称");
                 return null;
@@ -50,7 +50,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
             LangProvider.LangProviderInstance.LangChanged += LangProviderInstance_LangChanged;
 
             //找到其父窗体
-            var window = Window.GetWindow(property.Dependency);
+            Window window = Window.GetWindow(property.Dependency);
             if (window != null)
             {
                 //如果有父窗体,则绑定父窗体的显示事件
@@ -69,14 +69,13 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
                 return default;
             }
 
-
             return default;
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             LangProvider.LangProviderInstance.LangChanged -= LangProviderInstance_LangChanged;
-            BindingStaticClass.BindingLangWindow.Remove(sender as Window);
+            _ = BindingStaticClass.BindingLangWindow.Remove(sender as Window);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -84,7 +83,6 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
             LangProvider.LangProviderInstance.LangChanged -= LangProviderInstance_LangChanged;
             LangProvider.LangProviderInstance.LangChanged += LangProviderInstance_LangChanged;
         }
-
 
         private void LangProviderInstance_LangChanged(ResourceDictionary resx)
         {
@@ -95,8 +93,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
             //    value = resx[property.LangKey]; //获取对应的值
             //                                    //赋值
 
-
-            var value = LangProvider.LangProviderInstance.GetLangValue(this.LangKey);
+            string value = LangProvider.LangProviderInstance.GetLangValue(LangKey);
             if (string.IsNullOrEmpty(value))
                 value = property.DefaultLabel + "";
             property.SetValue(value ?? property.DefaultLabel);

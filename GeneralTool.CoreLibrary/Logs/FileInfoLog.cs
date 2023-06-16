@@ -25,8 +25,6 @@ namespace GeneralTool.CoreLibrary.Logs
         private FileStream currentFileStream = null;
         private readonly string logName;
 
-
-
         #endregion Private 字段
 
         #region Public 构造函数
@@ -39,18 +37,16 @@ namespace GeneralTool.CoreLibrary.Logs
         public FileInfoLog(string logName, string logBaseDir = "")
         {
             if (string.IsNullOrWhiteSpace(logBaseDir))
-                this.logPathDir = Directory.CreateDirectory(Path.Combine(logPathDir, logName)).FullName;
+                logPathDir = Directory.CreateDirectory(Path.Combine(logPathDir, logName)).FullName;
             else
             {
                 this.logName = logName;
-                this.logPathDir = new DirectoryInfo(logBaseDir).FullName;
+                logPathDir = new DirectoryInfo(logBaseDir).FullName;
             }
 
-            Microsoft.VisualBasic.FileIO.FileSystem.CreateDirectory(this.logPathDir);
+            Microsoft.VisualBasic.FileIO.FileSystem.CreateDirectory(logPathDir);
 
         }
-
-
 
         #endregion Public 构造函数
 
@@ -83,16 +79,16 @@ namespace GeneralTool.CoreLibrary.Logs
         #region Public 方法
 
         /// <inheritdoc/>
-        public override void Debug(string msg) => this.Log(msg, LogType.Debug);
+        public override void Debug(string msg) => Log(msg, LogType.Debug);
 
         /// <inheritdoc/>
-        public override void Error(string msg) => this.Log(msg, LogType.Error);
+        public override void Error(string msg) => Log(msg, LogType.Error);
 
         /// <inheritdoc/>
-        public override void Fail(string msg) => this.Log(msg, LogType.Fail);
+        public override void Fail(string msg) => Log(msg, LogType.Fail);
 
         /// <inheritdoc/>
-        public override void Info(string msg) => this.Log(msg, LogType.Info);
+        public override void Info(string msg) => Log(msg, LogType.Info);
 
         /// <inheritdoc/>
         public override void Log(string msg, LogType logType = LogType.Info)
@@ -101,22 +97,22 @@ namespace GeneralTool.CoreLibrary.Logs
             {
                 lock (locker)
                 {
-                    string fileName = Path.Combine(this.logPathDir, this.logName + DateTime.Now.ToString("yyyy-MM-dd_1") + ".log");
-                    var fileInfo = new FileInfo(fileName);
-                    var createNew = true;
+                    string fileName = Path.Combine(logPathDir, logName + DateTime.Now.ToString("yyyy-MM-dd_1") + ".log");
+                    FileInfo fileInfo = new FileInfo(fileName);
+                    bool createNew = true;
                     if (fileInfo.Exists)
                     {
                         //查看是否已有日志
-                        var files = Directory.GetFiles(this.logPathDir, "*.log");
+                        string[] files = Directory.GetFiles(logPathDir, "*.log");
 
                         if (files.Length > 0)
                         {
-                            var file = new FileInfo(Path.Combine(this.logPathDir, DateTime.Now.ToString("yyyy-MM-dd_") + files.Length + ".log"));
+                            FileInfo file = new FileInfo(Path.Combine(logPathDir, DateTime.Now.ToString("yyyy-MM-dd_") + files.Length + ".log"));
                             if (file.Exists)
                             {
                                 if (file.Length > MaxLength)
                                 {
-                                    fileName = Path.Combine(this.logPathDir, DateTime.Now.ToString("yyyy-MM-dd_") + (files.Length + 1) + ".log");
+                                    fileName = Path.Combine(logPathDir, DateTime.Now.ToString("yyyy-MM-dd_") + (files.Length + 1) + ".log");
                                     createNew = true;
                                 }
                                 else
@@ -129,7 +125,7 @@ namespace GeneralTool.CoreLibrary.Logs
                             {
                                 if (fileInfo.Length > MaxLength)
                                 {
-                                    fileName = Path.Combine(this.logPathDir, DateTime.Now.ToString("yyyy-MM-dd_") + (files.Length + 1) + ".log");
+                                    fileName = Path.Combine(logPathDir, DateTime.Now.ToString("yyyy-MM-dd_") + (files.Length + 1) + ".log");
                                     createNew = true;
                                 }
                                 else
@@ -143,18 +139,17 @@ namespace GeneralTool.CoreLibrary.Logs
 
                     if (createNew)
                     {
-                        this.currentFileStream?.Close();
-                        this.currentFileStream?.Dispose();
-                        this.currentFileStream = new FileStream(fileName, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
+                        currentFileStream?.Close();
+                        currentFileStream?.Dispose();
+                        currentFileStream = new FileStream(fileName, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
                     }
-                    else if (this.currentFileStream == null)
-                        this.currentFileStream = new FileStream(fileName, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
+                    else if (currentFileStream == null)
+                        currentFileStream = new FileStream(fileName, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
 
-
-                    var info = new LogMessageInfo(msg, logType, fileName) { CurrentTime = DateTime.Now, CurrentThreadId = Thread.CurrentThread.ManagedThreadId };
-                    this.lockDic.Enqueue(info);
+                    LogMessageInfo info = new LogMessageInfo(msg, logType, fileName) { CurrentTime = DateTime.Now, CurrentThreadId = Thread.CurrentThread.ManagedThreadId };
+                    lockDic.Enqueue(info);
                     WriteLog();
-                    this.CurrentPath = fileName;
+                    CurrentPath = fileName;
                 }
             }
             catch (Exception ex)
@@ -164,13 +159,13 @@ namespace GeneralTool.CoreLibrary.Logs
         }
 
         /// <inheritdoc/>
-        public override void Waring(string msg) => this.Log(msg, LogType.Waring);
+        public override void Waring(string msg) => Log(msg, LogType.Waring);
 
         /// <inheritdoc/>
         public override void Dispose()
         {
-            var time = DateTime.Now;
-            while (!this.lockDic.IsEmpty)
+            DateTime time = DateTime.Now;
+            while (!lockDic.IsEmpty)
             {
                 Thread.Sleep(10);
                 if (DateTime.Now - time > TimeSpan.FromMilliseconds(3))
@@ -179,8 +174,8 @@ namespace GeneralTool.CoreLibrary.Logs
 
             try
             {
-                this.currentFileStream?.Close();
-                this.currentFileStream?.Dispose();
+                currentFileStream?.Close();
+                currentFileStream?.Dispose();
             }
             catch
             {
@@ -194,29 +189,28 @@ namespace GeneralTool.CoreLibrary.Logs
 
         private void WriteLog()
         {
-            var re = this.lockDic.TryDequeue(out var result);
+            bool re = lockDic.TryDequeue(out LogMessageInfo result);
             if (re)
             {
-                var headInfo = "";
-                if (this.ShowLogTypeInfo) headInfo = "[" + result.LogType + "]";
-                if (this.ShowLogThreadId) headInfo += " " + result.CurrentThreadId + " ";
-                if (this.ShowLogTime) headInfo += " " + result.CurrentTime + ":";
+                string headInfo = "";
+                if (ShowLogTypeInfo) headInfo = "[" + result.LogType + "]";
+                if (ShowLogThreadId) headInfo += " " + result.CurrentThreadId + " ";
+                if (ShowLogTime) headInfo += " " + result.CurrentTime + ":";
 
-                var msg = $"{headInfo}{result.Msg}";
+                string msg = $"{headInfo}{result.Msg}";
                 result.FullMsg = msg;
 
-                var data = Encoding.UTF8.GetBytes(msg + Environment.NewLine);
-                this.currentFileStream.Write(data, 0, data.Length);
-                this.currentFileStream.Flush();
+                byte[] data = Encoding.UTF8.GetBytes(msg + Environment.NewLine);
+                currentFileStream.Write(data, 0, data.Length);
+                currentFileStream.Flush();
 
-                if (this.ConsoleLogEnable)
+                if (ConsoleLogEnable)
                     Trace.WriteLine(msg);
                 // base.LogEvent?.Invoke(this, result);
 
                 base.LogEventMethod(this, result);
             }
         }
-
 
         #endregion Private 方法
     }

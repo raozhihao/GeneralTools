@@ -22,7 +22,7 @@ namespace GeneralTool.CoreLibrary.ExceptionHelper
         /// </param>
         public IPException(string errorip) : base("ip错误，不是正确的ip")
         {
-            this.ErrorIP = errorip;
+            ErrorIP = errorip;
         }
 
         #endregion Public 构造函数

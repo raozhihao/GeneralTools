@@ -18,7 +18,6 @@ namespace GeneralTool.CoreLibrary.TaskExtensions
         /// <param name="reCount">重试次数</param>
         public static int Retry<T>(Predicate<T> predicate, T data, CancellationToken token, int reCount = 5)
         {
-            var msg = string.Empty;
             int index = 0;
             do
             {
@@ -33,7 +32,6 @@ namespace GeneralTool.CoreLibrary.TaskExtensions
             return index;
         }
 
-
         /// <summary>
         /// 任务重试
         /// </summary>
@@ -44,9 +42,8 @@ namespace GeneralTool.CoreLibrary.TaskExtensions
         /// <param name="timeOut">重试超时时间</param>
         public static int Retry<T>(Predicate<T> predicate, T data, CancellationToken token, TimeSpan timeOut)
         {
-            var msg = string.Empty;
             int index = 0;
-            var now = DateTime.Now;
+            DateTime now = DateTime.Now;
             do
             {
                 if (token.IsCancellationRequested)

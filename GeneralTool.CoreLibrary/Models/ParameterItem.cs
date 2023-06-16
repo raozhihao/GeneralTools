@@ -32,8 +32,8 @@ namespace GeneralTool.CoreLibrary.Models
         /// </param>
         public ParameterItem(string parameterName, object value)
         {
-            this.ParameterName = parameterName;
-            this.Value = value;
+            ParameterName = parameterName;
+            Value = value;
         }
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace GeneralTool.CoreLibrary.Models
             }
             set
             {
-                this.RegisterProperty(ref this.parameterName, value);
+                RegisterProperty(ref parameterName, value);
             }
         }
 
@@ -75,8 +75,8 @@ namespace GeneralTool.CoreLibrary.Models
         /// </summary>
         public Type ParameterType
         {
-            get => this.parameterType;
-            set => this.RegisterProperty(ref this.parameterType, value);
+            get => parameterType;
+            set => RegisterProperty(ref parameterType, value);
         }
 
         /// <summary>
@@ -90,8 +90,8 @@ namespace GeneralTool.CoreLibrary.Models
             }
             set
             {
-                this.RegisterProperty(ref this.value, value);
-                this.ValueChanged?.Invoke();
+                RegisterProperty(ref this.value, value);
+                ValueChanged?.Invoke();
             }
         }
 
@@ -100,8 +100,8 @@ namespace GeneralTool.CoreLibrary.Models
         /// </summary>
         public string WaterMark
         {
-            get => this.waterMark;
-            set => this.RegisterProperty(ref this.waterMark, value);
+            get => waterMark;
+            set => RegisterProperty(ref waterMark, value);
         }
 
         /// <summary>
@@ -110,7 +110,7 @@ namespace GeneralTool.CoreLibrary.Models
         public int Index
         {
             get => index;
-            set => this.RegisterProperty(ref this.index, value);
+            set => RegisterProperty(ref index, value);
         }
 
         #endregion Public 属性

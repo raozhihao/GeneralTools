@@ -30,8 +30,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper
         /// <param name="windowType">窗体类型</param>
         public void RegisterWindow(string key, Type windowType)
         {
-            var windowInstance = Activator.CreateInstance(windowType) as Window;
-            this.windows.TryAdd(key, windowInstance);
+            Window windowInstance = Activator.CreateInstance(windowType) as Window;
+            _ = windows.TryAdd(key, windowInstance);
         }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper
         /// <param name="instanceWindow"></param>
         public void RegisterWindow(string key, Window instanceWindow)
         {
-            this.windows.TryAdd(key, instanceWindow);
+            _ = windows.TryAdd(key, instanceWindow);
         }
 
         private void NoResultWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -50,9 +50,9 @@ namespace GeneralTool.CoreLibrary.WPFHelper
             {
                 if (w.DataContext != null)
                 {
-                    var obj = w.DataContext;
-                    var disposeMethod = obj.GetType().GetMethod("Dispose");
-                    disposeMethod?.Invoke(obj, null);
+                    object obj = w.DataContext;
+                    System.Reflection.MethodInfo disposeMethod = obj.GetType().GetMethod("Dispose");
+                    _ = (disposeMethod?.Invoke(obj, null));
                 }
             }
         }
@@ -65,9 +65,9 @@ namespace GeneralTool.CoreLibrary.WPFHelper
         /// <param name="context">窗体的DataContext</param>
         public void ShowWindow<T>(string key, T context) where T : class
         {
-            if (this.windows.TryGetValue(key, out var window))
+            if (windows.TryGetValue(key, out Window window))
             {
-                this.RegisterClosing(window, context);
+                RegisterClosing(window, context);
                 window.Show();
             }
         }
@@ -81,9 +81,9 @@ namespace GeneralTool.CoreLibrary.WPFHelper
         /// <returns></returns>
         public bool? ShowWindowDialog<T>(string key, T context) where T : class
         {
-            if (this.windows.TryGetValue(key, out var window))
+            if (windows.TryGetValue(key, out Window window))
             {
-                this.RegisterClosing(window, context);
+                RegisterClosing(window, context);
                 return window.ShowDialog();
             }
             return null;
@@ -92,11 +92,11 @@ namespace GeneralTool.CoreLibrary.WPFHelper
         private void RegisterClosing(Window window, object context)
         {
             window.DataContext = context;
-            var @event = window.GetType().GetEvent("Closing");
+            System.Reflection.EventInfo @event = window.GetType().GetEvent("Closing");
             if (@event != null)
             {
-                var method = this.GetType().GetMethod(nameof(NoResultWindow_Closing), System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-                var @delegate = Delegate.CreateDelegate(@event.EventHandlerType, this, method);
+                System.Reflection.MethodInfo method = GetType().GetMethod(nameof(NoResultWindow_Closing), System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+                Delegate @delegate = Delegate.CreateDelegate(@event.EventHandlerType, this, method);
                 @event.AddEventHandler(window, @delegate);
             }
         }

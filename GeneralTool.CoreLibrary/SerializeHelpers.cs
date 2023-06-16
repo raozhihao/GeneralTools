@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -12,7 +13,6 @@ using GeneralTool.CoreLibrary.Extensions;
 
 namespace GeneralTool.CoreLibrary
 {
-#pragma warning disable SYSLIB0011
     /// <summary>
     /// 序列化帮助类
     /// </summary>
@@ -45,9 +45,9 @@ namespace GeneralTool.CoreLibrary
         {
             Type type = null;
 
-            using (var ms = new MemoryStream(data))
+            using (MemoryStream ms = new MemoryStream(data))
             {
-                var binary = new BinaryReader(ms);
+                BinaryReader binary = new BinaryReader(ms);
                 int len = binary.ReadInt32();
                 byte[] typeData = binary.ReadBytes(len);
                 string typeStr = typeData.ToStrings();//获取当前类型信息
@@ -117,38 +117,19 @@ namespace GeneralTool.CoreLibrary
             {
                 Type numType = Enum.GetUnderlyingType(type);
 
-                if (numType == typeof(byte))
-                {
-                    obj = Enum.ToObject(type, data[0]);
-                }
-                else if (numType == typeof(short))
-                {
-                    obj = Enum.ToObject(type, BitConverter.ToInt16(data, 0));
-                }
-                else if (numType == typeof(int))
-                {
-                    obj = Enum.ToObject(type, BitConverter.ToInt32(data, 0));
-                }
-                else
-                {
-                    obj = Enum.ToObject(type, BitConverter.ToInt64(data, 0));
-                }
-            }
-            else if (type == typeof(DataTable) || type == typeof(DataSet) || type.IsSubclassOf(typeof(Delegate)))
-            {
-                obj = DeserializeToObj(data);
-            }
-            else if (type == typeof(byte[]))
-            {
-                obj = data;
-            }
-            else if (type.IsClass)
-            {
-                obj = DesrializeClass(data, type);
+                obj = numType == typeof(byte)
+                    ? Enum.ToObject(type, data[0])
+                    : numType == typeof(short)
+                        ? Enum.ToObject(type, BitConverter.ToInt16(data, 0))
+                        : numType == typeof(int)
+                                            ? Enum.ToObject(type, BitConverter.ToInt32(data, 0))
+                                            : Enum.ToObject(type, BitConverter.ToInt64(data, 0));
             }
             else
             {
-                obj = null;
+                obj = type == typeof(DataTable) || type == typeof(DataSet) || type.IsSubclassOf(typeof(Delegate))
+                    ? DeserializeToObj(data)
+                    : type == typeof(byte[]) ? data : type.IsClass ? DesrializeClass(data, type) : null;
             }
             return obj;
         }
@@ -175,9 +156,9 @@ namespace GeneralTool.CoreLibrary
         {
             object obj = null;
 
-            using (var stream = new MemoryStream(data))
+            using (MemoryStream stream = new MemoryStream(data))
             {
-                var binary = new BinaryFormatter();
+                BinaryFormatter binary = new BinaryFormatter();
 
                 obj = binary.Deserialize(stream);
             }
@@ -189,12 +170,12 @@ namespace GeneralTool.CoreLibrary
         {
             object obj = null;
 
-            using (var stream = new MemoryStream(data))
+            using (MemoryStream stream = new MemoryStream(data))
             {
-                var formart = new BinaryReader(stream);
+                BinaryReader formart = new BinaryReader(stream);
                 int len = formart.ReadInt32();//获取数据的长度
                                               //生成数组
-                obj = FormatterServices.GetUninitializedObject(type);//Activator.CreateInstance(type, len) as Array;
+                obj = Activator.CreateInstance(type, len) as Array;
                 Type elType = type.GetElementType();
                 MethodInfo method = type.GetMethod("SetValue", new Type[] { typeof(object), typeof(int) });//添加方法SetValue
                                                                                                            //获取每一项
@@ -205,7 +186,7 @@ namespace GeneralTool.CoreLibrary
                     byte[] cdata = formart.ReadBytes(clen);//当前项的长度
                     object elObj = Desrialize(cdata);
                     //将数据加入进去
-                    method.Invoke(obj, new object[] { elObj, i });                                  //反序列化出来
+                    _ = method.Invoke(obj, new object[] { elObj, i });                                  //反序列化出来
 
                 }
             }
@@ -217,13 +198,19 @@ namespace GeneralTool.CoreLibrary
             object obj = FormatterServices.GetUninitializedObject(type);//Activator.CreateInstance(type);
             //创建类型
 
-            using (var stream = new MemoryStream(data))
+            using (MemoryStream stream = new MemoryStream(data))
             {
-                var binary = new BinaryReader(stream);
+                BinaryReader binary = new BinaryReader(stream);
                 //获取所有属性
-                PropertyInfo[] properties = type.GetProperties();
+                IOrderedEnumerable<PropertyInfo> properties = type.GetProperties().OrderBy(f => f.Name);
                 foreach (PropertyInfo property in properties)
                 {
+                    MethodInfo method = property.SetMethod;
+                    if (method == null)
+                    {
+                        //没有set方法,直接跳过
+                        continue;
+                    }
                     //先获取当前属性类型
 
                     //反序列化,获取当前属性的值
@@ -235,14 +222,9 @@ namespace GeneralTool.CoreLibrary
                     byte[] cdata = binary.ReadBytes(plen);
                     object proObj = Desrialize(cdata);
                     //将当前属性加入进去
-                    MethodInfo method = type.GetMethod("set_" + property.Name);
-                    if (method == null)
-                    {
-                        //没有set方法,直接跳过
-                        continue;
-                    }
+
                     //有,则加入
-                    method.Invoke(obj, new object[] { proObj });
+                    _ = method.Invoke(obj, new object[] { proObj });
 
                 }
             }
@@ -257,10 +239,10 @@ namespace GeneralTool.CoreLibrary
             if (inter != null)
             {
                 //生成泛型
-                obj = FormatterServices.GetUninitializedObject(type); //Activator.CreateInstance(type);
-                using (var stream = new MemoryStream(data))
+                obj = Activator.CreateInstance(type);
+                using (MemoryStream stream = new MemoryStream(data))
                 {
-                    var formart = new BinaryReader(stream);
+                    BinaryReader formart = new BinaryReader(stream);
 
                     //判断该泛型是数组类型还是自定义类型
 
@@ -278,7 +260,7 @@ namespace GeneralTool.CoreLibrary
                             int clen = formart.ReadInt32();
                             byte[] cdata = formart.ReadBytes(clen);
                             object proObj = Desrialize(cdata);
-                            addMethod.Invoke(obj, new object[] { proObj });
+                            _ = addMethod.Invoke(obj, new object[] { proObj });
                         }
                         else
                         {
@@ -293,16 +275,16 @@ namespace GeneralTool.CoreLibrary
                                 object proObj = Desrialize(cdata);
                                 paraObj[j] = proObj;
                             }
-                            addMethod.Invoke(obj, paraObj);
+                            _ = addMethod.Invoke(obj, paraObj);
                         }
                     }
                 }
             }
             else
             {
-                using (var stream = new MemoryStream(data))
+                using (MemoryStream stream = new MemoryStream(data))
                 {
-                    var binary = new BinaryReader(stream);
+                    BinaryReader binary = new BinaryReader(stream);
                     int len = binary.ReadInt32();//类的长度
                     byte[] cdata = binary.ReadBytes(len);//类的信息
                                                          //自定义类型
@@ -324,7 +306,7 @@ namespace GeneralTool.CoreLibrary
         /// </returns>
         private byte[] Serialize(object param, Type type)
         {
-            var datas = new List<byte>();
+            List<byte> datas = new List<byte>();
             byte[] typeData = type.AssemblyQualifiedName.ToBytes();//写入当前类型的长度
             datas.AddRange(BitConverter.GetBytes(typeData.Length));//写入当前类型信息的数据
             datas.AddRange(typeData);//写入类型信息
@@ -384,24 +366,13 @@ namespace GeneralTool.CoreLibrary
             {
                 Type enumValType = Enum.GetUnderlyingType(param.GetType());
 
-                if (enumValType == typeof(byte))
-                {
-                    data = new byte[] { (byte)param };
-                }
-                else if (enumValType == typeof(short))
-                {
-                    data = BitConverter.GetBytes((short)param);
-                }
-                else if (enumValType == typeof(int))
-                {
-                    data = BitConverter.GetBytes((int)param);
-                }
-                else
-                {
-                    data = BitConverter.GetBytes((long)param);
-                }
+                data = enumValType == typeof(byte)
+                    ? (new byte[] { (byte)param })
+                    : enumValType == typeof(short)
+                        ? BitConverter.GetBytes((short)param)
+                        : enumValType == typeof(int) ? BitConverter.GetBytes((int)param) : BitConverter.GetBytes((long)param);
             }
-            else if (param is DataTable || param is DataSet || param is Delegate)
+            else if (param is DataTable || param is  DataSet || param is  Delegate)
             {
                 data = SerializeToBytes(param);
             }
@@ -460,7 +431,7 @@ namespace GeneralTool.CoreLibrary
                 throw new Exception("数组只支持一维格式");
             }
 
-            var datas = new List<byte>();
+            List<byte> datas = new List<byte>();
 
             //查看数组类型
             Array arr = param as Array;
@@ -480,11 +451,12 @@ namespace GeneralTool.CoreLibrary
 
         private byte[] SerializeClass(object param, Type type)
         {
-            var data = new List<byte>();
+            List<byte> data = new List<byte>();
 
-            PropertyInfo[] properties = type.GetProperties();
+            IOrderedEnumerable<PropertyInfo> properties = type.GetProperties().OrderBy(f => f.Name);
             foreach (PropertyInfo item in properties)//循环类的每一个属性
             {
+                if (item.SetMethod == null) continue;
                 //获取属性值
                 object value = item.GetValue(param, null);
                 byte[] cdata;
@@ -539,7 +511,7 @@ namespace GeneralTool.CoreLibrary
                             if (method != null)
                             {
                                 object tmpObj = method.Invoke(obj, null);
-                                var argData = Serialize(tmpObj);
+                                byte[] argData = Serialize(tmpObj);
                                 datas.AddRange(BitConverter.GetBytes(argData.Length));//获取长度
                                 datas.AddRange(argData);//获取序列化后的内容
                             }
@@ -561,7 +533,7 @@ namespace GeneralTool.CoreLibrary
         private byte[] SerializeToBytes(object param)
         {
             byte[] byts = new byte[0];
-            using (var stream = new MemoryStream())
+            using (MemoryStream stream = new MemoryStream())
             {
                 BinaryFormatter binary = new BinaryFormatter();
                 binary.Serialize(stream, param);
@@ -573,5 +545,4 @@ namespace GeneralTool.CoreLibrary
         #endregion Private 方法
     }
 
-#pragma warning restore SYSLIB0011
 }
