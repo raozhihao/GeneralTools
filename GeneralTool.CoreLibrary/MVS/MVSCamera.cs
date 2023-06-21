@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
-using System.Web.UI.WebControls;
 
 namespace GeneralTool.CoreLibrary.MVS
 {
