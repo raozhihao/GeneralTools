@@ -125,7 +125,6 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// </summary>
         protected override void OnPreviewMouseMove(MouseEventArgs e)
         {
-            ParentCanvas.SetTop(this);
 
             if (e.LeftButton == MouseButtonState.Pressed && connector != null)
             {
@@ -160,6 +159,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
                 }
             }
 
+            ParentCanvas.SetTop(this);
             _ = CaptureMouse();
             SourceBlock.ConnectorVisibility = SinkBlock.ConnectorVisibility = Visibility.Collapsed;
             if (e.LeftButton == MouseButtonState.Pressed)

@@ -818,10 +818,18 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
             foreach (UIElement item in Children)
             {
 
-                if (item is BlockItem || item.Equals(element))
+                if (item is BlockItem && item.Equals(element))
                 {
                     Canvas.SetZIndex(item, 91);
 
+                }
+                else if(item is Connection  c && item.Equals(element))
+                {
+                    SetZIndex(item, 91);
+                    if (c.SinkBlock != null)
+                        SetZIndex(c.SinkBlock, 91);
+                    if (c.SourceBlock != null)
+                        SetZIndex(c.SourceBlock, 91);
                 }
                 else
                 {

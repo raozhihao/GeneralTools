@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
+
+using GeneralTool.CoreLibrary.Extensions;
 
 namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
 {
@@ -99,6 +103,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
                 c.ZoomPanelVisibilityChangedEvent?.Invoke(v);
             }
         }
+
 
         /// <summary>
         /// 
