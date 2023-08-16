@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 
 using GeneralTool.CoreLibrary.Interfaces;
 using GeneralTool.CoreLibrary.Logs;
@@ -51,11 +52,11 @@ namespace GeneralTool.CoreLibrary.TaskLib
         /// <summary>
         /// 
         /// </summary>
-        public object InvokeResult(string methodName, params object[] datas)
+        public object InvokeResult(string methodName, CancellationToken token, params object[] datas)
         {
             ServerRequest request = Parse(methodName, datas);
 
-            return InvokeRequest(request);
+            return InvokeRequest(request, token);
         }
 
         /// <summary>
@@ -63,12 +64,12 @@ namespace GeneralTool.CoreLibrary.TaskLib
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public object InvokeRequest(ServerRequest request)
+        public object InvokeRequest(ServerRequest request, CancellationToken token)
         {
             using (FixedHeadSocketClient client = new FixedHeadSocketClient(Log, jsonConvert))
             {
                 client.Startup(ip, port);
-                return client.SendResultObject(request.Url, request.Parameters);
+                return client.SendResultObject(request.Url, request.Parameters,token);
             }
         }
 
@@ -101,19 +102,19 @@ namespace GeneralTool.CoreLibrary.TaskLib
         /// <summary>
         /// 
         /// </summary>
-        public T InvokeResult<T>(string methodName, params object[] datas)
+        public T InvokeResult<T>(string methodName, CancellationToken token, params object[] datas)
         {
             ServerRequest request = Parse(methodName, datas);
-            return (T)InvokeRequest(request);
+            return (T)InvokeRequest(request, token );
         }
 
         /// <summary>
         /// 
         /// </summary>
-        public void Invoke(string methodName, params object[] datas)
+        public void Invoke(string methodName, CancellationToken token, params object[] datas)
         {
             ServerRequest request = Parse(methodName, datas);
-            _ = InvokeRequest(request);
+            _ = InvokeRequest(request, token);
         }
 
     }

@@ -26,7 +26,7 @@ namespace SimpleDiagram
             InitializeComponent();
             this.Loaded += MainWindow_Loaded;
 
-          
+
 
         }
 
@@ -55,6 +55,7 @@ namespace SimpleDiagram
             this.dc.AddTempelte(start);
             start.Apply();
         }
+
 
         private void RunMethod(object sender, RoutedEventArgs e)
         {
@@ -105,6 +106,7 @@ namespace SimpleDiagram
                 //清除连接线相关属性,否则会出现循环引用
                 source.BlockViewModel.SourceBlockModels.Clear();
                 source.BlockViewModel.SinkBlockModels.Clear();
+                source.BlockViewModel.NextModel = null;
 
                 sink.BlockViewModel = source.BlockViewModel.Copy();
                 sink.BlockViewModel.BlockId = sink.ID.ToString();
@@ -138,6 +140,16 @@ namespace SimpleDiagram
             }
 
             return (T)copyObj;
+        }
+
+        private void BackMethod(object sender, RoutedEventArgs e)
+        {
+            this.dc.Back();
+        }
+
+        private void NextMethod(object sender, RoutedEventArgs e)
+        {
+            this.dc.Next();
         }
     }
 }

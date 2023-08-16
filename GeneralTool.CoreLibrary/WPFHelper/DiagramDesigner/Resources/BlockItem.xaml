@@ -26,9 +26,9 @@
 
     <Style TargetType="{x:Type c:BlockItem}">
         <Setter Property="MinWidth"
-                Value="50" />
+                Value="10" />
         <Setter Property="MinHeight"
-                Value="20" />
+                Value="10" />
         <Setter Property="Focusable"
                 Value="True" />
         <Setter Property="AllowDrop"
@@ -36,8 +36,8 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type c:BlockItem}">
-                    <Border Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}"
+                    <Border BorderBrush="{TemplateBinding BorderBrush}"
+                            Background="Transparent"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             Width="{TemplateBinding Width}"
                             Height="{TemplateBinding Height}"
@@ -50,16 +50,39 @@
                             Effect="{StaticResource UnSelectEffect}">
 
                         <Grid DataContext="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}}"
-                              IsHitTestVisible="True"
                               x:Name="PART_Grid">
-                            <t:MoveThumb Opacity="0"
-                                         x:Name="PART_MoveThumb" />
-                            <Grid>
+                            <!--<t:RotateThumb Margin="0 -28 0 0"
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Center"
+                                           RenderTransformOrigin="0.5,0.5"
+                                           Cursor="Hand"
+                                           Visibility="Visible">
+                                <t:RotateThumb.Template>
+                                    <ControlTemplate TargetType="{x:Type t:RotateThumb}">
+                                        <Grid Width="15"
+                                              Height="15">
+                                            <Ellipse Width="15"
+                                                     Height="15"
+                                                     Fill="AliceBlue" />
+                                        </Grid>
+                                    </ControlTemplate>
+                                </t:RotateThumb.Template>
+                            </t:RotateThumb>-->
+
+                            <Grid x:Name="PART_GridContent"
+                                  IsHitTestVisible="True">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="auto" />
                                     <RowDefinition Height="*" />
-                                    <RowDefinition Height="auto" />
                                 </Grid.RowDefinitions>
+
+                                <Grid.RenderTransform>
+
+                                    <RotateTransform x:Name="PART_RotateTransform"
+                                                     Angle="{Binding RotateAngle,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                                                     CenterX="{Binding RotateCenterX,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                                                     CenterY="{Binding RotateCenterY,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+                                </Grid.RenderTransform>
 
                                 <Border BorderBrush="Black"
                                         BorderThickness="1"
@@ -71,28 +94,32 @@
                                     <TextBlock Text="{TemplateBinding Header}"
                                                Foreground="White"
                                                Padding="5"
-                                               HorizontalAlignment="Center" />
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               Margin="5" />
                                 </Border>
 
-                                <ContentPresenter Grid.Row="1"
-                                                  VerticalAlignment="Center"
-                                                  HorizontalAlignment="Center"
-                                                  IsHitTestVisible="False"
-                                                  x:Name="PART_ContentPresenter"
-                                                  Content="{TemplateBinding Content}"
-                                                  Margin="5"
-                                                  Visibility="{TemplateBinding ContentVisibility}" />
-                                <TextBlock Grid.Row="2"
-                                           VerticalAlignment="Center"
-                                           HorizontalAlignment="Center"
-                                           x:Name="PART_ResultVariable"
-                                           Text="{TemplateBinding ResultVaraible}"
-                                           Visibility="{TemplateBinding ResultVisibility}" />
+                                <Border Grid.Row="1"
+                                        Background="{TemplateBinding Background}"
+                                        CornerRadius="{TemplateBinding ContentRadius}"
+                                        Visibility="{TemplateBinding ContentVisibility}"
+                                        Padding="{TemplateBinding Padding}">
+                                    <ContentPresenter Grid.Row="1"
+                                                      VerticalAlignment="Center"
+                                                      HorizontalAlignment="Center"
+                                                      IsHitTestVisible="False"
+                                                      x:Name="PART_ContentPresenter"
+                                                      Content="{TemplateBinding Content}"
+                                                      Margin="5" />
+                                </Border>
+
                             </Grid>
 
+                            <t:MoveThumb Opacity="0"
+                                         x:Name="PART_MoveThumb" />
                             <!--大小更改模板-->
                             <Control x:Name="PART_Resize"
-                                     Visibility="{Binding ElementName=PART_Grid,Path=DataContext.ResizeVisibility}" />
+                                     Visibility="{Binding ElementName=PART_Grid,Path=DataContext.ResizeVisibility,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
 
                             <!--连接点模板-->
                             <Control  x:Name="PART_Connectors"
@@ -115,6 +142,18 @@
                                     TargetName="PART_Resize" />
 
                         </Trigger>
+
+                        <!--<MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver"
+                                           Value="True" />
+                                <Condition Property="ResizeVisibility"
+                                           Value="Visible" />
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Visibility"
+                                    Value="Visible"
+                                    TargetName="PART_Resize" />
+                        </MultiTrigger>-->
 
                         <DataTrigger Value="True"
                                      Binding="{Binding RelativeSource={RelativeSource Self},Path=IsSelected}">

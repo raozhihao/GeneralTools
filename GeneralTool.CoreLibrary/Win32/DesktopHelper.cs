@@ -24,9 +24,9 @@ namespace GeneralTool.CoreLibrary.Win32
             }
         }
 
-        public static Bitmap CaptureScreen()
+        public static Bitmap CaptureScreen(Size bounds)
         {
-            Size bounds = DesktopSize;//Screen.GetBounds(Screen.GetBounds(Point.Empty));
+            
             Bitmap bitmap = new Bitmap(bounds.Width, bounds.Height);
             using (Graphics g = Graphics.FromImage(bitmap))
             {

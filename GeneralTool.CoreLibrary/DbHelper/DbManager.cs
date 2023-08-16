@@ -675,6 +675,9 @@ namespace GeneralTool.CoreLibrary.DbHelper
             if (null != transCommand)
             {
                 transCommand.Transaction.Commit();
+
+                transCommand.Connection.Close();
+                transCommand.Connection.Dispose();
                 transCommand.Dispose();
                 transCommand = null;
             }
@@ -688,6 +691,8 @@ namespace GeneralTool.CoreLibrary.DbHelper
             if (null != transCommand)
             {
                 transCommand.Transaction.Rollback();
+                transCommand.Connection.Close();
+                transCommand.Connection.Dispose();
                 transCommand.Dispose();
                 transCommand = null;
             }
@@ -846,6 +851,8 @@ namespace GeneralTool.CoreLibrary.DbHelper
         /// <param name="command"></param>
         protected void DisposeCommand(DbCommand command)
         {
+            command?.Connection?.Close();
+            command?.Connection?.Dispose();
             command?.Dispose();
         }
 

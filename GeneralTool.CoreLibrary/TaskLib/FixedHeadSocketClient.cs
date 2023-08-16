@@ -118,7 +118,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
         /// <param name="url"></param>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        public TOut SendResultObject<TOut>(string url, Dictionary<string, string> parameters) => (TOut)SendResultObject(url, parameters);
+        public TOut SendResultObject<TOut>(string url, Dictionary<string, string> parameters, CancellationToken token) => (TOut)SendResultObject(url, parameters, token);
 
         /// <summary>
         /// 
@@ -126,14 +126,14 @@ namespace GeneralTool.CoreLibrary.TaskLib
         /// <param name="url"></param>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        public object SendResultObject(string url, Dictionary<string, string> parameters)
+        public object SendResultObject(string url, Dictionary<string, string> parameters, CancellationToken token)
         {
             ServerRequest request = new ServerRequest()
             {
                 Url = url,
                 Parameters = parameters
             };
-            return SendResultObject(request);
+            return SendResultObject(request, token);
         }
 
         /// <summary>
@@ -142,29 +142,29 @@ namespace GeneralTool.CoreLibrary.TaskLib
         /// <param name="url"></param>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        public ServerResponse Send(string url, Dictionary<string, string> parameters)
+        public ServerResponse Send(string url, Dictionary<string, string> parameters, CancellationToken token)
         {
             ServerRequest request = new ServerRequest()
             {
                 Url = url,
                 Parameters = parameters
             };
-            return Send(request);
+            return Send(request, token);
         }
 
         /// <summary>
         /// 发送并返回值
         /// </summary>
-        public TOut SendResultObject<TOut>(ServerRequest request) => (TOut)SendResultObject(request);
+        public TOut SendResultObject<TOut>(ServerRequest request, CancellationToken token) => (TOut)SendResultObject(request, token);
 
         /// <summary>
         /// 发送并返回值
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public object SendResultObject(ServerRequest request)
+        public object SendResultObject(ServerRequest request, CancellationToken token)
         {
-            ServerResponse reponse = Send(request);
+            ServerResponse reponse = Send(request, token);
             return !reponse.RequestSuccess
                 ? throw new Exception(reponse.ErroMsg)
                 : converter.ConvertSimpleType(reponse.ResultString, Type.GetType(reponse.ReturnTypeString));
@@ -175,12 +175,40 @@ namespace GeneralTool.CoreLibrary.TaskLib
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public ServerResponse Send(ServerRequest request)
+        public ServerResponse Send(ServerRequest request, CancellationToken token)
         {
 
             string jsonRequest = jsonConvert.SerializeObject(request);
             _ = Client.Send(jsonRequest);
-            bool re = autoReset.WaitOne(ReadTimeOut);
+            var re = false;
+
+            if (this.ReadTimeOut <= 0)
+            {
+                re = this.autoReset.WaitOne();
+            }
+            else
+            {
+                var time = DateTime.Now;
+                var timeOutSpan = TimeSpan.FromMilliseconds(this.ReadTimeOut);
+                do
+                {
+                    if (DateTime.Now - time >= timeOutSpan)
+                        break;
+
+                    re = autoReset.WaitOne(10);
+                    if(re)
+                    {
+                        break;
+                    }
+                        
+
+                } while (!token.IsCancellationRequested);
+            }
+
+
+            if (token.IsCancellationRequested)
+                throw new Exception("已取消任务");
+
             if (!re)
                 throw new Exception("连接已超时");
             if (isCancel)

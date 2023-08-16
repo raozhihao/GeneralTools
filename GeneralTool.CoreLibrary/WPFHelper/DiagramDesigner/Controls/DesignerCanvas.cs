@@ -17,7 +17,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
     public partial class DesignerCanvas : Canvas
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public DesignerCanvas()
         {
@@ -27,6 +27,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
 
             AddHandler(Keyboard.KeyDownEvent, (KeyEventHandler)HandleKeyDownEvent);
             Loaded += DesignerCanvas_Loaded;
+
+            this.HistoryManger = new HistoryManger(this);
         }
 
         private ScrollViewer ParentScrollView;
@@ -111,7 +113,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
                     break;
                 }
 
-                if (!(hit is  FrameworkElement tmp))
+                if (!(hit is FrameworkElement tmp))
                     break;
                 hit = tmp.TemplatedParent as IInputElement;
             }
@@ -180,10 +182,20 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// 
         /// </summary>
         public static readonly DependencyProperty MaxScaleValueProperty = DependencyProperty.Register(nameof(MaxScaleValue), typeof(double), typeof(DesignerCanvas), new PropertyMetadata(5.0));
+        public static readonly DependencyProperty CanScrollProperty = DependencyProperty.Register(nameof(CanScroll), typeof(bool), typeof(DesignerCanvas), new PropertyMetadata(true));
 
         #endregion
 
         #region 属性
+
+        /// <summary>
+        /// 是否可滚动
+        /// </summary>
+        public bool CanScroll
+        {
+            get => (bool)this.GetValue(CanScrollProperty);
+            set => this.SetValue(CanScrollProperty, value);
+        }
 
         /// <summary>
         /// 缩放的最小值
@@ -240,6 +252,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
             base.OnPreviewMouseRightButtonDown(e);
             rightMouseDownStartPoint = e.GetPosition(this);
         }
+
         /// <summary>
         /// 
         /// </summary>
@@ -321,19 +334,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
 
             if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
             {
-                //if (this.LayoutTransform is ScaleTransform scaleTransform)
-                //{
-                //    var scale = e.Delta * 0.001 + scaleTransform.ScaleX;
-                //    scale = scale < 0.05 ? 0.05 : scale;
-                //    scale = scale > 5 ? 5 : scale;
-
-                //    scaleTransform.ScaleX = scale;
-                //    scaleTransform.ScaleY = scale;
-
-                //    e.Handled = true;
-                //    ScaleChanged?.Invoke(scale * 100);
-
-                //}
+                if (!this.CanMouseWheelScale) return;
 
                 if (LayoutTransform is TransformGroup group)
                 {
@@ -493,7 +494,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
             //设置位置
             Connection connection = null;
 
-            _ = Children.Add(block);
+            // _ = Children.Add(block);
+            this.AddItem(block, false);
 
             block.IsInCanvas = true;
             _ = block.ApplyTemplate();
@@ -782,6 +784,12 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         {
             _ = Children.Add(item);
 
+            this.HistoryManger.AddHistoryModel(new HistoryModel()
+            {
+                Item = item,
+                HistoryType = HistoryType.Add
+            });
+
             item.IsInCanvas = true;
             if (!isDrop)
                 item.OnAddItem();
@@ -823,7 +831,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
                     Canvas.SetZIndex(item, 91);
 
                 }
-                else if(item is Connection  c && item.Equals(element))
+                else if (item is Connection c && item.Equals(element))
                 {
                     SetZIndex(item, 91);
                     if (c.SinkBlock != null)
@@ -839,6 +847,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
 
             }
         }
+
 
         /// <summary>
         /// 移除块
@@ -873,9 +882,15 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
                 {
                     item.Dispose();
                     RemoveConnection(item);
+
                 }
                 blockItem.Delete();
                 Children.Remove(blockItem);
+                this.HistoryManger.AddHistoryModel(new HistoryModel()
+                {
+                    HistoryType = HistoryType.Delete,
+                    Item = blockItem
+                });
             }
 
         }
@@ -1062,7 +1077,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// </summary>
         protected override Size MeasureOverride(Size constraint)
         {
-
+            if (!this.CanScroll) return base.MeasureOverride(constraint);
             Size size = new Size();
 
             foreach (UIElement element in InternalChildren)

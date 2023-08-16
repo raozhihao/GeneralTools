@@ -37,6 +37,21 @@ namespace GeneralTool.CoreLibrary.Extensions
         /// 
         /// </summary>
         /// <param name="obj"></param>
+        /// <returns></returns>
+        public static decimal ToDecimal(this object obj) => Convert.ToDecimal(obj);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="result"></param>
+        /// <returns></returns>
+        public static bool TryToDecimal(this object obj, out decimal result) => decimal.TryParse(obj + "", out result);
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
         /// <param name="result"></param>
         /// <returns></returns>
         public static bool TryToDouble(this object obj, out double result) => double.TryParse(obj.ToString(), out result);

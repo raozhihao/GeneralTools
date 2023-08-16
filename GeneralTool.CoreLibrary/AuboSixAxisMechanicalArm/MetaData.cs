@@ -50,9 +50,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
             /// 原点、z轴正半轴、z、y轴平面的第一象限上任意一点
             /// </summary>
             zOzy, // 
-            /// <summary>
-            /// 
-            /// </summary>
+
             CoordTypeCount
         }
 
@@ -62,57 +60,18 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         [Serializable]
         public enum TeachMode
         {
-            /// <summary>
-            /// 
-            /// </summary>
             NO_TEACH = 0,
-            /// <summary>
-            /// 轴动示教
-            /// </summary>
-            JOINT1, //
-            /// <summary>
-            /// 
-            /// </summary>
+            JOINT1, //轴动示教
             JOINT2,
-            /// <summary>
-            /// 
-            /// </summary>
             JOINT3,
-            /// <summary>
-            /// 
-            /// </summary>
             JOINT4,
-            /// <summary>
-            /// 
-            /// </summary>
             JOINT5,
-            /// <summary>
-            /// 
-            /// </summary>
             JOINT6,
-            /// <summary>
-            /// 位置示教
-            /// </summary>
-            MOV_X,
-            /// <summary>
-            /// 
-            /// </summary>
+            MOV_X, //位置示教
             MOV_Y,
-            /// <summary>
-            /// 
-            /// </summary>
             MOV_Z,
-            /// <summary>
-            /// 姿态示教
-            /// </summary>
-            ROT_X,
-            /// <summary>
-            /// 
-            /// </summary>
+            ROT_X, //姿态示教
             ROT_Y,
-            /// <summary>
-            /// 
-            /// </summary>
             ROT_Z,
         };
 
@@ -123,17 +82,8 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         [StructLayout(LayoutKind.Sequential)]
         public struct Pos
         {
-            /// <summary>
-            /// 
-            /// </summary>
             public double x;
-            /// <summary>
-            /// 
-            /// </summary>
             public double y;
-            /// <summary>
-            /// 
-            /// </summary>
             public double z;
         }
 
@@ -144,17 +94,12 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         [Serializable]
         public struct CartesianPos_U
         {
-            /// <summary>
-            /// 
-            /// </summary>
             // 指定数组尺寸
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
             public double[] positionVector;
         };
 
-        /// <summary>
-        /// 关节角信息
-        /// </summary>
+
         [StructLayout(LayoutKind.Sequential)]
         [Serializable]
         public struct JointStatus
@@ -194,7 +139,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
             /// <summary>
             /// 关节错误码
             /// </summary>
-            public ushort jointErrorNum;
+            public UInt16 jointErrorNum;
         }
 
         /// <summary>
@@ -312,11 +257,11 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
             /// <summary>
             /// mac缓冲器长度
             /// </summary>
-            public ushort macTargetPosBufferSize;
+            public UInt16 macTargetPosBufferSize;
             /// <summary>
             /// mac缓冲器有效数据长度
             /// </summary>
-            public ushort macTargetPosDataSize;
+            public UInt16 macTargetPosDataSize;
             /// <summary>
             /// /mac数据中断
             /// </summary>
@@ -330,21 +275,9 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         [Serializable]
         public struct Ori
         {
-            /// <summary>
-            /// 
-            /// </summary>
             public double w;
-            /// <summary>
-            /// 
-            /// </summary>
             public double x;
-            /// <summary>
-            /// 
-            /// </summary>
             public double y;
-            /// <summary>
-            /// 
-            /// </summary>
             public double z;
         };
 
@@ -355,17 +288,8 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         [Serializable]
         public struct Rpy
         {
-            /// <summary>
-            /// 
-            /// </summary>
             public double rx;
-            /// <summary>
-            /// 
-            /// </summary>
             public double ry;
-            /// <summary>
-            /// 
-            /// </summary>
             public double rz;
         };
 
@@ -398,9 +322,6 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         [Serializable]
         public struct JointVelcAccParam
         {
-            /// <summary>
-            /// 
-            /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = Util.ARM_DOF)]
             public double[] jointPara;
         };
@@ -412,9 +333,6 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         [Serializable]
         public struct JointRadian
         {
-            /// <summary>
-            /// 
-            /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = Util.ARM_DOF)]
             public double[] jointRadian;
         };
@@ -436,23 +354,11 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
             public Ori orientation;
         };
 
-        /// <summary>
-        /// 
-        /// </summary>
         [Serializable]
         public enum CoordType
         {
-            /// <summary>
-            /// 
-            /// </summary>
             BaseCoordinate = 0,
-            /// <summary>
-            /// 
-            /// </summary>
             EndCoordinate,
-            /// <summary>
-            /// 
-            /// </summary>
             WorldCoordinate
         }
 
@@ -489,9 +395,6 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         [Serializable]
         public struct MoveRotateAxis
         {
-            /// <summary>
-            /// 
-            /// </summary>
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
             public double[] rotateAxis;
         };
@@ -526,29 +429,11 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         [Serializable]
         public struct ToolInertia
         {
-            /// <summary>
-            /// 
-            /// </summary>
             public double xx;
-            /// <summary>
-            /// 
-            /// </summary>
             public double xy;
-            /// <summary>
-            /// 
-            /// </summary>
             public double xz;
-            /// <summary>
-            /// 
-            /// </summary>
             public double yy;
-            /// <summary>
-            /// 
-            /// </summary>
             public double yz;
-            /// <summary>
-            /// 
-            /// </summary>
             public double zz;
         };
 
@@ -916,6 +801,8 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
              *     使用时尽量用枚举变量　　枚举变量值只是为了查看日志方便
              *
              **/
+
+
             /// <summary>
             /// 关节运动属性配置错误
             /// </summary>
@@ -1078,9 +965,6 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
             [RobotEvent("关节跟踪误差过大", true, "Exception that joint tracking is lost")]
             RobotEventMonitorErrTrackingLost = 1203,  // , .
 
-            /// <summary>
-            /// 
-            /// </summary>
             [RobotEvent("预留,不使用,RobotEventMonitorErrNoArrivalInTime")]
             RobotEventMonitorErrNoArrivalInTime = 1204,  // not used 
 
@@ -1102,6 +986,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
             [RobotEvent("运动进入到stop阶段", false, "Movement enters the stop state")]
             RobotEventMoveEnterStopState = 1300,  //  
 
+
             /**
              * RobotHardwareErrorEvent  来自硬件反馈的异常事件 2001~2999
              *
@@ -1114,342 +999,174 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
             [RobotEvent("机械臂硬件错误", true, "Robot hardware error ")]
             RobotEventHardwareErrorNotify = 2001,  // 
 
-            /// <summary>
-            /// 机械臂关节错误
-            /// </summary>
             [RobotEvent("机械臂关节错误", true, "Robot joint error ")]
             RobotEventJointError = 2101,  // 
 
-            /// <summary>
-            /// 机械臂关节过流
-            /// </summary>
             [RobotEvent("机械臂关节过流", true, "Robot joint over current.")]
             RobotEventJointOverCurrent = 2102,  // 
 
-            /// <summary>
-            /// 机械臂关节过压
-            /// </summary>
             [RobotEvent("机械臂关节过压", true, "Robot joint over voltage")]
             RobotEventJointOverVoltage = 2103,  // .　 
 
-            /// <summary>
-            /// 机械臂关节欠压
-            /// </summary>
             [RobotEvent("机械臂关节欠压", true, "Robot joint low voltage")]
             RobotEventJointLowVoltage = 2104,  // .　  
 
-            /// <summary>
-            /// 机械臂关节过温
-            /// </summary>
             [RobotEvent("机械臂关节过温", true, "Robot joint over temperature")]
             RobotEventJointOverTemperature = 2105,  // . 
 
-            /// <summary>
-            /// 机械臂关节霍尔错误
-            /// </summary>
             [RobotEvent("机械臂关节霍尔错误", true, "Robot joint hall error")]
             RobotEventJointHallError = 2106,  // . 
 
-            /// <summary>
-            /// 机械臂关节编码器错误
-            /// </summary>
             [RobotEvent("机械臂关节编码器错误", true, "Robot joint encoder error")]
             RobotEventJointEncoderError = 2107,  // . 
 
-            /// <summary>
-            /// 机械臂关节绝对编码器错误
-            /// </summary>
             [RobotEvent("机械臂关节绝对编码器错误", true, "Robot joint absolute encoder error.")]
             RobotEventJointAbsoluteEncoderError = 2108,  //  
 
-            /// <summary>
-            /// 机械臂关节当前位置错误
-            /// </summary>
             [RobotEvent("机械臂关节当前位置错误", true, "Robot joint current position error")]
             RobotEventJointCurrentDetectError = 2109,  // . 
 
-            /// <summary>
-            /// 机械臂关节编码器污染
-            /// </summary>
             [RobotEvent("机械臂关节编码器污染", true, "Robot joint encoder pollustion")]
             RobotEventJointEncoderPollustion = 2110,  // .             建议采取措施:警告性通知
 
-            /// <summary>
-            /// 机械臂关节编码器Z信号错误
-            /// </summary>
             [RobotEvent("机械臂关节编码器Z信号错误", true, "Robot joint encoder Z signal error")]
             RobotEventJointEncoderZSignalError = 2111,  // . 
 
-            /// <summary>
-            /// 机械臂关节编码器校准失效
-            /// </summary>
             [RobotEvent("机械臂关节编码器校准失效", true, "Robot joint encoder calibrate　invalid")]
             RobotEventJointEncoderCalibrateInvalid = 2112,  // . 
 
-            /// <summary>
-            /// 机械臂关节IMU传感器失效
-            /// </summary>
             [RobotEvent("机械臂关节IMU传感器失效", true, "Robot joint IMU sensor invalid")]
             RobotEventJoint_IMU_SensorInvalid = 2113,  // . 
 
-            /// <summary>
-            /// 机械臂关节温度传感器出错
-            /// </summary>
             [RobotEvent("机械臂关节温度传感器出错", true, "Robot joint temperature sensor error")]
             RobotEventJointTemperatureSensorError = 2114,  // . 
 
-            /// <summary>
-            /// 机械臂关节CAN总线出错
-            /// </summary>
             [RobotEvent("机械臂关节CAN总线出错", true, "Robot joint CAN BUS error")]
             RobotEventJointCanBusError = 2115,  // . 
 
-            /// <summary>
-            /// 机械臂关节当前电流错误
-            /// </summary>
             [RobotEvent("机械臂关节当前电流错误", true, "Robot joint current error")]
             RobotEventJointCurrentError = 2116,  // . 
 
-            /// <summary>
-            /// 机械臂关节当前位置错误
-            /// </summary>
             [RobotEvent("机械臂关节当前位置错误", true, "Robot joint current position error")]
             RobotEventJointCurrentPositionError = 2117,  // . 
 
-            /// <summary>
-            /// 机械臂关节超速
-            /// </summary>
             [RobotEvent("机械臂关节超速", true, "Robot joint over speed.")]
             RobotEventJointOverSpeed = 2118,  //  
 
-            /// <summary>
-            /// 机械臂关节加速度过大错误
-            /// </summary>
             [RobotEvent("机械臂关节加速度过大错误", true, "Robot joint over accelerate.")]
             RobotEventJointOverAccelerate = 2119,  //  
 
-            /// <summary>
-            /// 机械臂关节跟踪精度错误
-            /// </summary>
             [RobotEvent("机械臂关节跟踪精度错误", true, "Robot joint trace accuracy")]
             RobotEventJointTraceAccuracy = 2120,  // . 
 
-            /// <summary>
-            /// 机械臂关节目标位置超范围
-            /// </summary>
             [RobotEvent("机械臂关节目标位置超范围", true, "Robot joint target position out of range")]
             RobotEventJointTargetPositionOutOfRange = 2121,  // .  
 
-            /// <summary>
-            /// 机械臂关节目标速度超范围
-            /// </summary>
             [RobotEvent("机械臂关节目标速度超范围", true, "Robot joint target speed out of range")]
             RobotEventJointTargetSpeedOutOfRange = 2122,  // . 
 
-            /// <summary>
-            /// 机械臂碰撞
-            /// </summary>
             [RobotEvent("机械臂碰撞", true, "Robot joint collision")]
             RobotEventJointCollision = 2123,  // .     　　　建议采取措施:暂停当前运动
 
-            /// <summary>
-            /// 机械臂信息异常
-            /// </summary>
             [RobotEvent("机械臂信息异常", true, "Robot data abnormal ")]
             RobotEventDataAbnormal = 2200,  // 
 
-            /// <summary>
-            /// 机械臂类型错误
-            /// </summary>
             [RobotEvent("机械臂类型错误", true, "Robot type error ")]
             RobotEventRobotTypeError = 2201,  // 
 
-            /// <summary>
-            /// 机械臂加速度计芯片错误
-            /// </summary>
             [RobotEvent("机械臂加速度计芯片错误", true, "Robot acceleration sensor error ")]
             RobotEventAccelerationSensorError = 2202,  // 
 
-            /// <summary>
-            /// 
-            /// </summary>
             [RobotEvent("机械臂编码器线数错误", true, " Robot encoder line error  ")]
             RobotEventEncoderLineError = 2203,  //
 
-            /// <summary>
-            /// 机械臂进入拖动示教模式错误
-            /// </summary>
             [RobotEvent("机械臂进入拖动示教模式错误", true, "Robot enter drag and teach mode error ")]
             RobotEventEnterDragAndTeachModeError = 2204,  // 
 
-            /// <summary>
-            /// 机械臂退出拖动示教模式错误
-            /// </summary>
             [RobotEvent("机械臂退出拖动示教模式错误", true, "Robot exit drag and teach mode error ")]
             RobotEventExitDragAndTeachModeError = 2205,  // 
 
-            /// <summary>
-            /// 
-            /// </summary>
             [RobotEvent("机械臂MAC数据中断错误", true, "Robot MAC data interruption error ")]
             RobotEventMACDataInterruptionError = 2206,  // 
 
-            /// <summary>
-            /// 驱动器版本错误(关节固件版本不一致)
-            /// </summary>
             [RobotEvent("驱动器版本错误(关节固件版本不一致)", true, "Drive version error ")]
             RobotEventDriveVersionError = 2207,  // 
 
-            /// <summary>
-            /// 机械臂初始化异常
-            /// </summary>
             [RobotEvent("机械臂初始化异常", true, "Robot init abnormal  ")]
             RobotEventInitAbnormal = 2300,  // 
 
-            /// <summary>
-            /// 机械臂驱动器使能失败
-            /// </summary>
             [RobotEvent("机械臂驱动器使能失败", true, "Robot driver enable failed  ")]
             RobotEventDriverEnableFailed = 2301,  // 
 
-            /// <summary>
-            /// 机械臂驱动器使能自动回应失败
-            /// </summary>
             [RobotEvent("机械臂驱动器使能自动回应失败", true, "Robot driver enable auto back failed")]
             RobotEventDriverEnableAutoBackFailed = 2302,  //   
 
-            /// <summary>
-            /// 机械臂驱动器使能电流环失败
-            /// </summary>
             [RobotEvent("机械臂驱动器使能电流环失败", true, " Robot driver enable current loop failed")]
             RobotEventDriverEnableCurrentLoopFailed = 2303,  //  
 
-            /// <summary>
-            /// 机械臂驱动器设置目标电流失败
-            /// </summary>
             [RobotEvent("机械臂驱动器设置目标电流失败", true, "Robot driver set target current failed")]
             RobotEventDriverSetTargetCurrentFailed = 2304,  //   
 
-            /// <summary>
-            /// 机械臂释放刹车失败
-            /// </summary>
             [RobotEvent("机械臂释放刹车失败", true, "Robot driver release brake failed ")]
             RobotEventDriverReleaseBrakeFailed = 2305,  //  
 
-            /// <summary>
-            /// 机械臂使能位置环失败
-            /// </summary>
             [RobotEvent("机械臂使能位置环失败", true, "Robot driver enable postion loop failed")]
             RobotEventDriverEnablePostionLoopFailed = 2306,  //   
 
-            /// <summary>
-            /// 设置最大加速度失败
-            /// </summary>
             [RobotEvent("设置最大加速度失败", true, "Robot set max accelerate failed ")]
             RobotEventSetMaxAccelerateFailed = 2307,  //  
 
-            /// <summary>
-            /// 机械臂安全出错
-            /// </summary>
             [RobotEvent("机械臂安全出错", true, "Robot Safety error")]
             RobotEventSafetyError = 2400,  //   
 
-            /// <summary>
-            /// 机械臂外部紧急停止
-            /// </summary>
             [RobotEvent("机械臂外部紧急停止", true, "Robot extern emergency stop")]
             RobotEventExternEmergencyStop = 2401,  //   
 
-            /// <summary>
-            /// 机械臂系统紧急停止
-            /// </summary>
             [RobotEvent("机械臂系统紧急停止", true, "Robot system emergency stop")]
             RobotEventSystemEmergencyStop = 2402,  //   
 
-            /// <summary>
-            /// 机械臂示教器紧急停止
-            /// </summary>
             [RobotEvent("机械臂示教器紧急停止", true, "Robot teachpendant emergency stop")]
             RobotEventTeachpendantEmergencyStop = 2403,  //   
 
-            /// <summary>
-            /// 机械臂控制柜紧急停止
-            /// </summary>
             [RobotEvent("机械臂控制柜紧急停止", true, "Robot control cabinet emergency stop")]
             RobotEventControlCabinetEmergencyStop = 2404,  //   
 
-            /// <summary>
-            /// 机械臂保护停止超时
-            /// </summary>
             [RobotEvent("机械臂保护停止超时", true, "Robot protection stop timeout")]
             RobotEventProtectionStopTimeout = 2405,  //   
 
-            /// <summary>
-            /// 机械臂缩减模式超时
-            /// </summary>
             [RobotEvent("机械臂缩减模式超时", true, "Robot reduced mode timeout")]
             RobotEventEeducedModeTimeout = 2406,  //   
 
-            /// <summary>
-            /// 机械臂mcu通信异常
-            /// </summary>
 
             [RobotEvent("机械臂mcu通信异常", true, "Robot mcu communication error")]
             RobotEventSystemAbnormal = 2500,  //   
 
-            /// <summary>
-            /// 机械臂485通信异常
-            /// </summary>
             [RobotEvent("机械臂485通信异常", true, "Robot RS485 communication error")]
             RobotEvent_MCU_CommunicationAbnormal = 2501,  //   
 
-            /// <summary>
-            /// 机械臂系统异常
-            /// </summary>
             [RobotEvent("机械臂系统异常", true, "Robot systen abnormal  ")]
             RobotEvent485CommunicationAbnormal = 2502,  // 
 
-            /// <summary>
-            /// 控制柜接触器断开导致机械臂48V断电
-            /// </summary>
             [RobotEvent("控制柜接触器断开导致机械臂48V断电", true, "Disconnecting the contactor causes the arm 48V power off")]
             RobotEventArmPowerOff = 2600,  // 
 
-            /// <summary>
-            /// 最大索引
-            /// </summary>
             [RobotEvent("最大索引")]
             RobotEventHardwareErrorNotifyMaximumIndex = 2999,  // 
 
-            /// <summary>
-            /// 机械臂通知性事件
-            /// </summary>
             [RobotEvent("机械臂通知性事件", false, " Robot notification event")]
             RobotEventNotifyEvent = 3000,  // 
 
-            /// <summary>
-            /// 机械臂事件通知-碰撞等级被改变
-            /// </summary>
             [RobotEvent("机械臂事件通知-碰撞等级被改变", false, "Robot Collision level change")]
             RobotEventNotifyCollisionLevelChange = 3001,  //  机械臂事件通知-碰撞等级被改变
 
-            /// <summary>
-            /// 未知
-            /// </summary>
             //unknown event
             [RobotEvent("未知")]
             robot_event_unknown,
 
-            /// <summary>
-            /// 开始用户
-            /// </summary>
             //user event
             [RobotEvent("开始用户(未知)", false, "first user event id")]
             RobotEvent_User = 9000,                            // 
 
-            /// <summary>
-            /// 最大用户
-            /// </summary>
             [RobotEvent("最大用户(未知)", false, "last user event id")]
             RobotEvent_MaxUser = 9999                             // 
         }
@@ -1515,37 +1232,13 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         [Serializable]
         public enum ROBOT_SERVICE_STATE
         {
-            /// <summary>
-            /// 
-            /// </summary>
             ROBOT_SERVICE_READY = 0,
-            /// <summary>
-            /// 
-            /// </summary>
             ROBOT_SERVICE_STARTING,
-            /// <summary>
-            /// 
-            /// </summary>
             ROBOT_SERVICE_WORKING,
-            /// <summary>
-            /// 
-            /// </summary>
             ROBOT_SERVICE_CLOSING,
-            /// <summary>
-            /// 
-            /// </summary>
             ROBOT_SERVICE_CLOSED,
-            /// <summary>
-            /// 
-            /// </summary>
             ROBOT_SETVICE_FAULT_POWER,
-            /// <summary>
-            /// 
-            /// </summary>
             ROBOT_SETVICE_FAULT_BRAKE,
-            /// <summary>
-            /// 
-            /// </summary>
             ROBOT_SETVICE_FAULT_NO_ROBOT
         }
 
@@ -1571,17 +1264,8 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         [Serializable]
         public enum ToolPowerType
         {
-            /// <summary>
-            /// 
-            /// </summary>
             OUT_0V = 0,
-            /// <summary>
-            /// 
-            /// </summary>
             OUT_12V = 1,
-            /// <summary>
-            /// 
-            /// </summary>
             OUT_24V = 2
         }
 
@@ -1591,21 +1275,9 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         [Serializable]
         public enum ToolDigitalIOAddr
         {
-            /// <summary>
-            /// 
-            /// </summary>
             TOOL_DIGITAL_IO_0 = 0,
-            /// <summary>
-            /// 
-            /// </summary>
             TOOL_DIGITAL_IO_1 = 1,
-            /// <summary>
-            /// 
-            /// </summary>
             TOOL_DIGITAL_IO_2 = 2,
-            /// <summary>
-            /// 
-            /// </summary>
             TOOL_DIGITAL_IO_3 = 3
         }
 
@@ -1615,21 +1287,9 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         [Serializable]
         public enum RobotState
         {
-            /// <summary>
-            /// 
-            /// </summary>
             RobotStopped = 0,
-            /// <summary>
-            /// 
-            /// </summary>
             RobotRunning,
-            /// <summary>
-            /// 
-            /// </summary>
             RobotPaused,
-            /// <summary>
-            /// 
-            /// </summary>
             RobotResumed
         }
 
@@ -1648,6 +1308,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
             /// </summary>
             RobotModeReal       //
         }
+
 
         /// <summary>
         /// 机械臂事件
@@ -1670,53 +1331,28 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
             public IntPtr eventContent; //
         };
 
-        /// <summary>
-        /// 枚举描述
-        /// </summary>
-        [AttributeUsage(AttributeTargets.All)]
         public class EnumDescriptionAttribute : Attribute
         {
-            /// <summary>
-            /// 描述
-            /// </summary>
             public string Description { get; set; }
-
-            /// <summary>
-            /// 
-            /// </summary>
             public EnumDescriptionAttribute(string description)
             {
-                Description = description;
+                this.Description = description;
             }
         }
 
-        /// <summary>
-        /// 机械臂事件特性
-        /// </summary>
-        [AttributeUsage(AttributeTargets.All)]
         public class RobotEventAttribute : Attribute
         {
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <param name="description"></param>
-            /// <param name="isWaring"></param>
-            /// <param name="enDescription"></param>
             public RobotEventAttribute(string description, bool isWaring = false, string enDescription = "")
             {
-                IsWaring = isWaring;
-                ZhCnDescription = description;
-                EnDescription = enDescription;
+                this.IsWaring = isWaring;
+                this.ZhCnDescription = description;
+                this.EnDescription = enDescription;
             }
 
             /// <summary>
             /// 英文释义
             /// </summary>
             public string EnDescription { get; set; }
-
-            /// <summary>
-            /// 是否警告
-            /// </summary>
             public bool IsWaring { get; set; }
 
             /// <summary>
@@ -1726,299 +1362,122 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
 
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
         [Serializable]
         public enum LoginCode
         {
-            /// <summary>
-            /// 成功
-            /// </summary>
             ErrnoSucc = 0,  /** 成功　**/
-            /// <summary>
-            /// 
-            /// </summary>
+
             ErrCode_Base = 10000,
-            /// <summary>
-            /// 通用失败
-            /// </summary>
             ErrCode_Failed,       /** 通用失败　**/
-            /// <summary>
-            /// 参数错误
-            /// </summary>
             ErrCode_ParamError,   /** 参数错误　**/
-            /// <summary>
-            /// Socket连接失败
-            /// </summary>
             ErrCode_ConnectSocketFailed,        /** Socket连接失败　**/
-            /// <summary>
-            /// Socket断开连接
-            /// </summary>
             ErrCode_SocketDisconnect,           /** Socket断开连接　**/
-            /// <summary>
-            /// 创建请求失败
-            /// </summary>
             ErrCode_CreateRequestFailed,        /** 创建请求失败　**/
-            /// <summary>
-            /// 请求相关的内部变量出错
-            /// </summary>
             ErrCode_RequestRelatedVariableError,/** 请求相关的内部变量出错　**/
-            /// <summary>
-            /// 请求超时
-            /// </summary>
             ErrCode_RequestTimeout,             /** 请求超时　**/
-            /// <summary>
-            /// 发送请求信息失败
-            /// </summary>
             ErrCode_SendRequestFailed,          /** 发送请求信息失败　**/
-            /// <summary>
-            /// 响应信息为空
-            /// </summary>
             ErrCode_ResponseInfoIsNULL,        /** 响应信息为空　**/
-            /// <summary>
-            /// 解析响应失败
-            /// </summary>
             ErrCode_ResolveResponseFailed,     /** 解析响应失败　**/
-            /// <summary>
-            /// 正解出错
-            /// </summary>
             ErrCode_FkFailed,                   /** 正解出错　**/
-            /// <summary>
-            /// 逆解出错
-            /// </summary>
             ErrCode_IkFailed,                   /** 逆解出错　**/
-            /// <summary>
-            /// 工具标定参数有错
-            /// </summary>
             ErrCode_ToolCalibrateError,              /** 工具标定参数有错**/
-            /// <summary>
-            /// 工具标定参数有错
-            /// </summary>
             ErrCode_ToolCalibrateParamError,         /** 工具标定参数有错**/
-            /// <summary>
-            /// 坐标系标定失败
-            /// </summary>
             ErrCode_CoordinateSystemCalibrateError,  /** 坐标系标定失败　**/
-            /// <summary>
-            /// 基坐标系转用户座标失败
-            /// </summary>
             ErrCode_BaseToUserConvertFailed,         /** 基坐标系转用户座标失败　**/
-            /// <summary>
-            /// 用户坐标系转基座标失败
-            /// </summary>
-            ErrCode_UserToBaseConvertFailed,
+            ErrCode_UserToBaseConvertFailed,         /** 用户坐标系转基座标失败　**/
+
             //move
-            /// <summary>
-            /// 运动相关的内部变量出错
-            /// </summary>
             ErrCode_MotionRelatedVariableError,      /** 运动相关的内部变量出错　**/
-            /// <summary>
-            /// 运动请求失败
-            /// </summary>
             ErrCode_MotionRequestFailed,             /** 运动请求失败**/
-            /// <summary>
-            /// 生成运动请求失败
-            /// </summary>
             ErrCode_CreateMotionRequestFailed,       /** 生成运动请求失败**/
-            /// <summary>
-            /// 运动被事件中断
-            /// </summary>
             ErrCode_MotionInterruptedByEvent,        /** 运动被事件中断　**/
-            /// <summary>
-            /// 运动相关的路点容器的长度不符合规定
-            /// </summary>
             ErrCode_MotionWaypointVetorSizeError,    /** 运动相关的路点容器的长度不符合规定　**/
-            /// <summary>
-            /// 服务器响应返回错误
-            /// </summary>
             ErrCode_ResponseReturnError,             /** 服务器响应返回错误　**/
-            /// <summary>
-            /// 真实机械臂不存在，因为有些接口只有在真是机械臂存在的情况下才可以被调用
-            /// </summary>
             ErrCode_RealRobotNoExist,                /** 真实机械臂不存在，因为有些接口只有在真是机械臂存在的情况下才可以被调用　**/
-            /// <summary>
-            /// 
-            /// </summary>
+
+
             ErrCode_Count = ErrCode_RealRobotNoExist - ErrCode_Base + 2,
         }
 
-        /// <summary>
-        /// 返回代码
-        /// </summary>
         [Serializable]
         public enum RetunCode
         {
-            /// <summary>
-            /// 调用成功
-            /// </summary>
             [EnumDescription("调用成功")]
             InterfaceCallSuccCode = 0,
-            /// <summary>
-            /// 通用失败
-            /// </summary>
+
             [EnumDescription("通用失败")]
             ErrCode_Failed = 1001,
-            /// <summary>
-            /// 参数错误
-            /// </summary>
             [EnumDescription("参数错误")]
             ErrCode_ParamError = 1002,
-            /// <summary>
-            /// Socket 连接失败
-            /// </summary>
             [EnumDescription("Socket 连接失败")]
             ErrCode_ConnectSocketFailed = 10003,
-            /// <summary>
-            /// Socket 断开连接
-            /// </summary>
             [EnumDescriptionAttribute("Socket 断开连接")]
             ErrCode_SocketDisconnect = 1004,
-            /// <summary>
-            /// 创建请求失败
-            /// </summary>
             [EnumDescription("创建请求失败")]
             ErrCode_CreateRequestFailed = 1005,
-            /// <summary>
-            /// 请求相关的内部变量出错
-            /// </summary>
             [EnumDescription("请求相关的内部变量出错")]
             ErrCode_RequestRelatedVariableError = 1006,
-            /// <summary>
-            /// 请求超时
-            /// </summary>
             [EnumDescription("请求超时")]
             ErrCode_RequestTimeout = 1007,
-            /// <summary>
-            /// 发送请求信息失败
-            /// </summary>
             [EnumDescription("发送请求信息失败")]
             ErrCode_SendRequestFailed = 1008,
-            /// <summary>
-            /// 响应信息为空
-            /// </summary>
             [EnumDescription("响应信息为空")]
             ErrCode_ResponseInfoIsNULL = 1009,
-            /// <summary>
-            /// 解析响应失败
-            /// </summary>
             [EnumDescription("解析响应失败")]
             ErrCode_ResolveResponseFailed = 1010,
-            /// <summary>
-            /// 正解出错
-            /// </summary>
             [EnumDescription("正解出错")]
             ErrCode_FkFailed = 1011,
-            /// <summary>
-            /// 逆解出错
-            /// </summary>
             [EnumDescription("逆解出错")]
             ErrCode_IkFailed = 1012,
-            /// <summary>
-            /// 工具标定参数有错
-            /// </summary>
             [EnumDescription("工具标定参数有错")]
             ErrCode_ToolCalibrateError = 1013,
-            /// <summary>
-            /// 工具标定参数有错
-            /// </summary>
             [EnumDescription("工具标定参数有错")]
             ErrCode_ToolCalibrateParamError = 1014,
-            /// <summary>
-            /// 坐标系标定失败
-            /// </summary>
             [EnumDescription("坐标系标定失败")]
             ErrCode_CoordinateSystemCalibrateError = 1015,
-            /// <summary>
-            /// 基坐标系转用户座标失败
-            /// </summary>
             [EnumDescription("基坐标系转用户座标失败")]
             ErrCode_BaseToUserConvertFailed = 1016,
-            /// <summary>
-            /// 用户坐标系转基座标失败
-            /// </summary>
             [EnumDescription("用户坐标系转基座标失败")]
             ErrCode_UserToBaseConvertFailed = 1017,
-            /// <summary>
-            /// 运动相关的内部变量出错
-            /// </summary>
             [EnumDescription("运动相关的内部变量出错")]
             ErrCode_MotionRelatedVariableError = 1018,
-            /// <summary>
-            /// 运动请求失败
-            /// </summary>
             [EnumDescription("运动请求失败")]
             ErrCode_MotionRequestFailed = 1019,
-            /// <summary>
-            /// 生成运动请求失败
-            /// </summary>
             [EnumDescription("生成运动请求失败")]
             ErrCode_CreateMotionRequestFailed = 1020,
-            /// <summary>
-            /// 运动被事件中断
-            /// </summary>
             [EnumDescription("运动被事件中断")]
             ErrCode_MotionInterruptedByEvent = 1021,
-            /// <summary>
-            /// 运动相关的路点容器的长度不符合规定
-            /// </summary>
             [EnumDescription("运动相关的路点容器的长度不符合规定")]
             ErrCode_MotionWaypointVetorSizeError = 1022,
-            /// <summary>
-            /// 服务器响应返回错误
-            /// </summary>
             [EnumDescription("服务器响应返回错误")]
             ErrCode_ResponseReturnError = 1023,
-            /// <summary>
-            /// 真实机械臂不存在，因为有些接口只有在真是机械臂存在的情况下才可以被调用
-            /// </summary>
             [EnumDescription("真实机械臂不存在，因为有些接口只有在真是机械臂存在的情况下才可以被调用")]
             ErrCode_RealRobotNoExist = 1024,
-            /// <summary>
-            /// 调用缓停接口失败
-            /// </summary>
             [EnumDescription("调用缓停接口失败")]
             ErrCode_moveControlSlowStopFailed = 1025,
-            /// <summary>
-            /// 调用急停接口失败
-            /// </summary>
             [EnumDescription("调用急停接口失败")]
             ErrCode_moveControlFastStopFailed = 1026,
-            /// <summary>
-            /// 调用暂停接口失败
-            /// </summary>
             [EnumDescription("调用暂停接口失败")]
             ErrCode_moveControlPauseFailed = 1027,
-            /// <summary>
-            /// 调用继续接口失败
-            /// </summary>
             [EnumDescription("调用继续接口失败")]
             ErrCode_moveControlContinueFailed = 1028
         }
 
-        /// <summary>
-        /// 获取返回信息
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="code"></param>
-        /// <param name="enumType"></param>
-        /// <returns></returns>
         public static string GetRetunDescription<T>(int code, Type enumType = null)
         {
             if (enumType == null)
                 enumType = typeof(EnumDescriptionAttribute);
             RetunCode retunCode = (RetunCode)code;
-            System.Reflection.FieldInfo re = retunCode.GetType().GetField(retunCode.ToString());
+            var re = retunCode.GetType().GetField(retunCode.ToString());
             if (re == null)
                 return "未知错误";
-            object[] datas = re.GetCustomAttributes(enumType, false); ;
-            return datas.Length == 0 ? "未知错误" : ((EnumDescriptionAttribute)datas[0]).Description;
+            var datas = re.GetCustomAttributes(enumType, false); ;
+            if (datas.Length == 0)
+                return "未知错误";
+            else
+                return ((EnumDescriptionAttribute)datas[0]).Description;
         }
 
-        /// <summary>
-        /// 获取基坐标系
-        /// </summary>
-        /// <returns></returns>
         public static CoordCalibrate GetBaseCoordCalibrate()
         {
             return new CoordCalibrate()
@@ -2039,6 +1498,52 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
                 }
             };
         }
+
+        /// <summary>
+        /// 获取枚举上的指定名称
+        /// </summary>
+        /// <typeparam name="OutType">输出枚举特性属性的类型</typeparam>
+        /// <typeparam name="EnumAttributeType">要查找的枚举类型</typeparam>
+        /// <param name="enum">枚举对象</param>
+        /// <param name="property">输出枚举特性属性名称</param>
+        /// <returns></returns>
+        public static OutType GetEnumCustomAttributeInfo<OutType, EnumAttributeType>(Enum @enum, string property) where EnumAttributeType : Attribute
+        {
+
+            //var type = @enum.GetType();
+            //var field = type.GetField(@enum.ToString());
+            //if (field == null)
+            //    return default;
+
+            //var datas = field.GetCustomAttributes(typeof(EnumAttributeType), false);
+            //if (datas.Length == 0)
+            //    return default;
+
+            //var en = (EnumAttributeType)datas[0];
+            var en = GetEnumCustomAttribute<EnumAttributeType>(@enum);
+            var p = en.GetType().GetProperty(property);
+            if (p == null)
+                return default;
+
+            return (OutType)p.GetValue(en);
+
+        }
+
+        public static T GetEnumCustomAttribute<T>(Enum @enum) where T : Attribute
+        {
+            var type = @enum.GetType();
+            var field = type.GetField(@enum.ToString());
+            if (field == null)
+                return default;
+
+            var datas = field.GetCustomAttributes(typeof(T), false);
+            if (datas.Length == 0)
+                return default;
+
+            var en = (T)datas[0];
+            return en;
+        }
+
 
     }
 }

@@ -47,37 +47,37 @@ namespace GeneralTool.CoreLibrary.Logs
         /// </summary>
         /// <param name="msg"></param>
         /// <param name="logType"></param>
-        public virtual void Log(object msg, LogType logType = LogType.Info) => Log(msg, logType);
+        public virtual void Log(object msg, LogType logType = LogType.Info) => Log(msg + "", logType);
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="msg"></param>
-        public virtual void Debug(object msg) => Log(msg, LogType.Debug);
+        public virtual void Debug(object msg) => Log(msg + "", LogType.Debug);
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="msg"></param>
-        public virtual void Info(object msg) => Log(msg, LogType.Info);
+        public virtual void Info(object msg) => Log(msg + "", LogType.Info);
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="msg"></param>
-        public virtual void Error(object msg) => Log(msg, LogType.Error);
+        public virtual void Error(object msg) => Log(msg + "", LogType.Error);
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="msg"></param>
-        public virtual void Waring(object msg) => Log(msg, LogType.Waring);
+        public virtual void Waring(object msg) => Log(msg + "", LogType.Waring);
 
         /// <summary>
         /// 
         /// </summary>
         /// <param name="msg"></param>
-        public virtual void Fail(object msg) => Log(msg, LogType.Fail);
+        public virtual void Fail(object msg) => Log(msg + "", LogType.Fail);
 
         /// <summary>
         /// 

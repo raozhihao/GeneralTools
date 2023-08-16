@@ -61,6 +61,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Blocks\TestBlock.cs" />
     <Compile Include="Common\TaskExecuteController.cs" />
     <Compile Include="Common\LayoutHelper.cs" />
     <Compile Include="Demo\ImageDemoView.xaml.cs">

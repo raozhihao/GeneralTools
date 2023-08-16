@@ -106,6 +106,12 @@
                                               Content="自动布局" />
                                 </MenuItem.Header>
                             </MenuItem>
+
+                            <MenuItem Header="Back"
+                                      Click="BackMethod" />
+                            
+                             <MenuItem Header="Next"
+                                      Click="NextMethod" />
                         </Menu>
 
                         <Grid Grid.Row="1">
@@ -117,7 +123,7 @@
                                        ScrollViewer="{Binding ElementName=DesignerScrollViewer}"
                                        Background="Orange"
                                        Panel.ZIndex="1" />
-
+                           
                             <ScrollViewer Name="DesignerScrollViewer"
                                           HorizontalScrollBarVisibility="Auto"
                                           VerticalScrollBarVisibility="Auto"
@@ -130,8 +136,7 @@
                                                   Focusable="true"
                                                   FocusVisualStyle="{x:Null}"
                                                   IsEnabled="{Binding CanvasEnable}"
-                                                  CopyEvent="dc_CopyEvent"
-                                                  DragEndArrary="{Binding ElementName=AutoCheckBox,Path=IsChecked}">
+                                                  CopyEvent="dc_CopyEvent">
 
                                 </c:DesignerCanvas>
                             </ScrollViewer>

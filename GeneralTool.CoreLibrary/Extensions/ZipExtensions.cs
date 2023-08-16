@@ -20,15 +20,19 @@ namespace GeneralTool.CoreLibrary.Extensions
             return destFullName;
         }
 
-        public static string UnZip(this string zipFile)
+        public static string UnZip(this string zipFile, string saveDir = "")
         {
-            string fileDir = Path.GetDirectoryName(zipFile);
-            string fileName = Path.GetFileNameWithoutExtension(zipFile);
-            string destDir = Path.Combine(fileDir, fileName);
-            if (Directory.Exists(destDir))
-                Directory.Delete(destDir, true);
-            ZipFile.ExtractToDirectory(zipFile, destDir);
-            return destDir;
+            if (string.IsNullOrWhiteSpace(saveDir))
+            {
+                string fileDir = Path.GetDirectoryName(zipFile);
+                string fileName = Path.GetFileNameWithoutExtension(zipFile);
+                saveDir = Path.Combine(fileDir, fileName);
+                if (Directory.Exists(saveDir))
+                    Directory.Delete(saveDir, true);
+            }
+            
+            ZipFile.ExtractToDirectory(zipFile, saveDir);
+            return saveDir;
         }
     }
 }

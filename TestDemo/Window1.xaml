@@ -1,0 +1,67 @@
+﻿<Window x:Class="TestDemo.Window1"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TestDemo"
+        mc:Ignorable="d"
+        Title="Window1"
+        Height="450"
+        Width="800">
+
+    <Grid  x:Name="PART_Grid"
+           Width="200"
+           Height="100">
+
+        <Grid x:Name="PART_GridContent"
+              IsHitTestVisible="True">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Border BorderBrush="Black"
+                    BorderThickness="1"
+                    Grid.Row="0"
+                    CornerRadius="10 10 0 0"
+                    Background="#364E72"
+                    IsHitTestVisible="False"
+                    Visibility="Visible">
+                <TextBlock Text="Header"
+                           Foreground="White"
+                           Padding="5"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center" />
+            </Border>
+
+            <Border Grid.Row="1"
+                    BorderBrush="Black"
+                    BorderThickness="1"
+                    CornerRadius="0 0 10 10">
+                <ContentPresenter VerticalAlignment="Center"
+                                  HorizontalAlignment="Center"
+                                  IsHitTestVisible="False"
+                                  x:Name="PART_ContentPresenter"
+                                  Content="aaacontent"
+                                  Margin="5"
+                                  Visibility="Visible" />
+            </Border>
+
+        </Grid>
+
+        <!--大小更改模板-->
+        <Control x:Name="PART_Resize"
+                 Visibility="{Binding ElementName=PART_Grid,Path=DataContext.ResizeVisibility,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" />
+
+        <!--连接点模板-->
+        <Control  x:Name="PART_Connectors"
+                  Visibility="Collapsed"
+                  Panel.ZIndex="999" />
+
+        <!--左上角红点模板-->
+        <Control Template="{StaticResource BreakPoint}"
+                 Visibility="Collapsed"
+                 x:Name="PART_BreakPoint" />
+
+    </Grid>
+</Window>

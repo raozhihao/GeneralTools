@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Security.RightsManagement;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 using GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Models;
 using GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs;
@@ -112,69 +115,78 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// <summary>
         /// 
         /// </summary>
-        public static readonly DependencyProperty HeaderCornerRadiusProperty = DependencyProperty.Register(nameof(HeaderCornerRadius), typeof(CornerRadius), typeof(BlockItem));
+        public static readonly DependencyProperty HeaderCornerRadiusProperty = DependencyProperty.Register(nameof(HeaderCornerRadius), typeof(CornerRadius), typeof(BlockItem), new PropertyMetadata(new CornerRadius(10,10,10,10)));
 
         /// <summary>
         /// 
         /// </summary>
         public static readonly DependencyProperty IsBreakBlockProperty = DependencyProperty.Register(nameof(IsBreakBlock), typeof(bool), typeof(BlockItem));
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public static readonly DependencyProperty ResultVaraibleProperty = DependencyProperty.Register(nameof(ResultVaraible), typeof(string), typeof(BlockItem), new PropertyMetadata(ResultChanged));
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public static readonly DependencyProperty ResultVisibilityProperty = DependencyProperty.Register(nameof(ResultVisibility), typeof(Visibility), typeof(BlockItem), new PropertyMetadata(Visibility.Collapsed));
+       
+        public static readonly DependencyProperty ContentRadiusProperty = DependencyProperty.Register(nameof(ContentRadius), typeof(CornerRadius), typeof(BlockItem), new PropertyMetadata(new CornerRadius(10)));
 
         /// <summary>
         /// 
         /// </summary>
         public static readonly DependencyProperty IsDebugModeProperty = DependencyProperty.Register(nameof(IsDebugMode), typeof(bool), typeof(BlockItem), new PropertyMetadata(false));
+        public static readonly DependencyProperty CanResizeProperty = DependencyProperty.Register(nameof(CanResize), typeof(bool), typeof(BlockItem), new PropertyMetadata(true));
 
-        private static void ResultChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            if (d is BlockItem b)
-            {
-                if (string.IsNullOrWhiteSpace(e.NewValue + ""))
-                {
-                    b.ResultVisibility = Visibility.Collapsed;
-                    b.HeaderCornerRadius = new CornerRadius(10);//更新边框
-                }
-                else
-                {
-                    b.ResultVisibility = Visibility.Visible;
-                    b.HeaderCornerRadius = new CornerRadius(10, 10, 0, 0);//更新边框
-                }
+        public static readonly DependencyProperty AutoCornerRadiusProperty = DependencyProperty.Register(nameof(AutoCornerRadius), typeof(bool), typeof(BlockItem), new PropertyMetadata(true));
 
-                //b.ConnectorVisibility = Visibility.Visible;
-                double x = Canvas.GetLeft(b);
-                double y = Canvas.GetTop(b);
-                Point point = new Point(x, y);
-                b.Width = double.NaN;
-                b.Height = double.NaN;
+        //private static void ResultChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        //{
+        //    if (d is BlockItem b)
+        //    {
+        //        if (b.ResizeVisibility == Visibility.Collapsed)
+        //            return;
+        //        if (string.IsNullOrWhiteSpace(e.NewValue + ""))
+        //        {
+        //            b.HeaderCornerRadius = new CornerRadius(10);//更新边框
+        //        }
+        //        else
+        //        {
+        //            b.HeaderCornerRadius = new CornerRadius(10, 10, 0, 0);//更新边框
+        //        }
 
-                b.RaiseResizeChanged(point, b.DesiredSize);
-            }
-        }
+        //        if (b.AutoCornerRadius)
+        //            b.ConnectorVisibility = Visibility.Visible;
+        //        double x = Canvas.GetLeft(b);
+        //        double y = Canvas.GetTop(b);
+        //        Point point = new Point(x, y);
+        //        b.Width = double.NaN;
+        //        b.Height = double.NaN;
+
+        //        b.RaiseResizeChanged(point, b.DesiredSize);
+        //    }
+        //}
 
         private static void ContentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is BlockItem b)
             {
+               
                 if (string.IsNullOrWhiteSpace(e.NewValue + ""))
                 {
-                    b.ContentVisibility = Visibility.Collapsed;
+                    if (b.AutoCornerRadius)
+                    {
+                        b.HeaderCornerRadius = new CornerRadius(10);//更新边框
+
+                        b.ContentVisibility = Visibility.Collapsed;
+                    }
                 }
+
                 else
                 {
                     b.ContentVisibility = Visibility.Visible;
-                    b.HeaderCornerRadius = new CornerRadius(10, 10, 0, 0);//更新边框
+                    if (b.AutoCornerRadius)
+                    {
+                        b.HeaderCornerRadius = new CornerRadius(10, 10, 0, 0);//更新边框
+                        b.ContentRadius = new CornerRadius(0, 0, 10, 10);
+                    }
+                        
                 }
-
-                //b.ConnectorVisibility = Visibility.Visible;
+                if (b.AutoCornerRadius)
+                    b.ConnectorVisibility = Visibility.Visible;
                 double x = Canvas.GetLeft(b);
                 double y = Canvas.GetTop(b);
                 Point point = new Point(x, y);
@@ -185,9 +197,67 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
             }
         }
 
+        public Point CurrentPoint { get; private set; }
+        public event Action<BlockItem, Rect> PosChangedEvent;
+        internal void MoveChanged(Point point)
+        {
+            this.CurrentPoint = point;
+            this.PosChangedEvent?.Invoke(this, new Rect(point, this.DesiredSize));
+        }
+
+        public event Func<BlockItem, Rect, bool> PosChangingEvent;
+        internal bool MoveChanging(Point point)
+        {
+            if (this.PosChangingEvent != null)
+            {
+                return this.PosChangingEvent(this, new Rect(point, this.DesiredSize));
+            }
+            return true;
+        }
+
+        public static readonly DependencyProperty RotateAngleProperty = DependencyProperty.Register(nameof(RotateAngle), typeof(double), typeof(BlockItem), new PropertyMetadata(0d));
+        public static readonly DependencyProperty RotateCenterXProperty = DependencyProperty.Register(nameof(RotateCenterX), typeof(double), typeof(BlockItem), new PropertyMetadata(0d));
+        public static readonly DependencyProperty RotateCenterYroperty = DependencyProperty.Register(nameof(RotateCenterY), typeof(double), typeof(BlockItem), new PropertyMetadata(0d));
+
         #endregion
 
         #region 公共属性
+        public bool AutoCornerRadius
+        {
+            get => (bool)GetValue(AutoCornerRadiusProperty);
+            set => this.SetValue(AutoCornerRadiusProperty, value);
+        }
+        public double RotateAngle
+        {
+            get => (double)GetValue(RotateAngleProperty);
+            set => SetValue(RotateAngleProperty, value);
+        }
+
+        public double RotateCenterX
+        {
+            get => (double)GetValue(RotateCenterXProperty);
+            set => SetValue(RotateCenterXProperty, value);
+        }
+
+        public double RotateCenterY
+        {
+            get => (double)GetValue(RotateCenterYroperty);
+            set => SetValue(RotateCenterYroperty, value);
+        }
+
+        public bool CanResize
+        {
+            get => (bool)this.GetValue(CanResizeProperty);
+            set => this.SetValue(CanResizeProperty, value);
+        }
+        /// <summary>
+        /// 块的整体的
+        /// </summary>
+        public CornerRadius ContentRadius
+        {
+            get => (CornerRadius)this.GetValue(ContentRadiusProperty);
+            set => this.SetValue(ContentRadiusProperty, value);
+        }
 
         /// <summary>
         /// 
@@ -243,23 +313,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
             set => SetValue(IsBreakBlockProperty, value);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public string ResultVaraible
-        {
-            get => GetValue(ResultVaraibleProperty) + "";
-            set => SetValue(ResultVaraibleProperty, value);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        public Visibility ResultVisibility
-        {
-            get => (Visibility)GetValue(ResultVisibilityProperty);
-            set => SetValue(ResultVisibilityProperty, value);
-        }
+     
         /// <summary>
         /// 是否可以多次拖入画布
         /// </summary>

@@ -1,4 +1,6 @@
-﻿using SimpleDiagram.BlockVIewModels;
+﻿using System.Windows;
+
+using SimpleDiagram.BlockVIewModels;
 using SimpleDiagram.Models;
 using SimpleDiagram.Windows;
 

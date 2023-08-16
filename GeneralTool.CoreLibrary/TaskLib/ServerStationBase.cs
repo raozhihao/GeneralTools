@@ -146,7 +146,10 @@ namespace GeneralTool.CoreLibrary.TaskLib
                                 serverResponse.Result = requestAddressItem.MethodInfo.Invoke(requestAddressItem.Target, array);
                                 try
                                 {
-                                    serverResponse.ResultString = jsonConvert.SerializeObject(serverResponse.Result); //converter.Convert(serverResponse.Result, null, null, null) + "";
+                                    if (serverResponse.Result.GetType() != typeof(string) && serverResponse.Result != null)
+                                        serverResponse.ResultString = jsonConvert.SerializeObject(serverResponse.Result);
+                                    else
+                                        serverResponse.ResultString = serverResponse.Result + "";
                                 }
                                 catch (Exception ex)
                                 {

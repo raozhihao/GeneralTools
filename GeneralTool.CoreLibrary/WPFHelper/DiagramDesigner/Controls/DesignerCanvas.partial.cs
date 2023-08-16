@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
 
 using GeneralTool.CoreLibrary.Extensions;
+using GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Common;
+using GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Models;
 
 namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
 {
@@ -37,13 +41,19 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
             typeof(BlockItem),
             typeof(DesignerCanvas));
 
+        public event Action<BlockItem> SelectedBlockItemChanged;
+
         /// <summary>
         /// 获取当前选择的块
         /// </summary>
         public BlockItem SelectedBlockItem
         {
             get => GetValue(SelectedBlockItemProperty) as BlockItem;
-            set => SetValue(SelectedBlockItemProperty, value);
+            set
+            {
+                SetValue(SelectedBlockItemProperty, value);
+                this.SelectedBlockItemChanged?.Invoke(value);
+            }
         }
 
         /// <summary>
@@ -79,6 +89,18 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
             set => SetValue(CanOperationProperty, value);
         }
 
+
+        public static readonly DependencyProperty CanMouseWheelScaleProperty = DependencyProperty.Register(nameof(CanMouseWheelScale), typeof(bool), typeof(DesignerCanvas), new PropertyMetadata(true));
+
+        /// <summary>
+        /// 是否允许鼠标滚动缩放
+        /// </summary>
+        public bool CanMouseWheelScale
+        {
+            get => (bool)GetValue(CanMouseWheelScaleProperty);
+            set => this.SetValue(CanMouseWheelScaleProperty, value);
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -86,6 +108,28 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
             typeof(bool),
             typeof(DesignerCanvas),
             new PropertyMetadata(true, ZoomPanelVisibilityChanged));
+
+        public static readonly DependencyProperty AutoZoomProperty = DependencyProperty.Register(nameof(AutoZoom), typeof(bool), typeof(DesignerCanvas), new PropertyMetadata(false, AutoZoomChanged));
+
+        public event Action<bool> AutoZoomChangedEvent;
+        private static void AutoZoomChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is DesignerCanvas c)
+            {
+                var re = (bool)e.NewValue;
+
+                c.AutoZoomChangedEvent?.Invoke(re);
+            }
+        }
+
+        /// <summary>
+        /// 设置当前画布的表现模式
+        /// </summary>
+        /// <param name="full">是否自适应当前屏幕显示</param>
+        public void ZoomScale(bool full)
+        {
+            this.AutoZoomChangedEvent?.Invoke(full);
+        }
 
         /// <summary>
         /// 
@@ -104,6 +148,17 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
             }
         }
 
+      
+
+        /// <summary>
+        /// 是否自动缩放，默认false
+        /// </summary>
+        public bool AutoZoom
+        {
+            get => (bool)this.GetValue(AutoZoomProperty);
+            set => this.SetValue(AutoZoomProperty, value);
+        }
+
 
         /// <summary>
         /// 
@@ -113,5 +168,20 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
             get => (bool)GetValue(ZoomPanelVisibilityProperty);
             set => SetValue(ZoomPanelVisibilityProperty, value);
         }
+
+        public HistoryManger HistoryManger { get; private set; }
+
+        public void Back()
+        {
+
+            this.HistoryManger.Undo();
+        }
+
+        public void Next()
+        {
+            this.HistoryManger.Next();
+        }
+
+
     }
 }

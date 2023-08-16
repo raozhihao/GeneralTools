@@ -62,6 +62,7 @@ namespace GeneralTool.CoreLibrary.ProcessHelpers
             catch (Exception ex)
             {
                 ErroReceived(process, ex.GetInnerExceptionMessage());
+                this.Close();
             }
         }
 
@@ -70,8 +71,12 @@ namespace GeneralTool.CoreLibrary.ProcessHelpers
         /// </summary>
         public void Close()
         {
+            if (_process == null) return;
             try
             {
+                _process.Exited -= Process_Exited;
+                _process.OutputDataReceived -= Process_OutputDataReceived;
+                _process.ErrorDataReceived -= Process_ErrorDataReceived;
                 if (_process.HasExited)
                     _process.Close();
                 else
@@ -97,6 +102,11 @@ namespace GeneralTool.CoreLibrary.ProcessHelpers
         private void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
             ReceivedHandler?.Invoke(sender, e.Data);
+            if (this._process.HasExited)
+            {
+                this.Close();
+                return;
+            }
         }
 
         private void Process_Exited(object sender, EventArgs e)

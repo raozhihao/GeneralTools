@@ -26,7 +26,9 @@
 
                                         </Canvas.Background>-->
                                         <Thumb Name="PART_ZoomThumb"
-                                               Cursor="SizeAll">
+                                               Cursor="SizeAll"
+                                               Canvas.Left="0"
+                                               Canvas.Top="0">
                                             <Thumb.Style>
                                                 <Style TargetType="Thumb">
                                                     <Setter Property="Template">
@@ -34,7 +36,8 @@
                                                             <ControlTemplate TargetType="Thumb">
                                                                 <Rectangle StrokeThickness="1"
                                                                            Stroke="Black"
-                                                                           Fill="Transparent" />
+                                                                           Fill="Transparent"
+                                                                           />
                                                             </ControlTemplate>
                                                         </Setter.Value>
                                                     </Setter>

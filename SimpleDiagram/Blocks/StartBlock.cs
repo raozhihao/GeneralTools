@@ -18,6 +18,8 @@ namespace SimpleDiagram.Blocks
                System.Windows.Visibility.Collapsed;
             this.ConnectorThumbs[Direction.Bottom].ConnectorType = ConnectorType.OnlySource;
             this.IsStart = true;
+            this.ContentRadius = new System.Windows.CornerRadius(20);
+            this.CanResize = false;
         }
 
         public override WindowResult OpenWindow()

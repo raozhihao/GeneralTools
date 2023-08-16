@@ -34,9 +34,9 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
             在此之后:
                         if (!(TemplatedParent is BlockItem block))
             */
-            if (!(TemplatedParent is  BlockItem block))
+            if (!(TemplatedParent is BlockItem block))
                 return;
-            if (!(block.Parent is  DesignerCanvas))
+            if (!(block.Parent is DesignerCanvas))
             {
                 return;
             }
@@ -55,9 +55,9 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
             在此之后:
                         if (!(TemplatedParent is BlockItem block))
             */
-             if (!(this.TemplatedParent is BlockItem block))
+            if (!(this.TemplatedParent is BlockItem block))
                 return;
-            if (!(block.Parent is  DesignerCanvas canvas))
+            if (!(block.Parent is DesignerCanvas canvas))
             {
                 return;
             }
@@ -88,7 +88,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
         public const double MinLeft = 20;
         private void MoveThumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            if (TemplatedParent is BlockItem designerItem && VisualTreeHelper.GetParent(designerItem) is Canvas designer)
+            if (TemplatedParent is BlockItem designerItem && VisualTreeHelper.GetParent(designerItem) is DesignerCanvas designer)
             {
                 // we only move DesignerItems
                 System.Collections.Generic.IEnumerable<BlockItem> designerItems = designer.Children.OfType<BlockItem>().Where(b => b.IsSelected);
@@ -104,21 +104,63 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
 
                         minLeft = double.IsNaN(left) ? 0 : Math.Min(left, minLeft);
                         minTop = double.IsNaN(top) ? 0 : Math.Min(top, minTop);
+
                     }
 
-                    double deltaHorizontal = Math.Max(-minLeft, e.HorizontalChange);
-                    double deltaVertical = Math.Max(-minTop, e.VerticalChange);
+                    double deltaHorizontal = Math.Round(e.HorizontalChange, 3);//Math.Max(-minLeft, e.HorizontalChange);
+                    double deltaVertical = Math.Round(e.VerticalChange, 3);// Math.Max(-minTop, e.VerticalChange);
 
                     foreach (BlockItem item in designerItems)
                     {
+                        //获取真实外包矩形,因为有旋转
+                        var bounds = item.GetBoundRect();
                         double left = Canvas.GetLeft(item);
                         double top = Canvas.GetTop(item);
+                        var boundTop = bounds.Top + deltaVertical;
+                        var bountTopVertiacal = 0d;
+                        //if (boundTop < 0 && deltaVertical < 0)
+                        //{
+                        //    bountTopVertiacal = boundTop;
+                        //}
+                        //计算最上方的点能到哪
+                        var topPos = top - bounds.Top - bountTopVertiacal;
+
+                        var boundLeft = bounds.Left + deltaHorizontal;
+                        var boundLeftHorizontal = 0d;
+                        //if (boundLeft < 0 && deltaHorizontal < 0)
+                        //{
+                        //    boundLeftHorizontal = boundLeft;
+                        //}
+                        //计算最左方的点能到哪
+                        var leftPos = left - bounds.Left + boundLeftHorizontal;
+
 
                         if (double.IsNaN(left)) left = 0;
                         if (double.IsNaN(top)) top = 0;
 
-                        Canvas.SetLeft(item, Math.Round(left + deltaHorizontal, 0));
-                        Canvas.SetTop(item, Math.Round(top + deltaVertical, 0));
+                        left = left + deltaHorizontal;
+                        top = top + deltaVertical;
+                        if (top < topPos) top = topPos;
+                        if (left < leftPos) left = leftPos;
+
+                        if (!designer.CanScroll)
+                        {
+                            //不允许超过右边界
+                            if (left - leftPos + bounds.Width > designer.ActualWidth)
+                                left = designer.ActualWidth - bounds.Width + leftPos;
+
+                            //不允许超过下边界
+                            if (top - topPos + bounds.Height > designer.ActualHeight)
+                                top = designer.ActualHeight - bounds.Height + topPos;
+
+                        }
+
+                        var point = new Point(Math.Round(left), Math.Round(top));
+
+                        if (!item.MoveChanging(point)) return;
+                        Canvas.SetLeft(item, point.X);
+                        Canvas.SetTop(item, point.Y);
+                        item.MoveChanged(point);
 
                     }
 
@@ -156,6 +198,9 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
             left += deltaHorizontal;
             left = left < MinLeft ? MinLeft : left;
 
+            var point = new Point(left, top);
+            if (!block.MoveChanging(point))
+                return;
             Canvas.SetLeft(block, left);
             Canvas.SetTop(block, top);
 

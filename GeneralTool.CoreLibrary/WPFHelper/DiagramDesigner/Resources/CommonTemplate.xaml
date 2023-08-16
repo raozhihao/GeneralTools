@@ -158,4 +158,26 @@
 
         </Grid>
     </ControlTemplate>
+
+    <!-- RotateThumb Style -->
+    <Style TargetType="{x:Type t:RotateThumb}">
+        <Setter Property="RenderTransformOrigin"
+                Value="0.5,0.5" />
+        <Setter Property="Cursor"
+                Value="Hand" />
+        <Setter Property="Control.Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type t:RotateThumb}">
+                    <Grid Width="30"
+                          Height="30">
+                        <Path Fill="#AAD0D0DD"
+                              Stretch="Fill"
+                              Data="M 50,100 A 50,50 0 1 1 100,50 H 50 V 100" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+   
 </ResourceDictionary>

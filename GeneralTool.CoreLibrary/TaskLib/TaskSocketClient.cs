@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 
 using GeneralTool.CoreLibrary.Interfaces;
 using GeneralTool.CoreLibrary.Logs;
@@ -159,7 +160,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
         /// <param name="objects"></param>
         /// <returns></returns>
         /// <exception cref="Exception"></exception>
-        public virtual Tout Execute<Tout>(params object[] objects)
+        public virtual Tout Execute<Tout>(CancellationToken token, params object[] objects)
         {
             if (!IsInit) throw new Exception("没有进行初始化");
             //获取方法
@@ -181,7 +182,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
             };
 
             Client.Startup(Ip, Port);
-            ServerResponse reponse = Client.Send(request);
+            ServerResponse reponse = Client.Send(request, token);
 
             if (!reponse.RequestSuccess)
                 throw new Exception(reponse.ErroMsg);

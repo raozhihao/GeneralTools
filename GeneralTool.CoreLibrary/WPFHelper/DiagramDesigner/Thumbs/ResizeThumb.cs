@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -55,10 +56,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
             //获取当前附加的控件
             if (DataContext is BlockItem item && VisualTreeHelper.GetParent(item) is Canvas canvas)
             {
-                if (item.Content == null)
-                {
-                    return;
-                }
+                if (!item.CanResize) return;
+
                 double deltaVertical, deltaHorizontal;
 
                 ResizeArg resizeArg = new ResizeArg();
@@ -66,12 +65,28 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
                 double oldY = Canvas.GetTop(item);
                 Point oldPoint = new Point(oldX, oldY);
                 resizeArg.OldCanvasPoint = oldPoint;
-
+                //获取真实外包矩形
+                var bounds = item.GetBoundRect();
+                var top1 = Canvas.GetTop(item);
+                var left1 = Canvas.GetLeft(item);
+                var heightInc = top1 - bounds.Y;
+                var widthInc = left1 - bounds.X;
                 switch (VerticalAlignment)
                 {
                     case System.Windows.VerticalAlignment.Bottom:
                         deltaVertical = Math.Min(-e.VerticalChange,
                             item.ActualHeight - item.MinHeight);
+
+                        if (e.VerticalChange > 0)
+                        {
+                            //往下拉时,查看是否会大于画布的高
+                            var height = bounds.Bottom + e.VerticalChange;
+                            if (height >= canvas.ActualHeight)
+                                 return;
+                            if (left1 - widthInc < 0)
+                                return;
+
+                        }
 
                         SetHeight(item, deltaVertical, canvas);
                         resizeArg.Direction = Direction.Bottom;
@@ -81,9 +96,18 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
                             item.ActualHeight - item.MinHeight);
 
                         //查看top是否会达到0
-                        double top = Canvas.GetTop(item) + deltaVertical;
+                        double top = top1 + deltaVertical;
                         if (top <= 0)
                             return;
+
+                        if (e.VerticalChange < 0)
+                        {
+                            if (top1 - heightInc < 0 && e.VerticalChange < 0)
+                                return;
+                            if (left1 - widthInc < 0)
+                                return;
+                        }
+                       
                         Canvas.SetTop(item, top);
                         SetHeight(item, deltaVertical, canvas);
                         resizeArg.Direction = Direction.Top;
@@ -96,10 +120,22 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
                         deltaHorizontal = Math.Min(e.HorizontalChange,
                             item.ActualWidth - item.MinWidth);
                         //查看左边是否超出
-                        double left = Canvas.GetLeft(item) + deltaHorizontal;
+                        double left = left1 + deltaHorizontal;
                         if (left <= 0)
                             return;
-                        Canvas.SetLeft(item, Canvas.GetLeft(item) + deltaHorizontal);
+
+                        if (e.HorizontalChange<0)
+                        {
+                            if (left1 - widthInc < 0 && e.HorizontalChange < 0)
+                                return;
+                            var height = bounds.Bottom - e.HorizontalChange;
+                            if (height >= canvas.ActualHeight)
+                            {
+                                return;
+                            }
+                        }
+                       
+                        Canvas.SetLeft(item, left1 + deltaHorizontal);
                         SetWidth(item, deltaHorizontal, canvas);
 
                         resizeArg.Direction = Direction.Left;
@@ -107,6 +143,18 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
                     case System.Windows.HorizontalAlignment.Right:
                         deltaHorizontal = Math.Min(-e.HorizontalChange,
                             item.ActualWidth - item.MinWidth);
+
+                        //往右拉
+                        if (e.HorizontalChange > 0)
+                        {
+                            if (bounds.Right + e.HorizontalChange >= canvas.ActualWidth)
+                                return;
+                            var height = bounds.Bottom + e.HorizontalChange;
+                            if (height >= canvas.ActualHeight)
+                            {
+                                return;
+                            }
+                        }
                         SetWidth(item, deltaHorizontal, canvas);
 
                         resizeArg.Direction = Direction.Right;
@@ -121,26 +169,37 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
             e.Handled = true;
         }
 
-        private void SetWidth(Control item, double deltaHorizontal, Canvas canvas)
+        private void SetWidth(BlockItem item, double deltaHorizontal, Canvas canvas)
         {
+            var left = Canvas.GetLeft(item);
             double tmpWidth = item.ActualWidth - deltaHorizontal;
+            if (tmpWidth <= 0) return;
             //查看width是否会大于等于容器的宽
-            if (tmpWidth >= canvas.ActualWidth)
-                tmpWidth = canvas.ActualWidth;
-            item.Width = tmpWidth >= canvas.ActualWidth ? canvas.ActualWidth : tmpWidth;
-            item.Width = tmpWidth <= item.MinWidth ? item.MinWidth : tmpWidth;
+            if (tmpWidth + left >= canvas.ActualWidth)
+                tmpWidth = canvas.ActualWidth - left;
+
+            // var width = tmpWidth >= canvas.ActualWidth ? canvas.ActualWidth : tmpWidth;
+            var width = tmpWidth <= item.MinWidth ? item.MinWidth : tmpWidth;
+
+            width = Math.Round(width);
+            item.Width = width;
+            Trace.WriteLine($"{item.Width}     {canvas.ActualWidth}");
         }
 
-        private void SetHeight(Control item, double deltaVertical, Canvas canvas)
+        private void SetHeight(BlockItem item, double deltaVertical, Canvas canvas)
         {
+            var top = Canvas.GetTop(item);
+
             double tmpHeight = item.ActualHeight - deltaVertical;
+            if (tmpHeight <= 0) return;
 
             //查看height是否会大于等于容器的高
-            if (tmpHeight >= canvas.ActualHeight)
-                tmpHeight = canvas.ActualHeight;
+            if (tmpHeight + top >= canvas.ActualHeight)
+                tmpHeight = canvas.ActualHeight - top;
 
-            item.Height = tmpHeight;
-            item.Height = tmpHeight <= item.MinHeight ? item.MinHeight : tmpHeight;
+            // var height = tmpHeight;
+            var height = tmpHeight <= item.MinHeight ? item.MinHeight : tmpHeight;
+            item.Height = Math.Round(height);
         }
     }
 

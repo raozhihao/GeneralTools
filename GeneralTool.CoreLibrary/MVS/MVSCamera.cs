@@ -12,7 +12,7 @@ namespace GeneralTool.CoreLibrary.MVS
     public class MVSCamera : ICamera
     {
         private MVSCameraProvider.MV_CC_DEVICE_INFO_LIST m_stDeviceList;
-        public MVSCameraProvider M_MyCamera { get; private set; } = new MVSCameraProvider();
+        protected MVSCameraProvider M_MyCamera { get; private set; } = new MVSCameraProvider();
         private readonly IntPtr m_BufForDriver = IntPtr.Zero;
         private static readonly object BufForDriverLock = new object();
 
@@ -21,7 +21,7 @@ namespace GeneralTool.CoreLibrary.MVS
         /// <summary>
         /// 错误信息
         /// </summary>
-        public string ErroMsg { get; private set; }
+        public string ErroMsg { get; protected set; }
 
         /// <summary>
         /// 相机列表
@@ -40,7 +40,7 @@ namespace GeneralTool.CoreLibrary.MVS
         /// </summary>
         public bool IsOpen
         {
-            get; private set;
+            get; protected set;
         }
 
         /// <summary>
@@ -60,6 +60,11 @@ namespace GeneralTool.CoreLibrary.MVS
             return list;
         }
 
+        /// <summary>
+        /// 转换为IP地址
+        /// </summary>
+        /// <param name="nCurrentIp"></param>
+        /// <returns></returns>
         public static string ParseToIp(uint nCurrentIp)
         {
             uint i1 = ((nCurrentIp) & 0xff000000) >> 24;
@@ -69,6 +74,11 @@ namespace GeneralTool.CoreLibrary.MVS
             return $"{i1}.{i2}.{i3}.{i4}";
         }
 
+        /// <summary>
+        /// 转换为IP地址
+        /// </summary>
+        /// <param name="nCurrentIp"></param>
+        /// <returns></returns>
         public static Tuple<uint, uint, uint, uint> ParseToIpEx(uint nCurrentIp)
         {
             uint i1 = ((nCurrentIp) & 0xff000000) >> 24;
@@ -78,6 +88,10 @@ namespace GeneralTool.CoreLibrary.MVS
             return new Tuple<uint, uint, uint, uint>(i1, i2, i3, i4);
         }
 
+        /// <summary>
+        /// 获取所有的GIGE设备
+        /// </summary>
+        /// <returns></returns>
         public static List<MVSCameraProvider.MV_GIGE_DEVICE_INFO> DeviceList()
         {
             System.GC.Collect();
@@ -392,7 +406,6 @@ namespace GeneralTool.CoreLibrary.MVS
                 {
                     IntPtr PData = Marshal.UnsafeAddrOfPinnedArrayElement(buffer, 0);
                     int nRet2 = M_MyCamera.MV_CC_GetImageForBGR_NET(PData, (uint)buffer.Length, ref stFrameInfoEx, 1000);
-
                     if (nRet2 != MVSCameraProvider.MV_OK)
                     {
                         if (DeviceListAcq(_ip) < 0)
@@ -545,19 +558,19 @@ namespace GeneralTool.CoreLibrary.MVS
 
             //计算宽
             int width = rect.Width + p1.X % offXInc;//如果左顶点x往左偏移过,则可以加大点
-            int widthResult = width - width % widthInc + widthInc;
+            int widthResult = width - width % widthInc ;
             if (widthResult + xResult > MaxSize.Width)
             {
                 //如果大于最大宽度,则将宽度减小
-                widthResult = MaxSize.Width - widthResult;
+                widthResult = MaxSize.Width - xResult;
             }
 
             //计算高
             int height = rect.Height + p1.Y % offYInc;
-            int heightResult = height - height % heightInc + heightInc;
+            int heightResult = height - height % heightInc ;
             if (heightResult + yResult > MaxSize.Height)
             {
-                heightResult = MaxSize.Height - heightResult;
+                heightResult = MaxSize.Height - yResult;
             }
 
             return new Rectangle(xResult, yResult, widthResult, heightResult);
@@ -580,27 +593,31 @@ namespace GeneralTool.CoreLibrary.MVS
                 return true;
             }
 
-            //先停止采集
-            StopGrab();
-            //将其设置到最大值
-            bool re = SetMaxAOI();
-            if (!re) return false;
+            lock (M_MyCamera)
+            {
+                //先停止采集
+                StopGrab();
+                //将其设置到最大值
+                bool re = SetMaxAOI();
+                if (!re) return false;
 
-            rect = ParseAOI(rect);
+                rect = ParseAOI(rect);
 
-            _ = M_MyCamera.MV_CC_SetWidth_NET((uint)rect.Width);
+                _ = M_MyCamera.MV_CC_SetWidth_NET((uint)rect.Width);
 
-            _ = M_MyCamera.MV_CC_SetHeight_NET((uint)rect.Height);
+                _ = M_MyCamera.MV_CC_SetHeight_NET((uint)rect.Height);
 
-            _ = M_MyCamera.MV_CC_SetAOIoffsetX_NET((uint)rect.Left);
+                _ = M_MyCamera.MV_CC_SetAOIoffsetX_NET((uint)rect.Left);
 
-            _ = M_MyCamera.MV_CC_SetAOIoffsetY_NET((uint)rect.Top);
+                _ = M_MyCamera.MV_CC_SetAOIoffsetY_NET((uint)rect.Top);
 
-            //检验是因为更换相机后造的
-            CameraRectangleInfo resultRect = GetCurrentAOISize();
-            rect = resultRect.ToRectangle();
-            re = StartGrab();
-            return re;
+                //检验是因为更换相机后造的
+                CameraRectangleInfo resultRect = GetCurrentAOISize();
+                rect = resultRect.ToRectangle();
+                re = StartGrab();
+                return re;
+            }
+            
         }
 
         /// <summary>
@@ -714,9 +731,12 @@ namespace GeneralTool.CoreLibrary.MVS
         public virtual void SetExposureTime(double time)
         {
             //应对JAI的相机,曝光必须要先停止采集
-            StopGrab();
-            _ = M_MyCamera.MV_CC_SetExposureTime_NET(Convert.ToSingle(time));
-            _ = StartGrab();
+            lock (M_MyCamera)
+            {
+                StopGrab();
+                _ = M_MyCamera.MV_CC_SetExposureTime_NET(Convert.ToSingle(time));
+                _ = StartGrab(); 
+            }
         }
     }
 }

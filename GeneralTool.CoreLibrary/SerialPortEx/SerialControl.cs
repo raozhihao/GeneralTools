@@ -1,10 +1,13 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO.Ports;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+
+using GeneralTool.CoreLibrary.Extensions;
 
 namespace GeneralTool.CoreLibrary.SerialPortEx
 {
@@ -13,15 +16,10 @@ namespace GeneralTool.CoreLibrary.SerialPortEx
     /// </summary>
     public class SerialControl : SerialPort
     {
-        #region Private 字段
-
-        private readonly List<byte> recDatas = new List<byte>();
-
-        private bool isRequest;
-
-        #endregion Private 字段
-
-        #region Public 构造函数
+        /// <summary>
+        /// 数据缓存区
+        /// </summary>
+        private readonly System.Collections.Concurrent.ConcurrentQueue<byte> recDatas = new System.Collections.Concurrent.ConcurrentQueue<byte>();
 
         /// <summary>
         /// </summary>
@@ -30,9 +28,6 @@ namespace GeneralTool.CoreLibrary.SerialPortEx
             base.DataReceived += SerialControl_DataReceived;
         }
 
-        #endregion Public 构造函数
-
-        #region Public 事件
 
         /// <summary>
         /// 返回出错事件
@@ -44,9 +39,6 @@ namespace GeneralTool.CoreLibrary.SerialPortEx
         /// </summary>
         public event EventHandler<OnlineStateEventArgs> OnlineStateEvent;
 
-        #endregion Public 事件
-
-        #region Public 属性
 
         /// <summary>
         /// 获取是否需要进行后台检测串口在线状态
@@ -56,40 +48,25 @@ namespace GeneralTool.CoreLibrary.SerialPortEx
         /// <summary>
         /// 尾
         /// </summary>
-        public byte End
-        {
-            get;
-            set;
-        }
+        public byte End { get; set; }
 
         /// <summary>
         /// 头
         /// </summary>
-        public byte Head
-        {
-            get;
-            set;
-        }
+        public byte Head { get; set; }
 
-        #endregion Public 属性
+        /// <summary>
+        /// 当前使用的关键字
+        /// </summary>
+        public byte CurrentKeyWord { get; protected set; }
 
-        #region Private 属性
+        /// <summary>
+        /// 返回数据应由 头+关键字+数据量位+[数据主体]+和位+包尾组成,所以返回的数据个数必然大于等于5
+        /// </summary>
+        private byte dataCount = 5;
 
-        private SerialRequest CurrentRequest
-        {
-            get;
-            set;
-        }
+        private Stopwatch watch = new Stopwatch();
 
-        private AutoResetEvent RecEvent
-        {
-            get;
-            set;
-        } = new AutoResetEvent(initialState: false);
-
-        #endregion Private 属性
-
-        #region Public 方法
 
         /// <summary>
         /// 关闭
@@ -100,7 +77,6 @@ namespace GeneralTool.CoreLibrary.SerialPortEx
                 tokenSource.Cancel();
 
             base.Close();
-            recDatas.Clear();
         }
 
         /// <summary>
@@ -114,6 +90,7 @@ namespace GeneralTool.CoreLibrary.SerialPortEx
         }
 
         private CancellationTokenSource tokenSource;
+
         /// <summary>
         /// 开启
         /// </summary>
@@ -133,20 +110,18 @@ namespace GeneralTool.CoreLibrary.SerialPortEx
 
                 _ = Task.Run(() =>
                 {
-                    System.Diagnostics.Trace.WriteLine("开始线程检测");
+                    Trace.WriteLine("开始线程检测");
                     while (!tokenSource.IsCancellationRequested)
                     {
                         if (!IsOpen)
                         {
-                            if (isRequest)
-                                _ = RecEvent.Set();
                             OnlineStateEvent?.Invoke(this, new OnlineStateEventArgs(OnlineState.Unline));
                             break;
                         }
 
                         Thread.Sleep(10);
                     }
-                    System.Diagnostics.Trace.WriteLine("线程检测已断开");
+                    Trace.WriteLine("线程检测已断开");
                 });
             }
         }
@@ -170,73 +145,91 @@ namespace GeneralTool.CoreLibrary.SerialPortEx
         /// </returns>
         public SerialResponse Send(SerialRequest request)
         {
-            //重置信号量,以免被上一次的污染
-            _ = RecEvent.Reset();
-            recDatas.Clear();
 
             if (!request.IsSetData)
                 throw new Exception("不能发送没有设置数据的消息结构！");
 
             if (!IsOpen)
             {
-                isRequest = false;
-                return new SerialResponse(request, recDatas.ToArray(), null);
+                throw new Exception("串口未开启");
             }
 
             byte[] array = request.ToSendDatas();
-            CurrentRequest = request;
+            this.CurrentKeyWord = request.KeyWorld;
+
+            //写入
             Write(array, 0, array.Length);
-            isRequest = true;
-            _ = RecEvent.WaitOne(base.ReadTimeout);
-            isRequest = false;
+
+            if (!this.UnPackage(out var reponses))
+                throw new Exception("返回错误不一致,可能是超时导致,返回数据为:" + reponses.FomartDatas());
+
+            this.CheckPacketAllReady(reponses);
             int num = 0;
-            if (recDatas.Count() > 3)
-                num = recDatas[2];
-
-            CurrentRequest = null;
-            return new SerialResponse(request, recDatas.ToArray(), (num == 0) ? null : recDatas.GetRange(3, num).ToArray());
+            if (reponses.Count > this.dataCount)
+                num = reponses[2];
+            return new SerialResponse(request, recDatas.ToArray(), (num == 0) ? null : reponses.GetRange(3, num).ToArray());
         }
 
-        #endregion Public 方法
 
-        #region Protected 方法
-
-        /// <summary>
-        /// 检查
-        /// </summary>
-        /// <returns>
-        /// </returns>
-        protected virtual bool CheckPacketAllReady()
+        private bool UnPackage(out List<byte> list)
         {
-            if (recDatas.Count < 4)
-                return false;
-
-            if (CurrentRequest.Head != recDatas.First())
-                return false;
-
-            if (CurrentRequest.KeyWorld != recDatas[1])
-                return false;
-
-            int num = recDatas[2];
-            if (recDatas.Count < 5 + num)
-                return false;
-
-            if (recDatas.Count == 5 + num)
+            list = new List<byte>();
+            this.watch.Restart();
+            //循环读取
+            var sumCount = this.dataCount;//总的数据长度,包头+关键字+数据长度位+[数据]+和校验+包尾
+            do
             {
-                byte b = 0;
-                for (int i = 0; i < recDatas.Count - 2; i++)
-                    b = (byte)(b + recDatas[i]);
+                if (this.recDatas.TryDequeue(out var b))
+                {
+                    //读取出来,如果是包头
+                    if (b == this.Head && list.Count == 0)
+                    {
+                        list.Add(b);
+                    }
+                    else if (list.Count > 0)
+                    {
+                        list.Add(b);
+                        if (list.Count == 3)
+                        {
+                            //写到第三个了,则查看数据长度
+                            sumCount += list[2];//更新整体长度
+                        }
+                        else if (list.Count == sumCount)
+                        {
+                            break;
+                        }
+                    }
+                    else
+                    {
+                        Trace.WriteLine("缓存中有冗余数据量 " + b);
+                    }
 
-                return b == recDatas[recDatas.Count - 2] && CurrentRequest.End == recDatas.Last();
-            }
+                }
+            } while (watch.ElapsedMilliseconds < this.ReadTimeout);
 
-            recDatas.Clear();
-            return false;
+            watch.Stop();
+            Trace.WriteLine($"解包时间:{watch.ElapsedMilliseconds} ms");
+            return list.Count == sumCount;
         }
 
-        #endregion Protected 方法
 
-        #region Private 方法
+        private void CheckPacketAllReady(List<byte> reponses)
+        {
+
+            if (this.CurrentKeyWord != reponses[1])
+                throw new Exception("返回关键字错误");
+
+            byte b = 0;
+            for (int i = 0; i < reponses.Count - 2; i++)
+                b = (byte)(b + reponses[i]);
+
+            if (b != reponses[reponses.Count - 2])
+                throw new Exception("返回和校验错误");
+
+            if (this.End != reponses.Last())
+                throw new Exception("返回包属校验错误");
+        }
+
 
         private void SerialControl_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
@@ -247,28 +240,14 @@ namespace GeneralTool.CoreLibrary.SerialPortEx
                 byte[] array2 = array;
                 foreach (byte b in array2)
                 {
-                    if (recDatas.Count == 0 && CurrentRequest != null && b != CurrentRequest.Head)
-                        continue;
-
-                    if (recDatas.Count == 1 && CurrentRequest != null && b != CurrentRequest.KeyWorld)
-                    {
-                        recDatas.Clear();
-                        continue;
-                    }
-
-                    recDatas.Add(b);
-                    //如果检测通过
-                    if (CheckPacketAllReady())
-                        _ = RecEvent.Set();
+                    this.recDatas.Enqueue(b);
                 }
             }
             catch (Exception ex)
             {
                 ErrorMsg?.Invoke(ex);
-                _ = RecEvent.Set();
             }
         }
 
-        #endregion Private 方法
     }
 }
