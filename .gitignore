@@ -340,3 +340,6 @@ ASALocalRun/
 # BeatPulse healthcheck temp database
 healthchecksdb
 /DbTest
+/ConsoleApp1/ConsoleApp1.csproj
+/TestDemo/TestDemo.csproj
+/TokenDemo/TokenDemo.csproj
