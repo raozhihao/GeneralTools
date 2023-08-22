@@ -5,6 +5,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Xml;
 
 using GeneralTool.CoreLibrary.Extensions;
@@ -78,6 +79,8 @@ namespace GeneralTool.CoreLibrary.Adb
                 return ex.GetInnerExceptionMessage();
             }
         }
+
+     
 
         /// <summary>
         /// 关闭所有adb连接

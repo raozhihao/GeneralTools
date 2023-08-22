@@ -89,6 +89,11 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         /// </summary>
         public static readonly DependencyProperty WaringVisibleProperty = DependencyProperty.RegisterAttached(nameof(WaringVisible), typeof(bool), typeof(LogParargraph), new PropertyMetadata(true));
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public static readonly DependencyProperty ShowFullMsgProperty = DependencyProperty.RegisterAttached(nameof(ShowFullMsg), typeof(bool), typeof(LogParargraph), new PropertyMetadata(true));
+
         #endregion Public 字段
 
         /// <summary>
@@ -101,14 +106,17 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
             logMessageInfos.CollectionChanged += Dp_CollectionChanged;
         }
 
-        private void AddItems(System.Collections.IList addItems, NotifyCollectionChangedAction action)
+        private void AddItems(IList addItems, NotifyCollectionChangedAction action)
         {
             if (addItems == null)
                 return;
             for (int index = 0; index < addItems.Count; index++)
             {
-                LogMessageInfo msg = (LogMessageInfo)addItems[index];
-                Run run = new Run(msg.Msg + Environment.NewLine)
+                var msg = (LogMessageInfo)addItems[index];
+                var msgString = msg.Msg;
+                if (this.ShowFullMsg)
+                    msgString = msg.FullMsg;
+                Run run = new Run(msgString + Environment.NewLine)
                 {
                     Tag = msg
                 };
@@ -154,7 +162,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         }
 
         private readonly object Locker = new object();
-        private void Dp_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void Dp_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             Dispatcher.Invoke(new Action(() =>
             {
@@ -195,7 +203,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
 
             for (int i = 0; i < oldItems.Count; i++)
             {
-                if (!(oldItems[i] is  LogMessageInfo item)) continue;
+                if (!(oldItems[i] is LogMessageInfo item)) continue;
                 Inline run = Inlines.FirstOrDefault(r => ((Run)r).Tag == item);
                 if (run != null)
                     _ = Inlines.Remove(run);
@@ -204,6 +212,15 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         }
 
         #region Public 属性
+
+        /// <summary>
+        /// 显示完全的消息
+        /// </summary>
+        public bool ShowFullMsg
+        {
+            get => (bool)this.GetValue(ShowFullMsgProperty);
+            set=>this.SetValue(ShowFullMsgProperty, value);
+        }
 
         /// <summary>
         ///获取Debug日志前景色

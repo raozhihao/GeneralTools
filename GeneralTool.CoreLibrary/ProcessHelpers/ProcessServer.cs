@@ -23,13 +23,30 @@ namespace GeneralTool.CoreLibrary.ProcessHelpers
         /// </summary>
         public event EventHandler Exited;
 
-        private Process _process;
+        /// <summary>
+        /// 外部程序对象
+        /// </summary>
+        public Process Process { get; private set; }
+
         /// <summary>
         /// 开启
         /// </summary>
         /// <param name="exePath">应用程序路径</param>
         /// <param name="args">参数</param>
-        public void Run(string exePath, string workDir = null, string args = "")
+        public void Run(string exePath, string workDir, string args)
+        {
+            this.Run(exePath, args, workDir);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="exePath"></param>
+        /// <param name="args"></param>
+        /// <param name="workDir"></param>
+        /// <param name="createNoWindow"></param>
+        /// <param name="windowStyle"></param>
+        public void Run(string exePath, string args, string workDir, bool createNoWindow, ProcessWindowStyle windowStyle)
         {
             Process process = new Process();
             ProcessStartInfo startInfo = new ProcessStartInfo()
@@ -37,8 +54,8 @@ namespace GeneralTool.CoreLibrary.ProcessHelpers
                 FileName = exePath,
                 Arguments = args,
                 UseShellExecute = false,
-                CreateNoWindow = true,
-                WindowStyle = ProcessWindowStyle.Hidden,
+                CreateNoWindow = createNoWindow,
+                WindowStyle = windowStyle,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 RedirectStandardInput = true,
@@ -57,7 +74,7 @@ namespace GeneralTool.CoreLibrary.ProcessHelpers
                 _ = process.Start();
                 process.BeginOutputReadLine();
                 process.BeginErrorReadLine();
-                _process = process;
+                Process = process;
             }
             catch (Exception ex)
             {
@@ -71,22 +88,22 @@ namespace GeneralTool.CoreLibrary.ProcessHelpers
         /// </summary>
         public void Close()
         {
-            if (_process == null) return;
+            if (Process == null) return;
             try
             {
-                _process.Exited -= Process_Exited;
-                _process.OutputDataReceived -= Process_OutputDataReceived;
-                _process.ErrorDataReceived -= Process_ErrorDataReceived;
-                if (_process.HasExited)
-                    _process.Close();
+                Process.Exited -= Process_Exited;
+                Process.OutputDataReceived -= Process_OutputDataReceived;
+                Process.ErrorDataReceived -= Process_ErrorDataReceived;
+                if (Process.HasExited)
+                    Process.Close();
                 else
-                    _process.Kill();
+                    Process.Kill();
 
-                _process.Dispose();
+                Process.Dispose();
             }
             catch (Exception ex)
             {
-                ErrorHandler?.Invoke(_process, ex.GetInnerExceptionMessage());
+                ErrorHandler?.Invoke(Process, ex.GetInnerExceptionMessage());
             }
         }
 
@@ -102,7 +119,7 @@ namespace GeneralTool.CoreLibrary.ProcessHelpers
         private void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
             ReceivedHandler?.Invoke(sender, e.Data);
-            if (this._process.HasExited)
+            if (this.Process.HasExited)
             {
                 this.Close();
                 return;

@@ -7,7 +7,11 @@ namespace GeneralTool.CoreLibrary.Extensions
     /// </summary>
     public static class OtherExtensions
     {
-
+        /// <summary>
+        /// 转换IP地址
+        /// </summary>
+        /// <param name="nCurrentIp"></param>
+        /// <returns></returns>
         public static IPAddress ParseToIp(this uint nCurrentIp)
         {
             uint i1 = ((nCurrentIp) & 0xff000000) >> 24;
@@ -17,9 +21,27 @@ namespace GeneralTool.CoreLibrary.Extensions
             return $"{i1}.{i2}.{i3}.{i4}".ParseToIPAddress();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ip"></param>
+        /// <returns></returns>
         public static IPAddress ParseToIPAddress(this string ip)
             => IPAddress.Parse(ip);
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="iPAddress"></param>
+        /// <returns></returns>
+        public static string ParseToIPAddress(IPAddress iPAddress)
+            => iPAddress.ToString();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="nCurrentIp"></param>
+        /// <returns></returns>
         public static string ParseToIPString(this uint nCurrentIp)
             => nCurrentIp.ParseToIp().ToString();
 

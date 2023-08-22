@@ -1,6 +1,11 @@
 ﻿using System;
 using System.Reflection;
 
+using GeneralTool.CoreLibrary.Attributes;
+using GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm;
+using GeneralTool.CoreLibrary.Extensions;
+using GeneralTool.CoreLibrary.Interfaces;
+
 namespace GeneralTool.CoreLibrary.IniHelpers
 {
     /// <summary>
@@ -52,15 +57,20 @@ namespace GeneralTool.CoreLibrary.IniHelpers
         /// <param name="defaultValue">
         /// 默认值
         /// </param>
-        /// <param name="create"></param>
-        /// <param name="iniPath"></param>
-        public Node(string sectionName, string keyName, T defaultValue, bool create = false, string iniPath = "")
+        /// <param name="create">是否在空时自动创建默认值</param>
+        /// <param name="iniPath">单独保存到的文件路径,如无,则使用 Configs/default.ini</param>
+        /// <param name="isJosn">是否Json</param>
+        /// <param name="convert">Json的转换器,如无则使用默认转换器</param>
+        public Node(string sectionName, string keyName, T defaultValue, bool create = false, string iniPath = "", bool isJosn = true, IJsonConvert convert = null)
         {
             SectionName = sectionName;
             KeyName = keyName;
 
             DefaultValue = defaultValue;
             IniPath = iniPath;
+
+            IsJosn = isJosn;
+            JsonConvert = convert;
 
             if (create)
             {
@@ -75,6 +85,16 @@ namespace GeneralTool.CoreLibrary.IniHelpers
         #endregion Public 构造函数
 
         #region Public 属性
+
+        /// <summary>
+        /// 是否为Json类型
+        /// </summary>
+        public bool IsJosn { get; set; }
+
+        /// <summary>
+        /// Json的转换器
+        /// </summary>
+        public IJsonConvert JsonConvert { get; set; }
 
         /// <summary>
         /// 
@@ -122,6 +142,16 @@ namespace GeneralTool.CoreLibrary.IniHelpers
                 if (string.IsNullOrWhiteSpace(tmp))
                     return DefaultValue;
                 Type type = typeof(T);
+
+
+                if (this.IsJosn)
+                {
+                    //转换为Json,查看有无Json转换器
+                    var obj = (T)this.DesrializeToObj(this.JsonConvert, type);
+
+                    return obj;
+                }
+
                 //如果是泛型或数组类型
                 if (type.IsGenericType || type.IsArray)
                 {
@@ -167,6 +197,16 @@ namespace GeneralTool.CoreLibrary.IniHelpers
             set
             {
                 Type type = value.GetType();
+
+                if (this.IsJosn)
+                {
+                    //转换为Json,查看有无Json转换器
+
+                    var jsonStr = this.SerializeToString(this.JsonConvert, value);
+                    IniHelper.WriteValueString(this.SectionName, this.KeyName, jsonStr);
+
+                    return;
+                }
                 if (type.IsGenericType || type.IsArray)
                 {
                     //获取长度
@@ -197,6 +237,42 @@ namespace GeneralTool.CoreLibrary.IniHelpers
                     IniHelper.WriteValueT<T>(SectionName, KeyName, value);
                 }
             }
+        }
+
+        private object DesrializeToObj(IJsonConvert jsonType, Type type)
+        {
+            var value = IniHelper.GetString(this.SectionName, this.KeyName, this.GetDefaultValue(jsonType));
+            object obj;
+            if (jsonType != null)
+            {
+                obj = jsonType.DeserializeObject(value, type);
+            }
+            else
+            {
+                obj = value.DeserializeJsonToObject(type);
+            }
+
+            return obj;
+        }
+
+        private string GetDefaultValue(IJsonConvert jsonType)
+        {
+            return this.SerializeToString(jsonType, this.DefaultValue);
+        }
+
+        private string SerializeToString(IJsonConvert jsonConvert, T value)
+        {
+            string jsonStr;
+            if (jsonConvert != null)
+            {
+                jsonStr = jsonConvert.SerializeObject(value);
+            }
+            else
+            {
+                jsonStr = value.SerializeToJsonString();
+            }
+
+            return jsonStr;
         }
 
         #endregion Public 属性
