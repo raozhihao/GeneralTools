@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Security.RightsManagement;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
 
 using GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Models;
 using GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs;
@@ -115,14 +112,14 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// <summary>
         /// 
         /// </summary>
-        public static readonly DependencyProperty HeaderCornerRadiusProperty = DependencyProperty.Register(nameof(HeaderCornerRadius), typeof(CornerRadius), typeof(BlockItem), new PropertyMetadata(new CornerRadius(10,10,10,10)));
+        public static readonly DependencyProperty HeaderCornerRadiusProperty = DependencyProperty.Register(nameof(HeaderCornerRadius), typeof(CornerRadius), typeof(BlockItem), new PropertyMetadata(new CornerRadius(10, 10, 10, 10)));
 
         /// <summary>
         /// 
         /// </summary>
         public static readonly DependencyProperty IsBreakBlockProperty = DependencyProperty.Register(nameof(IsBreakBlock), typeof(bool), typeof(BlockItem));
 
-       
+
         public static readonly DependencyProperty ContentRadiusProperty = DependencyProperty.Register(nameof(ContentRadius), typeof(CornerRadius), typeof(BlockItem), new PropertyMetadata(new CornerRadius(10)));
 
         /// <summary>
@@ -164,7 +161,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         {
             if (d is BlockItem b)
             {
-               
+
                 if (string.IsNullOrWhiteSpace(e.NewValue + ""))
                 {
                     if (b.AutoCornerRadius)
@@ -183,7 +180,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
                         b.HeaderCornerRadius = new CornerRadius(10, 10, 0, 0);//更新边框
                         b.ContentRadius = new CornerRadius(0, 0, 10, 10);
                     }
-                        
+
                 }
                 if (b.AutoCornerRadius)
                     b.ConnectorVisibility = Visibility.Visible;
@@ -201,18 +198,14 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         public event Action<BlockItem, Rect> PosChangedEvent;
         internal void MoveChanged(Point point)
         {
-            this.CurrentPoint = point;
-            this.PosChangedEvent?.Invoke(this, new Rect(point, this.DesiredSize));
+            CurrentPoint = point;
+            PosChangedEvent?.Invoke(this, new Rect(point, DesiredSize));
         }
 
         public event Func<BlockItem, Rect, bool> PosChangingEvent;
         internal bool MoveChanging(Point point)
         {
-            if (this.PosChangingEvent != null)
-            {
-                return this.PosChangingEvent(this, new Rect(point, this.DesiredSize));
-            }
-            return true;
+            return PosChangingEvent == null || PosChangingEvent(this, new Rect(point, DesiredSize));
         }
 
         public static readonly DependencyProperty RotateAngleProperty = DependencyProperty.Register(nameof(RotateAngle), typeof(double), typeof(BlockItem), new PropertyMetadata(0d));
@@ -225,7 +218,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         public bool AutoCornerRadius
         {
             get => (bool)GetValue(AutoCornerRadiusProperty);
-            set => this.SetValue(AutoCornerRadiusProperty, value);
+            set => SetValue(AutoCornerRadiusProperty, value);
         }
         public double RotateAngle
         {
@@ -247,16 +240,16 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
 
         public bool CanResize
         {
-            get => (bool)this.GetValue(CanResizeProperty);
-            set => this.SetValue(CanResizeProperty, value);
+            get => (bool)GetValue(CanResizeProperty);
+            set => SetValue(CanResizeProperty, value);
         }
         /// <summary>
         /// 块的整体的
         /// </summary>
         public CornerRadius ContentRadius
         {
-            get => (CornerRadius)this.GetValue(ContentRadiusProperty);
-            set => this.SetValue(ContentRadiusProperty, value);
+            get => (CornerRadius)GetValue(ContentRadiusProperty);
+            set => SetValue(ContentRadiusProperty, value);
         }
 
         /// <summary>
@@ -313,7 +306,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
             set => SetValue(IsBreakBlockProperty, value);
         }
 
-     
+
         /// <summary>
         /// 是否可以多次拖入画布
         /// </summary>

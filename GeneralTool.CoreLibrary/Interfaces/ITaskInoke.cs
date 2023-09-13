@@ -28,7 +28,7 @@ namespace GeneralTool.CoreLibrary.Interfaces
         /// </param>
         /// <returns>
         /// </returns>
-        Dictionary<string, DoTaskParameterItem> this[BaseTaskInvoke obj]
+        Dictionary<TaskKey, DoTaskParameterItem> this[object obj]
         {
             get;
         }
@@ -40,22 +40,16 @@ namespace GeneralTool.CoreLibrary.Interfaces
         /// <summary>
         /// 执行任务
         /// </summary>
-        /// <param name="url">
-        /// 任务路由
-        /// </param>
-        /// <param name="parameterItem">
-        /// 任务项目
-        /// </param>
-        /// <returns>
-        /// </returns>
-        object DoInterface(string url, DoTaskParameterItem parameterItem);
+        /// <param name="parameterItem"></param>
+        /// <returns></returns>
+        object DoInterface(DoTaskParameterItem parameterItem);
 
         /// <summary>
         /// 获取所有任务
         /// </summary>
         /// <returns>
         /// </returns>
-        Dictionary<string, DoTaskParameterItem> GetInterfaces();
+        Dictionary<TaskKey, DoTaskParameterItem> GetInterfaces();
 
         /// <summary>
         /// 开启任务
@@ -68,7 +62,7 @@ namespace GeneralTool.CoreLibrary.Interfaces
         /// </param>
         /// <returns>
         /// </returns>
-        bool Open(string ip, int port, params BaseTaskInvoke[] tartget);
+        bool Open(string ip, int port, params object[] tartget);
 
         /// <summary>
         /// 不使用服务开启任务
@@ -78,7 +72,7 @@ namespace GeneralTool.CoreLibrary.Interfaces
         /// </param>
         /// <returns>
         /// </returns>
-        bool OpenWithoutServer(params BaseTaskInvoke[] taskInokes);
+        bool OpenWithoutServer(params object[] taskInokes);
 
         #endregion Public 方法
     }

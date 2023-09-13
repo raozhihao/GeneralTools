@@ -30,7 +30,7 @@ namespace GeneralTool.CoreLibrary.MVS
             System.Reflection.FieldInfo[] fields = typeof(Errors).GetFields();
             foreach (System.Reflection.FieldInfo item in fields)
             {
-                if (Attribute.GetCustomAttribute(item, typeof(DescriptionAttribute)) as DescriptionAttribute != null)
+                if ((Attribute.GetCustomAttribute(item, typeof(DescriptionAttribute)) as DescriptionAttribute) != null)
                 {
                     errorCodes.Add(Convert.ToInt32(item.GetValue(null)), (Attribute.GetCustomAttribute(item, typeof(DescriptionAttribute)) as DescriptionAttribute).Description);
                 }

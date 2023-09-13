@@ -35,7 +35,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Common
                 if (sourceInfo.Point.X > sinkInfo.Point.X)
                 {
                     //目标在左
-                    double x = sinkInfo.Point.X - sinkInfo.Size.Width / 2 - 5;
+                    double x = sinkInfo.Point.X - (sinkInfo.Size.Width / 2) - 5;
                     points.Add(new Point(x, sourceInfo.Point.Y));
                     points.Add(new Point(x, sinkInfo.Point.Y));
                 }
@@ -60,7 +60,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Common
                 else
                 {
                     //目标在右
-                    double y = sourceInfo.Point.Y - sourceInfo.Size.Height / 2 - 5;
+                    double y = sourceInfo.Point.Y - (sourceInfo.Size.Height / 2) - 5;
                     points.Add(new Point(sourceInfo.Point.X, y));
                     points.Add(new Point(sinkInfo.Point.X, y));
                 }
@@ -79,7 +79,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Common
                 else
                 {
                     //目标在右
-                    double y = sourceInfo.Point.Y + sourceInfo.Size.Height / 2 + 5;
+                    double y = sourceInfo.Point.Y + (sourceInfo.Size.Height / 2) + 5;
                     points.Add(new Point(sourceInfo.Point.X, y));
                     points.Add(new Point(sinkInfo.Point.X, y));
                 }
@@ -97,7 +97,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Common
                 else
                 {
                     //目标在右
-                    double y = sourceInfo.Point.Y - sourceInfo.Size.Height / 2 - 5;
+                    double y = sourceInfo.Point.Y - (sourceInfo.Size.Height / 2) - 5;
                     points.Add(new Point(sourceInfo.Point.X, y));
                     points.Add(new Point(sinkInfo.Point.X, y));
                 }
@@ -161,7 +161,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Common
                 if (sourceInfo.Point.X > sinkInfo.Point.X)
                 {
                     //目标在右
-                    double x = sinkInfo.Point.X - sinkInfo.Size.Width / 2 - 5;
+                    double x = sinkInfo.Point.X - (sinkInfo.Size.Width / 2) - 5;
                     points.Add(new Point(x, sourceInfo.Point.Y));
                     points.Add(new Point(x, sinkInfo.Point.Y));
                 }

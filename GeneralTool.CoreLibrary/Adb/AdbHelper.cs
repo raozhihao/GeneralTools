@@ -5,7 +5,6 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 
 using GeneralTool.CoreLibrary.Extensions;
@@ -19,7 +18,24 @@ namespace GeneralTool.CoreLibrary.Adb
     /// </summary>
     public class AdbHelper
     {
-        private readonly string adbPath;
+        private  string adbPath;
+
+        public AdbHelper()
+        {
+            
+        }
+
+        /// <summary>
+        /// 设置adb路径
+        /// </summary>
+        /// <param name="adbExePath"></param>
+        public void SetAdbPath(string adbExePath="")
+        {
+            if (string.IsNullOrWhiteSpace(adbExePath))
+                adbExePath = "adb";//尝试使用环境变量中的adb
+
+            adbPath = adbExePath;
+        }
 
         /// <summary>
         /// 构造函数初始化
@@ -80,7 +96,7 @@ namespace GeneralTool.CoreLibrary.Adb
             }
         }
 
-     
+
 
         /// <summary>
         /// 关闭所有adb连接

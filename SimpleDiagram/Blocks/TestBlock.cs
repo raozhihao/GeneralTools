@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Models;
+﻿using GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Models;
 
 using SimpleDiagram.BlockVIewModels;
 
@@ -16,10 +10,10 @@ namespace SimpleDiagram.Blocks
         public override void OnCreateInCanvas()
         {
             base.OnCreateInCanvas();
-            this.ConnectorThumbs[Direction.Right].Visibility =
-              this.ConnectorThumbs[Direction.Left].Visibility =
-              this.ConnectorThumbs[Direction.Top].Visibility =
-              this.ConnectorThumbs[Direction.Bottom].Visibility =
+            ConnectorThumbs[Direction.Right].Visibility =
+              ConnectorThumbs[Direction.Left].Visibility =
+              ConnectorThumbs[Direction.Top].Visibility =
+              ConnectorThumbs[Direction.Bottom].Visibility =
                System.Windows.Visibility.Collapsed;
         }
         public override WindowResult OpenWindow()
@@ -29,12 +23,12 @@ namespace SimpleDiagram.Blocks
 
         public override void SetShow()
         {
-            
+
         }
 
         protected override void OnDispose()
         {
-           
+
         }
     }
 }

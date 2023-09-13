@@ -105,7 +105,7 @@ namespace GeneralTool.CoreLibrary.Extensions
             {
                 for (int j = 0; j < cols; j++)
                 {
-                    int index = cols * i + j;
+                    int index = (cols * i) + j;
                     if (index >= count)
                     {
                         break;
@@ -134,7 +134,7 @@ namespace GeneralTool.CoreLibrary.Extensions
             {
                 for (int j = 0; j < cols; j++)
                 {
-                    int index = cols * i + j;
+                    int index = (cols * i) + j;
                     if (index >= count)
                     {
                         break;

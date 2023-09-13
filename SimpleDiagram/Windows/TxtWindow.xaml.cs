@@ -10,16 +10,16 @@ namespace SimpleDiagram.Windows
         public TxtWindow(string txt)
         {
             InitializeComponent();
-            this.Txt.Text = txt;
-            this.Txt.Focus();
+            Txt.Text = txt;
+            _ = Txt.Focus();
         }
 
         public string ResultTxt { get; internal set; }
 
         private void SubmitMethod(object sender, RoutedEventArgs e)
         {
-            this.ResultTxt = this.Txt.Text;
-            this.DialogResult = true;
+            ResultTxt = Txt.Text;
+            DialogResult = true;
         }
     }
 }

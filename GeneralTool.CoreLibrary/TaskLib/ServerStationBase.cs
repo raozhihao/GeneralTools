@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 using GeneralTool.CoreLibrary.Attributes;
@@ -51,7 +52,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
         /// <summary>
         /// 当前请求的路由集合
         /// </summary>
-        public Dictionary<string, RequestAddressItem> RequestRoute { get; set; } = new Dictionary<string, RequestAddressItem>();
+        public Dictionary<TaskKey, RequestAddressItem> RequestRoute { get; set; } = new Dictionary<TaskKey, RequestAddressItem>();
 
         #endregion Protected 属性
 
@@ -71,7 +72,12 @@ namespace GeneralTool.CoreLibrary.TaskLib
         /// </returns>
         public virtual bool AddRoute(string url, object target, MethodInfo m, HttpMethod httpMethod)
         {
-            bool flag = RequestRoute.ContainsKey(url);
+            TaskKey taskKey = new TaskKey()
+            {
+                Name = url,
+                FullName = m + ""
+            };
+            bool flag = RequestRoute.ContainsKey(taskKey);
             bool result;
             if (flag)
             {
@@ -80,7 +86,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
             }
             else
             {
-                RequestRoute.Add(url, new RequestAddressItem
+                RequestRoute.Add(taskKey, new RequestAddressItem
                 {
                     Url = url,
                     MethodInfo = m,
@@ -110,7 +116,10 @@ namespace GeneralTool.CoreLibrary.TaskLib
                 try
                 {
                     serverResponse.RequestUrl = serverRequest.Url;
-                    if (!RequestRoute.ContainsKey(serverRequest.Url))
+                    RequestAddressItem requestAddressItem = GetRequestItem(serverRequest);
+
+
+                    if (string.IsNullOrWhiteSpace(requestAddressItem.Url))
                     {
                         serverResponse.StateCode = RequestStateCode.UrlError;
                         serverResponse.RequestSuccess = false;
@@ -118,7 +127,6 @@ namespace GeneralTool.CoreLibrary.TaskLib
                     }
                     else
                     {
-                        RequestAddressItem requestAddressItem = RequestRoute[serverRequest.Url];
                         MethodInfo method = requestAddressItem.Target.GetType().GetMethod("GetServerErroMsg");
                         serverResponse.ReturnTypeString = requestAddressItem.MethodInfo.ReturnType.AssemblyQualifiedName;
                         try
@@ -146,10 +154,9 @@ namespace GeneralTool.CoreLibrary.TaskLib
                                 serverResponse.Result = requestAddressItem.MethodInfo.Invoke(requestAddressItem.Target, array);
                                 try
                                 {
-                                    if (serverResponse.Result.GetType() != typeof(string) && serverResponse.Result != null)
-                                        serverResponse.ResultString = jsonConvert.SerializeObject(serverResponse.Result);
-                                    else
-                                        serverResponse.ResultString = serverResponse.Result + "";
+                                    serverResponse.ResultString = serverResponse.Result.GetType() != typeof(string) && serverResponse.Result != null
+                                        ? jsonConvert.SerializeObject(serverResponse.Result)
+                                        : serverResponse.Result + "";
                                 }
                                 catch (Exception ex)
                                 {
@@ -195,6 +202,27 @@ namespace GeneralTool.CoreLibrary.TaskLib
             return serverResponse;
         }
 
+        public RequestAddressItem GetRequestItem(ServerRequest serverRequest)
+        {
+            // 查找对应的接口
+            foreach (KeyValuePair<TaskKey, RequestAddressItem> item in RequestRoute)
+            {
+                if (item.Key.Name != serverRequest.Url)
+                    continue;
+
+                //查看名称是否一致
+                RequestAddressItem value = item.Value;
+                ParameterInfo[] mps = value.MethodInfo.GetParameters();
+                string mpsNames = string.Join(",", mps.Select(p => p.Name).ToArray());
+                string requestNames = string.Join(",", serverRequest.Parameters.Keys);
+                if (mpsNames == requestNames)
+                {
+                    return value;
+                }
+            }
+            return default;
+        }
+
         /// <summary>
         /// 获取返回信息
         /// </summary>
@@ -207,23 +235,28 @@ namespace GeneralTool.CoreLibrary.TaskLib
                 jsonConvert = new BaseJsonCovert();
             ServerResponse response = GetServerResponse(serverRequest, jsonConvert);
 
-            RequestAddressItem item = RequestRoute[serverRequest.Url];
-            RouteAttribute attr = item.MethodInfo.GetCustomAttribute<RouteAttribute>();
-            if (attr != null)
+            RequestAddressItem item = GetRequestItem(serverRequest);//RequestRoute[serverRequest.Url];
+            if (!string.IsNullOrWhiteSpace(item.Url))
             {
-                if (attr.ReReponse)
+                RouteAttribute attr = item.MethodInfo.GetCustomAttribute<RouteAttribute>();
+                if (attr != null)
                 {
-                    if (response.RequestSuccess)
-                        return response.Result + "";
-                    else
+                    if (attr.ReReponse)
                     {
-                        if (!string.IsNullOrWhiteSpace(attr.ReReponseErroFomartString))
+                        if (response.RequestSuccess)
+                            return response.Result + "";
+                        else
                         {
-                            return attr.ReReponseErroFomartString.Replace("{0}", response.ErroMsg).Replace("\r\n", "");
+                            if (!string.IsNullOrWhiteSpace(attr.ReReponseErroFomartString))
+                            {
+                                return attr.ReReponseErroFomartString.Replace("{0}", response.ErroMsg).Replace("\r\n", "");
+                            }
                         }
                     }
                 }
             }
+
+
 
             return jsonConvert.SerializeObject(response);
         }
@@ -274,8 +307,20 @@ namespace GeneralTool.CoreLibrary.TaskLib
         /// </returns>
         public bool RemoveRoute(string url)
         {
-            bool flag = !RequestRoute.ContainsKey(url);
-            return !flag && RequestRoute.Remove(url);
+            List<TaskKey> removes = new List<TaskKey>();
+            foreach (KeyValuePair<TaskKey, RequestAddressItem> item in RequestRoute)
+            {
+                string surl = item.Key.Name;
+                if (surl == url)
+                {
+                    removes.Add(item.Key);
+                }
+            }
+            foreach (TaskKey item in removes)
+            {
+                _ = RequestRoute.Remove(item);
+            }
+            return true;
         }
 
         /// <summary>

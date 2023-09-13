@@ -98,7 +98,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
                     //给定必要信息后由调用人员自行处理
                     try
                     {
-                        RequestAddressItem route = RequestRoute[serverRequest.Url];
+                        RequestAddressItem route = GetRequestItem(serverRequest); //RequestRoute[serverRequest.Url];
                         Log.Debug($"由开发人员开始执行方法:{serverRequest.Url}");
                         RequestInfoEvent?.Invoke(sender, new GenRequestRoute() { AddressItem = route, SendToClinet = SendToClient, Client = e.Client, ServerRequest = serverRequest });
                     }

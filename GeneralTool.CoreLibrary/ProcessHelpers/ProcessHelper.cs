@@ -17,13 +17,13 @@ namespace GeneralTool.CoreLibrary.ProcessHelpers
         private static readonly AutoResetEvent reciveEvent = new AutoResetEvent(false);
         private static readonly List<string> reciveList = new List<string>();
 
-     
+
         /// <summary>
         /// 接收消息事件
         /// </summary>
         public static event Action<string> ReciveEvent;
 
-     
+
         /// <summary>
         /// 启动
         /// </summary>
@@ -36,7 +36,7 @@ namespace GeneralTool.CoreLibrary.ProcessHelpers
         /// <param name="timeOut"></param>
         /// <returns>
         /// </returns>
-        public static string Run(string exePath, string args , string workDir, int timeOut = -1)
+        public static string Run(string exePath, string args, string workDir, int timeOut = -1)
         {
             _ = reciveEvent.Reset();
             reciveList.Clear();

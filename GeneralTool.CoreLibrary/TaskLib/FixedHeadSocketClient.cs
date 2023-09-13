@@ -180,27 +180,27 @@ namespace GeneralTool.CoreLibrary.TaskLib
 
             string jsonRequest = jsonConvert.SerializeObject(request);
             _ = Client.Send(jsonRequest);
-            var re = false;
+            bool re = false;
 
-            if (this.ReadTimeOut <= 0)
+            if (ReadTimeOut <= 0)
             {
-                re = this.autoReset.WaitOne();
+                re = autoReset.WaitOne();
             }
             else
             {
-                var time = DateTime.Now;
-                var timeOutSpan = TimeSpan.FromMilliseconds(this.ReadTimeOut);
+                DateTime time = DateTime.Now;
+                TimeSpan timeOutSpan = TimeSpan.FromMilliseconds(ReadTimeOut);
                 do
                 {
                     if (DateTime.Now - time >= timeOutSpan)
                         break;
 
                     re = autoReset.WaitOne(10);
-                    if(re)
+                    if (re)
                     {
                         break;
                     }
-                        
+
 
                 } while (!token.IsCancellationRequested);
             }

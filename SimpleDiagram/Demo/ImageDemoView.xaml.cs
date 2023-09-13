@@ -23,10 +23,9 @@ namespace SimpleDiagram.Demo
         public ImageDemoView()
         {
             InitializeComponent();
-            this.ImgControl.ImageMouseDownEvent += ImgControl_MouseDown;
-            this.ImgControl.MouseUp += ImgControl_MouseUp;
+            ImgControl.ImageMouseDownEvent += ImgControl_MouseDown;
+            ImgControl.MouseUp += ImgControl_MouseUp;
         }
-
 
         private bool isDraw = false;
         private Path tmpPath = new Path();
@@ -36,7 +35,7 @@ namespace SimpleDiagram.Demo
         {
             if (e.LeftButton == MouseButtonState.Pressed)
             {
-                foreach (var item in this.ImgControl.CustomeShapes)
+                foreach (BaseShape item in ImgControl.CustomeShapes)
                 {
                     item.ClearResizeRectAdorner();
                 }
@@ -45,66 +44,66 @@ namespace SimpleDiagram.Demo
 
             if (isDraw)
             {
-                this.ImgControl.CanMoveImage = false;
-                this.startPoint = this.ImgControl.TranslateToCanvasPoint(this.ImgControl.CurrentMouseDownPixelPoint);
-                if (this.RectRadio.IsChecked.Value || this.HeartRadio.IsChecked.Value)
+                ImgControl.CanMoveImage = false;
+                startPoint = ImgControl.TranslateToCanvasPoint(ImgControl.CurrentMouseDownPixelPoint);
+                if (RectRadio.IsChecked.Value || HeartRadio.IsChecked.Value)
                 {
 
-                    this.tmpPath = new Path()
+                    tmpPath = new Path()
                     {
                         Stroke = Brushes.Red,
-                        StrokeThickness = 1 / this.ImgControl.ImageScale,
+                        StrokeThickness = 1 / ImgControl.ImageScale,
                     };
                     //矩形绘制
-                    var geo = new RectangleGeometry();
+                    RectangleGeometry geo = new RectangleGeometry();
                     tmpPath.Data = geo;
 
-                    this.ImgControl.AddElement(tmpPath);
+                    ImgControl.AddElement(tmpPath);
                 }
-                else if (this.LineRadio.IsChecked.Value)
+                else if (LineRadio.IsChecked.Value)
                 {
-                    this.tmpPath = new Path()
+                    tmpPath = new Path()
                     {
                         Stroke = Brushes.Red,
-                        StrokeThickness = 1 / this.ImgControl.ImageScale,
+                        StrokeThickness = 1 / ImgControl.ImageScale,
                     };
                     //矩形绘制
-                    var geo = new LineGeometry(startPoint, startPoint);
+                    LineGeometry geo = new LineGeometry(startPoint, startPoint);
                     tmpPath.Data = geo;
 
-                    this.ImgControl.AddElement(tmpPath);
+                    ImgControl.AddElement(tmpPath);
                 }
-                else if (this.PolygonRadio.IsChecked.Value)
+                else if (PolygonRadio.IsChecked.Value)
                 {
-                    if (this.tmpPath.Data is PathGeometry p)
+                    if (tmpPath.Data is PathGeometry p)
                     {
                         if (p.Figures[0].Segments.Count > 0)
                         {
-                            p.Figures[0].Segments.Add(new LineSegment(this.startPoint, true));
+                            p.Figures[0].Segments.Add(new LineSegment(startPoint, true));
                             return;
                         }
                     }
 
-                    this.tmpPath = new Path()
+                    tmpPath = new Path()
                     {
                         Stroke = Brushes.Red,
-                        StrokeThickness = 1 / this.ImgControl.ImageScale,
+                        StrokeThickness = 1 / ImgControl.ImageScale,
                     };
                     //多边形
-                    var polgyon = new PathGeometry()
+                    PathGeometry polgyon = new PathGeometry()
                     {
                         Figures = new PathFigureCollection()
                         {
                             new PathFigure()
                             {
-                                StartPoint=this.startPoint,
+                                StartPoint=startPoint,
                                  IsClosed=false,
                             }
                         }
                     };
-                    this.tmpPath.Data = polgyon;
+                    tmpPath.Data = polgyon;
 
-                    this.ImgControl.AddElement(tmpPath);
+                    ImgControl.AddElement(tmpPath);
                 }
 
             }
@@ -112,28 +111,28 @@ namespace SimpleDiagram.Demo
         }
         private void ImgControl_ImageMouseMoveEvent(ImageMouseEventArgs obj)
         {
-            this.PosTxt.Text = obj.CurrentPixelPoint.ToDrawPoint() + " _ " + obj.CanvasPoint.ToDrawPoint();
+            PosTxt.Text = obj.CurrentPixelPoint.ToDrawPoint() + " _ " + obj.CanvasPoint.ToDrawPoint();
 
-            var currPoint = obj.CanvasPoint;
-            if (this.isDraw && obj.RightButton == MouseButtonState.Pressed)
+            Point currPoint = obj.CanvasPoint;
+            if (isDraw && obj.RightButton == MouseButtonState.Pressed)
             {
-                if (this.RectRadio.IsChecked.Value || this.HeartRadio.IsChecked.Value)
+                if (RectRadio.IsChecked.Value || HeartRadio.IsChecked.Value)
                 {
-                    if (this.tmpPath.Data is RectangleGeometry g)
+                    if (tmpPath.Data is RectangleGeometry g)
                     {
-                        g.Rect = new Rect(this.startPoint, currPoint);
+                        g.Rect = new Rect(startPoint, currPoint);
                     }
                 }
-                else if (this.LineRadio.IsChecked.Value)
+                else if (LineRadio.IsChecked.Value)
                 {
-                    if (this.tmpPath.Data is LineGeometry l)
+                    if (tmpPath.Data is LineGeometry l)
                     {
                         l.EndPoint = currPoint;
                     }
                 }
-                else if (this.tmpPath.Data is PathGeometry g)
+                else if (tmpPath.Data is PathGeometry g)
                 {
-                    var Segments = g.Figures[0].Segments;
+                    PathSegmentCollection Segments = g.Figures[0].Segments;
                     if (Segments.Count > 0)
                     {
                         Segments.RemoveAt(Segments.Count - 1);
@@ -147,67 +146,65 @@ namespace SimpleDiagram.Demo
         private void ImgControl_MouseUp(object sender, MouseButtonEventArgs e)
         {
 
-            this.ImgControl.RemoveElement(this.tmpPath);
-            if (this.isDraw)
+            ImgControl.RemoveElement(tmpPath);
+            if (isDraw)
             {
-                this.isDraw = false;
+                isDraw = false;
 
-                this.ImgControl.CanMoveImage = true;
-                if (this.PointRadio.IsChecked.Value)
+                ImgControl.CanMoveImage = true;
+                if (PointRadio.IsChecked.Value)
                 {
-                    var pointShape = new PointShape(this.ImgControl.CurrentMouseDownPixelPoint, 3);
+                    PointShape pointShape = new PointShape(ImgControl.CurrentMouseDownPixelPoint, 3);
                     pointShape.Path.Fill = Brushes.Red;
-                    this.ImgControl.AddCustomeShape(pointShape);
-                    this.PointRadio.IsChecked = false;
+                    ImgControl.AddCustomeShape(pointShape);
+                    PointRadio.IsChecked = false;
                 }
-                else if (this.LineRadio.IsChecked.Value)
+                else if (LineRadio.IsChecked.Value)
                 {
-                    if (this.tmpPath.Data is LineGeometry l)
+                    if (tmpPath.Data is LineGeometry l)
                     {
-                        var start = this.ImgControl.TranslateToPixelPoint(l.StartPoint);
-                        var end = this.ImgControl.TranslateToPixelPoint(l.EndPoint);
-                        var lineShape = new LineShape(start, end);
+                        Point start = ImgControl.TranslateToPixelPoint(l.StartPoint);
+                        Point end = ImgControl.TranslateToPixelPoint(l.EndPoint);
+                        LineShape lineShape = new LineShape(start, end);
                         lineShape.Path.Stroke = Brushes.Red;
                         lineShape.Path.StrokeThickness = 1;
-                        this.ImgControl.AddCustomeShape(lineShape);
+                        ImgControl.AddCustomeShape(lineShape);
                     }
                 }
-                else if (this.RectRadio.IsChecked.Value || this.HeartRadio.IsChecked.Value)
+                else if (RectRadio.IsChecked.Value || HeartRadio.IsChecked.Value)
                 {
-                    if (this.tmpPath.Data is RectangleGeometry g)
+                    if (tmpPath.Data is RectangleGeometry g)
                     {
                         if (g.Rect.IsEmpty) return;
-                        var rect = g.Rect;
-                        var lt = rect.TopLeft;
-                        var rb = rect.BottomRight;
-                        lt = this.ImgControl.TranslateToPixelPoint(lt);
-                        rb = this.ImgControl.TranslateToPixelPoint(rb);
+                        Rect rect = g.Rect;
+                        Point lt = rect.TopLeft;
+                        Point rb = rect.BottomRight;
+                        lt = ImgControl.TranslateToPixelPoint(lt);
+                        rb = ImgControl.TranslateToPixelPoint(rb);
 
                         BaseShape shape = null;
-                        if (this.RectRadio.IsChecked.Value)
+                        if (RectRadio.IsChecked.Value)
                         {
                             shape = new RectShape(new Rect(lt, rb));
                         }
-                        else if (this.HeartRadio.IsChecked.Value)
+                        else if (HeartRadio.IsChecked.Value)
                         {
                             shape = new HeartShape(new Rect(lt, rb));
                         }
 
                         shape.Path.Stroke = Brushes.Red;
                         shape.Path.StrokeThickness = 1;
-                        this.ImgControl.AddCustomeShape(shape);
+                        ImgControl.AddCustomeShape(shape);
                         //shape.MouseDown += Path_MouseDown;
                     }
 
-
-                    this.RectRadio.IsChecked = false;
+                    RectRadio.IsChecked = false;
                 }
-                else if (this.PolygonRadio.IsChecked.Value)
+                else if (PolygonRadio.IsChecked.Value)
                 {
                     return;
                 }
             }
-
 
         }
 
@@ -218,12 +215,12 @@ namespace SimpleDiagram.Demo
 
         private void LoadImage(object sender, RoutedEventArgs e)
         {
-            var dialog = new OpenFileDialog();
+            OpenFileDialog dialog = new OpenFileDialog();
             if (dialog.ShowDialog().Value)
             {
-                using (var map = new System.Drawing.Bitmap(dialog.FileName))
+                using (System.Drawing.Bitmap map = new System.Drawing.Bitmap(dialog.FileName))
                 {
-                    this.ImgControl.Bitmap = map;
+                    ImgControl.Bitmap = map;
                 }
 
             }
@@ -236,26 +233,26 @@ namespace SimpleDiagram.Demo
 
         private void PolygonRadio_Unchecked(object sender, RoutedEventArgs e)
         {
-            this.isDraw = false;
+            isDraw = false;
 
-            this.ImgControl.CanMoveImage = true;
+            ImgControl.CanMoveImage = true;
 
-            var isClosed = false;
+            bool isClosed = false;
             if (MessageBox.Show("是否需要闭合", "提示", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
                 isClosed = true;
             }
 
-            if (this.tmpPath.Data is PathGeometry g)
+            if (tmpPath.Data is PathGeometry g)
             {
-                var shape = new PolygonShape();
-                foreach (var item in g.Figures)
+                PolygonShape shape = new PolygonShape();
+                foreach (PathFigure item in g.Figures)
                 {
-                    var start = this.ImgControl.TranslateToPixelPoint(item.StartPoint);
+                    Point start = ImgControl.TranslateToPixelPoint(item.StartPoint);
                     shape.PixelPoints.Add(start);
                     foreach (LineSegment p in item.Segments)
                     {
-                        var tmpp = this.ImgControl.TranslateToPixelPoint(p.Point);
+                        Point tmpp = ImgControl.TranslateToPixelPoint(p.Point);
                         shape.PixelPoints.Add(tmpp);
                     }
                 }
@@ -267,33 +264,33 @@ namespace SimpleDiagram.Demo
 
                 shape.Path.Stroke = Brushes.Red;
                 shape.Path.StrokeThickness = 1;
-                this.ImgControl.AddCustomeShape(shape);
+                ImgControl.AddCustomeShape(shape);
             }
-            this.ImgControl.RemoveElement(this.tmpPath);
-            this.tmpPath.Data = null;
+            ImgControl.RemoveElement(tmpPath);
+            tmpPath.Data = null;
         }
 
         private void ScaleClick(object sender, RoutedEventArgs e)
         {
-            var points = this.ImgControl.CustomeShapes[0].PixelPoints;
-            var rect = new Rect(points[0], points[2]);
-            this.ImgControl.SaveCutRectBitmap(new Int32Rect((int)rect.X, (int)rect.Y, (int)rect.Width, (int)rect.Height), "1.bmp", GeneralTool.CoreLibrary.Enums.BitmapEncoderEnum.Bmp);
+            System.Collections.ObjectModel.ObservableCollection<Point> points = ImgControl.CustomeShapes[0].PixelPoints;
+            Rect rect = new Rect(points[0], points[2]);
+            ImgControl.SaveCutRectBitmap(new Int32Rect((int)rect.X, (int)rect.Y, (int)rect.Width, (int)rect.Height), "1.bmp", GeneralTool.CoreLibrary.Enums.BitmapEncoderEnum.Bmp);
         }
 
         private bool loop = true;
         private async void LoopImage(object sender, RoutedEventArgs e)
         {
-            if (this.LoopMenu.Header + "" == "Loop")
+            if (LoopMenu.Header + "" == "Loop")
             {
-                this.LoopMenu.Header = "Stop";
+                LoopMenu.Header = "Stop";
                 await Task.Run(() =>
                 {
-                    var dir = @"C:\Users\raozh\Pictures\Camera";
-                    var files = System.IO.Directory.EnumerateFiles(dir);
+                    string dir = @"C:\Users\raozh\Pictures\Camera";
+                    System.Collections.Generic.IEnumerable<string> files = System.IO.Directory.EnumerateFiles(dir);
 
                     while (loop)
                     {
-                        foreach (var item in files)
+                        foreach (string item in files)
                         {
                             if (!loop)
                             {
@@ -301,29 +298,29 @@ namespace SimpleDiagram.Demo
                             }
 
                             //load image
-                            this.Dispatcher.Invoke(() =>
+                            Dispatcher.Invoke(() =>
                             {
-                                this.ImgControl.SourcePath = item;
+                                ImgControl.SourcePath = item;
                             });
 
                             //Thread.Sleep(10);
                         }
                     }
                 });
-                this.loop = true;
+                loop = true;
             }
             else
             {
-                this.loop = false;
-                this.LoopMenu.Header = "Loop";
+                loop = false;
+                LoopMenu.Header = "Loop";
             }
         }
 
         private void RemoveFirstClick(object sender, RoutedEventArgs e)
         {
-            if (this.ImgControl.CustomeShapes.Count > 0)
+            if (ImgControl.CustomeShapes.Count > 0)
             {
-                this.ImgControl.RemoveCustomeShape(this.ImgControl.CustomeShapes[0]);
+                ImgControl.RemoveCustomeShape(ImgControl.CustomeShapes[0]);
             }
         }
     }

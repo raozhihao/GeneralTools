@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
+
+using GeneralTool.CoreLibrary.Models;
 
 namespace GeneralTool.CoreLibrary.TaskLib
 {
@@ -8,6 +11,11 @@ namespace GeneralTool.CoreLibrary.TaskLib
     /// </summary>
     public interface IServerStation
     {
+        /// <summary>
+        /// 请求的信息
+        /// </summary>
+        Dictionary<TaskKey, RequestAddressItem> RequestRoute { get; set; }
+
         #region Public 方法
 
         /// <summary>

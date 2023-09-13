@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls;
+﻿using GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls;
 
 namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Models
 {

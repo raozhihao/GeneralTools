@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Windows;
@@ -129,7 +128,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// </summary>
         public virtual void RaiseResizeChanged(Point currPoint, Size currentSize)
         {
-            this.PosChangedEvent?.Invoke(this, new Rect(currPoint, currentSize));
+            PosChangedEvent?.Invoke(this, new Rect(currPoint, currentSize));
         }
 
         /// <summary>
@@ -158,8 +157,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
             ConnectorThumbs = new ConnectorThumbCollection(thumbs);
             ParentCanvas = Parent as DesignerCanvas;
 
-            this._rotateTransform = Template.FindName("PART_RotateTransform", this) as RotateTransform;
-            this._partGridContent = Template.FindName("PART_GridContent", this) as Grid;
+            _rotateTransform = Template.FindName("PART_RotateTransform", this) as RotateTransform;
+            _partGridContent = Template.FindName("PART_GridContent", this) as Grid;
 
             if (ParentCanvas != null)
             {
@@ -425,11 +424,11 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// <returns></returns>
         public List<Point> GetVertexCoordinates()
         {
-            var left = Canvas.GetLeft(this);
-            var top = Canvas.GetTop(this);
-            var rect = new Rect(left, top, this.Width, this.Height);
-            var list = new List<Point>();
-            if (this.RotateAngle == 0)
+            double left = Canvas.GetLeft(this);
+            double top = Canvas.GetTop(this);
+            Rect rect = new Rect(left, top, Width, Height);
+            List<Point> list = new List<Point>();
+            if (RotateAngle == 0)
             {
                 list.Add(rect.TopLeft);
                 list.Add(rect.TopRight);
@@ -438,21 +437,21 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
             }
             else
             {
-                var width = this._partGridContent.Width;
-                if (width == 0 || double.IsNaN(width)) width = this.Width;
-                var height = this._partGridContent.Height;
-                if (height == 0 || double.IsNaN(height)) height = this.Height;
+                double width = _partGridContent.Width;
+                if (width == 0 || double.IsNaN(width)) width = Width;
+                double height = _partGridContent.Height;
+                if (height == 0 || double.IsNaN(height)) height = Height;
                 rect = new Rect(0, 0, width, height);
-                var topLeft = this._rotateTransform.Transform(rect.TopLeft);
-                var topRight = this._rotateTransform.Transform(rect.TopRight);
-                var bottomRight = this._rotateTransform.Transform(rect.BottomRight);
-                var bottomLeft = this._rotateTransform.Transform(rect.BottomLeft);
+                Point topLeft = _rotateTransform.Transform(rect.TopLeft);
+                Point topRight = _rotateTransform.Transform(rect.TopRight);
+                Point bottomRight = _rotateTransform.Transform(rect.BottomRight);
+                Point bottomLeft = _rotateTransform.Transform(rect.BottomLeft);
 
-                var roundNum = 5;
-                topLeft = new Point(Math.Round(topLeft.X + left,roundNum),Math.Round( topLeft.Y + top, roundNum));
-                topRight = new Point(Math.Round(topRight.X + left,roundNum), Math.Round(topRight.Y + top,roundNum));
-                bottomRight = new Point(Math.Round(bottomRight.X + left,roundNum), Math.Round(bottomRight.Y + top,roundNum));
-                bottomLeft = new Point(Math.Round(bottomLeft.X + left,roundNum), Math.Round(bottomLeft.Y + top,roundNum));
+                int roundNum = 5;
+                topLeft = new Point(Math.Round(topLeft.X + left, roundNum), Math.Round(topLeft.Y + top, roundNum));
+                topRight = new Point(Math.Round(topRight.X + left, roundNum), Math.Round(topRight.Y + top, roundNum));
+                bottomRight = new Point(Math.Round(bottomRight.X + left, roundNum), Math.Round(bottomRight.Y + top, roundNum));
+                bottomLeft = new Point(Math.Round(bottomLeft.X + left, roundNum), Math.Round(bottomLeft.Y + top, roundNum));
                 list.Add(topLeft);
                 list.Add(topRight);
                 list.Add(bottomRight);
@@ -467,7 +466,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// <returns></returns>
         public Rect GetBoundRect()
         {
-            return this.GetGeometry().Bounds;
+            return GetGeometry().Bounds;
         }
 
         /// <summary>
@@ -476,16 +475,16 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// <returns></returns>
         public Geometry GetGeometry()
         {
-            var corrdinates = this.GetVertexCoordinates();
+            List<Point> corrdinates = GetVertexCoordinates();
             if (corrdinates.Count < 1)
                 return null;
 
-            var builder = new StringBuilder();
-            var first = corrdinates[0];
-            builder.Append($"M {first} ");
+            StringBuilder builder = new StringBuilder();
+            Point first = corrdinates[0];
+            _ = builder.Append($"M {first} ");
             for (int i = 1; i < corrdinates.Count; i++)
             {
-                builder.Append($"L {corrdinates[i]} ");
+                _ = builder.Append($"L {corrdinates[i]} ");
             }
             return Geometry.Parse(builder.ToString());
         }

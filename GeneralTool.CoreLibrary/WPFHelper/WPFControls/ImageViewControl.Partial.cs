@@ -523,7 +523,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
                 if (Img != null)
                     BindingOperations.ClearBinding(Img, Image.SourceProperty);
                 //初始化最大尺寸
-                if (value != null && (CutPanelMaxSize.IsEmpty || this.CutPanelMaxSize.Width != value.Width || this.CutPanelMaxSize.Height != value.Height))
+                if (value != null && (CutPanelMaxSize.IsEmpty || CutPanelMaxSize.Width != value.Width || CutPanelMaxSize.Height != value.Height))
                 {
                     CutPanelMaxSize = new Size(value.Width, value.Height);
                 }

@@ -14,7 +14,7 @@ namespace SimpleDiagram.BlockVIewModels
 
         public override Task<bool> ExecuteImp(BaseBlockViewModel prevModel, ExcuteCancelTokenSource token)
         {
-            this.Log.Info($"执行文本:[{this.Txt?.Txt}]");
+            Log.Info($"执行文本:[{Txt?.Txt}]");
             return Task.FromResult(true);
         }
 

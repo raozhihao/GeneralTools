@@ -55,7 +55,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
             在此之后:
                         if (!(TemplatedParent is BlockItem block))
             */
-            if (!(this.TemplatedParent is BlockItem block))
+            if (!(TemplatedParent is BlockItem block))
                 return;
             if (!(block.Parent is DesignerCanvas canvas))
             {
@@ -113,26 +113,26 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
                     foreach (BlockItem item in designerItems)
                     {
                         //获取真实外包矩形,因为有旋转
-                        var bounds = item.GetBoundRect();
+                        Rect bounds = item.GetBoundRect();
                         double left = Canvas.GetLeft(item);
                         double top = Canvas.GetTop(item);
-                        var boundTop = bounds.Top + deltaVertical;
-                        var bountTopVertiacal = 0d;
+                        double boundTop = bounds.Top + deltaVertical;
+                        double bountTopVertiacal = 0d;
                         //if (boundTop < 0 && deltaVertical < 0)
                         //{
                         //    bountTopVertiacal = boundTop;
                         //}
                         //计算最上方的点能到哪
-                        var topPos = top - bounds.Top - bountTopVertiacal;
+                        double topPos = top - bounds.Top - bountTopVertiacal;
 
-                        var boundLeft = bounds.Left + deltaHorizontal;
-                        var boundLeftHorizontal = 0d;
+                        double boundLeft = bounds.Left + deltaHorizontal;
+                        double boundLeftHorizontal = 0d;
                         //if (boundLeft < 0 && deltaHorizontal < 0)
                         //{
                         //    boundLeftHorizontal = boundLeft;
                         //}
                         //计算最左方的点能到哪
-                        var leftPos = left - bounds.Left + boundLeftHorizontal;
+                        double leftPos = left - bounds.Left + boundLeftHorizontal;
 
 
                         if (double.IsNaN(left)) left = 0;
@@ -155,7 +155,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
 
                         }
 
-                        var point = new Point(Math.Round(left), Math.Round(top));
+                        Point point = new Point(Math.Round(left), Math.Round(top));
 
                         if (!item.MoveChanging(point)) return;
                         Canvas.SetLeft(item, point.X);
@@ -198,7 +198,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
             left += deltaHorizontal;
             left = left < MinLeft ? MinLeft : left;
 
-            var point = new Point(left, top);
+            Point point = new Point(left, top);
             if (!block.MoveChanging(point))
                 return;
             Canvas.SetLeft(block, left);

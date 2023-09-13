@@ -156,7 +156,7 @@ namespace GeneralTool.CoreLibrary.Models
         /// <summary>
         /// 任务执行对象
         /// </summary>
-        public BaseTaskInvoke TaskObj
+        public object TaskObj
         {
             get;
             set;

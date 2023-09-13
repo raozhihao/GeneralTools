@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Reflection;
 
 using GeneralTool.CoreLibrary.Attributes;
@@ -81,24 +80,17 @@ namespace GeneralTool.CoreLibrary.TaskLib
         public bool AddStationObjectClass(object target)
         {
             RouteAttribute attributeByClass = target.GetAttributeByClass<RouteAttribute>();
-            if (attributeByClass == null)
+            string rootPath = target.GetType().Name + "/";
+            if (attributeByClass != null)
             {
-                log.Debug($"类型 {target} 没有添加特性 {nameof(RouteAttribute)} ,跳过不执行");
-                return false;
+                rootPath = attributeByClass.Url;
             }
 
-            string rootPath = attributeByClass.Url;
-            MethodInfo[] methods = target.GetType().GetMethods();
-
-            System.Collections.Generic.IEnumerable<MethodInfo> ms = from m in methods
-                                                                    where m.GetCustomAttribute<RouteAttribute>() != null
-                                                                    select m;
-
-            ms.Foreach(m =>
+            _ = target.GetType().GetMethods().Foreach(m =>
            {
                RouteAttribute route = m.GetCustomAttribute<RouteAttribute>();
-
-               _ = ServerStation.AddRoute(rootPath + route.Url, target, m, route.Method);
+               if (route != null)
+                   _ = ServerStation.AddRoute(rootPath + route.Url, target, m, route.Method);
            });
 
             return true;

@@ -881,11 +881,11 @@ namespace GeneralTool.CoreLibrary.DbHelper
                 }
                 return command;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 DisposeCommand(command);
                 parameters.Clear();
-                throw ex;
+                throw;
             }
         }
 
@@ -917,7 +917,7 @@ namespace GeneralTool.CoreLibrary.DbHelper
                     transCommand?.Dispose();
                     transCommand = null;
                     parameters.Clear();
-                    throw ex;
+                    throw;
                 }
             }
             transCommand.CommandText = sql;

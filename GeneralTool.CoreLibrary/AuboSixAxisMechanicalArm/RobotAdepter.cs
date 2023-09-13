@@ -94,7 +94,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
             return false;
         }
 
-     
+
 
         private void JointStatusCallBackMethod(ref MetaData.JointStatus jointStatus, int size, IntPtr arg)
         {

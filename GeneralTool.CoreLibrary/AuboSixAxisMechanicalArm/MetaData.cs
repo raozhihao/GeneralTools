@@ -139,7 +139,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
             /// <summary>
             /// 关节错误码
             /// </summary>
-            public UInt16 jointErrorNum;
+            public ushort jointErrorNum;
         }
 
         /// <summary>
@@ -257,11 +257,11 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
             /// <summary>
             /// mac缓冲器长度
             /// </summary>
-            public UInt16 macTargetPosBufferSize;
+            public ushort macTargetPosBufferSize;
             /// <summary>
             /// mac缓冲器有效数据长度
             /// </summary>
-            public UInt16 macTargetPosDataSize;
+            public ushort macTargetPosDataSize;
             /// <summary>
             /// /mac数据中断
             /// </summary>
@@ -1336,7 +1336,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
             public string Description { get; set; }
             public EnumDescriptionAttribute(string description)
             {
-                this.Description = description;
+                Description = description;
             }
         }
 
@@ -1344,9 +1344,9 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         {
             public RobotEventAttribute(string description, bool isWaring = false, string enDescription = "")
             {
-                this.IsWaring = isWaring;
-                this.ZhCnDescription = description;
-                this.EnDescription = enDescription;
+                IsWaring = isWaring;
+                ZhCnDescription = description;
+                EnDescription = enDescription;
             }
 
             /// <summary>
@@ -1468,14 +1468,11 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
             if (enumType == null)
                 enumType = typeof(EnumDescriptionAttribute);
             RetunCode retunCode = (RetunCode)code;
-            var re = retunCode.GetType().GetField(retunCode.ToString());
+            System.Reflection.FieldInfo re = retunCode.GetType().GetField(retunCode.ToString());
             if (re == null)
                 return "未知错误";
-            var datas = re.GetCustomAttributes(enumType, false); ;
-            if (datas.Length == 0)
-                return "未知错误";
-            else
-                return ((EnumDescriptionAttribute)datas[0]).Description;
+            object[] datas = re.GetCustomAttributes(enumType, false); ;
+            return datas.Length == 0 ? "未知错误" : ((EnumDescriptionAttribute)datas[0]).Description;
         }
 
         public static CoordCalibrate GetBaseCoordCalibrate()
@@ -1520,27 +1517,23 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
             //    return default;
 
             //var en = (EnumAttributeType)datas[0];
-            var en = GetEnumCustomAttribute<EnumAttributeType>(@enum);
-            var p = en.GetType().GetProperty(property);
-            if (p == null)
-                return default;
-
-            return (OutType)p.GetValue(en);
-
+            EnumAttributeType en = GetEnumCustomAttribute<EnumAttributeType>(@enum);
+            System.Reflection.PropertyInfo p = en.GetType().GetProperty(property);
+            return p == null ? default : (OutType)p.GetValue(en);
         }
 
         public static T GetEnumCustomAttribute<T>(Enum @enum) where T : Attribute
         {
-            var type = @enum.GetType();
-            var field = type.GetField(@enum.ToString());
+            Type type = @enum.GetType();
+            System.Reflection.FieldInfo field = type.GetField(@enum.ToString());
             if (field == null)
                 return default;
 
-            var datas = field.GetCustomAttributes(typeof(T), false);
+            object[] datas = field.GetCustomAttributes(typeof(T), false);
             if (datas.Length == 0)
                 return default;
 
-            var en = (T)datas[0];
+            T en = (T)datas[0];
             return en;
         }
 

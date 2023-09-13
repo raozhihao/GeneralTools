@@ -9,13 +9,12 @@ namespace SimpleDiagram.BlockVIewModels
 
         public override void SetProperty(ConnectionDo connection, BaseBlockViewModel newxtModel)
         {
-            var sourceDirection = connection.SourceDirection;
+            Direction sourceDirection = connection.SourceDirection;
             if (sourceDirection == Direction.Bottom)
-                this.TrueViewModel = newxtModel;
+                TrueViewModel = newxtModel;
             if (sourceDirection == Direction.Right)
-                this.FalseViewModel = newxtModel;
+                FalseViewModel = newxtModel;
         }
-
 
     }
 }

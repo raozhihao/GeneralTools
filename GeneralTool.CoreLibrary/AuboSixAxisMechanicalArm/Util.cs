@@ -118,10 +118,10 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         public const int Robot_ToolIoType_DO = Robot_Tool_DO;
 
         //工具端IO名称
-        public const string TOOL_IO_0 = ("T_DI/O_00");
-        public const string TOOL_IO_1 = ("T_DI/O_01");
-        public const string TOOL_IO_2 = ("T_DI/O_02");
-        public const string TOOL_IO_3 = ("T_DI/O_03");
+        public const string TOOL_IO_0 = "T_DI/O_00";
+        public const string TOOL_IO_1 = "T_DI/O_01";
+        public const string TOOL_IO_2 = "T_DI/O_02";
+        public const string TOOL_IO_3 = "T_DI/O_03";
 
         //工具端数字IO类型
         //

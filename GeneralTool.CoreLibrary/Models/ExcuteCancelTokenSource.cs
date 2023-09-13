@@ -271,7 +271,7 @@ namespace GeneralTool.CoreLibrary.Models
 
     }
 
-    
+
 
     /// <summary>
     /// 处理取消标记
@@ -290,7 +290,7 @@ namespace GeneralTool.CoreLibrary.Models
         /// </summary>
         public void Cancel()
         {
-            this.tokenSource?.Cancel();
+            tokenSource?.Cancel();
             IsRequestCancel = true;
         }
 
@@ -321,14 +321,14 @@ namespace GeneralTool.CoreLibrary.Models
         public async Task Pause()
         {
             Trace.WriteLine("Start pause");
-            this.PauseEvent?.Invoke(this, new TokenPausArgs(false));
+            PauseEvent?.Invoke(this, new TokenPausArgs(false));
             IsPauseNotify = true;
             //查看是否已经获取到了暂停信号
             await Task.Run(async () =>
             {
                 while (!IsPaused && !IsRequestCancel)
                 {
-                    if (this.IsResumed) break;
+                    if (IsResumed) break;
                     try
                     {
                         await Task.Delay(10, Token);
@@ -340,7 +340,7 @@ namespace GeneralTool.CoreLibrary.Models
                 }
 
             });
-            this.PauseEvent?.Invoke(this, new TokenPausArgs(true));
+            PauseEvent?.Invoke(this, new TokenPausArgs(true));
             Trace.WriteLine("End Pause");
         }
 
@@ -353,15 +353,15 @@ namespace GeneralTool.CoreLibrary.Models
         /// </summary>
         public async Task Resume()
         {
-            if (!this.IsPauseNotify) return;
+            if (!IsPauseNotify) return;
             Trace.WriteLine("Start resume");
-            this.ResumeEvent?.Invoke(this, new TokenResumeArgs(false));
+            ResumeEvent?.Invoke(this, new TokenResumeArgs(false));
             IsResumed = true;
             await Task.Run(async () =>
             {
                 while (!IsResumed && !IsRequestCancel)
                 {
-                    if (this.IsPauseNotify) break;
+                    if (IsPauseNotify) break;
                     try
                     {
                         await Task.Delay(10, Token);
@@ -371,7 +371,7 @@ namespace GeneralTool.CoreLibrary.Models
                     }
                 }
             });
-            this.ResumeEvent?.Invoke(this, new TokenResumeArgs(true));
+            ResumeEvent?.Invoke(this, new TokenResumeArgs(true));
             Trace.WriteLine("End Resume");
         }
 
@@ -384,7 +384,7 @@ namespace GeneralTool.CoreLibrary.Models
         /// </summary>
         public void Reset()
         {
-            this.NotifyCancel();
+            NotifyCancel();
             //WaitPause();
             isFirstRequest = false;
             IsRequestCancel = false;

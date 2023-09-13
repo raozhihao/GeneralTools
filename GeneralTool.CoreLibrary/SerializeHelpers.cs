@@ -78,35 +78,35 @@ namespace GeneralTool.CoreLibrary
             }
             else if (type == typeof(byte))
             {
-                obj = (data);
+                obj = data;
             }
             else if (type == typeof(bool))
             {
-                obj = (BitConverter.ToBoolean(data, 0));
+                obj = BitConverter.ToBoolean(data, 0);
             }
             else if (type == typeof(short))
             {
-                obj = (BitConverter.ToInt16(data, 0));
+                obj = BitConverter.ToInt16(data, 0);
             }
             else if (type == typeof(int))
             {
-                obj = (BitConverter.ToInt32(data, 0));
+                obj = BitConverter.ToInt32(data, 0);
             }
             else if (type == typeof(long))
             {
-                obj = (BitConverter.ToInt64(data, 0));
+                obj = BitConverter.ToInt64(data, 0);
             }
             else if (type == typeof(float))
             {
-                obj = (BitConverter.ToSingle(data, 0));
+                obj = BitConverter.ToSingle(data, 0);
             }
             else if (type == typeof(double))
             {
-                obj = (BitConverter.ToDouble(data, 0));
+                obj = BitConverter.ToDouble(data, 0);
             }
             else if (type == typeof(decimal))
             {
-                obj = (BitConverter.ToDouble(data, 0));
+                obj = BitConverter.ToDouble(data, 0);
             }
             else if (type == typeof(DateTime))
             {
@@ -372,7 +372,7 @@ namespace GeneralTool.CoreLibrary
                         ? BitConverter.GetBytes((short)param)
                         : enumValType == typeof(int) ? BitConverter.GetBytes((int)param) : BitConverter.GetBytes((long)param);
             }
-            else if (param is DataTable || param is  DataSet || param is  Delegate)
+            else if (param is DataTable || param is DataSet || param is Delegate)
             {
                 data = SerializeToBytes(param);
             }

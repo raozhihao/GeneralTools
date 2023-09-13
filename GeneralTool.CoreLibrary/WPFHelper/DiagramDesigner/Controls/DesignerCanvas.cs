@@ -28,7 +28,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
             AddHandler(Keyboard.KeyDownEvent, (KeyEventHandler)HandleKeyDownEvent);
             Loaded += DesignerCanvas_Loaded;
 
-            this.HistoryManger = new HistoryManger(this);
+            HistoryManger = new HistoryManger(this);
         }
 
         private ScrollViewer ParentScrollView;
@@ -46,7 +46,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
 
         private void HandleKeyDownEvent(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.C && (Keyboard.Modifiers & (ModifierKeys.Control)) == (ModifierKeys.Control))
+            if (e.Key == Key.C && (Keyboard.Modifiers & (ModifierKeys.Control)) == ModifierKeys.Control)
             {
                 BlockItem block = Children.OfType<BlockItem>().Where(b => b.IsSelected).FirstOrDefault();
                 if (block != null)
@@ -56,7 +56,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
                     currentObj.IsDoubleClickAdd = true;
                 }
             }
-            else if (e.Key == Key.V && (Keyboard.Modifiers & (ModifierKeys.Control)) == (ModifierKeys.Control))
+            else if (e.Key == Key.V && (Keyboard.Modifiers & (ModifierKeys.Control)) == ModifierKeys.Control)
             {
                 if (currentObj != null)
                 {
@@ -193,8 +193,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// </summary>
         public bool CanScroll
         {
-            get => (bool)this.GetValue(CanScrollProperty);
-            set => this.SetValue(CanScrollProperty, value);
+            get => (bool)GetValue(CanScrollProperty);
+            set => SetValue(CanScrollProperty, value);
         }
 
         /// <summary>
@@ -334,7 +334,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
 
             if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
             {
-                if (!this.CanMouseWheelScale) return;
+                if (!CanMouseWheelScale) return;
 
                 if (LayoutTransform is TransformGroup group)
                 {
@@ -346,7 +346,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
                     //translate.X = (zoomCenter.X - pt.X) * scaleTransform.ScaleX;
                     //translate.Y = (zoomCenter.Y - pt.Y) * scaleTransform.ScaleY;
 
-                    double scale = e.Delta * 0.001 + scaleTransform.ScaleX;
+                    double scale = (e.Delta * 0.001) + scaleTransform.ScaleX;
                     scale = scale < 0.05 ? 0.05 : scale;
                     scale = scale > 5 ? 5 : scale;
 
@@ -495,7 +495,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
             Connection connection = null;
 
             // _ = Children.Add(block);
-            this.AddItem(block, false);
+            AddItem(block, false);
 
             block.IsInCanvas = true;
             _ = block.ApplyTemplate();
@@ -784,7 +784,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         {
             _ = Children.Add(item);
 
-            this.HistoryManger.AddHistoryModel(new HistoryModel()
+            HistoryManger.AddHistoryModel(new HistoryModel()
             {
                 Item = item,
                 HistoryType = HistoryType.Add
@@ -886,7 +886,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
                 }
                 blockItem.Delete();
                 Children.Remove(blockItem);
-                this.HistoryManger.AddHistoryModel(new HistoryModel()
+                HistoryManger.AddHistoryModel(new HistoryModel()
                 {
                     HistoryType = HistoryType.Delete,
                     Item = blockItem
@@ -1029,7 +1029,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
                 top = top + cur.ActualHeight + MARGIN;
 
                 BlockItem next = cur.ConnectorThumbs[Direction.Bottom].SinkBlock;
-                if (next != null && (!nextColBlocks.Contains(next) && caches.Contains(next)))
+                if (next != null && !nextColBlocks.Contains(next) && caches.Contains(next))
                 {
                     nextColBlocks.Add(next);
                     _ = caches.Remove(next);
@@ -1077,7 +1077,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
         /// </summary>
         protected override Size MeasureOverride(Size constraint)
         {
-            if (!this.CanScroll) return base.MeasureOverride(constraint);
+            if (!CanScroll) return base.MeasureOverride(constraint);
             Size size = new Size();
 
             foreach (UIElement element in InternalChildren)

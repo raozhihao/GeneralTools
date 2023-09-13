@@ -193,10 +193,10 @@ namespace GeneralTool.CoreLibrary.TaskLib
             Type resultType = Type.GetType(reponse.ReturnTypeString);
             return resultType.IsValueType || resultType == typeof(string)
                 ? typeof(Tout) == typeof(byte[])
-                    ? (Tout)((object)(Encoding.UTF8.GetBytes(reponse.Result + "")))
+                    ? (Tout)(object)Encoding.UTF8.GetBytes(reponse.Result + "")
                     : reponse.Result is IConvertible
                     ? (Tout)Convert.ChangeType(reponse.Result, typeof(Tout))
-                    : (Tout)(new StringConverter().ConvertSimpleType(reponse.Result, resultType))
+                    : (Tout)new StringConverter().ConvertSimpleType(reponse.Result, resultType)
                 : (Tout)reponse.Result;
         }
 

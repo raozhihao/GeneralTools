@@ -28,10 +28,9 @@ namespace SimpleDiagram.BlockVIewModels
         public ILog Log { get; set; }
         public BaseBlockViewModel NextModel { get; set; }
 
-
         public virtual async Task<bool> Execute(BaseBlockViewModel prevModel, ExcuteCancelTokenSource token)
         {
-            return await this.ExecuteImp(prevModel, token);
+            return await ExecuteImp(prevModel, token);
         }
 
         public abstract Task<bool> ExecuteImp(BaseBlockViewModel prevModel, ExcuteCancelTokenSource token);
@@ -40,7 +39,7 @@ namespace SimpleDiagram.BlockVIewModels
 
         public void SetSinkModels(List<BaseBlockViewModel> sinkModels)
         {
-            this.SinkBlockModels = sinkModels;
+            SinkBlockModels = sinkModels;
         }
 
         public event Action<bool> IsSelected;
@@ -48,7 +47,6 @@ namespace SimpleDiagram.BlockVIewModels
         {
             IsSelected?.Invoke(true);
         }
-
 
         public virtual void UnSelected()
         {
@@ -77,27 +75,18 @@ namespace SimpleDiagram.BlockVIewModels
         {
             get
             {
-                if (this.IsBreakPointEvent != null)
-                {
-                    return this.IsBreakPointEvent();
-                }
-                return false;
+                return IsBreakPointEvent != null && IsBreakPointEvent();
             }
         }
         public string Description
         {
             get
             {
-                var type = this.GetType();
-                var desc = type.GetCustomAttribute<DescriptionAttribute>();
-                if (desc == null)
-                    return type.Name;
-                else
-                    return desc.Description;
+                Type type = GetType();
+                DescriptionAttribute desc = type.GetCustomAttribute<DescriptionAttribute>();
+                return desc == null ? type.Name : desc.Description;
             }
         }
-
-
 
         public virtual void SetProperty(ConnectionDo connection, BaseBlockViewModel newxtModel)
         {

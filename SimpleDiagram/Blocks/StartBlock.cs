@@ -12,14 +12,14 @@ namespace SimpleDiagram.Blocks
         public override void OnCreateInCanvas()
         {
             base.OnCreateInCanvas();
-            this.ConnectorThumbs[Direction.Right].Visibility =
-              this.ConnectorThumbs[Direction.Left].Visibility =
-              this.ConnectorThumbs[Direction.Top].Visibility =
+            ConnectorThumbs[Direction.Right].Visibility =
+              ConnectorThumbs[Direction.Left].Visibility =
+              ConnectorThumbs[Direction.Top].Visibility =
                System.Windows.Visibility.Collapsed;
-            this.ConnectorThumbs[Direction.Bottom].ConnectorType = ConnectorType.OnlySource;
-            this.IsStart = true;
-            this.ContentRadius = new System.Windows.CornerRadius(20);
-            this.CanResize = false;
+            ConnectorThumbs[Direction.Bottom].ConnectorType = ConnectorType.OnlySource;
+            IsStart = true;
+            ContentRadius = new System.Windows.CornerRadius(20);
+            CanResize = false;
         }
 
         public override WindowResult OpenWindow()

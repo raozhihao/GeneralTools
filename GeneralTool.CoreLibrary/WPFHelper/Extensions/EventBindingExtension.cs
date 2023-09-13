@@ -87,7 +87,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
         /// </param>
         public void MethodEvent(object sender, object e)
         {
-            if (!(sender is  FrameworkElement element))
+            if (!(sender is FrameworkElement element))
                 return;
             if (dataContextMethodInfo != null && element.DataContext != null)
             {
@@ -319,7 +319,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
 
         private void TargetObject_DataContextChanged(object sender, EventArgs e)
         {
-            if (!(sender is  DependencyObject targetObj))
+            if (!(sender is DependencyObject targetObj))
                 return;
 
             UnsubscribeFromDataContextChanged(targetObj);

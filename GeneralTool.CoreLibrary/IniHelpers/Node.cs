@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Reflection;
 
-using GeneralTool.CoreLibrary.Attributes;
-using GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm;
 using GeneralTool.CoreLibrary.Extensions;
 using GeneralTool.CoreLibrary.Interfaces;
 
@@ -61,7 +59,7 @@ namespace GeneralTool.CoreLibrary.IniHelpers
         /// <param name="iniPath">单独保存到的文件路径,如无,则使用 Configs/default.ini</param>
         /// <param name="isJosn">是否Json</param>
         /// <param name="convert">Json的转换器,如无则使用默认转换器</param>
-        public Node(string sectionName, string keyName, T defaultValue, bool create = false, string iniPath = "", bool isJosn = true, IJsonConvert convert = null)
+        public Node(string sectionName, string keyName, T defaultValue, bool create = false, string iniPath = "", bool isJosn = false, IJsonConvert convert = null)
         {
             SectionName = sectionName;
             KeyName = keyName;
@@ -144,10 +142,10 @@ namespace GeneralTool.CoreLibrary.IniHelpers
                 Type type = typeof(T);
 
 
-                if (this.IsJosn)
+                if (IsJosn)
                 {
                     //转换为Json,查看有无Json转换器
-                    var obj = (T)this.DesrializeToObj(this.JsonConvert, type);
+                    T obj = (T)DesrializeToObj(JsonConvert, type);
 
                     return obj;
                 }
@@ -198,12 +196,12 @@ namespace GeneralTool.CoreLibrary.IniHelpers
             {
                 Type type = value.GetType();
 
-                if (this.IsJosn)
+                if (IsJosn)
                 {
                     //转换为Json,查看有无Json转换器
 
-                    var jsonStr = this.SerializeToString(this.JsonConvert, value);
-                    IniHelper.WriteValueString(this.SectionName, this.KeyName, jsonStr);
+                    string jsonStr = SerializeToString(JsonConvert, value);
+                    IniHelper.WriteValueString(SectionName, KeyName, jsonStr);
 
                     return;
                 }
@@ -214,12 +212,12 @@ namespace GeneralTool.CoreLibrary.IniHelpers
                     MethodInfo get = null;
                     if (type.IsGenericType)
                     {
-                        len = (int)(type.GetMethod("get_Count").Invoke(value, null));
+                        len = (int)type.GetMethod("get_Count").Invoke(value, null);
                         get = type.GetMethod("get_Item", new Type[] { typeof(int) });
                     }
                     else if (type.IsArray)
                     {
-                        len = (int)(type.GetMethod("get_Length").Invoke(value, null));
+                        len = (int)type.GetMethod("get_Length").Invoke(value, null);
                         get = type.GetMethod("GetValue", new Type[] { typeof(int) });
                     }
 
@@ -241,37 +239,19 @@ namespace GeneralTool.CoreLibrary.IniHelpers
 
         private object DesrializeToObj(IJsonConvert jsonType, Type type)
         {
-            var value = IniHelper.GetString(this.SectionName, this.KeyName, this.GetDefaultValue(jsonType));
-            object obj;
-            if (jsonType != null)
-            {
-                obj = jsonType.DeserializeObject(value, type);
-            }
-            else
-            {
-                obj = value.DeserializeJsonToObject(type);
-            }
-
+            string value = IniHelper.GetString(SectionName, KeyName, GetDefaultValue(jsonType));
+            object obj = jsonType != null ? jsonType.DeserializeObject(value, type) : value.DeserializeJsonToObject(type);
             return obj;
         }
 
         private string GetDefaultValue(IJsonConvert jsonType)
         {
-            return this.SerializeToString(jsonType, this.DefaultValue);
+            return SerializeToString(jsonType, DefaultValue);
         }
 
         private string SerializeToString(IJsonConvert jsonConvert, T value)
         {
-            string jsonStr;
-            if (jsonConvert != null)
-            {
-                jsonStr = jsonConvert.SerializeObject(value);
-            }
-            else
-            {
-                jsonStr = value.SerializeToJsonString();
-            }
-
+            string jsonStr = jsonConvert != null ? jsonConvert.SerializeObject(value) : value.SerializeToJsonString();
             return jsonStr;
         }
 

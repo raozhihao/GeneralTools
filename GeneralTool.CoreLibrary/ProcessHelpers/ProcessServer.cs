@@ -35,7 +35,7 @@ namespace GeneralTool.CoreLibrary.ProcessHelpers
         /// <param name="args">参数</param>
         public void Run(string exePath, string workDir, string args)
         {
-            this.Run(exePath, args, workDir);
+            Run(exePath, args, workDir);
         }
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace GeneralTool.CoreLibrary.ProcessHelpers
             catch (Exception ex)
             {
                 ErroReceived(process, ex.GetInnerExceptionMessage());
-                this.Close();
+                Close();
             }
         }
 
@@ -119,9 +119,9 @@ namespace GeneralTool.CoreLibrary.ProcessHelpers
         private void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
             ReceivedHandler?.Invoke(sender, e.Data);
-            if (this.Process.HasExited)
+            if (Process.HasExited)
             {
-                this.Close();
+                Close();
                 return;
             }
         }

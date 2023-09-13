@@ -33,7 +33,7 @@ namespace GeneralTool.CoreLibrary.Maths
             //绘制
             for (double x = 0; x < width; x += 3)
             {
-                double y = (height / 2) * (Math.Cos(2 * Math.PI * num / width * x) + 1) + top;
+                double y = (height / 2 * (Math.Cos(2 * Math.PI * num / width * x) + 1)) + top;
                 double x1 = x + left;
                 double y1 = y;
                 points.Add(new System.Windows.Point(x1, y1));
@@ -50,7 +50,7 @@ namespace GeneralTool.CoreLibrary.Maths
         /// <returns></returns>
         public static List<System.Windows.Point> GetThreeDeg(System.Windows.Point startPoint, System.Windows.Point endPoint)
         {
-            System.Windows.Point p1 = new System.Windows.Point((endPoint.X - startPoint.X) / 2f + startPoint.X, startPoint.Y);
+            System.Windows.Point p1 = new System.Windows.Point(((endPoint.X - startPoint.X) / 2f) + startPoint.X, startPoint.Y);
             System.Windows.Point p2 = new System.Windows.Point(startPoint.X, endPoint.Y);
             System.Windows.Point p3 = new System.Windows.Point(endPoint.X, endPoint.Y);
             return new List<System.Windows.Point>() { p1, p2, p3, p1 };
@@ -71,10 +71,10 @@ namespace GeneralTool.CoreLibrary.Maths
             double cy = p.Item1.Y;
             double cr = p.Item3;
             System.Windows.Point p1 = new System.Windows.Point(cx, cy - cr);
-            System.Windows.Point p2 = new System.Windows.Point(cx - cr * Math.Sin(0.2 * Math.PI), cy + cr * Math.Cos(Math.PI * 0.2));
-            System.Windows.Point p3 = new System.Windows.Point(cx + cr * Math.Sin(0.4 * Math.PI), cy - cr * Math.Cos(Math.PI * 0.4));
-            System.Windows.Point p4 = new System.Windows.Point(cx - cr * Math.Sin(0.4 * Math.PI), cy - cr * Math.Cos(Math.PI * 0.4));
-            System.Windows.Point p5 = new System.Windows.Point(cx + cr * Math.Sin(0.2 * Math.PI), cy + cr * Math.Cos(Math.PI * 0.2));
+            System.Windows.Point p2 = new System.Windows.Point(cx - (cr * Math.Sin(0.2 * Math.PI)), cy + (cr * Math.Cos(Math.PI * 0.2)));
+            System.Windows.Point p3 = new System.Windows.Point(cx + (cr * Math.Sin(0.4 * Math.PI)), cy - (cr * Math.Cos(Math.PI * 0.4)));
+            System.Windows.Point p4 = new System.Windows.Point(cx - (cr * Math.Sin(0.4 * Math.PI)), cy - (cr * Math.Cos(Math.PI * 0.4)));
+            System.Windows.Point p5 = new System.Windows.Point(cx + (cr * Math.Sin(0.2 * Math.PI)), cy + (cr * Math.Cos(Math.PI * 0.2)));
             return new List<System.Windows.Point>()
             {
                 p1,p2,p3,p4,p5,p1
@@ -93,9 +93,9 @@ namespace GeneralTool.CoreLibrary.Maths
             //s形要分两半
             System.Windows.Size size = new System.Windows.Size(rectLarge.Width, rectLarge.Height / 2);
             System.Windows.Rect topRect = new System.Windows.Rect(rectLarge.TopLeft, size);
-            System.Windows.Rect bottomRect = new System.Windows.Rect(new System.Windows.Point(rectLarge.Left, rectLarge.Top + rectLarge.Height / 2), size);
+            System.Windows.Rect bottomRect = new System.Windows.Rect(new System.Windows.Point(rectLarge.Left, rectLarge.Top + (rectLarge.Height / 2)), size);
 
-            System.Windows.Point center = new System.Windows.Point(topRect.Left + topRect.Width / 2, topRect.Top + topRect.Height / 2);
+            System.Windows.Point center = new System.Windows.Point(topRect.Left + (topRect.Width / 2), topRect.Top + (topRect.Height / 2));
             //获取数据
             double yDis = topRect.Height / 2.0;
             double xDis = topRect.Width / 2.0;
@@ -103,7 +103,7 @@ namespace GeneralTool.CoreLibrary.Maths
 
             points.RemoveAt(points.Count - 1);
             //S形,下方
-            center = new System.Windows.Point(bottomRect.Left + bottomRect.Width / 2, bottomRect.Top + bottomRect.Height / 2);
+            center = new System.Windows.Point(bottomRect.Left + (bottomRect.Width / 2), bottomRect.Top + (bottomRect.Height / 2));
             yDis = bottomRect.Height / 2.0;
             xDis = bottomRect.Width / 2.0;
             List<System.Windows.Point> c2 = CutCirclePoints(xDis, yDis, center, 180, -90, 90);
@@ -135,7 +135,7 @@ namespace GeneralTool.CoreLibrary.Maths
             double x;
 
             //起点绘制坐标
-            System.Windows.Point startDrawPoint = new System.Windows.Point(rect.Left, rect.Top + rect.Height / 2);
+            System.Windows.Point startDrawPoint = new System.Windows.Point(rect.Left, rect.Top + (rect.Height / 2));
 
             System.Windows.Point prevTopPoint = default(System.Windows.Point);
             //两点之间最小像素,是在最顶端点与旁边点之间的距离
@@ -237,10 +237,10 @@ namespace GeneralTool.CoreLibrary.Maths
 
         private static System.Windows.Point GetHeartPoint(double x, double r, double a, double l, System.Windows.Point topLeft, bool isY1 = true)
         {
-            double hh = (a * 2 + 0.5);//此值影响心形下的尖尖，值越小，尖尖就越长
+            double hh = (a * 2) + 0.5;//此值影响心形下的尖尖，值越小，尖尖就越长
             double tmmTop = Math.Pow(x + l, 2);
             double y = isY1
-                ? -(a * Math.Sqrt(r * Math.Sqrt(tmmTop) - tmmTop))
+                ? -(a * Math.Sqrt((r * Math.Sqrt(tmmTop)) - tmmTop))
                 : -(-a * (r / hh) * Math.Sqrt(Math.Sqrt(r) - Math.Sqrt(Math.Abs(x + l))));
             x += topLeft.X;
             y += topLeft.Y;
@@ -279,16 +279,16 @@ namespace GeneralTool.CoreLibrary.Maths
             double cy2 = cp2.Y;
 
             double x =
-                x1 * (1 - t) * (1 - t) * (1 - t) +
-                3 * cx1 * t * (1 - t) * (1 - t) +
-                3 * cx2 * t * t * (1 - t) +
-                x2 * t * t * t;
+                (x1 * (1 - t) * (1 - t) * (1 - t)) +
+                (3 * cx1 * t * (1 - t) * (1 - t)) +
+                (3 * cx2 * t * t * (1 - t)) +
+                (x2 * t * t * t);
 
             double y =
-                y1 * (1 - t) * (1 - t) * (1 - t) +
-                3 * cy1 * t * (1 - t) * (1 - t) +
-                3 * cy2 * t * t * (1 - t) +
-                y2 * t * t * t;
+                (y1 * (1 - t) * (1 - t) * (1 - t)) +
+                (3 * cy1 * t * (1 - t) * (1 - t)) +
+                (3 * cy2 * t * t * (1 - t)) +
+                (y2 * t * t * t);
 
             return new System.Windows.Point(x, y);
         }
@@ -327,8 +327,8 @@ namespace GeneralTool.CoreLibrary.Maths
                 for (double i = ed; i >= sd; i -= skip)
                 {
                     //此处为xy的绝对坐标
-                    double x = ox + xDistance * Math.Sin(radians * i);
-                    double y = oy + yDistance * Math.Cos(radians * i);
+                    double x = ox + (xDistance * Math.Sin(radians * i));
+                    double y = oy + (yDistance * Math.Cos(radians * i));
                     ////此处为xy的相对坐标
                     points.Add(new System.Windows.Point(x, y));
                 }
@@ -337,8 +337,8 @@ namespace GeneralTool.CoreLibrary.Maths
             {
                 for (double i = sd; i <= ed; i += skip)
                 {
-                    double x = ox + xDistance * Math.Sin(radians * i);
-                    double y = oy + yDistance * Math.Cos(radians * i);
+                    double x = ox + (xDistance * Math.Sin(radians * i));
+                    double y = oy + (yDistance * Math.Cos(radians * i));
 
                     points.Add(new System.Windows.Point(x, y));
                 }

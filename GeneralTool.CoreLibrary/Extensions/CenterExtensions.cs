@@ -9,7 +9,7 @@
         /// 获取中心点
         /// </summary>
         public static System.Windows.Point Center(double x, double y, double width, double height)
-            => new System.Windows.Point(x + width / 2, y + height / 2);
+            => new System.Windows.Point(x + (width / 2), y + (height / 2));
 
         /// <summary>
         /// 获取中心点

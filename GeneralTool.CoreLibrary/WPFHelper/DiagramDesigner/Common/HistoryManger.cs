@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media;
 
 using GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls;
@@ -16,17 +13,17 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Common
 
         public int CurrentIndex { get; set; } = -1;
 
-        private DesignerCanvas designerCanvas;
+        private readonly DesignerCanvas designerCanvas;
         public HistoryManger(DesignerCanvas canvas)
         {
-            this.designerCanvas = canvas;
+            designerCanvas = canvas;
         }
 
         public void AddHistoryModel(HistoryModel historyModel)
         {
-            var first = this.HistoryModels.FirstOrDefault(f => f.Item == historyModel.Item);
-            if (first != null) this.HistoryModels.Remove(first);
-            this.HistoryModels.Add(historyModel);
+            HistoryModel first = HistoryModels.FirstOrDefault(f => f.Item == historyModel.Item);
+            if (first != null) _ = HistoryModels.Remove(first);
+            HistoryModels.Add(historyModel);
         }
 
 
@@ -34,31 +31,31 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Common
         {
             HistoryModel current = null;
 
-            if (this.CurrentIndex == -1)
+            if (CurrentIndex == -1)
             {
-                if (this.HistoryModels.Count == 0)
+                if (HistoryModels.Count == 0)
                 {
-                    this.CurrentIndex = -1;
+                    CurrentIndex = -1;
                     return;
                 }
-                else if (this.HistoryModels.Count > 1)
+                else if (HistoryModels.Count > 1)
                 {
-                    this.CurrentIndex = this.HistoryModels.Count - 1;
-                    current = this.HistoryModels[this.CurrentIndex];
+                    CurrentIndex = HistoryModels.Count - 1;
+                    current = HistoryModels[CurrentIndex];
                 }
 
             }
-            else if (this.CurrentIndex == 0)
+            else if (CurrentIndex == 0)
             {
                 current = null;
             }
-            else if (this.CurrentIndex > 0)
+            else if (CurrentIndex > 0)
             {
-                this.CurrentIndex--;
-                current = this.HistoryModels[this.CurrentIndex];
+                CurrentIndex--;
+                current = HistoryModels[CurrentIndex];
                 if (current.Item.IsStart)
                 {
-                    this.CurrentIndex++;
+                    CurrentIndex++;
                     return;
                 }
             }
@@ -66,7 +63,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Common
             if (current == null) return;
 
 
-            this.ReLoad(current);
+            ReLoad(current);
         }
 
         private void ReLoad(HistoryModel current)
@@ -75,17 +72,17 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Common
             switch (current.HistoryType)
             {
                 case HistoryType.Add:
-                    this.designerCanvas.RemoveItem(current.Item);
+                    designerCanvas.RemoveItem(current.Item);
                     break;
                 case HistoryType.Delete:
                     //重新添加进去
-                    var p = VisualTreeHelper.GetParent(current.Item);
+                    System.Windows.DependencyObject p = VisualTreeHelper.GetParent(current.Item);
                     if (p != null)
                     {
-                        this.HistoryModels.Remove(current);
+                        _ = HistoryModels.Remove(current);
                         return;
                     }
-                    this.designerCanvas.AddItem(current.Item, false);
+                    designerCanvas.AddItem(current.Item, false);
                     break;
             }
         }
@@ -93,24 +90,24 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Common
         public void Next()
         {
             //获取当前的
-            if (this.CurrentIndex < 0) return;
+            if (CurrentIndex < 0) return;
 
-            if (this.CurrentIndex >= this.HistoryModels.Count)
+            if (CurrentIndex >= HistoryModels.Count)
             {
-                this.CurrentIndex = this.HistoryModels.Count;
+                CurrentIndex = HistoryModels.Count;
                 return;
             }
 
             //当前项
-            var current = this.HistoryModels[this.CurrentIndex];
+            HistoryModel current = HistoryModels[CurrentIndex];
 
-            this.CurrentIndex++;
-            this.ReLoad(current);
+            CurrentIndex++;
+            ReLoad(current);
         }
 
         public void Clear()
         {
-            this.HistoryModels.Clear();
+            HistoryModels.Clear();
         }
     }
 }

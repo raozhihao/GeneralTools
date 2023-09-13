@@ -1,6 +1,4 @@
-﻿using System.Windows;
-
-using SimpleDiagram.BlockVIewModels;
+﻿using SimpleDiagram.BlockVIewModels;
 using SimpleDiagram.Models;
 using SimpleDiagram.Windows;
 
@@ -12,16 +10,16 @@ namespace SimpleDiagram.Blocks
 
         public override WindowResult OpenWindow()
         {
-            if (!(this.BlockViewModel is TxtBlockViewModel t))
+            if (!(BlockViewModel is TxtBlockViewModel t))
             {
                 return WindowResult.False;
             }
-            var window = new TxtWindow(t.Txt?.Txt)
+            TxtWindow window = new TxtWindow(t.Txt?.Txt)
             {
-                Owner = this.MainWindow
+                Owner = MainWindow
             };
 
-            var re = window.ShowDialog();
+            bool? re = window.ShowDialog();
             if (re.Value)
             {
 
@@ -30,21 +28,19 @@ namespace SimpleDiagram.Blocks
                     {
                         Txt = window.ResultTxt,
                         BlockId = t.BlockId,
-                        ScriptId = this.LayoutId
+                        ScriptId = LayoutId
                     };
                 }
-                this.SetContent();
+                SetContent();
             }
-            return this.GetResult(re);
+            return GetResult(re);
         }
-
-
 
         private void SetContent()
         {
-            if (this.BlockViewModel is TxtBlockViewModel t)
+            if (BlockViewModel is TxtBlockViewModel t)
             {
-                this.SetShowText(t.Txt.Txt);
+                SetShowText(t.Txt.Txt);
             }
         }
 
@@ -55,7 +51,7 @@ namespace SimpleDiagram.Blocks
 
         public override void SetShow()
         {
-            this.SetContent();
+            SetContent();
         }
     }
 }

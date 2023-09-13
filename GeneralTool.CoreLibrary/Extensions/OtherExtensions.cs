@@ -17,7 +17,7 @@ namespace GeneralTool.CoreLibrary.Extensions
             uint i1 = ((nCurrentIp) & 0xff000000) >> 24;
             uint i2 = ((nCurrentIp) & 0x00ff0000) >> 16;
             uint i3 = ((nCurrentIp) & 0x0000ff00) >> 8;
-            uint i4 = ((nCurrentIp) & 0x000000ff);
+            uint i4 = (nCurrentIp) & 0x000000ff;
             return $"{i1}.{i2}.{i3}.{i4}".ParseToIPAddress();
         }
 

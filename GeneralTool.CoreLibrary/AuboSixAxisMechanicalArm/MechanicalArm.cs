@@ -3,12 +3,11 @@ using System.Runtime.InteropServices;
 
 namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
 {
-    partial class RobotAdepter
+    public partial class RobotAdepter
     {
         //机械臂控制上下文句柄
-        public UInt16 Rshd = 0xffff;
-
-        const string Robot_Library = "libserviceinterface.dll";
+        public ushort Rshd = 0xffff;
+        private const string Robot_Library = "libserviceinterface.dll";
 
         /// <summary>
         /// 初始化机械臂控制库
@@ -30,7 +29,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="rshd">械臂控制上下文句柄</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_create_context", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_create_context(ref UInt16 rshd);
+        public static extern int rs_create_context(ref ushort rshd);
 
         /// <summary>
         /// 注销机械臂控制上下文句柄
@@ -38,7 +37,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="rshd">械臂控制上下文句柄</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_destory_context", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_destory_context(UInt16 rshd);
+        public static extern int rs_destory_context(ushort rshd);
 
         /// <summary>
         /// 注销机械臂控制上下文句柄
@@ -48,7 +47,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="port">机械臂服务器的端口号</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_login", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_login(UInt16 rshd, [MarshalAs(UnmanagedType.LPStr)] string addr, int port);
+        public static extern int rs_login(ushort rshd, [MarshalAs(UnmanagedType.LPStr)] string addr, int port);
 
         /// <summary>
         /// 断开机械臂服务器链接
@@ -56,7 +55,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="rshd">械臂控制上下文句柄</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_logout", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_logout(UInt16 rshd);
+        public static extern int rs_logout(ushort rshd);
 
         /// <summary>
         /// 初始化全局的运动属性
@@ -64,7 +63,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="rshd">械臂控制上下文句柄</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_init_global_move_profile", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_init_global_move_profile(UInt16 rshd);
+        public static extern int rs_init_global_move_profile(ushort rshd);
 
         /// <summary>
         /// 设置六个关节轴动的最大速度（最大为180度/秒），注意如果没有特殊需求，6个关节尽量配置成一样！
@@ -73,7 +72,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="max_velc">六个关节的最大加速度，单位(rad/ss)</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_set_global_joint_maxvelc", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_set_global_joint_maxvelc(UInt16 rshd, double[] max_velc);
+        public static extern int rs_set_global_joint_maxvelc(ushort rshd, double[] max_velc);
 
         /// <summary>
         /// 获取六个关节轴动的最大速度
@@ -82,7 +81,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="max_velc">返回六个关节的最大加度单位(rad/s)(rad/s)</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_get_global_joint_maxvelc", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_get_global_joint_maxvelc(UInt16 rshd, ref MetaData.JointVelcAccParam max_velc);
+        public static extern int rs_get_global_joint_maxvelc(ushort rshd, ref MetaData.JointVelcAccParam max_velc);
 
         /// <summary>
         /// 设置六个关节轴动的最大加速度 （十倍的最大速度），注意如果没有特殊需求，6个关节尽量配置成一样！
@@ -91,7 +90,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="max_acc">六个关节的最大加速度，单位(rad/ss)</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_set_global_joint_maxacc", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_set_global_joint_maxacc(UInt16 rshd, double[] max_acc);
+        public static extern int rs_set_global_joint_maxacc(ushort rshd, double[] max_acc);
 
         /// <summary>
         /// 获取六个关节轴动的最大加速度
@@ -100,7 +99,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="max_acc">返回六个关节的最大加速度单位(rad/s^2)</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_get_global_joint_maxacc", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_get_global_joint_maxacc(UInt16 rshd, ref MetaData.JointVelcAccParam max_acc);
+        public static extern int rs_get_global_joint_maxacc(ushort rshd, ref MetaData.JointVelcAccParam max_acc);
 
         /// <summary>
         /// 设置机械臂末端最大线加速度
@@ -109,7 +108,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="max_acc">末端最大加线速度，单位(m/s^2)</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_set_global_end_max_line_acc", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_set_global_end_max_line_acc(UInt16 rshd, double max_acc);
+        public static extern int rs_set_global_end_max_line_acc(ushort rshd, double max_acc);
 
         /// <summary>
         /// 设置机械臂末端最大线速度
@@ -118,7 +117,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="max_velc">末端最大线速度，单位(m/s)</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_set_global_end_max_line_velc", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_set_global_end_max_line_velc(UInt16 rshd, double max_velc);
+        public static extern int rs_set_global_end_max_line_velc(ushort rshd, double max_velc);
 
         /// <summary>
         /// 获取机械臂末端最大线加速度
@@ -127,7 +126,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="max_acc">机械臂末端最大线加速度，单位(m/s^2)</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_get_global_end_max_line_acc", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_get_global_end_max_line_acc(UInt16 rshd, ref double max_acc);
+        public static extern int rs_get_global_end_max_line_acc(ushort rshd, ref double max_acc);
 
         /// <summary>
         /// 获取机械臂末端最大线速度
@@ -136,7 +135,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="max_velc">机械臂末端最大线速度，单位(m/s)</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_get_global_end_max_line_velc", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_get_global_end_max_line_velc(UInt16 rshd, ref double max_velc);
+        public static extern int rs_get_global_end_max_line_velc(ushort rshd, ref double max_velc);
 
         /// <summary>
         /// 设置机械臂末端最大角加速度
@@ -145,7 +144,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="max_acc">末端最大角加速度，单位(rad/s^2)</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_set_global_end_max_angle_acc", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_set_global_end_max_angle_acc(UInt16 rshd, double max_acc);
+        public static extern int rs_set_global_end_max_angle_acc(ushort rshd, double max_acc);
 
         /// <summary>
         /// 设置机械臂末端最大角速度
@@ -154,7 +153,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="max_velc">末端最大速度，单位(rad/s)</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_set_global_end_max_angle_velc", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_set_global_end_max_angle_velc(UInt16 rshd, double max_velc);
+        public static extern int rs_set_global_end_max_angle_velc(ushort rshd, double max_velc);
 
         /// <summary>
         /// 获取机械臂末端最大角加速度
@@ -163,7 +162,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="max_acc">机械臂末端最大角加速度，单位(m/s^2)</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_get_global_end_max_angle_acc", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_get_global_end_max_angle_acc(UInt16 rshd, ref double max_acc);
+        public static extern int rs_get_global_end_max_angle_acc(ushort rshd, ref double max_acc);
 
         /// <summary>
         /// 获取机械臂末端最大角加速度
@@ -172,7 +171,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="max_velc">机械臂末端最大角速度，单位(m/s)</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_get_global_end_max_angle_velc", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_get_global_end_max_angle_velc(UInt16 rshd, ref double max_velc);
+        public static extern int rs_get_global_end_max_angle_velc(ushort rshd, ref double max_velc);
 
         /// <summary>
         /// 设置用户坐标系
@@ -181,7 +180,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="user_coord">用户坐标系</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_set_user_coord", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_set_user_coord(UInt16 rshd, ref MetaData.CoordCalibrate user_coord);
+        public static extern int rs_set_user_coord(ushort rshd, ref MetaData.CoordCalibrate user_coord);
 
         /// <summary>
         /// 设置基座坐标系
@@ -189,7 +188,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="rshd">械臂控制上下文句柄</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_set_base_coord", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_set_base_coord(UInt16 rshd);
+        public static extern int rs_set_base_coord(ushort rshd);
 
         /// <summary>
         /// 机械臂轴动
@@ -200,7 +199,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// isblock==false 代表非阻塞，立即返回，运动指令发送成功就返回，函数返回后机械臂开始运动。</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_move_joint", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_move_joint(UInt16 rshd, double[] joint_radia, bool isblock);
+        public static extern int rs_move_joint(ushort rshd, double[] joint_radia, bool isblock);
 
         /// <summary>
         /// 机械臂直线运动
@@ -211,7 +210,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         ///             isblock==false 代表非阻塞，立即返回，运动指令发送成功就返回，函数返回后机械臂开始运动。</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_move_line", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_move_line(UInt16 rshd, double[] joint_radia, bool isblock);
+        public static extern int rs_move_line(ushort rshd, double[] joint_radia, bool isblock);
 
         /// <summary>
         /// 保持当前位置变换姿态做旋转运动
@@ -224,7 +223,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         ///             isblock==false 代表非阻塞，立即返回，运动指令发送成功就返回，函数返回后机械臂开始运动。</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_move_rotate", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_move_rotate(UInt16 rshd, ref MetaData.CoordCalibrate user_coord, ref MetaData.MoveRotateAxis rotate_axis, double rotate_angle, bool isblock);
+        public static extern int rs_move_rotate(ushort rshd, ref MetaData.CoordCalibrate user_coord, ref MetaData.MoveRotateAxis rotate_axis, double rotate_angle, bool isblock);
 
         /// <summary>
         /// 清除所有已经设置的全局路点
@@ -232,7 +231,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="rshd">械臂控制上下文句柄</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_remove_all_waypoint", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_remove_all_waypoint(UInt16 rshd);
+        public static extern int rs_remove_all_waypoint(ushort rshd);
 
         /// <summary>
         /// 添加全局路点用于轨迹运动
@@ -241,7 +240,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="joint_radia">六个关节的关节角，单位(rad)</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_add_waypoint", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_add_waypoint(UInt16 rshd, double[] joint_radia);
+        public static extern int rs_add_waypoint(ushort rshd, double[] joint_radia);
 
         /// <summary>
         /// 设置交融半径
@@ -250,7 +249,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="radius">交融半径，单位(m)</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_set_blend_radius", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_set_blend_radius(UInt16 rshd, double radius);
+        public static extern int rs_set_blend_radius(ushort rshd, double radius);
 
         /// <summary>
         /// 设置圆运动圈数
@@ -259,7 +258,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="times">当times大于0时，机械臂进行圆运动times次,当times等于0时，机械臂进行圆弧轨迹运动</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_set_circular_loop_times", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_set_circular_loop_times(UInt16 rshd, int times);
+        public static extern int rs_set_circular_loop_times(ushort rshd, int times);
 
         /// <summary>
         /// 检查用户坐标系参数设置是否合理
@@ -268,7 +267,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="user_coord">用户坐标系</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_check_user_coord", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_check_user_coord(UInt16 rshd, ref MetaData.CoordCalibrate user_coord);
+        public static extern int rs_check_user_coord(ushort rshd, ref MetaData.CoordCalibrate user_coord);
 
         /// <summary>
         /// 设置基于基座标系运动偏移量
@@ -277,7 +276,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="relative">相对位移(x, y, z) 单位(m)</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_set_relative_offset_on_base", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_set_relative_offset_on_base(UInt16 rshd, ref MetaData.MoveRelative relative);
+        public static extern int rs_set_relative_offset_on_base(ushort rshd, ref MetaData.MoveRelative relative);
 
         /// <summary>
         /// 设置基于用户标系运动偏移量
@@ -287,7 +286,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="user_coord">用户坐标系</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_set_relative_offset_on_user", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_set_relative_offset_on_user(UInt16 rshd, ref MetaData.MoveRelative relative, ref MetaData.CoordCalibrate user_coord);
+        public static extern int rs_set_relative_offset_on_user(ushort rshd, ref MetaData.MoveRelative relative, ref MetaData.CoordCalibrate user_coord);
 
         /// <summary>
         /// 取消提前到位设置
@@ -295,7 +294,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="rshd">械臂控制上下文句柄</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_set_no_arrival_ahead", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_set_no_arrival_ahead(UInt16 rshd);
+        public static extern int rs_set_no_arrival_ahead(ushort rshd);
 
         /// <summary>
         /// 设置距离模式下的提前到位距离
@@ -304,14 +303,14 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="distance">提前到位距离 单位（米）</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_set_arrival_ahead_distance", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_set_arrival_ahead_distance(UInt16 rshd, double distance);
+        public static extern int rs_set_arrival_ahead_distance(ushort rshd, double distance);
 
         /// <summary>
         ///  设置时间模式下的提前到位时间
         /// </summary>
 
         [DllImport(Robot_Library, EntryPoint = "rs_set_arrival_ahead_time", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_set_arrival_ahead_time(UInt16 rshd, double sec);
+        public static extern int rs_set_arrival_ahead_time(ushort rshd, double sec);
 
         /// <summary>
         /// 轨迹运动
@@ -321,7 +320,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="isblock">isblock==true  代表阻塞，机械臂运动直到到达目标位置或者出现故障后返回。isblock==false 代表非阻塞，立即返回，运动指令发送成功就返回，函数返回后机械臂开始运动。</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_move_track", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_move_track(UInt16 rshd, int sub_move_mode, bool isblock);
+        public static extern int rs_move_track(ushort rshd, int sub_move_mode, bool isblock);
 
         /// <summary>
         /// 保持当前位姿通过直线运动的方式运动到目标位置
@@ -332,7 +331,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="isblock">isblock==true  代表阻塞，机械臂运动直到到达目标位置或者出现故障后返回。isblock==false 代表非阻塞，立即返回，运动指令发送成功就返回，函数返回后机械臂开始运动。</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_move_line_to", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_move_line_to(UInt16 rshd, ref MetaData.Pos target, ref MetaData.ToolInEndDesc tool, bool isblock);
+        public static extern int rs_move_line_to(ushort rshd, ref MetaData.Pos target, ref MetaData.ToolInEndDesc tool, bool isblock);
 
         /// <summary>
         /// 保持当前位姿通过关节运动的方式运动到目标位置
@@ -343,7 +342,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="isblock">isblock==true  代表阻塞，机械臂运动直到到达目标位置或者出现故障后返回。isblock==false 代表非阻塞，立即返回，运动指令发送成功就返回，函数返回后机械臂开始运动。</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_move_joint_to", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_move_joint_to(UInt16 rshd, ref MetaData.Pos target, ref MetaData.ToolInEndDesc tool, bool isblock);
+        public static extern int rs_move_joint_to(ushort rshd, ref MetaData.Pos target, ref MetaData.ToolInEndDesc tool, bool isblock);
 
         /// <summary>
         /// 设置示教坐标系
@@ -352,7 +351,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="user_coord">示教坐标系</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_set_teach_coord", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_set_teach_coord(UInt16 rshd, ref MetaData.CoordCalibrate user_coord);
+        public static extern int rs_set_teach_coord(ushort rshd, ref MetaData.CoordCalibrate user_coord);
 
         /// <summary>
         /// 开始轴动示教 mode 示教关节:JOINT1~6,   位置示教:MOV_X,MOV_Y,MOV_Z   姿态示教:ROT_X,ROT_Y,ROT_Z  dir 运动方向 正方向true 反方向false
@@ -362,7 +361,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="dir">运动方向   正方向true  反方向false</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_teach_move_start", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_teach_move_start(UInt16 rshd, MetaData.TeachMode teach_mode, bool dir);
+        public static extern int rs_teach_move_start(ushort rshd, MetaData.TeachMode teach_mode, bool dir);
 
         /// <summary>
         /// 结束示教
@@ -370,7 +369,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="rshd">械臂控制上下文句柄</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_teach_move_stop", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_teach_move_stop(UInt16 rshd);
+        public static extern int rs_teach_move_stop(ushort rshd);
 
         /// <summary>
         /// 获取机械臂当前位置信息
@@ -379,7 +378,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="waypoint">关节位置信息</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_get_current_waypoint", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_get_current_waypoint(UInt16 rshd, ref MetaData.WayPoint_S waypoint);
+        public static extern int rs_get_current_waypoint(ushort rshd, ref MetaData.WayPoint_S waypoint);
 
         /// <summary>
         /// 获取机械臂诊断信息
@@ -388,7 +387,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="info">机械臂诊断信息</param>
         /// <returns>成功 其他失败</returns>
         [DllImport(Robot_Library, EntryPoint = "rs_get_diagnosis_info", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_get_diagnosis_info(UInt16 rshd, ref MetaData.RobotDiagnosis info);
+        public static extern int rs_get_diagnosis_info(ushort rshd, ref MetaData.RobotDiagnosis info);
 
         /// <summary>
         /// 正解,此函数为正解函数，已知关节角求对应位置的位置和姿态。
@@ -398,7 +397,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="waypoint">六个关节角,位置,姿态</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_forward_kin", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_forward_kin(UInt16 rshd, double[] joint_radia, ref MetaData.WayPoint_S waypoint);
+        public static extern int rs_forward_kin(ushort rshd, double[] joint_radia, ref MetaData.WayPoint_S waypoint);
 
         /// <summary>
         /// 逆解 此函数为机械臂逆解函数，根据位置信息(x,y,z)和对应位置的参考姿态(w,x,y,z)得到对应位置的关节角信息。
@@ -410,7 +409,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="waypoint">目标路点信息</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_inverse_kin", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_inverse_kin(UInt16 rshd, double[] joint_radia, ref MetaData.Pos pos, ref MetaData.Ori ori, ref MetaData.WayPoint_S waypoint);
+        public static extern int rs_inverse_kin(ushort rshd, double[] joint_radia, ref MetaData.Pos pos, ref MetaData.Ori ori, ref MetaData.WayPoint_S waypoint);
 
         /// <summary>
         /// 欧拉角转四元素
@@ -420,7 +419,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="ori">姿态的四元素表示方法</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_rpy_to_quaternion", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_rpy_to_quaternion(UInt16 rshd, ref MetaData.Rpy rpy, ref MetaData.Ori ori);
+        public static extern int rs_rpy_to_quaternion(ushort rshd, ref MetaData.Rpy rpy, ref MetaData.Ori ori);
 
         /// <summary>
         /// 四元素转欧拉角
@@ -430,7 +429,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="rpy">姿态的欧拉角表示方法</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_quaternion_to_rpy", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_quaternion_to_rpy(UInt16 rshd, ref MetaData.Ori ori, ref MetaData.Rpy rpy);
+        public static extern int rs_quaternion_to_rpy(ushort rshd, ref MetaData.Ori ori, ref MetaData.Rpy rpy);
 
         /// <summary>
         /// 基座坐标系转用户坐标系
@@ -448,7 +447,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="ori_onuser">基于用户座标系的工具末端姿态信息,输出参数</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_base_to_user", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_base_to_user(UInt16 rshd, ref MetaData.Pos pos_onbase, ref MetaData.Ori ori_onbase, ref MetaData.CoordCalibrate user_coord, ref MetaData.ToolInEndDesc tool_pos, ref MetaData.Pos pos_onuser, ref MetaData.Ori ori_onuser);
+        public static extern int rs_base_to_user(ushort rshd, ref MetaData.Pos pos_onbase, ref MetaData.Ori ori_onbase, ref MetaData.CoordCalibrate user_coord, ref MetaData.ToolInEndDesc tool_pos, ref MetaData.Pos pos_onuser, ref MetaData.Ori ori_onuser);
 
         /// <summary>
         /// 用户坐标系转基座坐标系
@@ -462,7 +461,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="ori_onbase">基于基座标系的姿态信息</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_user_to_base", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_user_to_base(UInt16 rshd, ref MetaData.Pos pos_onuser, ref MetaData.Ori ori_onuser, ref MetaData.CoordCalibrate user_coord, ref MetaData.ToolInEndDesc tool_pos, ref MetaData.Pos pos_onbase, ref MetaData.Ori ori_onbase);
+        public static extern int rs_user_to_base(ushort rshd, ref MetaData.Pos pos_onuser, ref MetaData.Ori ori_onuser, ref MetaData.CoordCalibrate user_coord, ref MetaData.ToolInEndDesc tool_pos, ref MetaData.Pos pos_onbase, ref MetaData.Ori ori_onbase);
 
         /// <summary>
         /// 基坐标系转基座标得到工具末端点的位置和姿态
@@ -475,7 +474,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="tool_end_ori_onbase">基于基座标系的工具末端姿态信息</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_base_to_base_additional_tool", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_base_to_base_additional_tool(UInt16 rshd, ref MetaData.Pos flange_center_pos_onbase, ref MetaData.Ori flange_center_ori_onbase, ref MetaData.ToolInEndDesc tool_pos, ref MetaData.Pos tool_end_pos_onbase, ref MetaData.Ori tool_end_ori_onbase);
+        public static extern int rs_base_to_base_additional_tool(ushort rshd, ref MetaData.Pos flange_center_pos_onbase, ref MetaData.Ori flange_center_ori_onbase, ref MetaData.ToolInEndDesc tool_pos, ref MetaData.Pos tool_end_pos_onbase, ref MetaData.Ori tool_end_ori_onbase);
 
         /// <summary>
         /// 设置工具的运动学参数
@@ -484,7 +483,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="tool">工具的运动学参数</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_set_tool_end_param", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_set_tool_end_param(UInt16 rshd, ref MetaData.ToolInEndDesc tool);
+        public static extern int rs_set_tool_end_param(ushort rshd, ref MetaData.ToolInEndDesc tool);
 
         /// <summary>
         /// 设置无工具的动力学参数
@@ -492,7 +491,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="rshd">械臂控制上下文句柄</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_set_none_tool_dynamics_param", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_set_none_tool_dynamics_param(UInt16 rshd);
+        public static extern int rs_set_none_tool_dynamics_param(ushort rshd);
 
         /// <summary>
         /// 根据接口板IO类型和地址设置IO状态
@@ -503,7 +502,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="val">IO状态</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_set_board_io_status_by_addr", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_set_board_io_status_by_addr(UInt16 rshd, MetaData.RobotIoType io_type, int addr, double val);
+        public static extern int rs_set_board_io_status_by_addr(ushort rshd, MetaData.RobotIoType io_type, int addr, double val);
 
         /// <summary>
         /// 根据接口板IO类型和地址获取IO状态
@@ -514,7 +513,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="val"></param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_get_board_io_status_by_addr", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_get_board_io_status_by_addr(UInt16 rshd, MetaData.RobotIoType io_type, int addr, ref double val);
+        public static extern int rs_get_board_io_status_by_addr(ushort rshd, MetaData.RobotIoType io_type, int addr, ref double val);
 
         /// <summary>
         /// 设置工具端IO状态
@@ -524,7 +523,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="status">工具端IO状态</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_set_tool_do_status", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_set_tool_do_status(UInt16 rshd, string name, MetaData.IO_STATUS status);
+        public static extern int rs_set_tool_do_status(ushort rshd, string name, MetaData.IO_STATUS status);
 
         /// <summary>
         /// 获取工具端IO状态
@@ -534,7 +533,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="val">工具端IO状态</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_get_tool_io_status", CharSet = CharSet.Ansi, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_get_tool_io_status(UInt16 rshd, string name, ref double val);
+        public static extern int rs_get_tool_io_status(ushort rshd, string name, ref double val);
 
         /// <summary>
         /// 设置工具端电源电压类型
@@ -543,7 +542,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="type">ower_type:电源类型 0:.OUT_0V 1:.OUT_12V 2:.OUT_24V</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_set_tool_power_type", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_set_tool_power_type(UInt16 rshd, MetaData.ToolPowerType type);
+        public static extern int rs_set_tool_power_type(ushort rshd, MetaData.ToolPowerType type);
 
         /// <summary>
         /// 获取工具端电源电压类型
@@ -552,7 +551,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="type">电源类型</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_get_tool_power_type", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_get_tool_power_type(UInt16 rshd, ref MetaData.ToolPowerType type);
+        public static extern int rs_get_tool_power_type(ushort rshd, ref MetaData.ToolPowerType type);
 
         /// <summary>
         /// 设置工具端数字量IO的类型
@@ -562,7 +561,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="type">类型  0:输入 1:输出</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_set_tool_io_type", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_set_tool_io_type(UInt16 rshd, MetaData.ToolDigitalIOAddr addr, MetaData.ToolPowerType type);
+        public static extern int rs_set_tool_io_type(ushort rshd, MetaData.ToolDigitalIOAddr addr, MetaData.ToolPowerType type);
 
         /// <summary>
         /// 设置工具的动力学参数
@@ -571,7 +570,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="tool">工具的动力学参数</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_set_tool_dynamics_param", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_set_tool_dynamics_param(UInt16 rshd, ref MetaData.ToolDynamicsParam tool);
+        public static extern int rs_set_tool_dynamics_param(ushort rshd, ref MetaData.ToolDynamicsParam tool);
 
         /// <summary>
         /// 获取工具的动力学参数
@@ -580,7 +579,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="tool">工具的动力学参数</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_get_tool_dynamics_param", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_get_tool_dynamics_param(UInt16 rshd, ref MetaData.ToolDynamicsParam tool);
+        public static extern int rs_get_tool_dynamics_param(ushort rshd, ref MetaData.ToolDynamicsParam tool);
 
         /// <summary>
         /// 设置无工具运动学参数
@@ -588,7 +587,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="rshd">械臂控制上下文句柄</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_set_none_tool_kinematics_param", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_set_none_tool_kinematics_param(UInt16 rshd);
+        public static extern int rs_set_none_tool_kinematics_param(ushort rshd);
 
         /// <summary>
         /// 设置工具的运动学参数
@@ -597,7 +596,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="tool">工具的动力学参数</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_set_tool_kinematics_param", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_set_tool_kinematics_param(UInt16 rshd, ref MetaData.ToolInEndDesc tool);
+        public static extern int rs_set_tool_kinematics_param(ushort rshd, ref MetaData.ToolInEndDesc tool);
 
         /// <summary>
         /// 获取工具的运动学参数
@@ -606,7 +605,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="tool">工具的动力学参数</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_get_tool_kinematics_param", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_get_tool_kinematics_param(UInt16 rshd, ref MetaData.ToolInEndDesc tool);
+        public static extern int rs_get_tool_kinematics_param(ushort rshd, ref MetaData.ToolInEndDesc tool);
 
         /// <summary>
         /// 启动机械臂
@@ -620,7 +619,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="state">机械臂启动状态</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_robot_startup", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_robot_startup(UInt16 rshd, ref MetaData.ToolDynamicsParam tool, byte colli_class, bool read_pos, bool static_colli_detect, int board_maxacc, ref MetaData.ROBOT_SERVICE_STATE state);
+        public static extern int rs_robot_startup(ushort rshd, ref MetaData.ToolDynamicsParam tool, byte colli_class, bool read_pos, bool static_colli_detect, int board_maxacc, ref MetaData.ROBOT_SERVICE_STATE state);
 
         /// <summary>
         /// 关闭机械臂
@@ -628,7 +627,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="rshd">械臂控制上下文句柄</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_robot_shutdown", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_robot_shutdown(UInt16 rshd);
+        public static extern int rs_robot_shutdown(ushort rshd);
 
         /// <summary>
         /// 停止机械臂运动
@@ -636,7 +635,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="rshd">械臂控制上下文句柄</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_move_stop", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_move_stop(UInt16 rshd);
+        public static extern int rs_move_stop(ushort rshd);
 
         /// <summary>
         /// 停止机械臂运动
@@ -644,7 +643,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="rshd">械臂控制上下文句柄</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_move_fast_stop", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_move_fast_stop(UInt16 rshd);
+        public static extern int rs_move_fast_stop(ushort rshd);
 
         /// <summary>
         /// 暂停机械臂运动
@@ -652,7 +651,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="rshd">械臂控制上下文句柄</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_move_pause", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_move_pause(UInt16 rshd);
+        public static extern int rs_move_pause(ushort rshd);
 
         /// <summary>
         /// 暂停后回复机械臂运动
@@ -660,7 +659,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="rshd">械臂控制上下文句柄</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_move_continue", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_move_continue(UInt16 rshd);
+        public static extern int rs_move_continue(ushort rshd);
 
         /// <summary>
         /// 机械臂碰撞后恢复
@@ -668,7 +667,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="rshd">械臂控制上下文句柄</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_collision_recover", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_collision_recover(UInt16 rshd);
+        public static extern int rs_collision_recover(ushort rshd);
 
         /// <summary>
         /// 获取机械臂当前状态
@@ -677,7 +676,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="state">机械臂当前状态</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_get_robot_state", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_get_robot_state(UInt16 rshd, ref MetaData.RobotState state);
+        public static extern int rs_get_robot_state(ushort rshd, ref MetaData.RobotState state);
 
         /// <summary>
         /// 设置机械臂服务器工作模式
@@ -686,7 +685,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="state">机械臂服务器工作模式</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_set_work_mode", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_set_work_mode(UInt16 rshd, MetaData.RobotWorkMode state);
+        public static extern int rs_set_work_mode(ushort rshd, MetaData.RobotWorkMode state);
 
         /// <summary>
         /// 获取机械臂服务器当前工作模式
@@ -695,7 +694,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="state">机械臂服务器工作模式</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_get_work_mode", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_get_work_mode(UInt16 rshd, ref MetaData.RobotWorkMode state);
+        public static extern int rs_get_work_mode(ushort rshd, ref MetaData.RobotWorkMode state);
 
         /// <summary>
         /// 设置机械臂碰撞等级
@@ -704,7 +703,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="grade">碰撞等级 范围（0～10）</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_set_collision_class", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_set_collision_class(UInt16 rshd, int grade);
+        public static extern int rs_set_collision_class(ushort rshd, int grade);
 
         /// <summary>
         /// 获取socket链接状态
@@ -713,7 +712,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="connected">connected true：已连接 false：未连接</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_get_socket_status", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_get_socket_status(UInt16 rshd, ref byte connected);
+        public static extern int rs_get_socket_status(ushort rshd, ref byte connected);
 
         /// <summary>
         /// 设置是否允许实时路点信息推送
@@ -722,7 +721,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="enable">true表示允许 false表示不允许</param>
         /// <returns></returns>
         [DllImport(Robot_Library, EntryPoint = "rs_enable_push_realtime_roadpoint", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_enable_push_realtime_roadpoint(UInt16 rshd, bool enable);
+        public static extern int rs_enable_push_realtime_roadpoint(ushort rshd, bool enable);
 
         /// <summary>
         /// 实时路点回调函数
@@ -749,7 +748,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <returns></returns>
 
         [DllImport(Robot_Library, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_enable_push_realtime_joint_status(UInt16 rshd, bool enable);
+        public static extern int rs_enable_push_realtime_joint_status(ushort rshd, bool enable);
 
 
         /// <summary>
@@ -760,7 +759,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="arg"></param>
         /// <returns></returns>
         [DllImport(Robot_Library, CallingConvention = CallingConvention.Cdecl)]
-        public static extern int rs_setcallback_realtime_joint_status(UInt16 rshd, [MarshalAs(UnmanagedType.FunctionPtr)] REALTIME_JOINT_STATUS_CALLBACK realTimeJointStatusCallback, IntPtr arg);
+        public static extern int rs_setcallback_realtime_joint_status(ushort rshd, [MarshalAs(UnmanagedType.FunctionPtr)] REALTIME_JOINT_STATUS_CALLBACK realTimeJointStatusCallback, IntPtr arg);
 
         /// <summary>
         /// 注册用于获取实时路点的回调函数
@@ -769,7 +768,7 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="CurrentPositionCallback">获取实时路点信息的函数委托</param>
         /// <param name="arg">这个参数系统不做任何处理，只是进行了缓存，当回调函数触发时该参数会通过回调函数的参数传回</param>
         [DllImport(Robot_Library, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void rs_setcallback_realtime_roadpoint(UInt16 rshd, [MarshalAs(UnmanagedType.FunctionPtr)] REALTIME_ROADPOINT_CALLBACK CurrentPositionCallback, IntPtr arg);
+        public static extern void rs_setcallback_realtime_roadpoint(ushort rshd, [MarshalAs(UnmanagedType.FunctionPtr)] REALTIME_ROADPOINT_CALLBACK CurrentPositionCallback, IntPtr arg);
 
         /// <summary>
         /// 机械臂事件
@@ -786,6 +785,6 @@ namespace GeneralTool.CoreLibrary.AuboSixAxisMechanicalArm
         /// <param name="RobotEventCallback">获取机械臂事件信息的函数</param>
         /// <param name="arg">个参数系统不做任何处理，只是进行了缓存，当回调函数触发时该参数会通过回调函数的参数传回</param>
         [DllImport(Robot_Library, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void rs_setcallback_robot_event(UInt16 rshd, [MarshalAs(UnmanagedType.FunctionPtr)] ROBOT_EVENT_CALLBACK RobotEventCallback, IntPtr arg);
+        public static extern void rs_setcallback_robot_event(ushort rshd, [MarshalAs(UnmanagedType.FunctionPtr)] ROBOT_EVENT_CALLBACK RobotEventCallback, IntPtr arg);
     }
 }

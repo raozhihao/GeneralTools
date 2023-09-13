@@ -23,30 +23,30 @@ namespace GeneralTool.CoreLibrary.Adb
         /// </summary>
         public AdbProcessOperation()
         {
-            this.process.ErrorHandler += Process_ErrorHandler;
-            this.process.ReceivedHandler += Process_ReceivedHandler;
-            this.process.Exited += Process_Exited;
+            process.ErrorHandler += Process_ErrorHandler;
+            process.ReceivedHandler += Process_ReceivedHandler;
+            process.Exited += Process_Exited;
         }
 
         private void Process_Exited(object sender, EventArgs e)
         {
-            this.isExited = true;
+            isExited = true;
         }
 
         private void Process_ReceivedHandler(object sender, string e)
         {
-            if (this.addDate)
-                e = $"[{DateTime.Now.ToString(this.dateFoamrt)}]  " + e;
-            this.outPutMsg.AppendLine(e);
+            if (addDate)
+                e = $"[{DateTime.Now.ToString(dateFoamrt)}]  " + e;
+            _ = outPutMsg.AppendLine(e);
         }
 
         private void Process_ErrorHandler(object sender, string e)
         {
             if (!string.IsNullOrEmpty(e))
             {
-                if (this.addDate)
-                    e = $"[{DateTime.Now.ToString(this.dateFoamrt)}]  " + e;
-                this.outPutMsg.AppendLine(e);
+                if (addDate)
+                    e = $"[{DateTime.Now.ToString(dateFoamrt)}]  " + e;
+                _ = outPutMsg.AppendLine(e);
             }
 
         }
@@ -57,8 +57,8 @@ namespace GeneralTool.CoreLibrary.Adb
         /// <returns></returns>
         public string GetEndResult()
         {
-            this.Dispose();
-            return this.WaitResult();
+            Dispose();
+            return WaitResult();
         }
 
         /// <summary>
@@ -73,10 +73,10 @@ namespace GeneralTool.CoreLibrary.Adb
             this.token = token;
             if (string.IsNullOrWhiteSpace(this.adbPath))
                 this.adbPath = "adb";
-            if (!isExited) this.Dispose();
-            this.isExited = false;
-            this.dateFoamrt = dateFomart;
-            this.addDate = !string.IsNullOrWhiteSpace(this.dateFoamrt);
+            if (!isExited) Dispose();
+            isExited = false;
+            dateFoamrt = dateFomart;
+            addDate = !string.IsNullOrWhiteSpace(dateFoamrt);
 
             if (adbCommand.StartsWith("adb "))
             {
@@ -88,8 +88,8 @@ namespace GeneralTool.CoreLibrary.Adb
                 throw new Exception("非正确的命令");
             }
 
-            this.outPutMsg.Clear();
-            this.process.Run(this.adbPath, null, adbCommand);
+            _ = outPutMsg.Clear();
+            process.Run(this.adbPath, null, adbCommand);
         }
 
         /// <summary>
@@ -98,9 +98,9 @@ namespace GeneralTool.CoreLibrary.Adb
         /// <returns></returns>
         public string WaitResult()
         {
-            while (!this.isExited)
+            while (!isExited)
             {
-                if (this.token.IsCancellationRequested)
+                if (token.IsCancellationRequested)
                     break;
                 Thread.Sleep(1);
             }
@@ -112,16 +112,16 @@ namespace GeneralTool.CoreLibrary.Adb
         /// </summary>
         public void Dispose()
         {
-            if (this.isExited) return;
+            if (isExited) return;
             try
             {
-                this.process.Close();
+                process.Close();
             }
             catch (Exception)
             {
 
             }
-            this.isExited = true;
+            isExited = true;
         }
 
     }

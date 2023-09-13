@@ -1,13 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls.Primitives;
-using System.Windows.Controls;
-using System.Windows.Media;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media;
+
 using GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls;
 
 namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
@@ -18,13 +15,13 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
         private Vector startVector;
         private double initialAngle;
         private Canvas designerCanvas;
-        private ContentControl designerItem;
+        private readonly ContentControl designerItem;
         private RotateTransform rotateTransform;
 
         public RotateThumb()
         {
-            DragDelta += new DragDeltaEventHandler(this.RotateThumb_DragDelta);
-            DragStarted += new DragStartedEventHandler(this.RotateThumb_DragStarted);
+            DragDelta += new DragDeltaEventHandler(RotateThumb_DragDelta);
+            DragStarted += new DragStartedEventHandler(RotateThumb_DragStarted);
         }
 
         private void RotateThumb_DragStarted(object sender, DragStartedEventArgs e)
@@ -36,29 +33,29 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
                 return;
             }
 
-            if (this.designerItem != null)
+            if (designerItem != null)
             {
-                this.designerCanvas = VisualTreeHelper.GetParent(this.designerItem) as Canvas;
+                designerCanvas = VisualTreeHelper.GetParent(designerItem) as Canvas;
 
-                if (this.designerCanvas != null)
+                if (designerCanvas != null)
                 {
-                    this.centerPoint = this.designerItem.TranslatePoint(
-                        new Point(this.designerItem.Width * this.designerItem.RenderTransformOrigin.X,
-                                  this.designerItem.Height * this.designerItem.RenderTransformOrigin.Y),
-                                  this.designerCanvas);
+                    centerPoint = designerItem.TranslatePoint(
+                        new Point(designerItem.Width * designerItem.RenderTransformOrigin.X,
+                                  designerItem.Height * designerItem.RenderTransformOrigin.Y),
+                                  designerCanvas);
 
-                    Point startPoint = Mouse.GetPosition(this.designerCanvas);
-                    this.startVector = Point.Subtract(startPoint, this.centerPoint);
+                    Point startPoint = Mouse.GetPosition(designerCanvas);
+                    startVector = Point.Subtract(startPoint, centerPoint);
 
-                    this.rotateTransform = this.designerItem.RenderTransform as RotateTransform;
-                    if (this.rotateTransform == null)
+                    rotateTransform = designerItem.RenderTransform as RotateTransform;
+                    if (rotateTransform == null)
                     {
-                        this.designerItem.RenderTransform = new RotateTransform(0);
-                        this.initialAngle = 0;
+                        designerItem.RenderTransform = new RotateTransform(0);
+                        initialAngle = 0;
                     }
                     else
                     {
-                        this.initialAngle = this.rotateTransform.Angle;
+                        initialAngle = rotateTransform.Angle;
                     }
                 }
             }
@@ -66,16 +63,16 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
 
         private void RotateThumb_DragDelta(object sender, DragDeltaEventArgs e)
         {
-            if (this.designerItem != null && this.designerCanvas != null)
+            if (designerItem != null && designerCanvas != null)
             {
-                Point currentPoint = Mouse.GetPosition(this.designerCanvas);
-                Vector deltaVector = Point.Subtract(currentPoint, this.centerPoint);
+                Point currentPoint = Mouse.GetPosition(designerCanvas);
+                Vector deltaVector = Point.Subtract(currentPoint, centerPoint);
 
-                double angle = Vector.AngleBetween(this.startVector, deltaVector);
+                double angle = Vector.AngleBetween(startVector, deltaVector);
 
-                RotateTransform rotateTransform = this.designerItem.RenderTransform as RotateTransform;
-                rotateTransform.Angle = this.initialAngle + Math.Round(angle, 0);
-                this.designerItem.InvalidateMeasure();
+                RotateTransform rotateTransform = designerItem.RenderTransform as RotateTransform;
+                rotateTransform.Angle = initialAngle + Math.Round(angle, 0);
+                designerItem.InvalidateMeasure();
             }
         }
     }

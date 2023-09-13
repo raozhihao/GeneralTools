@@ -15,56 +15,56 @@ namespace SimpleDiagram.Blocks
         public override void OnCreateInCanvas()
         {
             base.OnCreateInCanvas();
-            this.ConnectorThumbs[Direction.Left].Visibility =
+            ConnectorThumbs[Direction.Left].Visibility =
                System.Windows.Visibility.Collapsed;
 
-            this.SetCanConnectSinkDirections(new System.Collections.Generic.Dictionary<Direction, Direction[]>()
+            SetCanConnectSinkDirections(new System.Collections.Generic.Dictionary<Direction, Direction[]>()
             {
                 { Direction.Bottom,new Direction[] {Direction.Top}},
                 { Direction.Right,new Direction[] {Direction.Top}},
 
             });
 
-            this.ConnectorThumbs[Direction.Bottom].ConnectorType = ConnectorType.OnlySource;
-            this.ConnectorThumbs[Direction.Top].ConnectorType = ConnectorType.OnlySink;
+            ConnectorThumbs[Direction.Bottom].ConnectorType = ConnectorType.OnlySource;
+            ConnectorThumbs[Direction.Top].ConnectorType = ConnectorType.OnlySink;
         }
 
         public override void SetProperty()
         {
             base.SetProperty();
-            if (this.SinkItems.Count == 0)
+            if (SinkItems.Count == 0)
             {
                 return;
             }
-            var ifData = this.BlockViewModel as TrueFalseBaseBlockViewModel;
+            TrueFalseBaseBlockViewModel ifData = BlockViewModel as TrueFalseBaseBlockViewModel;
 
             //找出正确的连接线
-            var trueConnection = this.ParentCanvas.Children.OfType<Connection>().FirstOrDefault(s => s.SourceThumb == this.ConnectorThumbs[Direction.Bottom]);
+            Connection trueConnection = ParentCanvas.Children.OfType<Connection>().FirstOrDefault(s => s.SourceThumb == ConnectorThumbs[Direction.Bottom]);
             if (trueConnection != null)
                 ifData.TrueViewModel = trueConnection.SinkBlock.DataContext as BaseBlockViewModel;
 
             //找出错误的连接线
-            var falseConnection = this.ParentCanvas.Children.OfType<Connection>().FirstOrDefault(s => s.SourceThumb == this.ConnectorThumbs[Direction.Right]);
+            Connection falseConnection = ParentCanvas.Children.OfType<Connection>().FirstOrDefault(s => s.SourceThumb == ConnectorThumbs[Direction.Right]);
             if (falseConnection != null)
                 ifData.FalseViewModel = falseConnection.SinkBlock.DataContext as BaseBlockViewModel;
         }
 
         protected override void OnRender(DrawingContext drawingContext)
         {
-            if (!this.IsInCanvas) return;
+            if (!IsInCanvas) return;
             base.OnRender(drawingContext);
-            var trueFormat = new FormattedText("True", CultureInfo.CurrentCulture, FlowDirection.LeftToRight, new Typeface("Verdana"), 10, System.Windows.Media.Brushes.Black, 1);
-            drawingContext.DrawText(trueFormat, new Point(this.DesiredSize.Width / 2 + 10, this.DesiredSize.Height));
+            FormattedText trueFormat = new FormattedText("True", CultureInfo.CurrentCulture, FlowDirection.LeftToRight, new Typeface("Verdana"), 10, System.Windows.Media.Brushes.Black, 1);
+            drawingContext.DrawText(trueFormat, new Point((DesiredSize.Width / 2) + 10, DesiredSize.Height));
 
-            var falseFormat = new FormattedText("False", CultureInfo.CurrentCulture, FlowDirection.LeftToRight, new Typeface("Verdana"), 10, System.Windows.Media.Brushes.Black, 1);
-            drawingContext.DrawText(falseFormat, new Point(this.DesiredSize.Width + 5, this.DesiredSize.Height / 2 - 20));
+            FormattedText falseFormat = new FormattedText("False", CultureInfo.CurrentCulture, FlowDirection.LeftToRight, new Typeface("Verdana"), 10, System.Windows.Media.Brushes.Black, 1);
+            drawingContext.DrawText(falseFormat, new Point(DesiredSize.Width + 5, (DesiredSize.Height / 2) - 20));
         }
 
         public override void OnRemoveConnection(Connection connection)
         {
-            var ifData = this.BlockViewModel as TrueFalseBaseBlockViewModel;
+            TrueFalseBaseBlockViewModel ifData = BlockViewModel as TrueFalseBaseBlockViewModel;
             //找出是哪边的删除的
-            var direction = connection.SourceThumb.Direction;
+            Direction direction = connection.SourceThumb.Direction;
             switch (direction)
             {
                 case Direction.Top:

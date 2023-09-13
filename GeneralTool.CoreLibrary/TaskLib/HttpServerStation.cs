@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Text;
@@ -145,7 +146,16 @@ namespace GeneralTool.CoreLibrary.TaskLib
             string url = context.Request.Url.LocalPath;
             url = url.Substring(1);//将前面的/去除
             //判断url是否存在
-            if (!RequestRoute.ContainsKey(url))
+            bool findUrl = false;
+            foreach (KeyValuePair<TaskKey, RequestAddressItem> item in RequestRoute)
+            {
+                if (item.Key.Name == url)
+                {
+                    findUrl = true;
+                    break;
+                }
+            }
+            if (!findUrl)
             {
                 //不存在,返回
                 string erro = $"不存在所请示的 [url] - [{url}]";
@@ -159,38 +169,47 @@ namespace GeneralTool.CoreLibrary.TaskLib
             string method = context.Request.HttpMethod;
             string queryString = WebUtility.UrlDecode(context.Request.Url.Query);
             Dictionary<string, string> dic = queryString.ParseUrlToQueryDictionary();
+
             if (method.Equals("POST", StringComparison.InvariantCultureIgnoreCase))
             {
-                bool executed = false;
-                ParameterInfo[] parameters = RequestRoute[url].MethodInfo.GetParameters();
-                if (parameters.Length == 1)
+                try
                 {
-                    ParameterInfo pa = parameters[0];
-                    WaterMarkAttribute wa = pa.GetCustomAttribute<WaterMarkAttribute>();
-                    if (wa != null && wa.IsJson)
+                    dic = JsonConvert.DeserializeObject<Dictionary<string, string>>(msg);
+                    if (dic == null) dic = new Dictionary<string, string>();
+                }
+                catch (Exception ex)
+                {
+                    return JsonConvert.SerializeObject(new ServerResponse() { RequestSuccess = false, ErroMsg = "POST 参数不正确,无法正确转为Json字典" + ex.GetInnerExceptionMessage(), RequestUrl = url });
+                }
+
+                string dicString = string.Join(",", dic.Keys);
+                foreach (KeyValuePair<TaskKey, RequestAddressItem> item in RequestRoute)
+                {
+                    if (item.Key.Name != url) continue;
+
+                    ParameterInfo[] parameters = item.Value.MethodInfo.GetParameters();
+                    string mps = string.Join(",", parameters.Select(p => p.Name));
+                    if (mps != dicString) continue;
+
+
+                    if (parameters.Length == 1)
                     {
-                        //如果是Json类型,则直接设置了
-                        //var value = this.JsonConvert.DeserializeObject(msg, pa.ParameterType);
-                        dic = new Dictionary<string, string>
+                        ParameterInfo pa = parameters[0];
+                        WaterMarkAttribute wa = pa.GetCustomAttribute<WaterMarkAttribute>();
+                        if (wa != null && wa.IsJson)
+                        {
+                            //如果是Json类型,则直接设置了
+                            //var value = this.JsonConvert.DeserializeObject(msg, pa.ParameterType);
+                            dic = new Dictionary<string, string>
                         {
                             { pa.Name, msg }
                         };
-                        executed = true;
+                        }
                     }
+
+                    break;
                 }
 
-                if (!executed)
-                {
-                    try
-                    {
-                        dic = JsonConvert.DeserializeObject<Dictionary<string, string>>(msg);
-                        if (dic == null) dic = new Dictionary<string, string>();
-                    }
-                    catch (Exception ex)
-                    {
-                        return ex.GetInnerExceptionMessage();
-                    }
-                }
 
             }
 
@@ -204,10 +223,11 @@ namespace GeneralTool.CoreLibrary.TaskLib
             if (HandlerRequest != null)
             {
                 //判断请求方法是否正确
-                RequestAddressItem item = RequestRoute[url];
+                RequestAddressItem item = GetRequestItem(cmd);//RequestRoute[url];
+
                 if (item.HttpMethod.ToString().ToLower() != context.Request.HttpMethod.ToLower())
                 {
-                    return $"远程请示的Http Metod与接口不一致,请示的 url : {url} ,请示的Http Method : {context.Request.HttpMethod}";
+                    return JsonConvert.SerializeObject(new ServerResponse() { RequestSuccess = false, ErroMsg = $"远程请示的Http Metod与接口不一致,请示的 url : {url} ,请示的Http Method : {context.Request.HttpMethod}", RequestUrl = url });
                 }
 
                 RequestInfo info = new RequestInfo(cmd, response, item);

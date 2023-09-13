@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -116,11 +115,11 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
             designerCanvas.ScaleChanged += DesignerCanvas_ScaleChanged;
             designerCanvas.ZoomPanelVisibilityChangedEvent += DesignerCanvas_ZoomPanelVisibilityChangedEvent;
             designerCanvas.AutoZoomChangedEvent += DesignerCanvas_AutoZoomChangedEvent;
-            this.designerCanvas.SizeChanged += DesignerCanvas_SizeChanged1;
-            this.ScrollViewer.SizeChanged += ScrollViewer_SizeChanged;
-            this.designerCanvas.Loaded += DesignerCanvas_Loaded;
-            this.zoomCanvas.SizeChanged += ZoomCanvas_SizeChanged;
-            this.Loaded += ZoomBox_Loaded;
+            designerCanvas.SizeChanged += DesignerCanvas_SizeChanged1;
+            ScrollViewer.SizeChanged += ScrollViewer_SizeChanged;
+            designerCanvas.Loaded += DesignerCanvas_Loaded;
+            zoomCanvas.SizeChanged += ZoomCanvas_SizeChanged;
+            Loaded += ZoomBox_Loaded;
 
             VisualBrush visual = new VisualBrush
             {
@@ -131,51 +130,51 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
 
         private void DesignerCanvas_Loaded(object sender, RoutedEventArgs e)
         {
-            this.DesignerCanvas_AutoZoomChangedEvent(this.designerCanvas.AutoZoom);
+            DesignerCanvas_AutoZoomChangedEvent(designerCanvas.AutoZoom);
         }
 
         private void DesignerCanvas_SizeChanged1(object sender, SizeChangedEventArgs e)
         {
-            if (this.designerCanvas.AutoZoom)
+            if (designerCanvas.AutoZoom)
             {
-                this.DesignerCanvas_AutoZoomChangedEvent(true);
+                DesignerCanvas_AutoZoomChangedEvent(true);
             }
         }
 
         private void ScrollViewer_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (this.designerCanvas.AutoZoom)
+            if (designerCanvas.AutoZoom)
             {
-                this.DesignerCanvas_AutoZoomChangedEvent(true);
+                DesignerCanvas_AutoZoomChangedEvent(true);
             }
         }
 
 
-        private  void DesignerCanvas_AutoZoomChangedEvent(bool zoom)
+        private void DesignerCanvas_AutoZoomChangedEvent(bool zoom)
         {
-            if (!this.IsLoaded) return;
-            InvalidateScale(out double scale, out double xOffset, out double yOffset);
-            Trace.WriteLine(this.ScrollViewer.ComputedHorizontalScrollBarVisibility + "  ||  " + this.ScrollViewer.ComputedVerticalScrollBarVisibility);
+            if (!IsLoaded) return;
+            InvalidateScale(out _, out _, out _);
+            Trace.WriteLine(ScrollViewer.ComputedHorizontalScrollBarVisibility + "  ||  " + ScrollViewer.ComputedVerticalScrollBarVisibility);
             if (zoom)
             {
                 ////反向推衍画布的Scale x y
 
-                this.zoomSlider.Value = 100;
-                this.ScrollViewer.UpdateLayout();
-                var visible = this.ScrollViewer.ComputedHorizontalScrollBarVisibility == Visibility.Visible || this.ScrollViewer.ComputedVerticalScrollBarVisibility == Visibility.Visible;
-                var sliderValue = this.zoomSlider.Value;
+                zoomSlider.Value = 100;
+                ScrollViewer.UpdateLayout();
+                bool visible = ScrollViewer.ComputedHorizontalScrollBarVisibility == Visibility.Visible || ScrollViewer.ComputedVerticalScrollBarVisibility == Visibility.Visible;
+                double sliderValue = zoomSlider.Value;
                 if (visible)
                 {
                     sliderValue -= 1;
-                    this.zoomSlider.Value = sliderValue;
-                    this.ScrollViewer.UpdateLayout();
-                    visible = this.ScrollViewer.ComputedHorizontalScrollBarVisibility == Visibility.Visible || this.ScrollViewer.ComputedVerticalScrollBarVisibility == Visibility.Visible;
+                    zoomSlider.Value = sliderValue;
+                    ScrollViewer.UpdateLayout();
+                    visible = ScrollViewer.ComputedHorizontalScrollBarVisibility == Visibility.Visible || ScrollViewer.ComputedVerticalScrollBarVisibility == Visibility.Visible;
                     while (visible)
                     {
-                        this.zoomSlider.Value -= 1;
-                        this.ScrollViewer.UpdateLayout();
-                        visible = this.ScrollViewer.ComputedHorizontalScrollBarVisibility == Visibility.Visible || this.ScrollViewer.ComputedVerticalScrollBarVisibility == Visibility.Visible;
-                        if (this.zoomSlider.Value <= this.zoomSlider.Minimum)
+                        zoomSlider.Value -= 1;
+                        ScrollViewer.UpdateLayout();
+                        visible = ScrollViewer.ComputedHorizontalScrollBarVisibility == Visibility.Visible || ScrollViewer.ComputedVerticalScrollBarVisibility == Visibility.Visible;
+                        if (zoomSlider.Value <= zoomSlider.Minimum)
                         {
                             break;
                         }
@@ -203,7 +202,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
             }
             else
             {
-                this.zoomSlider.Value = 100;
+                zoomSlider.Value = 100;
             }
         }
 
@@ -272,12 +271,12 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
                 double scale = e.NewValue / e.OldValue;
 
                 double halfViewportHeight = ScrollViewer.ViewportHeight / 2;
-                double newVerticalOffset = ((ScrollViewer.VerticalOffset + halfViewportHeight) * scale -
-                                            halfViewportHeight);
+                double newVerticalOffset = ((ScrollViewer.VerticalOffset + halfViewportHeight) * scale) -
+                                            halfViewportHeight;
 
                 double halfViewportWidth = ScrollViewer.ViewportWidth / 2;
-                double newHorizontalOffset = ((ScrollViewer.HorizontalOffset + halfViewportWidth) * scale -
-                                              halfViewportWidth);
+                double newHorizontalOffset = ((ScrollViewer.HorizontalOffset + halfViewportWidth) * scale) -
+                                              halfViewportWidth;
 
                 scaleTransform.ScaleX *= scale;
                 scaleTransform.ScaleY *= scale;
@@ -293,8 +292,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
             {
                 InvalidateScale(out double scale, out _, out _);
 
-                ScrollViewer.ScrollToHorizontalOffset(ScrollViewer.HorizontalOffset + e.HorizontalChange / scale);
-                ScrollViewer.ScrollToVerticalOffset(ScrollViewer.VerticalOffset + e.VerticalChange / scale);
+                ScrollViewer.ScrollToHorizontalOffset(ScrollViewer.HorizontalOffset + (e.HorizontalChange / scale));
+                ScrollViewer.ScrollToVerticalOffset(ScrollViewer.VerticalOffset + (e.VerticalChange / scale));
             }
         }
 
@@ -304,18 +303,18 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
             {
                 InvalidateScale(out double scale, out double xOffset, out double yOffset);
 
-                var Width = ScrollViewer.ViewportWidth * scale;
-                var Height = ScrollViewer.ViewportHeight * scale;
-                if (Width + xOffset > this.zoomCanvas.ActualWidth)
-                    Width = this.zoomCanvas.ActualWidth - xOffset;
-                if (Height + yOffset > this.zoomCanvas.ActualHeight)
-                    Height = this.zoomCanvas.ActualHeight - yOffset;
+                double Width = ScrollViewer.ViewportWidth * scale;
+                double Height = ScrollViewer.ViewportHeight * scale;
+                if (Width + xOffset > zoomCanvas.ActualWidth)
+                    Width = zoomCanvas.ActualWidth - xOffset;
+                if (Height + yOffset > zoomCanvas.ActualHeight)
+                    Height = zoomCanvas.ActualHeight - yOffset;
 
-                this.zoomThumb.Width = Width;
-                this.zoomThumb.Height = Height;
+                zoomThumb.Width = Width;
+                zoomThumb.Height = Height;
 
-                Canvas.SetLeft(zoomThumb, xOffset + ScrollViewer.HorizontalOffset * scale);
-                Canvas.SetTop(zoomThumb, yOffset + ScrollViewer.VerticalOffset * scale);
+                Canvas.SetLeft(zoomThumb, xOffset + (ScrollViewer.HorizontalOffset * scale));
+                Canvas.SetTop(zoomThumb, yOffset + (ScrollViewer.VerticalOffset * scale));
 
                 if (Parent is UIElement u)
                 {
@@ -351,8 +350,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
 
             scale = (scaleX < scaleY) ? scaleX : scaleY;
 
-            xOffset = (x - scale * w) / 2;
-            yOffset = (y - scale * h) / 2;
+            xOffset = (x - (scale * w)) / 2;
+            yOffset = (y - (scale * h)) / 2;
         }
     }
 }

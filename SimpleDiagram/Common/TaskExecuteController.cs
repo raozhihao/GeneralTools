@@ -21,7 +21,7 @@ namespace SimpleDiagram.Common
             {
                 log = new ConsoleLogInfo();
             }
-            this.Log = log;
+            Log = log;
         }
 
         /// <summary>
@@ -35,59 +35,56 @@ namespace SimpleDiagram.Common
         public Task<TaskResultInfo> Start(BaseBlockViewModel current, string scriptName, ExcuteCancelTokenSource token, bool isDebug = false)
         {
 
-            var reResult = Task.Run(async () =>
+            Task<TaskResultInfo> reResult = Task.Run(async () =>
             {
-                var resultInfo = new TaskResultInfo()
+                TaskResultInfo resultInfo = new TaskResultInfo()
                 {
                     IsSuccess = true,
                     ErroMsg = "系统指定 - 成功"
                 };
 
-
-                this.Log.Info($"{scriptName} : 开始执行");
+                Log.Info($"{scriptName} : 开始执行");
                 if (current == null)
                 {
-                    this.Log.Error($"{scriptName} : 没有执行块,退出");
+                    Log.Error($"{scriptName} : 没有执行块,退出");
                     token.Canceld = true;
                     resultInfo.ErroMsg = "没有执行块而退出";
                     return resultInfo;
                 }
 
-                var watch = new Stopwatch();
+                Stopwatch watch = new Stopwatch();
 
                 watch.Start();
-                var result = await current.Execute(null, token);
-                this.Log.Info($"执行块 - [{current.Description}] ,耗时 - [{watch.ElapsedMilliseconds}] ms");
+                bool result = await current.Execute(null, token);
+                Log.Info($"执行块 - [{current.Description}] ,耗时 - [{watch.ElapsedMilliseconds}] ms");
                 watch.Stop();
                 if (isDebug) current.UnBreakBlock();
 
                 //当前需要执行的块,即是当前的块的下一个
-                var executeModel = current.NextModel;
+                BaseBlockViewModel executeModel = current.NextModel;
                 while (result && executeModel != null)
                 {
                     if (token.IsCancelNotify)
                     {
-                        this.Log.Info($"{scriptName} : 退出执行");
+                        Log.Info($"{scriptName} : 退出执行");
                         resultInfo.IsSuccess = false;
                         resultInfo.UserEnd = null;
                         resultInfo.ErroMsg = "因停止而退出执行";
                         break;
                     }
 
-
                     if (executeModel.IsBreakPoint && isDebug)
                     {
-                        this.Log.Info($"找到断点 -> [{executeModel.Description}]");
+                        Log.Info($"找到断点 -> [{executeModel.Description}]");
                         //到达下一个断点了
                         executeModel.SetBreakBlock();
                         resultInfo.IsBreak = true;
                         break;
                     }
 
-                    this.Log.Info($"正在执行测试块:{executeModel.Description}");
+                    Log.Info($"正在执行测试块:{executeModel.Description}");
                     if (isDebug) executeModel.SetBreakBlock();
                     else executeModel.Selected();
-
 
                     try
                     {
@@ -95,12 +92,12 @@ namespace SimpleDiagram.Common
                         //执行当前块
                         result = await executeModel.Execute(current, token);
                         watch.Stop();
-                        this.Log.Info($"执行块 - [{executeModel.Description}] ,耗时 - [{watch.ElapsedMilliseconds}] ms");
+                        Log.Info($"执行块 - [{executeModel.Description}] ,耗时 - [{watch.ElapsedMilliseconds}] ms");
 
                         resultInfo.ErroMsg = "执行块指定";
                         if (!result)
                         {
-                            this.Log.Error($"在执行块 - [{executeModel.Description} 时返回 false]");
+                            Log.Error($"在执行块 - [{executeModel.Description} 时返回 false]");
                             resultInfo.IsSuccess = result;
                             break;
                         }
@@ -126,14 +123,14 @@ namespace SimpleDiagram.Common
 
                         if (token.IsCancelNotify && ex is AppDomainUnloadedException)
                         {
-                            this.Log.Error("取消测试");
+                            Log.Error("取消测试");
                             resultInfo.IsSuccess = false;
                             resultInfo.ErroMsg = "取消测试";
                             break;
                         }
 
                         resultInfo.ErroMsg = $"执行块:{executeModel.Description} 出现异常:{ex.GetInnerExceptionMessage()}";
-                        this.Log.Error(resultInfo.ErroMsg);
+                        Log.Error(resultInfo.ErroMsg);
                         resultInfo.IsSuccess = false;
 
                         break;
@@ -144,25 +141,22 @@ namespace SimpleDiagram.Common
 
                     }
 
-
-
                     if (watch.ElapsedMilliseconds <= 1)
                         await Task.Delay(1);
 
                     if (current == null)
                     {
-                        this.Log.Waring($"{scriptName} : 没有执行块,退出执行");
+                        Log.Waring($"{scriptName} : 没有执行块,退出执行");
                         break;
                     }
-
 
                 }
 
                 token.Canceld = true;
                 if (resultInfo.IsBreak)
-                    this.Log.Waring("暂停执行");
+                    Log.Waring("暂停执行");
                 else
-                    this.Log.Info($"{scriptName} : 结束执行 - {resultInfo}");
+                    Log.Info($"{scriptName} : 结束执行 - {resultInfo}");
 
                 return resultInfo;
             });
@@ -171,7 +165,6 @@ namespace SimpleDiagram.Common
         }
 
     }
-
 
     /// <summary>
     /// 任务执行结果
@@ -200,7 +193,7 @@ namespace SimpleDiagram.Common
 
         public override string ToString()
         {
-            return $"执行结果 -> {this.IsSuccess} ,用户指定 -> {this.UserEnd} ,消息 -> {this.ErroMsg}";
+            return $"执行结果 -> {IsSuccess} ,用户指定 -> {UserEnd} ,消息 -> {ErroMsg}";
         }
     }
 }

@@ -63,9 +63,9 @@ namespace GeneralTool.CoreLibrary.SerialPortEx
         /// <summary>
         /// 返回数据应由 头+关键字+数据量位+[数据主体]+和位+包尾组成,所以返回的数据个数必然大于等于5
         /// </summary>
-        private byte dataCount = 5;
+        private readonly byte dataCount = 5;
 
-        private Stopwatch watch = new Stopwatch();
+        private readonly Stopwatch watch = new Stopwatch();
 
 
         /// <summary>
@@ -73,8 +73,15 @@ namespace GeneralTool.CoreLibrary.SerialPortEx
         /// </summary>
         public new void Close()
         {
+            base.DataReceived -= SerialControl_DataReceived;
             if (CheckState)
                 tokenSource.Cancel();
+
+            //清除所有信息
+            while (this.recDatas.TryDequeue(out _))
+            {
+
+            }
 
             base.Close();
         }
@@ -143,7 +150,7 @@ namespace GeneralTool.CoreLibrary.SerialPortEx
         /// </param>
         /// <returns>
         /// </returns>
-        public SerialResponse Send(SerialRequest request)
+        public virtual SerialResponse Send(SerialRequest request)
         {
 
             if (!request.IsSetData)
@@ -155,34 +162,52 @@ namespace GeneralTool.CoreLibrary.SerialPortEx
             }
 
             byte[] array = request.ToSendDatas();
-            this.CurrentKeyWord = request.KeyWorld;
+            CurrentKeyWord = request.KeyWorld;
 
             //写入
             Write(array, 0, array.Length);
 
-            if (!this.UnPackage(out var reponses))
+            if (!UnPackage(out List<byte> reponses))
                 throw new Exception("返回错误不一致,可能是超时导致,返回数据为:" + reponses.FomartDatas());
 
-            this.CheckPacketAllReady(reponses);
+            CheckPacketAllReady(reponses);
             int num = 0;
-            if (reponses.Count > this.dataCount)
+            if (reponses.Count > dataCount)
                 num = reponses[2];
             return new SerialResponse(request, recDatas.ToArray(), (num == 0) ? null : reponses.GetRange(3, num).ToArray());
         }
 
-
-        private bool UnPackage(out List<byte> list)
+        /// <summary>
+        /// 进行解包操作
+        /// </summary>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
+        protected virtual bool UnPackage(out List<byte> list)
         {
             list = new List<byte>();
-            this.watch.Restart();
+            watch.Restart();
             //循环读取
-            var sumCount = this.dataCount;//总的数据长度,包头+关键字+数据长度位+[数据]+和校验+包尾
+            byte sumCount = dataCount;//总的数据长度,包头+关键字+数据长度位+[数据]+和校验+包尾
             do
             {
-                if (this.recDatas.TryDequeue(out var b))
+                if (!IsOpen)
+                {
+                    try
+                    {
+                        Close();
+                    }
+                    catch (Exception)
+                    {
+                    }
+                    throw new Exception("串口已经断开连接");
+                }
+
+
+                if (recDatas.TryDequeue(out byte b))
                 {
                     //读取出来,如果是包头
-                    if (b == this.Head && list.Count == 0)
+                    if (b == Head && list.Count == 0)
                     {
                         list.Add(b);
                     }
@@ -205,18 +230,22 @@ namespace GeneralTool.CoreLibrary.SerialPortEx
                     }
 
                 }
-            } while (watch.ElapsedMilliseconds < this.ReadTimeout);
+            } while (watch.ElapsedMilliseconds < ReadTimeout);
 
             watch.Stop();
             Trace.WriteLine($"解包时间:{watch.ElapsedMilliseconds} ms");
             return list.Count == sumCount;
         }
 
-
-        private void CheckPacketAllReady(List<byte> reponses)
+        /// <summary>
+        /// 检测数据
+        /// </summary>
+        /// <param name="reponses"></param>
+        /// <exception cref="Exception"></exception>
+        protected virtual void CheckPacketAllReady(List<byte> reponses)
         {
 
-            if (this.CurrentKeyWord != reponses[1])
+            if (CurrentKeyWord != reponses[1])
                 throw new Exception("返回关键字错误");
 
             byte b = 0;
@@ -226,7 +255,7 @@ namespace GeneralTool.CoreLibrary.SerialPortEx
             if (b != reponses[reponses.Count - 2])
                 throw new Exception("返回和校验错误");
 
-            if (this.End != reponses.Last())
+            if (End != reponses.Last())
                 throw new Exception("返回包属校验错误");
         }
 
@@ -240,7 +269,7 @@ namespace GeneralTool.CoreLibrary.SerialPortEx
                 byte[] array2 = array;
                 foreach (byte b in array2)
                 {
-                    this.recDatas.Enqueue(b);
+                    recDatas.Enqueue(b);
                 }
             }
             catch (Exception ex)

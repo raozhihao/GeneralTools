@@ -18,7 +18,7 @@ namespace SimpleDiagram.Common
         public LayoutHelper(ILog log = null)
         {
             if (log == null) log = new ConsoleLogInfo();
-            this.Log = log;
+            Log = log;
         }
         /// <summary>
         /// 
@@ -27,18 +27,18 @@ namespace SimpleDiagram.Common
         /// <param name="start"></param>
         public void LoadBlocks(UIElementCollection arg, BlockItem start)
         {
-            var blocks = arg.OfType<BlockItem>();
+            System.Collections.Generic.IEnumerable<BlockItem> blocks = arg.OfType<BlockItem>();
 
             if (start == null)
                 return;
 
-            foreach (var item in blocks)
+            foreach (BlockItem item in blocks)
             {
-                (item as BaseBlock).Log = this.Log;
-                var model = item.DataContext as BaseBlockViewModel;
-                model.Log = this.Log;
-                model.NextModel = this.GetSinkModel(item, arg);// item.SinkItems.FirstOrDefault()?.DataContext as BaseBlockViewModel;
-                var sinkModels = item.SinkItems.Select(s => s.DataContext as BaseBlockViewModel);
+                (item as BaseBlock).Log = Log;
+                BaseBlockViewModel model = item.DataContext as BaseBlockViewModel;
+                model.Log = Log;
+                model.NextModel = GetSinkModel(item, arg);// item.SinkItems.FirstOrDefault()?.DataContext as BaseBlockViewModel;
+                System.Collections.Generic.IEnumerable<BaseBlockViewModel> sinkModels = item.SinkItems.Select(s => s.DataContext as BaseBlockViewModel);
                 model.SetSinkModels(sinkModels.ToList());
                 model.NextModel?.SourceBlockModels.Add(model);
 
@@ -50,11 +50,11 @@ namespace SimpleDiagram.Common
         private BaseBlockViewModel GetSinkModel(BlockItem source, UIElementCollection arg)
         {
             //获取当前块的下一个块
-            var sinkItems = source.SinkItems;
-            var connections = arg.OfType<Connection>();
-            foreach (var sink in sinkItems)
+            System.Collections.Generic.List<BlockItem> sinkItems = source.SinkItems;
+            System.Collections.Generic.IEnumerable<Connection> connections = arg.OfType<Connection>();
+            foreach (BlockItem sink in sinkItems)
             {
-                var first = connections.FirstOrDefault(b => b.SourceBlock == source && b.SinkBlock == sink);
+                Connection first = connections.FirstOrDefault(b => b.SourceBlock == source && b.SinkBlock == sink);
                 if (first == null)
                     continue;
 

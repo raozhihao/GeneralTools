@@ -89,7 +89,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
             bool flag2 = e.ExtentHeightChange == 0.0;
             if (flag2)
             {
-                ScrollViewerExtensions._autoScroll = (scrollViewer.VerticalOffset == scrollViewer.ScrollableHeight);
+                ScrollViewerExtensions._autoScroll = scrollViewer.VerticalOffset == scrollViewer.ScrollableHeight;
             }
             bool flag3 = ScrollViewerExtensions._autoScroll && e.ExtentHeightChange != 0.0;
             if (flag3)

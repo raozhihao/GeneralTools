@@ -52,7 +52,7 @@ namespace GeneralTool.CoreLibrary.SocketLib
                                                 if (stateOfConnection != TcpState.Closed && stateOfConnection != TcpState.CloseWait;
                                             }
                         */
-                        return stateOfConnection != TcpState.Closed && stateOfConnection !=  TcpState.CloseWait;
+                        return stateOfConnection != TcpState.Closed && stateOfConnection != TcpState.CloseWait;
                     }
                 }
                 catch

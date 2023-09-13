@@ -56,7 +56,7 @@ namespace GeneralTool.CoreLibrary.Extensions
         /// <param name="point"></param>
         /// <returns></returns>
         public static System.Drawing.PointF ToDrawPointF(this System.Windows.Point point)
-            => new System.Drawing.PointF((float)point.X, ((float)point.Y));
+            => new System.Drawing.PointF((float)point.X, (float)point.Y);
 
         /// <summary>
         /// 
@@ -147,8 +147,8 @@ namespace GeneralTool.CoreLibrary.Extensions
         public static System.Windows.Point VerticalLinePoint(double x0, double y0, double x1, double y1, double x2, double y2)
         {
             double k = (y1 - y0 == 0 ? 1 : y1 - y0) / (x1 - x0 == 0 ? 1 : x1 - x0);
-            double x = (y2 - y1 + k * x1 + x2 / k) / (k + 1.0 / k);
-            double y = y1 + k * (x - x1);
+            double x = (y2 - y1 + (k * x1) + (x2 / k)) / (k + (1.0 / k));
+            double y = y1 + (k * (x - x1));
             return double.IsNaN(x) || double.IsNaN(y) ? new System.Windows.Point(x2, y2) : new System.Windows.Point(x, y);
         }
 
@@ -177,12 +177,12 @@ namespace GeneralTool.CoreLibrary.Extensions
 
             deg = degrees + deg;
 
-            double d = Math.Sqrt(Math.Pow((x2 - x1), 2) + Math.Pow((y2 - y1), 2));
+            double d = Math.Sqrt(Math.Pow(x2 - x1, 2) + Math.Pow(y2 - y1, 2));
 
             double theta_rad = Math.PI / 180.0 * deg;
             //# 计算待求点的坐标
-            double x4 = x1 + d * Math.Cos(theta_rad);
-            double y4 = y1 + d * Math.Sin(theta_rad);
+            double x4 = x1 + (d * Math.Cos(theta_rad));
+            double y4 = y1 + (d * Math.Sin(theta_rad));
             return new System.Windows.Point(x4, y4);
         }
 
@@ -205,11 +205,11 @@ namespace GeneralTool.CoreLibrary.Extensions
             double angleDown = angleOri - arrowAngle;   // 箭头扩张角度
             double angleUp = angleOri + arrowAngle;     // 箭头扩张角度
             int directionFlag = (x2 > x1) ? -1 : 1;     // 方向标识
-            double x3 = x2 + ((directionFlag * arrowLength) * Math.Cos(angleDown));   // 箭头第三个点的坐标
-            double y3 = y2 + ((directionFlag * arrowLength) * Math.Sin(angleDown));
+            double x3 = x2 + (directionFlag * arrowLength * Math.Cos(angleDown));   // 箭头第三个点的坐标
+            double y3 = y2 + (directionFlag * arrowLength * Math.Sin(angleDown));
 
-            double x4 = x2 + ((directionFlag * arrowLength) * Math.Cos(angleUp));     // 箭头第四个点的坐标
-            double y4 = y2 + ((directionFlag * arrowLength) * Math.Sin(angleUp));
+            double x4 = x2 + (directionFlag * arrowLength * Math.Cos(angleUp));     // 箭头第四个点的坐标
+            double y4 = y2 + (directionFlag * arrowLength * Math.Sin(angleUp));
             System.Windows.Point point3 = new System.Windows.Point(x3, y3);   // 箭头第三个点
             System.Windows.Point point4 = new System.Windows.Point(x4, y4);   // 箭头第四个点
             System.Windows.Point[] points = new System.Windows.Point[] { point2, point3, point4, point2 };   // 多边形，起点 --> 终点 --> 第三点 --> 第四点 --> 终点
@@ -223,7 +223,7 @@ namespace GeneralTool.CoreLibrary.Extensions
         /// <returns></returns>
         public static System.Windows.Point GetCenterPoint(this System.Windows.Rect rect)
         {
-            return new System.Windows.Point(rect.Left + rect.Width / 2, rect.Top + rect.Height / 2);
+            return new System.Windows.Point(rect.Left + (rect.Width / 2), rect.Top + (rect.Height / 2));
         }
 
         /// <summary>
@@ -244,18 +244,18 @@ namespace GeneralTool.CoreLibrary.Extensions
                 currentHeight = rotatedWidth;
             }
             //旋转坐标
-            double x0 = posX - currentWidth / 2;
-            double y0 = currentHeight / 2 - posY;
+            double x0 = posX - (currentWidth / 2);
+            double y0 = (currentHeight / 2) - posY;
 
             double cosNum = Math.Round(Math.Cos(rotateDeg * 1.0 / 180 * Math.PI), 5);
 
             double sinNum = Math.Round(Math.Sin(rotateDeg * 1.0 / 180 * Math.PI), 5);
 
-            double x1 = x0 * cosNum + y0 * sinNum;
-            double y1 = -x0 * sinNum + y0 * cosNum;
+            double x1 = (x0 * cosNum) + (y0 * sinNum);
+            double y1 = (-x0 * sinNum) + (y0 * cosNum);
 
-            double x = rotatedWidth / 2 + x1;
-            double y = rotatedHeight / 2 - y1;
+            double x = (rotatedWidth / 2) + x1;
+            double y = (rotatedHeight / 2) - y1;
             return new Tuple<double, double>(x, y);
         }
 

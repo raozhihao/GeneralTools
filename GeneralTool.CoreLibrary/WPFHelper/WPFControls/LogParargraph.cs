@@ -69,7 +69,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
             {
                 if (e.NewValue != null)
                 {
-                    p.RaiseChanged((e.NewValue as ObservableCollection<LogMessageInfo>));
+                    p.RaiseChanged(e.NewValue as ObservableCollection<LogMessageInfo>);
                 }
             }
         }
@@ -112,9 +112,9 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
                 return;
             for (int index = 0; index < addItems.Count; index++)
             {
-                var msg = (LogMessageInfo)addItems[index];
-                var msgString = msg.Msg;
-                if (this.ShowFullMsg)
+                LogMessageInfo msg = (LogMessageInfo)addItems[index];
+                string msgString = msg.Msg;
+                if (ShowFullMsg)
                     msgString = msg.FullMsg;
                 Run run = new Run(msgString + Environment.NewLine)
                 {
@@ -218,8 +218,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         /// </summary>
         public bool ShowFullMsg
         {
-            get => (bool)this.GetValue(ShowFullMsgProperty);
-            set=>this.SetValue(ShowFullMsgProperty, value);
+            get => (bool)GetValue(ShowFullMsgProperty);
+            set => SetValue(ShowFullMsgProperty, value);
         }
 
         /// <summary>

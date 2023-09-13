@@ -1,13 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using GeneralTool.CoreLibrary.Models;
@@ -21,18 +14,18 @@ namespace TokenDemo
             InitializeComponent();
         }
         private Thread thread;
-        private ExcuteCancelTokenSource tokenSource = new ExcuteCancelTokenSource();
+        private readonly ExcuteCancelTokenSource tokenSource = new ExcuteCancelTokenSource();
         private void StartBtn_Click(object sender, EventArgs e)
         {
-            this.tokenSource.Reset();
-            this.thread = new Thread(LoopTestMethod) { IsBackground = true };
-            this.thread.Start();
+            tokenSource.Reset();
+            thread = new Thread(LoopTestMethod) { IsBackground = true };
+            thread.Start();
         }
 
         private void LoopTestMethod()
         {
             Trace.WriteLine("进入线程");
-            while (!this.tokenSource.IsCancelNotify)
+            while (!tokenSource.IsCancelNotify)
             {
                 Thread.Sleep(10);
             }
@@ -41,18 +34,18 @@ namespace TokenDemo
 
         private async void PauseBtn_Click(object sender, EventArgs e)
         {
-            await this.tokenSource.Pause();
+            await tokenSource.Pause();
         }
 
         private async void ResumeBtn_Click(object sender, EventArgs e)
         {
-            await this.tokenSource.Resume();
+            await tokenSource.Resume();
         }
 
-        private  void CancelBtn_Click(object sender, EventArgs e)
+        private void CancelBtn_Click(object sender, EventArgs e)
         {
-            this.tokenSource.Cancel();
-            this.thread.Join();
+            tokenSource.Cancel();
+            thread.Join();
         }
     }
 }

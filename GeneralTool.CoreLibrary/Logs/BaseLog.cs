@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 using GeneralTool.CoreLibrary.Enums;
@@ -138,7 +139,8 @@ namespace GeneralTool.CoreLibrary.Logs
         /// </summary>
         /// <param name="days"></param>
         /// <param name="rootDir"></param>
-        public static void ClearLogs(int days, string rootDir = null)
+        /// <param name="token"></param>
+        public static void ClearLogs(int days, string rootDir = null, CancellationToken token = default)
         {
             //清除本地LOG缓存 ,不是当天的全给清了
             //找到本地日志文件夹
@@ -152,11 +154,13 @@ namespace GeneralTool.CoreLibrary.Logs
                //循环其中的文件夹
                foreach (DirectoryInfo directory in logDir.EnumerateDirectories())
                {
-                   FileInfo[] files = directory.GetFiles("*.log");
+                   if (token.IsCancellationRequested) break;
+                   System.Collections.Generic.IEnumerable<FileInfo> files = directory.EnumerateFiles("*.log");
                    foreach (FileInfo item in files)
                    {
                        try
                        {
+                           if (token.IsCancellationRequested) break;
                            if (DateTime.Now - item.CreationTime >= TimeSpan.FromDays(days))
                                item.Delete();
                        }
@@ -166,7 +170,7 @@ namespace GeneralTool.CoreLibrary.Logs
                        }
                    }
                }
-           });
+           }, token);
         }
     }
 }

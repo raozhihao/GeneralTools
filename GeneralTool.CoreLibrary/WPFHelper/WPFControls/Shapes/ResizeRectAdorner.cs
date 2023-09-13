@@ -215,16 +215,16 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls.Shapes
 
             double scale = shape.ImageView.ImageScale;
             //判断鼠标是否在右边框
-            bool mouseInRightLine = xDis > -1 / scale && xDis < 3 / scale && mousePoint.Y > (bound.Top + 1 / scale) && mousePoint.Y < bound.Bottom - 1 / scale;
+            bool mouseInRightLine = xDis > -1 / scale && xDis < 3 / scale && mousePoint.Y > (bound.Top + (1 / scale)) && mousePoint.Y < bound.Bottom - (1 / scale);
 
             //判断鼠标是否在左边框
-            bool mouseInLeftLine = leftXDis > -1 / scale && leftXDis < 3 / scale && mousePoint.Y > (bound.Top + 1 / scale) && mousePoint.Y < bound.Bottom - 1 / scale;
+            bool mouseInLeftLine = leftXDis > -1 / scale && leftXDis < 3 / scale && mousePoint.Y > (bound.Top + (1 / scale)) && mousePoint.Y < bound.Bottom - (1 / scale);
 
             //判断鼠标是否在下边框
-            bool mouseInBottomLine = yDis > -1 / scale && yDis < 3 / scale && mousePoint.X > bound.Left + 1 / scale && mousePoint.X < bound.Right - 1 / scale;
+            bool mouseInBottomLine = yDis > -1 / scale && yDis < 3 / scale && mousePoint.X > bound.Left + (1 / scale) && mousePoint.X < bound.Right - (1 / scale);
 
             //判断鼠标是否在上边框
-            bool mouseInTopLine = topYDis > -1 / scale && topYDis < 3 / scale && mousePoint.X > bound.Left + 1 / scale && mousePoint.X < bound.Right - 1 / scale;
+            bool mouseInTopLine = topYDis > -1 / scale && topYDis < 3 / scale && mousePoint.X > bound.Left + (1 / scale) && mousePoint.X < bound.Right - (1 / scale);
 
             //右边的显示应该处于右顶点到右底点之间
             if (mouseInRightLine)

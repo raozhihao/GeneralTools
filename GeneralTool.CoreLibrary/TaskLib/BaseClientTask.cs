@@ -69,7 +69,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
             using (FixedHeadSocketClient client = new FixedHeadSocketClient(Log, jsonConvert))
             {
                 client.Startup(ip, port);
-                return client.SendResultObject(request.Url, request.Parameters,token);
+                return client.SendResultObject(request.Url, request.Parameters, token);
             }
         }
 
@@ -105,7 +105,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
         public T InvokeResult<T>(string methodName, CancellationToken token, params object[] datas)
         {
             ServerRequest request = Parse(methodName, datas);
-            return (T)InvokeRequest(request, token );
+            return (T)InvokeRequest(request, token);
         }
 
         /// <summary>

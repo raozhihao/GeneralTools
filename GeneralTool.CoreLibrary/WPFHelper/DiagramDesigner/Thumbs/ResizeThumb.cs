@@ -66,11 +66,11 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
                 Point oldPoint = new Point(oldX, oldY);
                 resizeArg.OldCanvasPoint = oldPoint;
                 //获取真实外包矩形
-                var bounds = item.GetBoundRect();
-                var top1 = Canvas.GetTop(item);
-                var left1 = Canvas.GetLeft(item);
-                var heightInc = top1 - bounds.Y;
-                var widthInc = left1 - bounds.X;
+                Rect bounds = item.GetBoundRect();
+                double top1 = Canvas.GetTop(item);
+                double left1 = Canvas.GetLeft(item);
+                double heightInc = top1 - bounds.Y;
+                double widthInc = left1 - bounds.X;
                 switch (VerticalAlignment)
                 {
                     case System.Windows.VerticalAlignment.Bottom:
@@ -80,9 +80,9 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
                         if (e.VerticalChange > 0)
                         {
                             //往下拉时,查看是否会大于画布的高
-                            var height = bounds.Bottom + e.VerticalChange;
+                            double height = bounds.Bottom + e.VerticalChange;
                             if (height >= canvas.ActualHeight)
-                                 return;
+                                return;
                             if (left1 - widthInc < 0)
                                 return;
 
@@ -107,7 +107,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
                             if (left1 - widthInc < 0)
                                 return;
                         }
-                       
+
                         Canvas.SetTop(item, top);
                         SetHeight(item, deltaVertical, canvas);
                         resizeArg.Direction = Direction.Top;
@@ -124,17 +124,17 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
                         if (left <= 0)
                             return;
 
-                        if (e.HorizontalChange<0)
+                        if (e.HorizontalChange < 0)
                         {
                             if (left1 - widthInc < 0 && e.HorizontalChange < 0)
                                 return;
-                            var height = bounds.Bottom - e.HorizontalChange;
+                            double height = bounds.Bottom - e.HorizontalChange;
                             if (height >= canvas.ActualHeight)
                             {
                                 return;
                             }
                         }
-                       
+
                         Canvas.SetLeft(item, left1 + deltaHorizontal);
                         SetWidth(item, deltaHorizontal, canvas);
 
@@ -149,7 +149,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
                         {
                             if (bounds.Right + e.HorizontalChange >= canvas.ActualWidth)
                                 return;
-                            var height = bounds.Bottom + e.HorizontalChange;
+                            double height = bounds.Bottom + e.HorizontalChange;
                             if (height >= canvas.ActualHeight)
                             {
                                 return;
@@ -171,7 +171,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
 
         private void SetWidth(BlockItem item, double deltaHorizontal, Canvas canvas)
         {
-            var left = Canvas.GetLeft(item);
+            double left = Canvas.GetLeft(item);
             double tmpWidth = item.ActualWidth - deltaHorizontal;
             if (tmpWidth <= 0) return;
             //查看width是否会大于等于容器的宽
@@ -179,7 +179,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
                 tmpWidth = canvas.ActualWidth - left;
 
             // var width = tmpWidth >= canvas.ActualWidth ? canvas.ActualWidth : tmpWidth;
-            var width = tmpWidth <= item.MinWidth ? item.MinWidth : tmpWidth;
+            double width = tmpWidth <= item.MinWidth ? item.MinWidth : tmpWidth;
 
             width = Math.Round(width);
             item.Width = width;
@@ -188,7 +188,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
 
         private void SetHeight(BlockItem item, double deltaVertical, Canvas canvas)
         {
-            var top = Canvas.GetTop(item);
+            double top = Canvas.GetTop(item);
 
             double tmpHeight = item.ActualHeight - deltaVertical;
             if (tmpHeight <= 0) return;
@@ -198,7 +198,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Thumbs
                 tmpHeight = canvas.ActualHeight - top;
 
             // var height = tmpHeight;
-            var height = tmpHeight <= item.MinHeight ? item.MinHeight : tmpHeight;
+            double height = tmpHeight <= item.MinHeight ? item.MinHeight : tmpHeight;
             item.Height = Math.Round(height);
         }
     }

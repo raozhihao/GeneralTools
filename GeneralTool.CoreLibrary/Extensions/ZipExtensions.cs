@@ -30,7 +30,7 @@ namespace GeneralTool.CoreLibrary.Extensions
                 if (Directory.Exists(saveDir))
                     Directory.Delete(saveDir, true);
             }
-            
+
             ZipFile.ExtractToDirectory(zipFile, saveDir);
             return saveDir;
         }

@@ -49,9 +49,9 @@ namespace GeneralTool.CoreLibrary.MVS
         /// <returns></returns>
         public static List<string> EnumableDeviceList()
         {
-            var devices = DeviceList();
-            var list = new List<string>();
-            foreach (var device in devices)
+            List<MVSCameraProvider.MV_GIGE_DEVICE_INFO> devices = DeviceList();
+            List<string> list = new List<string>();
+            foreach (MVSCameraProvider.MV_GIGE_DEVICE_INFO device in devices)
             {
 
                 list.Add(ParseToIp(device.nCurrentIp));
@@ -70,7 +70,7 @@ namespace GeneralTool.CoreLibrary.MVS
             uint i1 = ((nCurrentIp) & 0xff000000) >> 24;
             uint i2 = ((nCurrentIp) & 0x00ff0000) >> 16;
             uint i3 = ((nCurrentIp) & 0x0000ff00) >> 8;
-            uint i4 = ((nCurrentIp) & 0x000000ff);
+            uint i4 = (nCurrentIp) & 0x000000ff;
             return $"{i1}.{i2}.{i3}.{i4}";
         }
 
@@ -84,7 +84,7 @@ namespace GeneralTool.CoreLibrary.MVS
             uint i1 = ((nCurrentIp) & 0xff000000) >> 24;
             uint i2 = ((nCurrentIp) & 0x00ff0000) >> 16;
             uint i3 = ((nCurrentIp) & 0x0000ff00) >> 8;
-            uint i4 = ((nCurrentIp) & 0x000000ff);
+            uint i4 = (nCurrentIp) & 0x000000ff;
             return new Tuple<uint, uint, uint, uint>(i1, i2, i3, i4);
         }
 
@@ -96,7 +96,7 @@ namespace GeneralTool.CoreLibrary.MVS
         {
             System.GC.Collect();
 
-            var list = new List<MVSCameraProvider.MV_GIGE_DEVICE_INFO>();
+            List<MVSCameraProvider.MV_GIGE_DEVICE_INFO> list = new List<MVSCameraProvider.MV_GIGE_DEVICE_INFO>();
 
             MVSCameraProvider.MV_CC_DEVICE_INFO_LIST m_stDeviceList = new MVSCameraProvider.MV_CC_DEVICE_INFO_LIST
             {
@@ -114,7 +114,7 @@ namespace GeneralTool.CoreLibrary.MVS
                 MVSCameraProvider.MV_CC_DEVICE_INFO device = (MVSCameraProvider.MV_CC_DEVICE_INFO)Marshal.PtrToStructure(m_stDeviceList.pDeviceInfo[i], typeof(MVSCameraProvider.MV_CC_DEVICE_INFO));
                 if (device.nTLayerType == MVSCameraProvider.MV_GIGE_DEVICE)
                 {
-                    var gigeInfo = (MVSCameraProvider.MV_GIGE_DEVICE_INFO)MVSCameraProvider.ByteToStruct(device.SpecialInfo.stGigEInfo, typeof(MVSCameraProvider.MV_GIGE_DEVICE_INFO));
+                    MVSCameraProvider.MV_GIGE_DEVICE_INFO gigeInfo = (MVSCameraProvider.MV_GIGE_DEVICE_INFO)MVSCameraProvider.ByteToStruct(device.SpecialInfo.stGigEInfo, typeof(MVSCameraProvider.MV_GIGE_DEVICE_INFO));
 
 
                     list.Add(gigeInfo);
@@ -364,7 +364,7 @@ namespace GeneralTool.CoreLibrary.MVS
             {
                 for (int i = 0; i < bitmap.Height; ++i)
                 {
-                    Marshal.Copy(buffer, i * imageStride, new IntPtr(ptrBmp.ToInt64() + i * bmpData.Stride), width);
+                    Marshal.Copy(buffer, i * imageStride, new IntPtr(ptrBmp.ToInt64() + (i * bmpData.Stride)), width);
                 }
             }
             /* Unlock the bits. */
@@ -381,6 +381,7 @@ namespace GeneralTool.CoreLibrary.MVS
             return color ? width * 3 : width;
         }
 
+        byte[] buffer = new byte[5500 * 4000 * 3];
         /// <summary>
         /// 获取图片
         /// </summary>
@@ -400,12 +401,11 @@ namespace GeneralTool.CoreLibrary.MVS
                 ErroMsg = "";
                 MVSCameraProvider.MV_FRAME_OUT_INFO_EX stFrameInfoEx = new MVSCameraProvider.MV_FRAME_OUT_INFO_EX();
 
-                byte[] buffer = new byte[5500 * 4000 * 3];
-
                 try
                 {
                     IntPtr PData = Marshal.UnsafeAddrOfPinnedArrayElement(buffer, 0);
                     int nRet2 = M_MyCamera.MV_CC_GetImageForBGR_NET(PData, (uint)buffer.Length, ref stFrameInfoEx, 1000);
+
                     if (nRet2 != MVSCameraProvider.MV_OK)
                     {
                         if (DeviceListAcq(_ip) < 0)
@@ -432,6 +432,7 @@ namespace GeneralTool.CoreLibrary.MVS
                         CreateBitmap(ref renderBitmap, width, height, pixelFomart);
                     UpdateBitmap(renderBitmap, buffer, width, true, bufferLen);
 
+
                     Bitmap image = renderBitmap.Clone(new Rectangle(0, 0, width, height), pixelFomart);
 
                     return image;
@@ -443,6 +444,7 @@ namespace GeneralTool.CoreLibrary.MVS
                 }
                 finally
                 {
+                    Array.Clear(this.buffer, 0, this.buffer.Length);
                     //m_MyCamera.MV_CC_FreeImageBuffer_NET(ref stFrameInfo);
                 }
 
@@ -547,18 +549,18 @@ namespace GeneralTool.CoreLibrary.MVS
 
             //将其扩大
             //计算左上角偏移点
-            int xResult = p1.X - p1.X % offXInc;
+            int xResult = p1.X - (p1.X % offXInc);
             xResult = xResult < 0 ? 0 : xResult;
 
-            int yResult = p1.Y - p1.Y % offYInc;
+            int yResult = p1.Y - (p1.Y % offYInc);
             yResult = yResult < 0 ? 0 : yResult;
 
             int widthInc = info.WidthInc;
             int heightInc = info.HeightInc;
 
             //计算宽
-            int width = rect.Width + p1.X % offXInc;//如果左顶点x往左偏移过,则可以加大点
-            int widthResult = width - width % widthInc ;
+            int width = rect.Width + (p1.X % offXInc);//如果左顶点x往左偏移过,则可以加大点
+            int widthResult = width - (width % widthInc);
             if (widthResult + xResult > MaxSize.Width)
             {
                 //如果大于最大宽度,则将宽度减小
@@ -566,8 +568,8 @@ namespace GeneralTool.CoreLibrary.MVS
             }
 
             //计算高
-            int height = rect.Height + p1.Y % offYInc;
-            int heightResult = height - height % heightInc ;
+            int height = rect.Height + (p1.Y % offYInc);
+            int heightResult = height - (height % heightInc);
             if (heightResult + yResult > MaxSize.Height)
             {
                 heightResult = MaxSize.Height - yResult;
@@ -617,7 +619,7 @@ namespace GeneralTool.CoreLibrary.MVS
                 re = StartGrab();
                 return re;
             }
-            
+
         }
 
         /// <summary>
@@ -735,7 +737,7 @@ namespace GeneralTool.CoreLibrary.MVS
             {
                 StopGrab();
                 _ = M_MyCamera.MV_CC_SetExposureTime_NET(Convert.ToSingle(time));
-                _ = StartGrab(); 
+                _ = StartGrab();
             }
         }
     }

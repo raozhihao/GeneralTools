@@ -11,8 +11,8 @@ namespace SimpleDiagram.BlockVIewModels
         private bool? dialogResult;
         public bool? DialogResult
         {
-            get => this.dialogResult;
-            set => this.RegisterProperty(ref this.dialogResult, value);
+            get => dialogResult;
+            set => RegisterProperty(ref dialogResult, value);
         }
 
         public ILog Log { get; set; }
@@ -20,21 +20,20 @@ namespace SimpleDiagram.BlockVIewModels
 
         public virtual void OKMethod()
         {
-            this.DialogResult = true;
+            DialogResult = true;
         }
 
         public ICommand CancelCommand => new SimpleCommand(CancelMethod);
 
         public virtual void CancelMethod()
         {
-            this.DialogResult = false;
+            DialogResult = false;
         }
 
         public virtual void Dispose()
         {
             //this.ClearParameters();
         }
-
 
         public BaseBlockViewModel BaseViewModel { get; set; }
         #region 数据操作区

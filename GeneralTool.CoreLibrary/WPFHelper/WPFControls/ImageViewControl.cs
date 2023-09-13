@@ -545,8 +545,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
                 return null;
             }
             myEllipse.Tag = pixelPoint;
-            Canvas.SetLeft(myEllipse, pos.X - r / 2);
-            Canvas.SetTop(myEllipse, pos.Y - r / 2);
+            Canvas.SetLeft(myEllipse, pos.X - (r / 2));
+            Canvas.SetTop(myEllipse, pos.Y - (r / 2));
             return myEllipse;
         }
 
@@ -1280,16 +1280,16 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
             double topYDis = recStartPoint.Y - mousePoint.Y;
 
             //判断鼠标是否在右边框
-            bool mouseInRightLine = xDis > -1 / Slider.Value && xDis < 3 / Slider.Value && mousePoint.Y > (recRightTopPoint.Y + 1 / Slider.Value) && mousePoint.Y < recEndPoint.Y - 1 / Slider.Value;
+            bool mouseInRightLine = xDis > -1 / Slider.Value && xDis < 3 / Slider.Value && mousePoint.Y > (recRightTopPoint.Y + (1 / Slider.Value)) && mousePoint.Y < recEndPoint.Y - (1 / Slider.Value);
 
             //判断鼠标是否在左边框
-            bool mouseInLeftLine = leftXDis > -1 / Slider.Value && leftXDis < 3 / Slider.Value && mousePoint.Y > (recRightTopPoint.Y + 1 / Slider.Value) && mousePoint.Y < recEndPoint.Y - 1 / Slider.Value;
+            bool mouseInLeftLine = leftXDis > -1 / Slider.Value && leftXDis < 3 / Slider.Value && mousePoint.Y > (recRightTopPoint.Y + (1 / Slider.Value)) && mousePoint.Y < recEndPoint.Y - (1 / Slider.Value);
 
             //判断鼠标是否在下边框
-            bool mouseInBottomLine = yDis > -1 / Slider.Value && yDis < 3 / Slider.Value && mousePoint.X > recLeftBottomPoint.X + 1 / Slider.Value && mousePoint.X < recEndPoint.X - 1 / Slider.Value;
+            bool mouseInBottomLine = yDis > -1 / Slider.Value && yDis < 3 / Slider.Value && mousePoint.X > recLeftBottomPoint.X + (1 / Slider.Value) && mousePoint.X < recEndPoint.X - (1 / Slider.Value);
 
             //判断鼠标是否在上边框
-            bool mouseInTopLine = topYDis > -1 / Slider.Value && topYDis < 3 / Slider.Value && mousePoint.X > recStartPoint.X + 1 / Slider.Value && mousePoint.X < recEndPoint.X - 1 / Slider.Value;
+            bool mouseInTopLine = topYDis > -1 / Slider.Value && topYDis < 3 / Slider.Value && mousePoint.X > recStartPoint.X + (1 / Slider.Value) && mousePoint.X < recEndPoint.X - (1 / Slider.Value);
 
             //右边的显示应该处于右顶点到右底点之间
             if (mouseInRightLine)

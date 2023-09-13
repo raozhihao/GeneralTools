@@ -34,14 +34,14 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Common
                 if (sourceInfo.Point.X > sinkInfo.Point.X)
                 {
                     //目标在左
-                    double x = sinkInfo.Point.X + sinkInfo.Size.Width / 2 + 5;
+                    double x = sinkInfo.Point.X + (sinkInfo.Size.Width / 2) + 5;
                     points.Add(new Point(x, sourceInfo.Point.Y));
                     points.Add(new Point(x, sinkInfo.Point.Y));
                 }
                 else
                 {
                     //目标在右
-                    double x = sinkInfo.Point.X - sinkInfo.Size.Width / 2 - 5;
+                    double x = sinkInfo.Point.X - (sinkInfo.Size.Width / 2) - 5;
                     points.Add(new Point(x, sourceInfo.Point.Y));
                     points.Add(new Point(x, sinkInfo.Point.Y));
                 }
@@ -125,7 +125,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Common
                 else
                 {
                     //目标在右
-                    double x = sourceInfo.Point.X + sourceInfo.Size.Width / 2 + 5;
+                    double x = sourceInfo.Point.X + (sourceInfo.Size.Width / 2) + 5;
                     points.Add(new Point(x, sourceInfo.Point.Y));
                     points.Add(new Point(x, sinkInfo.Point.Y));
                 }
@@ -146,14 +146,14 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Common
                 if (sourceInfo.Point.X > sinkInfo.Point.X)
                 {
                     //目标在源左方,左上方
-                    double x = sinkInfo.Point.X - sinkInfo.Size.Width / 2 - 5;
+                    double x = sinkInfo.Point.X - (sinkInfo.Size.Width / 2) - 5;
                     points.Add(new Point(x, sourceInfo.Point.Y));
                     points.Add(new Point(x, sinkInfo.Point.Y));
                 }
                 else
                 {
                     //目标在源右方,右上方
-                    double x = sourceInfo.Point.X + sourceInfo.Size.Width / 2 + 5;
+                    double x = sourceInfo.Point.X + (sourceInfo.Size.Width / 2) + 5;
                     points.Add(new Point(x, sourceInfo.Point.Y));
                     points.Add(new Point(x, sinkInfo.Point.Y));
                 }

@@ -35,7 +35,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Common
                 if (sourceInfo.Point.X > sinkInfo.Point.X)
                 {
                     //目标在左
-                    double y = sourceInfo.Point.Y + sourceInfo.Size.Height / 2 + 5;
+                    double y = sourceInfo.Point.Y + (sourceInfo.Size.Height / 2) + 5;
                     points.Add(new Point(sourceInfo.Point.X, y));
                     points.Add(new Point(sinkInfo.Point.X, y));
                 }
@@ -51,7 +51,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Common
                 if (sourceInfo.Point.X > sinkInfo.Point.X)
                 {
                     //目标在左
-                    double y = sourceInfo.Point.Y - sourceInfo.Size.Height / 2 - 5;
+                    double y = sourceInfo.Point.Y - (sourceInfo.Size.Height / 2) - 5;
                     points.Add(new Point(sourceInfo.Point.X, y));
                     points.Add(new Point(sinkInfo.Point.X, y));
                 }
