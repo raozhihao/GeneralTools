@@ -149,7 +149,6 @@ namespace GeneralTool.CoreLibrary.Interfaces
         /// <param name="msg"></param>
         /// <param name="objects"></param>
         void Fail(string msg, params object[] objects);
-        void Dispose();
 
         #endregion Public 方法
 
