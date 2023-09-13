@@ -358,3 +358,4 @@ healthchecksdb
 /TaskServerUI/Properties/Settings.settings
 /TaskServerUI/TaskServerUI.csproj
 /TaskServerUI/TestTask.cs
+/SocketTest/SocketTest.csproj
