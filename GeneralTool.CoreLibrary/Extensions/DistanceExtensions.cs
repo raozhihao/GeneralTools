@@ -106,7 +106,7 @@ namespace GeneralTool.CoreLibrary.Extensions
         {
             double sum = 0d;
             int index = 0;
-            System.Drawing.PointF first = default(System.Drawing.PointF);
+            System.Drawing.PointF first = default;
             foreach (System.Drawing.PointF point in points)
             {
                 if (index == 0)
@@ -129,7 +129,7 @@ namespace GeneralTool.CoreLibrary.Extensions
         {
             double sum = 0d;
             int index = 0;
-            System.Windows.Point first = default(System.Windows.Point);
+            System.Windows.Point first = default;
             foreach (System.Windows.Point point in points)
             {
                 if (index == 0)
@@ -154,7 +154,7 @@ namespace GeneralTool.CoreLibrary.Extensions
         {
             if (points == null || points.Count <= 1) return 0;
             System.Windows.Point prev = points.First();
-            double disMax = 0d;
+            double disMax = double.MinValue;
             for (int i = 1; i < points.Count; i++)
             {
                 System.Windows.Point curr = points[i];
@@ -177,7 +177,7 @@ namespace GeneralTool.CoreLibrary.Extensions
         {
             if (points == null || points.Count <= 1) return 0;
             System.Windows.Point prev = points.First();
-            double disMin = 99990d;
+            double disMin = double.MaxValue;
             for (int i = 1; i < points.Count; i++)
             {
                 System.Windows.Point curr = points[i];

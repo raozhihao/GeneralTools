@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Security.Policy;
 using System.Text;
 
 using GeneralTool.CoreLibrary.Attributes;
@@ -97,6 +98,8 @@ namespace GeneralTool.CoreLibrary.TaskLib
 
             //取得请求的对象
             HttpListenerRequest request = context.Request;
+            if (request.RawUrl.Contains("favicon.ico"))
+                return;
             Log.Debug($"{request.HttpMethod} ,{request.RawUrl} ,{request.ProtocolVersion}");
             StreamReader reader = new StreamReader(request.InputStream, Encoding.UTF8);
             string msg = string.Empty;
@@ -145,6 +148,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
             HttpListenerResponse response = context.Response;
             string url = context.Request.Url.LocalPath;
             url = url.Substring(1);//将前面的/去除
+            if (url.Contains("favicon.ico")) { return ""; }
             //判断url是否存在
             bool findUrl = false;
             foreach (KeyValuePair<TaskKey, RequestAddressItem> item in RequestRoute)
@@ -219,25 +223,33 @@ namespace GeneralTool.CoreLibrary.TaskLib
             }
             cmd.Url = url;
 
-            //如果有事件,则交给用户去处理
-            if (HandlerRequest != null)
+            string responseString;
+            var reponse = this.OnRequestEvent(cmd);
+            if (reponse == null)
             {
-                //判断请求方法是否正确
-                RequestAddressItem item = GetRequestItem(cmd);//RequestRoute[url];
-
-                if (item.HttpMethod.ToString().ToLower() != context.Request.HttpMethod.ToLower())
+                //如果有事件,则交给用户去处理
+                if (HandlerRequest != null)
                 {
-                    return JsonConvert.SerializeObject(new ServerResponse() { RequestSuccess = false, ErroMsg = $"远程请示的Http Metod与接口不一致,请示的 url : {url} ,请示的Http Method : {context.Request.HttpMethod}", RequestUrl = url });
+                    //判断请求方法是否正确
+                    RequestAddressItem item = GetRequestItem(cmd);//RequestRoute[url];
+
+                    if (item.HttpMethod.ToString().ToLower() != context.Request.HttpMethod.ToLower())
+                    {
+                        return JsonConvert.SerializeObject(new ServerResponse() { RequestSuccess = false, ErroMsg = $"远程请示的Http Metod与接口不一致,请示的 url : {url} ,请示的Http Method : {context.Request.HttpMethod}", RequestUrl = url });
+                    }
+
+                    RequestInfo info = new RequestInfo(cmd, response, item);
+                    HandlerRequestMethod(info);
+                    return null;
                 }
 
-                RequestInfo info = new RequestInfo(cmd, response, item);
-                HandlerRequestMethod(info);
-                return null;
+                Log.Debug($"Request:{msg}");
+                responseString = GetReponseString(cmd, JsonConvert);
             }
-
-            Log.Debug($"Request:{msg}");
-
-            string responseString = GetReponseString(cmd, JsonConvert);
+            else
+            {
+                responseString = GetReponseString(cmd, reponse, JsonConvert);
+            }
 
             Log.Log($"Response:{responseString}" + Environment.NewLine);
 

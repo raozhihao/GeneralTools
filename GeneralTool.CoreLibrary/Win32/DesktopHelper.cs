@@ -36,5 +36,20 @@ namespace GeneralTool.CoreLibrary.Win32
             return bitmap;
         }
 
+        /// <summary>
+        /// 将窗口置前
+        /// </summary>
+        /// <param name="hWnd"></param>
+        public static void SetForeground(this IntPtr hWnd)
+        {
+            if (Win32Helper.IsIconic(hWnd))
+            {
+                Win32Helper.ShowWindow(hWnd, 9);
+            }
+
+            // 将窗口置于前端
+            Win32Helper.SetForegroundWindow(hWnd);
+        }
+
     }
 }

@@ -221,6 +221,8 @@ namespace GeneralTool.General.WPFHelper.WPFControls
                 {
                     //清除原有
                     v.ResertImageSource();
+                    v.ImageSource = null;
+                    v.writeable = null;
                 }
                 else
                 {
@@ -522,7 +524,10 @@ namespace GeneralTool.General.WPFHelper.WPFControls
             }
             set
             {
-                if (value == null) return;
+                if (value == null)
+                {
+                    this.Img = null;
+                }
                 if (this.Img != null)
                     BindingOperations.ClearBinding(this.Img, Image.SourceProperty);
                 //初始化最大尺寸

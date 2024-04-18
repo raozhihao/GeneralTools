@@ -18,18 +18,18 @@ namespace GeneralTool.CoreLibrary.Adb
     /// </summary>
     public class AdbHelper
     {
-        private  string adbPath;
+        private string adbPath;
 
         public AdbHelper()
         {
-            
+
         }
 
         /// <summary>
         /// 设置adb路径
         /// </summary>
         /// <param name="adbExePath"></param>
-        public void SetAdbPath(string adbExePath="")
+        public void SetAdbPath(string adbExePath = "")
         {
             if (string.IsNullOrWhiteSpace(adbExePath))
                 adbExePath = "adb";//尝试使用环境变量中的adb
@@ -666,8 +666,9 @@ namespace GeneralTool.CoreLibrary.Adb
         /// <param name="x2"></param>
         /// <param name="y2"></param>
         /// <param name="deviceSerial"></param>
+        /// <param name="time">滑动时间毫秒</param>
         /// <returns></returns>
-        public Result<string> Swipe(int x1, int y1, int x2, int y2, string deviceSerial = "")
+        public Result<string> Swipe(int x1, int y1, int x2, int y2, string deviceSerial = "", int time = 500)
         {
             Result<string> result = new Result<string>() { ResultBool = false };
             try

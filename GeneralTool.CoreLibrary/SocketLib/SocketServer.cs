@@ -58,6 +58,7 @@ namespace GeneralTool.CoreLibrary.SocketLib
         {
             //接收到连接
             Socket serverSocket = ar.AsyncState as Socket;
+            if (serverSocket == null) return;
             Socket client = null;
             try
             {
@@ -65,11 +66,19 @@ namespace GeneralTool.CoreLibrary.SocketLib
             }
             catch (Exception ex)
             {
-                CloseClient(client, ex);
+                try
+                {
+                    if (client != null)
+                        CloseClient(client.LocalEndPoint + "", client.RemoteEndPoint + "", ex);
+                }
+                catch (Exception)
+                {
+
+                }
                 return;
             }
 
-            _ = serverSocket.BeginAccept(AcceptCallback, serverSocket);
+            _ = serverSocket?.BeginAccept(AcceptCallback, serverSocket);
 
             ClientConnctedEvent?.Invoke(this, new SocketArg(client));
 

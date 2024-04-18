@@ -115,7 +115,18 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
                 LogMessageInfo msg = (LogMessageInfo)addItems[index];
                 string msgString = msg.Msg;
                 if (ShowFullMsg)
-                    msgString = msg.FullMsg;
+                {
+                    if (string.IsNullOrWhiteSpace(msg.FullMsg))
+                    {
+                        var headInfo = "[" + msg.LogType + "]";
+                        headInfo += " " + msg.CurrentThreadId + " ";
+                        headInfo += " " + msg.CurrentTime + ":";
+                        msgString = $"{headInfo}{msg.Msg}";
+
+                    }
+                    else
+                        msgString = msg.FullMsg;
+                }
                 Run run = new Run(msgString + Environment.NewLine)
                 {
                     Tag = msg
@@ -160,6 +171,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
                     Inlines.Add(run);
             }
         }
+
 
         private readonly object Locker = new object();
         private void Dp_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

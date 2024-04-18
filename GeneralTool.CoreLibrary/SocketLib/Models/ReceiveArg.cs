@@ -28,5 +28,10 @@ namespace GeneralTool.CoreLibrary.SocketLib.Models
         /// 工作的socket
         /// </summary>
         public Socket Client { get; }
+
+        /// <summary>
+        /// 指示是否已经处理了
+        /// </summary>
+        public bool Handled { get; set; }
     }
 }

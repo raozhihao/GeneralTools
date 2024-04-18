@@ -20,6 +20,7 @@ namespace GeneralTool.CoreLibrary.IniHelpers
         public Category(string sectionName)
         {
             SectionName = sectionName;
+
         }
 
         #endregion Public 构造函数
@@ -34,6 +35,8 @@ namespace GeneralTool.CoreLibrary.IniHelpers
         #endregion Public 属性
 
     }
+
+
 
     /// <summary>
     /// 节点
@@ -70,9 +73,10 @@ namespace GeneralTool.CoreLibrary.IniHelpers
             IsJosn = isJosn;
             JsonConvert = convert;
 
+          
             if (create)
             {
-                string tmp = IniHelper.GetValue<string>(SectionName, KeyName);
+                string tmp = this.IniHelper.GetValue<string>(SectionName, KeyName);
                 if (string.IsNullOrWhiteSpace(tmp))
                 {
                     Value = defaultValue;
@@ -136,7 +140,7 @@ namespace GeneralTool.CoreLibrary.IniHelpers
             get
             {
                 //获取值
-                string tmp = IniHelper.GetValue<string>(SectionName, KeyName);
+                string tmp = this.IniHelper.GetValue<string>(SectionName, KeyName);
                 if (string.IsNullOrWhiteSpace(tmp))
                     return DefaultValue;
                 Type type = typeof(T);
@@ -189,7 +193,7 @@ namespace GeneralTool.CoreLibrary.IniHelpers
                 }
                 else
                 {
-                    return IniHelper.GetValue<T>(SectionName, KeyName, default);
+                    return this.IniHelper.GetValue<T>(SectionName, KeyName, default);
                 }
             }
             set
@@ -201,7 +205,7 @@ namespace GeneralTool.CoreLibrary.IniHelpers
                     //转换为Json,查看有无Json转换器
 
                     string jsonStr = SerializeToString(JsonConvert, value);
-                    IniHelper.WriteValueString(SectionName, KeyName, jsonStr);
+                    this.IniHelper.WriteValueString(SectionName, KeyName, jsonStr);
 
                     return;
                 }
@@ -228,18 +232,18 @@ namespace GeneralTool.CoreLibrary.IniHelpers
                         objs[i] = get.Invoke(value, new object[] { i });
                     }
                     string val = string.Join(",", objs);
-                    IniHelper.WriteValueString(SectionName, KeyName, val);
+                    this.IniHelper.WriteValueString(SectionName, KeyName, val);
                 }
                 else
                 {
-                    IniHelper.WriteValueT<T>(SectionName, KeyName, value);
+                    this.IniHelper.WriteValueT<T>(SectionName, KeyName, value);
                 }
             }
         }
 
         private object DesrializeToObj(IJsonConvert jsonType, Type type)
         {
-            string value = IniHelper.GetString(SectionName, KeyName, GetDefaultValue(jsonType));
+            string value = this.IniHelper.GetString(SectionName, KeyName, GetDefaultValue(jsonType));
             object obj = jsonType != null ? jsonType.DeserializeObject(value, type) : value.DeserializeJsonToObject(type);
             return obj;
         }

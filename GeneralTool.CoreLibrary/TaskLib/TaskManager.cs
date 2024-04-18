@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net;
 using System.Reflection;
 
 using GeneralTool.CoreLibrary.Attributes;
@@ -21,6 +22,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
     /// <summary>
     /// 任务对象
     /// </summary>
+    [Serializable]
     public class TaskManager : ITaskInoke
     {
         #region Private 字段
@@ -63,7 +65,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
 
         /// <summary>
         /// </summary>
-        public TaskManager() : this(null, new ConsoleLogInfo())
+        public TaskManager() : this(null, new ConsoleLogInfo(), null)
         {
 
         }
@@ -73,7 +75,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
         /// </summary>
         /// <param name="jsonConvert"></param>
         /// <param name="log"></param>
-        public TaskManager(IJsonConvert jsonConvert, ILog log)
+        public TaskManager(IJsonConvert jsonConvert, ILog log) : this(jsonConvert, log, null)
         {
             if (log == null)
                 log = new ConsoleLogInfo();
@@ -293,26 +295,28 @@ namespace GeneralTool.CoreLibrary.TaskLib
         public virtual void AddTaskModel(object obj)
         {
             TaskModel taskModel = new TaskModel();
-            RouteAttribute classRoute = obj.GetAttributeByClass<RouteAttribute>();
+            RouteAttribute classRoute = obj.GetType().GetCustomAttributes().FirstOrDefault(f => f.GetType().Name == nameof(RouteAttribute)) as RouteAttribute; //obj.GetAttributeByClass<RouteAttribute>();
             if (classRoute == null)
             {
                 return;
             }
+
+            if (!Station.GetRouteVisible(classRoute)) return;
 
             taskModel.LangKey = classRoute.LangKey;
             taskModel.Explanation = classRoute.Explanation;
             string rootPath = classRoute.Url;
 
             Dictionary<TaskKey, DoTaskParameterItem> tmpDics = new Dictionary<TaskKey, DoTaskParameterItem>();
-            IOrderedEnumerable<MethodInfo> methods = obj.GetType().GetMethods().OrderBy(m => m.GetCustomAttribute<RouteAttribute>()?.SortIndex);
+            IOrderedEnumerable<MethodInfo> methods = obj.GetType().GetMethods().OrderBy(m => (m.GetCustomAttributes().FirstOrDefault(r => r.GetType().Name == nameof(RouteAttribute)) as RouteAttribute)?.SortIndex);
 
             methods.Foreach(m =>
             {
                 DoTaskModel doModel = new DoTaskModel();
-                IEnumerable<Attribute> attributes = m.GetCustomAttributes().Where(a => a is RouteAttribute);
-                if (attributes.Count() > 0)
+                var route = m.GetCustomAttributes().FirstOrDefault(a => a.GetType().Name == nameof(RouteAttribute)) as RouteAttribute;
+                if (route != null)
                 {
-                    RouteAttribute route = attributes.First() as RouteAttribute;
+                    if (!Station.GetRouteVisible(route)) return;
                     ObservableCollection<ParameterItem> paramters = new ObservableCollection<ParameterItem>();
                     _ = m.GetParameters().Foreach(p =>
                     {
@@ -324,11 +328,11 @@ namespace GeneralTool.CoreLibrary.TaskLib
                         };
                         if (p.HasDefaultValue)
                         {
-                            it.Value = p.DefaultValue.ToString();
+                            it.Value = p.DefaultValue+"";
                         }
 
                         //查看是否有水印提示
-                        WaterMarkAttribute water = p.GetCustomAttribute<WaterMarkAttribute>();
+                        WaterMarkAttribute water = p.GetCustomAttributes().FirstOrDefault(f => f.GetType().Name == nameof(WaterMarkAttribute)) as WaterMarkAttribute;//p.GetCustomAttribute<WaterMarkAttribute>();
                         if (water != null)
                         {
                             it.WaterMark = water.WaterMark;
@@ -348,6 +352,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
                         LangKey = route.LangKey,
                         Explanation = route.Explanation,
                         ResultType = m.ReturnType,
+                        Target = route.Target2,
                         HttpMethod = route.Method,
                         ReturnString = route.ReturnString,
                     };
@@ -387,6 +392,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
 
         }
 
+
         private bool isAddServerStation;
         /// <inheritdoc/>
         public virtual bool Open(string ip, int port, params object[] target)
@@ -420,6 +426,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
                 return false;
             }
         }
+
 
         /// <summary>
         /// 开启单个站点任务,同一个站点请勿多次调用
@@ -469,7 +476,8 @@ namespace GeneralTool.CoreLibrary.TaskLib
                         item.Station.Close();
                     }
 
-                    _ = item.Station.Start(item.Ip, item.Port);
+                    var re = item.Station.Start(item.Ip, item.Port);
+                    if (!re) throw new Exception("启动失败,请检查IP和端口");
                     log.Debug($"服务已开启 IP:{item.Ip} PORT:{item.Port}");
                     item.IsSocketInit = true;
                 }
@@ -533,6 +541,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
         {
             try
             {
+
                 if (!IsInterfacesInit)
                 {
                     this.taskInokes = taskInokes;
@@ -551,6 +560,45 @@ namespace GeneralTool.CoreLibrary.TaskLib
                 IsInterfacesInit = false;
                 return false;
             }
+        }
+
+        /// <summary>
+        /// 启动外部服务
+        /// </summary>
+        /// <returns></returns>
+        public virtual bool OpenServer(string ip, int port)
+        {
+            if (!isAddServerStation)
+            {
+                ServerStations.Add(new StationInfo(ip, port, ServerStation));
+                isAddServerStation = true;
+            }
+
+            foreach (StationInfo item in ServerStations)
+            {
+                try
+                {
+                    if (item.IsSocketInit)
+                    {
+                        item.Station.Close();
+                    }
+
+                    var re = item.Station.Start(item.Ip, item.Port);
+                    if (!re) throw new Exception("启动失败,请检查IP和端口");
+                    log.Debug($"服务已开启 IP:{item.Ip} PORT:{item.Port}");
+                    item.IsSocketInit = true;
+                }
+                catch (Exception ex)
+                {
+                    item.IsSocketInit = false;
+                    ErroMsg = "启动中有模块失败" + ex.GetInnerExceptionMessage();
+                    log.Fail(ErroMsg);
+                    return false;
+                }
+            }
+
+
+            return true;
         }
 
         /// <summary>

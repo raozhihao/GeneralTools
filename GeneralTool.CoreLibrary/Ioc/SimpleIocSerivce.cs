@@ -52,35 +52,7 @@ namespace GeneralTool.CoreLibrary.Ioc
             foreach (KeyValuePair<Type, DefinedClass> item in typeDics)
             {
                 DefinedClass defindClass = item.Value;
-                //获取所有属性
-                PropertyInfo[] pros = item.Key.GetProperties();
-                foreach (PropertyInfo pro in pros)
-                {
-                    Type propertyType = pro.PropertyType;
-                    //查看当前属性的类型是否已注册
-                    if (typeDics.ContainsKey(propertyType))
-                    {
-                        //存在,则进行赋值
-                        if (pro.SetMethod != null)
-                        {
-                            object obj = typeDics[propertyType].Instance;
-                            pro.SetValue(defindClass.Instance, obj);
-                        }
-                    }
-                    else if (propertyType.IsInterface)
-                    {
-                        //如果是接口,则找到与其一致的
-                        if (interfaceDics.ContainsKey(propertyType))
-                        {
-                            //存在,则进行赋值
-                            if (pro.SetMethod != null)
-                            {
-                                object obj = interfaceDics[propertyType].Instance;
-                                pro.SetValue(defindClass.Instance, obj);
-                            }
-                        }
-                    }
-                }
+                this.SetValue(defindClass, item.Key);
             }
 
             //调用构造函数
@@ -134,12 +106,46 @@ namespace GeneralTool.CoreLibrary.Ioc
             }
         }
 
+        private void SetValue(DefinedClass defindClass, Type key)
+        {
+            //获取所有属性
+            PropertyInfo[] pros = key.GetProperties();
+            foreach (PropertyInfo pro in pros)
+            {
+                Type propertyType = pro.PropertyType;
+                //查看当前属性的类型是否已注册
+                if (typeDics.ContainsKey(propertyType))
+                {
+                    //存在,则进行赋值
+                    if (pro.SetMethod != null)
+                    {
+                        object obj = typeDics[propertyType].Instance;
+                        pro.SetValue(defindClass.Instance, obj);
+                    }
+                }
+                else if (propertyType.IsInterface)
+                {
+                    //如果是接口,则找到与其一致的
+                    if (interfaceDics.ContainsKey(propertyType))
+                    {
+                        //存在,则进行赋值
+                        if (pro.SetMethod != null)
+                        {
+                            object obj = interfaceDics[propertyType].Instance;
+                            pro.SetValue(defindClass.Instance, obj);
+                        }
+                    }
+                }
+            }
+        }
+
         /// <summary>
         /// 注册指定程序集中的所有类型
         /// </summary>
         /// <param name="assembly">程序集</param>
         /// <param name="checkInjectTypeAttr">是否检查类型上有 InjectType 特性</param>
         public void Inject(Assembly assembly, bool checkInjectTypeAttr = false) => Inject(checkInjectTypeAttr, assembly.ExportedTypes.ToArray());
+
 
         /// <summary>
         /// 注册指定的类型集合
@@ -259,7 +265,7 @@ namespace GeneralTool.CoreLibrary.Ioc
             MethodInfo method = null;
             if (!string.IsNullOrWhiteSpace(methodName))
                 method = type.GetMethod(methodName);
-            DefinedClass defined = new DefinedClass() { Instance = instance, InterfaceType = intefaceType, InitMethod = method, TType = type, IsUninitializedObject = isUninitializedObject };
+            var defined = new DefinedClass() { Instance = instance, InterfaceType = intefaceType, InitMethod = method, TType = type, IsUninitializedObject = isUninitializedObject };
             if (!typeDics.ContainsKey(type))
                 typeDics.Add(type, defined);
             else
@@ -272,7 +278,19 @@ namespace GeneralTool.CoreLibrary.Ioc
                 else
                     interfaceDics[intefaceType] = defined;
             }
+        }
 
+        public void RuntimeInject(object instance)
+        {
+            Type type = instance.GetType();
+            var defined = new DefinedClass() { Instance = instance, InterfaceType = null, InitMethod = null, TType = type, IsUninitializedObject = false };
+            if (!typeDics.ContainsKey(type))
+                typeDics.Add(type, defined);
+            else
+                typeDics[type] = defined;
+
+            //进行实例化
+            this.SetValue(defined, type);
         }
 
         /// <summary>
@@ -321,7 +339,25 @@ namespace GeneralTool.CoreLibrary.Ioc
         /// <returns></returns>
         public object Resolve(Type type)
         {
-            return typeDics.ContainsKey(type) ? typeDics[type].Instance : null;
+            var instance = typeDics.ContainsKey(type) ? typeDics[type].Instance : null;
+            instance = instance == null ? (interfaceDics.ContainsKey(type) ? interfaceDics[type].Instance : null) : instance;
+
+            foreach (var item in typeDics)
+            {
+                if (type.IsAssignableFrom(item.Key))
+                {
+                    return typeDics[item.Key].Instance;
+                }
+            }
+
+            foreach (var item in interfaceDics)
+            {
+                if (type.IsAssignableFrom(item.Key))
+                {
+                    return interfaceDics[item.Key].Instance;
+                }
+            }
+            return null;
         }
     }
 }

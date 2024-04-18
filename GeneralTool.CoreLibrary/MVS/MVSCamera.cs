@@ -4,6 +4,8 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 
+using static GeneralTool.CoreLibrary.MVS.MVSCameraProvider;
+
 namespace GeneralTool.CoreLibrary.MVS
 {
     /// <summary>
@@ -42,6 +44,11 @@ namespace GeneralTool.CoreLibrary.MVS
         {
             get; protected set;
         }
+
+        /// <summary>
+        /// 是否注册图像回调
+        /// </summary>
+        public bool RegisterImageCallBack { get; set; }
 
         /// <summary>
         /// 枚举设备列表
@@ -160,6 +167,7 @@ namespace GeneralTool.CoreLibrary.MVS
 
                 }
             }
+
 
             ErroMsg = $"没有找到IP为 [{ip}] 的相机";
             return -1;
@@ -301,10 +309,21 @@ namespace GeneralTool.CoreLibrary.MVS
         /// <returns></returns>
         public virtual bool StartGrab()
         {
-            // ch:标志位置位true | en:Set position bit true
+            int nRet = 0;
+            if (this.RegisterImageCallBack)
+            {
+                // ch:注册回调函数 | en:Register image callback
+                ImageCallback = new cbOutputExdelegate(ImageCallbackFunc);
+                nRet = this.M_MyCamera.MV_CC_RegisterImageCallBackEx_NET(ImageCallback, IntPtr.Zero);
+                if (MVSCameraProvider.MV_OK != nRet)
+                {
+                    ShowErrorMsg("无法注册图像回调", nRet);
+                    Close();
+                }
+            }
 
             // ch:开始采集 | en:Start Grabbing
-            int nRet = M_MyCamera.MV_CC_StartGrabbing_NET();
+            nRet = M_MyCamera.MV_CC_StartGrabbing_NET();
             if (MVSCameraProvider.MV_OK != nRet)
             {
                 IsOpen = false;
@@ -317,6 +336,7 @@ namespace GeneralTool.CoreLibrary.MVS
             IsOpen = true;
             return true;
         }
+
 
         /// <summary>
         /// 停止采集
@@ -381,7 +401,24 @@ namespace GeneralTool.CoreLibrary.MVS
             return color ? width * 3 : width;
         }
 
+        public event Action<Bitmap> OnBitmapChanged;
+        private void ImageCallbackFunc(IntPtr pData, ref MV_FRAME_OUT_INFO_EX pFrameInfo, IntPtr pUser)
+        {
+            var width = (int)pFrameInfo.nWidth;
+            var height = (int)pFrameInfo.nHeight;
+            var buffer = new byte[width * height * 3];
+
+            var pBmpImage = Marshal.UnsafeAddrOfPinnedArrayElement(buffer, 0);
+            using (var bmp = new Bitmap(width, height, width * 3, PixelFormat.Format24bppRgb, pBmpImage))
+            {
+                this.OnBitmapChanged?.Invoke(bmp);
+            }
+        }
+
         byte[] buffer = new byte[5500 * 4000 * 3];
+        private cbOutputExdelegate ImageCallback;
+
+
         /// <summary>
         /// 获取图片
         /// </summary>
@@ -666,6 +703,15 @@ namespace GeneralTool.CoreLibrary.MVS
         }
 
         /// <summary>
+        /// 获取相机驱动
+        /// </summary>
+        /// <returns></returns>
+        public MVSCameraProvider GetMVSCameraProvider()
+        {
+            return this.M_MyCamera;
+        }
+
+        /// <summary>
         /// 关闭相机
         /// </summary>
         public virtual void Close()
@@ -739,6 +785,55 @@ namespace GeneralTool.CoreLibrary.MVS
                 _ = M_MyCamera.MV_CC_SetExposureTime_NET(Convert.ToSingle(time));
                 _ = StartGrab();
             }
+        }
+
+        /// <summary>
+        /// 更新大小
+        /// </summary>
+        /// <param name="rect"></param>
+        /// <returns></returns>
+        public static Rectangle ParseRect(Rectangle rect,Size maxSize,int offXInc,int offYInc,int widthInc,int heightInc)
+        {
+            //查看当前Rect的大小是否与最大值一样
+            if (rect.Width == maxSize.Width && rect.Height == maxSize.Height)
+            {
+                //已经OK了
+                return new Rectangle(0, 0, rect.Width, rect.Height);
+            }
+
+            #region New
+          
+            Point p1 = new Point(rect.X, rect.Y);
+          
+            //将其扩大
+            //计算左上角偏移点
+            int xResult = p1.X - (p1.X % offXInc);
+            xResult = xResult < 0 ? 0 : xResult;
+
+            int yResult = p1.Y - (p1.Y % offYInc);
+            yResult = yResult < 0 ? 0 : yResult;
+
+            //计算宽
+            int width = rect.Width + (p1.X % offXInc);//如果左顶点x往左偏移过,则可以加大点
+            int widthResult = width - (width % widthInc);
+            if (widthResult + xResult > maxSize.Width)
+            {
+                //如果大于最大宽度,则将宽度减小
+                widthResult = maxSize.Width - xResult;
+            }
+
+            //计算高
+            int height = rect.Height + (p1.Y % offYInc);
+            int heightResult = height - (height % heightInc);
+            if (heightResult + yResult > maxSize.Height)
+            {
+                heightResult = maxSize.Height - yResult;
+            }
+
+            return new Rectangle(xResult, yResult, widthResult, heightResult);
+
+            #endregion
+
         }
     }
 }

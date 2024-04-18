@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 
 using GeneralTool.CoreLibrary.Attributes;
@@ -71,6 +72,21 @@ namespace GeneralTool.CoreLibrary.TaskLib
             return ServerStation.AddTypeConverter<T>(converter);
         }
 
+        public static bool GetRouteVisible(RouteAttribute route)
+        {
+            //查看是否需要显示
+            if (route.RouteVisibleEditor != null)
+            {
+
+                var obj = Activator.CreateInstance(route.RouteVisibleEditor) as RouteVisibleEditor;
+                if (obj == null) throw new Exception($"{nameof(route.RouteVisibleEditor)}必须继承 {nameof(RouteVisibleEditor)}");
+
+                obj.Route = route;
+                return obj.Visible();
+            }
+            return true;
+        }
+
         /// <summary>
         /// </summary>
         /// <param name="target">
@@ -79,7 +95,9 @@ namespace GeneralTool.CoreLibrary.TaskLib
         /// </returns>
         public bool AddStationObjectClass(object target)
         {
-            RouteAttribute attributeByClass = target.GetAttributeByClass<RouteAttribute>();
+            var attributeByClass = target.GetType().GetCustomAttributes().FirstOrDefault(f => f.GetType().Name == nameof(RouteAttribute)) as RouteAttribute; ; //target.GetAttributeByClass<RouteAttribute>();
+            if (!GetRouteVisible(attributeByClass)) return true;
+
             string rootPath = target.GetType().Name + "/";
             if (attributeByClass != null)
             {
@@ -88,9 +106,13 @@ namespace GeneralTool.CoreLibrary.TaskLib
 
             _ = target.GetType().GetMethods().Foreach(m =>
            {
-               RouteAttribute route = m.GetCustomAttribute<RouteAttribute>();
+               RouteAttribute route = m.GetCustomAttributes().FirstOrDefault(f => f.GetType().Name == nameof(RouteAttribute)) as RouteAttribute; //m.GetCustomAttribute<RouteAttribute>();
                if (route != null)
-                   _ = ServerStation.AddRoute(rootPath + route.Url, target, m, route.Method);
+               {
+                   if (GetRouteVisible(route))
+                       _ = ServerStation.AddRoute(rootPath + route.Url, target, m, route.Method);
+               }
+
            });
 
             return true;

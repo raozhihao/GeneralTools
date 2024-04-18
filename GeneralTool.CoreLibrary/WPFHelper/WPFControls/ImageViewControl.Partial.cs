@@ -235,7 +235,8 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
                     else
                     {
                         value.WriteBitmap(ref v.writeable, false);
-                        v.Img.Source = v.writeable;
+                        if (v.Img != null)
+                            v.Img.Source = v.writeable;
                     }
                 }
                 //初始化最大尺寸

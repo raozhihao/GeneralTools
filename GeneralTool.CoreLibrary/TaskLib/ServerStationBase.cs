@@ -54,9 +54,21 @@ namespace GeneralTool.CoreLibrary.TaskLib
         /// </summary>
         public Dictionary<TaskKey, RequestAddressItem> RequestRoute { get; set; } = new Dictionary<TaskKey, RequestAddressItem>();
 
+
+        /// <summary>
+        /// 请求消息事件，此为第二事件
+        /// </summary>
+        public event Func<ServerRequest, ServerResponse> RequestEvent;
+
         #endregion Protected 属性
 
         #region Public 方法
+
+        protected virtual ServerResponse OnRequestEvent(ServerRequest request)
+        {
+            if (this.RequestEvent == null) return null;
+            return this.RequestEvent(request);
+        }
 
         /// <summary>
         /// 添加路由
@@ -154,13 +166,19 @@ namespace GeneralTool.CoreLibrary.TaskLib
                                 serverResponse.Result = requestAddressItem.MethodInfo.Invoke(requestAddressItem.Target, array);
                                 try
                                 {
-                                    serverResponse.ResultString = serverResponse.Result.GetType() != typeof(string) && serverResponse.Result != null
-                                        ? jsonConvert.SerializeObject(serverResponse.Result)
-                                        : serverResponse.Result + "";
+                                    if (serverResponse.Result != null)
+                                    {
+                                       var type= serverResponse.Result.GetType();
+                                        if (type == typeof(string)|| type.IsValueType||type.IsAbstract||type.IsInterface)
+                                            serverResponse.ResultString = serverResponse.Result + "";
+                                        else 
+                                            serverResponse.ResultString = jsonConvert.SerializeObject(serverResponse.Result);
+
+                                    }
                                 }
-                                catch (Exception ex)
+                                catch (Exception)
                                 {
-                                    serverResponse.ResultString = ex.GetInnerExceptionMessage();
+                                    serverResponse.ResultString = "";
                                 }
                                 if (method != null)
                                 {
@@ -235,6 +253,11 @@ namespace GeneralTool.CoreLibrary.TaskLib
                 jsonConvert = new BaseJsonCovert();
             ServerResponse response = GetServerResponse(serverRequest, jsonConvert);
 
+            return GetReponseString(serverRequest,response,jsonConvert);
+        }
+
+        public string GetReponseString(ServerRequest serverRequest, ServerResponse response, IJsonConvert jsonConvert )
+        {
             RequestAddressItem item = GetRequestItem(serverRequest);//RequestRoute[serverRequest.Url];
             if (!string.IsNullOrWhiteSpace(item.Url))
             {

@@ -6,6 +6,18 @@ using GeneralTool.CoreLibrary.TaskLib;
 
 namespace GeneralTool.CoreLibrary.Attributes
 {
+   
+    public abstract class RouteVisibleEditor
+    {
+
+        /// <summary>
+        /// 带入的 Route
+        /// </summary>
+        public RouteAttribute Route { get; set; }
+
+        public abstract bool Visible();
+    }
+
     /// <summary>
     /// 路由特性
     /// </summary>
@@ -53,6 +65,36 @@ namespace GeneralTool.CoreLibrary.Attributes
         {
             get => explantion;
             set => RegisterProperty(ref explantion, value);
+        }
+
+        private object target;
+        /// <summary>
+        /// 其它额外信息
+        /// </summary>
+        public object Target
+        {
+            get => this.target;
+            set => this.RegisterProperty(ref this.target, value);
+        }
+
+        private object target2;
+        /// <summary>
+        /// 其它额外信息
+        /// </summary>
+        public object Target2
+        {
+            get => this.target2;
+            set => this.RegisterProperty(ref this.target2, value);
+        }
+
+        private Type routeVisibleEditor;
+        /// <summary>
+        /// 需要显示的类型编辑器,其类型必须继承自 <see cref="RouteVisibleEditor"/>
+        /// </summary>
+        public Type RouteVisibleEditor
+        {
+            get => this.routeVisibleEditor;
+            set => this.RegisterProperty(ref this.routeVisibleEditor, value);
         }
 
         private string url;

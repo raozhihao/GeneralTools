@@ -8,6 +8,8 @@ using System.Threading;
 using System.Threading.Tasks;
 
 using GeneralTool.CoreLibrary.Extensions;
+using GeneralTool.CoreLibrary.Interfaces;
+using GeneralTool.CoreLibrary.Logs;
 
 namespace GeneralTool.CoreLibrary.SerialPortEx
 {
@@ -25,7 +27,6 @@ namespace GeneralTool.CoreLibrary.SerialPortEx
         /// </summary>
         public SerialControl()
         {
-            base.DataReceived += SerialControl_DataReceived;
         }
 
 
@@ -105,9 +106,10 @@ namespace GeneralTool.CoreLibrary.SerialPortEx
         {
             if (base.IsOpen)
             {
-                base.Close();
+                return;
             }
 
+            base.DataReceived += SerialControl_DataReceived;
             base.Open();
 
             if (CheckState)
@@ -168,7 +170,7 @@ namespace GeneralTool.CoreLibrary.SerialPortEx
             Write(array, 0, array.Length);
 
             if (!UnPackage(out List<byte> reponses))
-                throw new Exception("返回错误不一致,可能是超时导致,返回数据为:" + reponses.FomartDatas());
+                return new SerialResponse(request, recDatas.ToArray(), null);
 
             CheckPacketAllReady(reponses);
             int num = 0;
@@ -244,19 +246,19 @@ namespace GeneralTool.CoreLibrary.SerialPortEx
         /// <exception cref="Exception"></exception>
         protected virtual void CheckPacketAllReady(List<byte> reponses)
         {
-
+            var datas = reponses.FomartDatas();
             if (CurrentKeyWord != reponses[1])
-                throw new Exception("返回关键字错误");
+                throw new Exception("返回关键字错误:" + datas);
 
             byte b = 0;
             for (int i = 0; i < reponses.Count - 2; i++)
                 b = (byte)(b + reponses[i]);
 
             if (b != reponses[reponses.Count - 2])
-                throw new Exception("返回和校验错误");
+                throw new Exception("返回和校验错误:" + datas);
 
             if (End != reponses.Last())
-                throw new Exception("返回包属校验错误");
+                throw new Exception("返回包属校验错误:" + datas);
         }
 
 
@@ -276,6 +278,66 @@ namespace GeneralTool.CoreLibrary.SerialPortEx
             {
                 ErrorMsg?.Invoke(ex);
             }
+        }
+
+        /// <summary>
+        /// 发送指令
+        /// </summary>
+        /// <param name="keyword">关键字</param>
+        /// <param name="data">数据</param>
+        /// <param name="connectAction">连接函数</param>
+        /// <param name="closeAction">关闭函数</param>
+        /// <param name="validateAction">校验函数</param>
+        /// <param name="log">日志对象</param>
+        /// <returns></returns>
+        public byte[] SimpleBatchCommand(byte keyword, byte[] data, Action connectAction = null, Action closeAction = null, Action<byte, byte[]> validateAction = null, ILog log = null)
+        {
+            if (log == null) log = new ConsoleLogInfo();
+
+            connectAction?.Invoke();
+
+            SerialRequest request = this.CreateRequest();
+            if (data == null || data.Length == 0) data = new byte[] { };
+            _ = request.SetData(keyword, data);
+
+            string sendDataStr = request.ToSendDatas().FomartDatas();
+            log.Debug($"发送命令[{keyword} - {keyword}],发送命令数据:{sendDataStr}");
+
+            SerialResponse reponse = this.Send(request);
+
+            byte[] recDatas = reponse.UserDatas;
+
+            if (recDatas != null)
+            {
+                string reponseDataStr = recDatas.FomartDatas();
+                log.Debug($"命令[{keyword} - {keyword}] 返回:{reponseDataStr}");
+            }
+            else
+            {
+                log.Debug($"命令[{keyword} - {keyword}] 返回:null");
+            }
+
+            try
+            {
+                ValidateResult(keyword, recDatas, validateAction);
+            }
+            finally
+            {
+                closeAction?.Invoke();
+            }
+            return recDatas;
+        }
+
+
+        public static void ValidateResult(byte keyword, byte[] result, Action<byte, byte[]> validateAction = null)
+        {
+            if (result == null)
+                throw new Exception("没有接收到任何数据,请检查端口连接");
+
+            if (result.Length == 0)
+                throw new Exception("接收到空的数据");
+
+            validateAction?.Invoke(keyword, result);
         }
 
     }

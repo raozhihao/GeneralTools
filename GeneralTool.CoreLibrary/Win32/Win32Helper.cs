@@ -69,5 +69,59 @@ namespace GeneralTool.CoreLibrary.Win32
         public static extern bool GetCursorPos(out POINT lpPoint);
         [DllImport("user32.dll")]
         public static extern bool DestroyIcon(IntPtr handle);
+
+        [DllImport("user32.dll")]
+        public static extern bool SetForegroundWindow(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        public static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        [DllImport("user32.dll")]
+        public static extern bool IsIconic(IntPtr hWnd);
+
+        /// <summary>
+        /// SetThreadAffinityMask 指定hThread 运行在 核心 dwThreadAffinityMask
+        /// </summary>
+        /// <param name="hThread"></param>
+        /// <param name="dwThreadAffinityMask"></param>
+        /// <returns></returns>
+        [DllImport("kernel32.dll")]
+        public static extern UIntPtr SetThreadAffinityMask(IntPtr hThread, UIntPtr dwThreadAffinityMask);
+
+        /// <summary>
+        /// 得到当前线程的handler
+        /// </summary>
+        /// <returns></returns>
+        [DllImport("kernel32.dll")]
+        public static extern IntPtr GetCurrentThread();
+
+
+        /// <summary>
+        /// 类存复制
+        /// </summary>
+        /// <param name="dest"></param>
+        /// <param name="source"></param>
+        /// <param name="size"></param>
+        /// <returns></returns>
+        [DllImport("kernel32.dll", EntryPoint = "RtlMoveMemory", CharSet = CharSet.Ansi)]
+        public extern static long CopyMemory(IntPtr dest, IntPtr source, int size);
+
+        /// <summary>
+        /// 获取cpu的id号
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public static ulong SetCpuID(int id)
+        {
+            ulong cpuid = 0;
+            if (id < 0 || id >= System.Environment.ProcessorCount)
+            {
+                id = 0;
+            }
+            cpuid |= 1UL << id;
+
+            return cpuid;
+        }
+
     }
 }

@@ -15,12 +15,18 @@ namespace GeneralTool.CoreLibrary.Extensions
         /// <param name="keyValues"></param>
         /// <param name="key"></param>
         /// <param name="value"></param>
-        public static void AddOrUpdate<TKey, TValue>(this Dictionary<TKey, TValue> keyValues, TKey key, TValue value)
+        public static void AddOrUpdate<TKey, TValue>(this IDictionary<TKey, TValue> keyValues, TKey key, TValue value)
         {
             if (keyValues.ContainsKey(key))
                 keyValues[key] = value;
             else
                 keyValues.Add(key, value);
+        }
+
+        public static void TryRemove<TKey, TValue>(this IDictionary<TKey, TValue> keyValues, TKey key)
+        {
+            if (!keyValues.ContainsKey(key)) return;
+            keyValues.Remove(key);
         }
 
         /// <summary>
@@ -31,7 +37,7 @@ namespace GeneralTool.CoreLibrary.Extensions
         /// <param name="keyValues"></param>
         /// <param name="key"></param>
         /// <returns></returns>
-        public static TValue GetValueOrDefault<TKey, TValue>(this Dictionary<TKey, TValue> keyValues, TKey key)
+        public static TValue GetValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> keyValues, TKey key)
         {
             return keyValues.ContainsKey(key) ? keyValues[key] : default;
         }
@@ -44,7 +50,7 @@ namespace GeneralTool.CoreLibrary.Extensions
         /// <param name="keyValues"></param>
         /// <param name="key"></param>
         /// <returns></returns>
-        public static KeyValuePair<TKey, TValue> GetKeyValuePairOrDefault<TKey, TValue>(this Dictionary<TKey, TValue> keyValues, TKey key)
+        public static KeyValuePair<TKey, TValue> GetKeyValuePairOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> keyValues, TKey key)
         {
             return keyValues.ContainsKey(key) ? new KeyValuePair<TKey, TValue>(key, keyValues[key]) : default;
         }

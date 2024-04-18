@@ -21,20 +21,16 @@ namespace GeneralTool.CoreLibrary.TaskLib
     /// </summary>
     public class GenServerStation<T> : ServerStationBase where T : ReceiveState, new()
     {
-        private readonly SocketServer<T> server;
+        public SocketServer<T> server { get; private set; }
         /// <summary>
-        /// 返回消息,该事件需要设置 <see cref="ExecuteType"/> 为Buffer
+        /// 消息得到返回时的引用发事件，此为第一事件
         /// </summary>
-        public event EventHandler<ReceiveArg> ReceiveEvent;
+        public event EventHandler<ReceiveArg> BufferReceiveEvent;
         /// <summary>
-        /// 返回消息,该事件需要设置 <see cref="ExecuteType"/> RequestInfo
+        /// 消息得到的事件，此为第三事件
         /// </summary>
         public event EventHandler<GenRequestRoute> RequestInfoEvent;
 
-        /// <summary>
-        /// 处理类型
-        /// </summary>
-        public GenExecuteType ExecuteType { get; set; }
         /// <summary>
         /// 序列化类
         /// </summary>
@@ -64,94 +60,124 @@ namespace GeneralTool.CoreLibrary.TaskLib
 
         private void Server_ReceiveEvent(object sender, ReceiveArg e)
         {
-            if (ExecuteType == GenExecuteType.Buffer)
+            var reponse = new ServerResponse()
+            {
+                RequestSuccess = true,
+                StateCode = RequestStateCode.OK
+            };
+            try
+            {
+                BufferReceiveEvent?.Invoke(sender, e);
+            }
+            catch (Exception ex)
+            {
+                reponse.RequestSuccess = false;
+                reponse.ErroMsg = ex.GetInnerExceptionMessage();
+                this.SendReponse(reponse, e.Client);
+                return;
+            }
+            if (e.Handled)
             {
                 Log.Debug("直接将buffer交由开发人员处理");
-                ReceiveEvent?.Invoke(sender, e);
+                return;
             }
-            else
+
+
+
+            string receiveMsg = Encoding.UTF8.GetString(e.PackBuffer.ToArray());
+            ServerRequest serverRequest = null;
+            try
             {
-                ServerResponse serverResponse = new ServerResponse
-                {
-                    StateCode = RequestStateCode.OK
-                };
+                serverRequest = JsonConvert.DeserializeObject<ServerRequest>(receiveMsg);
+                Log?.Debug($"获取到客户端调用:{serverRequest.Url}");
+            }
+            catch (Exception ex)
+            {
+                Log?.Fail($"客户端无法反序列化:{ex},传入为:{receiveMsg}");
+                reponse.StateCode = RequestStateCode.UrlError;
+                reponse.RequestSuccess = false;
+                reponse.ErroMsg = ex.GetInnerExceptionMessage();
+                this.SendReponse(reponse, e.Client);
+                return;
+            }
 
-                string receiveMsg = Encoding.UTF8.GetString(e.PackBuffer.ToArray());
-                ServerRequest serverRequest = null;
-                try
-                {
-                    serverRequest = JsonConvert.DeserializeObject<ServerRequest>(receiveMsg);
-                    Log?.Debug($"获取到客户端调用:{serverRequest.Url}");
-                }
-                catch (Exception ex)
-                {
-                    Log?.Fail($"客户端无法反序列化:{ex},传入为:{receiveMsg}");
-                    serverResponse.StateCode = RequestStateCode.UrlError;
-                    serverResponse.RequestSuccess = false;
-                    serverResponse.ErroMsg = ex.GetInnerExceptionMessage();
-                    _ = server.Send(JsonConvert.SerializeObject(serverResponse), e.Client);
-                    return;
-                }
 
-                if (RequestInfoEvent != null && ExecuteType == GenExecuteType.RequestInfo)
+            try
+            {
+                reponse = this.OnRequestEvent(serverRequest);
+            }
+            catch (Exception ex)
+            {
+                reponse.RequestSuccess = false;
+                reponse.ErroMsg = ex.GetInnerExceptionMessage();
+                this.SendReponse(reponse, e.Client);
+                return;
+            }
+
+            if (reponse == null)
+            {
+                if (RequestInfoEvent != null)
                 {
                     //给定必要信息后由调用人员自行处理
                     try
                     {
-                        RequestAddressItem route = GetRequestItem(serverRequest); //RequestRoute[serverRequest.Url];
+                        var route = GetRequestItem(serverRequest); //RequestRoute[serverRequest.Url];
                         Log.Debug($"由开发人员开始执行方法:{serverRequest.Url}");
                         RequestInfoEvent?.Invoke(sender, new GenRequestRoute() { AddressItem = route, SendToClinet = SendToClient, Client = e.Client, ServerRequest = serverRequest });
                     }
                     catch (Exception ex)
                     {
                         Log?.Fail($"客户端调用服务方法发生未知错误:{ex}");
-                        serverResponse.StateCode = RequestStateCode.UnknowError;
-                        serverResponse.RequestSuccess = false;
-                        serverResponse.ErroMsg = ex.GetInnerExceptionMessage();
-                        _ = server.Send(JsonConvert.SerializeObject(serverResponse), e.Client);
+                        reponse.StateCode = RequestStateCode.UnknowError;
+                        reponse.RequestSuccess = false;
+                        reponse.ErroMsg = ex.GetInnerExceptionMessage();
+                        this.SendReponse(reponse, e.Client);
                     }
                     return;
                 }
-                else if (ExecuteType == GenExecuteType.Auto)
+                else
                 {
                     //由本类自行处理
                     try
                     {
                         Log.Debug($"由底层开始执行方法:{serverRequest.Url}");
-                        serverResponse = GetServerResponse(serverRequest, JsonConvert);
+                        reponse = GetServerResponse(serverRequest, JsonConvert);
                     }
                     catch (Exception ex6)
                     {
                         Log?.Fail($"客户端调用服务方法发生未知错误:{ex6}");
-                        serverResponse.StateCode = RequestStateCode.UnknowError;
-                        serverResponse.RequestSuccess = false;
-                        serverResponse.ErroMsg = ex6.GetInnerExceptionMessage();
+                        reponse.StateCode = RequestStateCode.UnknowError;
+                        reponse.RequestSuccess = false;
+                        reponse.ErroMsg = ex6.GetInnerExceptionMessage();
+                        this.SendReponse(reponse, e.Client);
+                        return;
                     }
-                    finally
-                    {
-                        Log.Debug($"底层执行方法:{serverRequest.Url} 完成,准备发送给客户端");
-                        string result = "";
-                        try
-                        {
-                            result = JsonConvert.SerializeObject(serverResponse);
-                        }
-                        catch (Exception ex)
-                        {
-                            result = ex.GetInnerExceptionMessage();
-                            serverResponse = new ServerResponse()
-                            {
-                                RequestSuccess = false,
-                                ErroMsg = "方法调用成功,但返回时出错:" + result
-                            };
-
-                            result = JsonConvert.SerializeObject(serverResponse);
-                        }
-                        _ = server.Send(result, e.Client);
-                    }
+                    Log.Debug($"底层执行方法:{serverRequest.Url} 完成,准备发送给客户端");
+                    this.SendReponse(reponse, e.Client);
                 }
-
             }
+            else
+            {
+                this.SendReponse(reponse, e.Client);
+            }
+        }
 
+        private void SendReponse(ServerResponse reponse, Socket client)
+        {
+            string result;
+            try
+            {
+                result = JsonConvert.SerializeObject(reponse);
+            }
+            catch (Exception ex2)
+            {
+                result = ex2.GetInnerExceptionMessage();
+                reponse.RequestSuccess = false;
+                reponse.ErroMsg = "方法调用成功,但在序列化时出错:" + result;
+
+                result = JsonConvert.SerializeObject(reponse);
+            }
+            _ = server.Send(result, client);
         }
 
         private void SendToClient(byte[] buffer, Socket client)
@@ -220,16 +246,8 @@ namespace GeneralTool.CoreLibrary.TaskLib
         /// <inheritdoc/>
         public override bool Start(string ip, int port)
         {
-            try
-            {
-                server.Startup(IPAddress.Parse(ip), port);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Log?.Fail($"Server startup error : {ex}");
-                return false;
-            }
+            server.Startup(IPAddress.Parse(ip), port);
+            return true;
 
         }
     }

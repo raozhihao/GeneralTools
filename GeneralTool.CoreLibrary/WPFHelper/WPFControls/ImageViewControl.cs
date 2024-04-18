@@ -350,6 +350,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         /// </returns>
         public Int32Rect GetChooseRect()
         {
+            if (this.CutPanel.Visibility == Visibility.Collapsed) return default;
             Point recStartPoint = CutRectangle.TranslatePoint(new Point(), Img);
 
             double x = recStartPoint.X * w;
@@ -680,6 +681,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
             if (e.LeftButton == MouseButtonState.Pressed && cuting && IsImageMouseDown && CanImageDraw)
             {
                 DrawRectangle(e);
+
             }
             else
             {
@@ -783,7 +785,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
             ImageCutRectEventArgs handler = new ImageCutRectEventArgs(rect, true);
             CutImageEvent?.Invoke(sender, handler);
             BitmapSource source = null;
-            bool sucess = false;
+            bool sucess = true;
             string msg = "";
             if (handler.HandleToNext)
             {
@@ -956,6 +958,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
             StartLeft = Img.TranslatePoint(StartLeft, ImageCanvas);
             Canvas.SetLeft(CutPanel, StartLeft.X);
             Canvas.SetTop(CutPanel, StartLeft.Y);
+
         }
 
         /// <summary>
@@ -996,9 +999,6 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
             Point point = GetCurrentPixelPoint(e);
             Point canvasPoint = e.GetPosition(ImageCanvas);
             ImageMouseMoveEvent?.Invoke(new ImageMouseEventArgs(e.MouseDevice, e.Timestamp, e.StylusDevice, point, canvasPoint));
-
-            // this.Canvas_MouseMove(this.Img, e); this.lbPosition.Text = point.X +
-            // Environment.NewLine + point.Y;
         }
 
         private void Img_MouseUp(object sender, MouseButtonEventArgs e)

@@ -1,4 +1,6 @@
-﻿using System.Net;
+﻿using System.Collections.Generic;
+using System.IO;
+using System.Net;
 
 namespace GeneralTool.CoreLibrary.Extensions
 {
@@ -44,6 +46,43 @@ namespace GeneralTool.CoreLibrary.Extensions
         /// <returns></returns>
         public static string ParseToIPString(this uint nCurrentIp)
             => nCurrentIp.ParseToIp().ToString();
+
+        /// <summary>
+        /// 创建目录(支持多级目录)
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public static DirectoryInfo CreateDirectory(this string path)
+        {
+            var dir = new DirectoryInfo(path);
+            var root = dir.Root;
+            var fullPath = dir.FullName;
+            var dirs = new List<DirectoryInfo>();
+            while (true)
+            {
+                if (dir.FullName == root.FullName)
+                    break;
+                if (!dir.Exists)
+                {
+                    dirs.Add(dir);
+                    dir = dir.Parent;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            if (dirs.Count == 0) return new DirectoryInfo(fullPath);
+
+            dirs.Reverse();
+
+            foreach (var item in dirs)
+            {
+                item.Create();
+            }
+            return new DirectoryInfo(fullPath);
+        }
 
     }
 }

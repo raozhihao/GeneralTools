@@ -13,6 +13,8 @@ using GeneralTool.CoreLibrary.SocketLib.Interfaces;
 using GeneralTool.CoreLibrary.SocketLib.Models;
 using GeneralTool.CoreLibrary.SocketLib.Packages;
 
+using static System.Windows.Forms.AxHost;
+
 namespace GeneralTool.CoreLibrary.SocketLib
 {
     #region New
@@ -109,15 +111,25 @@ namespace GeneralTool.CoreLibrary.SocketLib
                 state = PackageFunc().State;
                 if (state == null)
                 {
-                    CloseClient(client, new Exception("State不可为null"));
+                    try
+                    {
+                        CloseClient(client.LocalEndPoint + "", client.RemoteEndPoint + "", new Exception("State不可为null"));
+                    }
+                    catch (Exception)
+                    {
+
+                    }
                     return;
                 }
             }
 
             state.WorkSocket = client;
             state.BufferSize = ReceiveBufferSize;
+
             try
             {
+                state.WorkRemoePoint = client.RemoteEndPoint.ToString();
+                state.WorkLocalPoint = client.LocalEndPoint.ToString();
                 _ = CurrentSockets.TryAdd(client.RemoteEndPoint.ToString(), client);
                 Log.Debug($"开始异步读取 {client.RemoteEndPoint} 的数据");
                 _ = client.BeginReceive(state.Buffer, 0, state.BufferSize, SocketFlags.None, ReceiveCallBack, state);
@@ -125,7 +137,18 @@ namespace GeneralTool.CoreLibrary.SocketLib
             catch (Exception ex)
             {
                 Log.Debug($"异步读取 {client.RemoteEndPoint} 失败:{ex}");
-                CloseClient(client, ex);
+                try
+                {
+                    if (state == null)
+                        CloseClient(client.LocalEndPoint + "", client.RemoteEndPoint + "", ex);
+                    else
+                        CloseClient(state.WorkLocalPoint, state.WorkRemoePoint, ex);
+                }
+                catch (Exception)
+                {
+
+                }
+
             }
         }
 
@@ -137,26 +160,26 @@ namespace GeneralTool.CoreLibrary.SocketLib
             //获取已读取数据
             try
             {
-                if (!client.IsClientConnected())
+                if (!client.IsClientConnected(state.WorkLocalPoint, state.WorkRemoePoint))
                 {
                     Trace.WriteLine("EndReceive DisConnected");
-                    CloseClient(client, new Exception("已断开连接"));
+                    CloseClient(state.WorkLocalPoint, state.WorkRemoePoint, new Exception("已断开连接"));
                     return;
                 }
                 read = client.EndReceive(ar);
                 if (read != 0)
-                    Log.Debug($"读取到 {client.RemoteEndPoint} 的数据长度为 {read}");
+                    Log.Debug($"读取到 {state.WorkRemoePoint} 的数据长度为 {read}");
             }
             catch (Exception ex)
             {
                 Trace.WriteLine("EndReceive error");
-                CloseClient(client, ex);
+                CloseClient(state.WorkLocalPoint, state.WorkRemoePoint, ex);
                 return;
             }
-            if (!client.IsClientConnected())
+            if (!client.IsClientConnected(state.WorkLocalPoint, state.WorkRemoePoint))
             {
                 Trace.WriteLine("EndReceive DisConnected");
-                CloseClient(client, new Exception("已断开连接"));
+                CloseClient(state.WorkLocalPoint, state.WorkRemoePoint, new Exception("已断开连接"));
                 return;
             }
             if (read > 0)
@@ -166,32 +189,33 @@ namespace GeneralTool.CoreLibrary.SocketLib
                 //分包处理
                 try
                 {
-                    Log.Debug($"{client.RemoteEndPoint} 进行分包,分包程序:{PackageFunc}");
+                    Log.Debug($"{state.WorkRemoePoint} 进行分包,分包程序:{PackageFunc}");
                     PackageFunc().Subpackage(state, ExecutePackage);
                 }
                 catch (Exception ex)
                 {
-                    CloseClient(client, ex);
+                    CloseClient(state.WorkLocalPoint, state.WorkRemoePoint, ex);
                     return;
                 }
             }
-            if (!client.IsClientConnected())
+            if (!client.IsClientConnected(state.WorkLocalPoint, state.WorkRemoePoint))
             {
                 Trace.WriteLine("EndReceive SubPackage DisConnected");
-                CloseClient(client, new Exception("已断开连接"));
+                CloseClient(state.WorkLocalPoint, state.WorkRemoePoint, new Exception("已断开连接"));
                 return;
             }
 
-            Log.Debug($"{client.RemoteEndPoint} 继续接收");
+           
             //继续接收
             try
             {
+                Log.Debug($"{state.WorkRemoePoint} 继续接收");
                 _ = client.BeginReceive(state.Buffer, 0, state.BufferSize, SocketFlags.None, ReceiveCallBack, state);
             }
             catch (Exception ex)
             {
                 Trace.WriteLine("BeginReceive DisConnected");
-                CloseClient(client, ex);
+                CloseClient(state.WorkLocalPoint, state.WorkRemoePoint, ex);
                 return;
             }
         }
@@ -213,7 +237,14 @@ namespace GeneralTool.CoreLibrary.SocketLib
                 string msg = "处理包过程中未捕获的异常错误:" + e;
                 Log.Fail(msg);
                 ErrorEvent?.Invoke(this, new SocketErrorArg(client, new Exception(msg)));
-                CloseClient(client, new Exception(msg));
+                try
+                {
+                    CloseClient(client.LocalEndPoint + "", client.RemoteEndPoint + "", new Exception(msg));
+                }
+                catch (Exception)
+                {
+
+                }
             }
         }
 
@@ -246,9 +277,9 @@ namespace GeneralTool.CoreLibrary.SocketLib
 
                 Log.Debug($"向 {socket.RemoteEndPoint} 发送消息,压包程序:{PackageFunc}");
                 byte[] newBuffer = PackageFunc().Package(buffer);
-                if (!socket.IsClientConnected())
+                if (!socket.IsClientConnected(socket.LocalEndPoint + "", socket.RemoteEndPoint + ""))
                 {
-                    CloseClient(socket, new Exception("已断开连接"));
+                    CloseClient(socket.LocalEndPoint + "", socket.RemoteEndPoint + "", new Exception("已断开连接"));
                     return false;
                 }
                 return SocketCommon.SendBytes(newBuffer, socket);
@@ -258,7 +289,14 @@ namespace GeneralTool.CoreLibrary.SocketLib
                 string msg = $"向 {socket.RemoteEndPoint} 发送消息失败:{ex}";
                 Log.Fail(msg);
                 ErrorEvent?.Invoke(this, new SocketErrorArg(socket, new Exception(msg)));
-                CloseClient(socket, new Exception(msg));
+                try
+                {
+                    CloseClient(socket.LocalEndPoint + "", socket.RemoteEndPoint + "", new Exception(msg));
+                }
+                catch (Exception)
+                {
+
+                }
                 return false;
             }
         }
@@ -266,20 +304,23 @@ namespace GeneralTool.CoreLibrary.SocketLib
         /// <summary>
         /// 关闭
         /// </summary>
-        /// <param name="client"></param>
         /// <param name="ex"></param>
-        protected virtual void CloseClient(Socket client, Exception ex)
+        protected virtual void CloseClient(string localPoint, string remotePoint, Exception ex)
         {
             try
             {
+
+                _ = CurrentSockets.TryRemove(remotePoint, out var client);
+                Log.Debug($"关闭 {remotePoint} 的连接");
                 if (client == null)
                     return;
-                _ = CurrentSockets.TryRemove(client.RemoteEndPoint.ToString(), out _);
-                Log.Debug($"关闭 {client.RemoteEndPoint} 的连接");
-
                 DisconnectEvent?.Invoke(this, new SocketErrorArg(client, ex));
-                client?.Close();
-                client?.Dispose();
+                if (client.IsClientConnected(localPoint, remotePoint))
+                {
+                    client?.Close();
+                    client?.Dispose();
+                }
+
 
                 client = null;
             }

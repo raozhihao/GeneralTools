@@ -1,0 +1,25 @@
+﻿<Window x:Class="TaskServerUI.ImgDemo"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:g="clr-namespace:GeneralTool.CoreLibrary.WPFHelper.WPFControls;assembly=GeneralTool.CoreLibrary"
+        xmlns:local="clr-namespace:TaskServerUI"
+        mc:Ignorable="d"
+        Title="ImgDemo"
+        Height="450"
+        Width="800">
+    <Grid>
+        <g:ImageViewControl x:Name="ImgControl"
+                            CanImageDraw="True"
+                            CanMoveImage="True"
+                            SourcePath="C:\Users\raozh\Desktop\Pic_20240117145843501.bmp"
+                            ImageMouseMoveEvent="ImgControl_ImageMouseMoveEvent" />
+
+        <TextBlock x:Name="RectInfoTxt"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Bottom"
+                   Background="Black"
+                   Foreground="White" />
+    </Grid>
+</Window>

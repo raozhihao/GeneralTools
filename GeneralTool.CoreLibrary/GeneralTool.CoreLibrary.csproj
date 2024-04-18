@@ -13,13 +13,15 @@
 		<Company>Person</Company>
 		<IncludeSymbols>True</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
-		<Version>1.0.1.3</Version>
+		<Version>23.09.13</Version>
 		<RunAnalyzersDuringBuild>True</RunAnalyzersDuringBuild>
 		<RunAnalyzersDuringLiveAnalysis>True</RunAnalyzersDuringLiveAnalysis>
 		<EnableNETAnalyzers>True</EnableNETAnalyzers>
 		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
 		<AssemblyVersion>23.09.13</AssemblyVersion>
 		<FileVersion>23.09.13</FileVersion>
+		<Title>GeneralTool.CoreLibrary</Title>
+		<Copyright>Copyright Rao©  2023</Copyright>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

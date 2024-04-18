@@ -61,7 +61,7 @@ namespace GeneralTool.CoreLibrary.Models
         /// </summary>
         public string FullMsg
         {
-            get; internal set;
+            get;  set;
         }
 
         #endregion Public 属性

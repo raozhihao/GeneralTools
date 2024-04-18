@@ -87,6 +87,8 @@ namespace GeneralTool.CoreLibrary.Models
         }
 
         private string langKey;
+        private object target;
+
         /// <summary>
         /// 语言Key
         /// </summary>
@@ -170,6 +172,11 @@ namespace GeneralTool.CoreLibrary.Models
             get => url;
             set => RegisterProperty(ref url, value);
         }
+
+        /// <summary>
+        /// 其它信息
+        /// </summary>
+        public object Target { get => target;  set => this.RegisterProperty(ref this.target,value); }
 
         #endregion Public 属性
 

@@ -35,6 +35,12 @@ namespace GeneralTool.CoreLibrary.SocketLib.Models
         public Socket WorkSocket { get; internal set; }
 
         /// <summary>
+        /// 远程的IP地址
+        /// </summary>
+        public string WorkRemoePoint { get; set; }
+        public string WorkLocalPoint { get; internal set; }
+
+        /// <summary>
         /// 
         /// </summary>
         public ReceiveState()

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 
 using GeneralTool.CoreLibrary.Enums;
+using GeneralTool.CoreLibrary.Extensions;
 using GeneralTool.CoreLibrary.Models;
 
 namespace GeneralTool.CoreLibrary.Logs
@@ -24,6 +25,8 @@ namespace GeneralTool.CoreLibrary.Logs
 
         private FileStream currentFileStream = null;
         private readonly string logName;
+        //private Thread writeThread;
+        //private CancellationTokenSource cancellationTokenSource;
 
         #endregion Private 字段
 
@@ -37,14 +40,21 @@ namespace GeneralTool.CoreLibrary.Logs
         public FileInfoLog(string logName, string logBaseDir = "")
         {
             if (string.IsNullOrWhiteSpace(logBaseDir))
-                logPathDir = Directory.CreateDirectory(Path.Combine(logPathDir, logName)).FullName;
+            {
+                var dir = Path.Combine(logPathDir, logName);
+                Microsoft.VisualBasic.FileIO.FileSystem.CreateDirectory(dir);
+                logPathDir = new DirectoryInfo(dir).FullName;
+            }
             else
             {
                 this.logName = logName;
                 logPathDir = new DirectoryInfo(logBaseDir).FullName;
+                Microsoft.VisualBasic.FileIO.FileSystem.CreateDirectory(logPathDir);
             }
 
-            Microsoft.VisualBasic.FileIO.FileSystem.CreateDirectory(logPathDir);
+            //this.cancellationTokenSource = new CancellationTokenSource();
+            //this.writeThread = new Thread(WriteLog) { IsBackground = true };
+            //this.writeThread.Start();
 
         }
 
@@ -95,9 +105,9 @@ namespace GeneralTool.CoreLibrary.Logs
         {
             try
             {
+                string fileName = Path.Combine(logPathDir, logName + DateTime.Now.ToString("yyyy-MM-dd_1") + ".log");
                 lock (locker)
                 {
-                    string fileName = Path.Combine(logPathDir, logName + DateTime.Now.ToString("yyyy-MM-dd_1") + ".log");
                     FileInfo fileInfo = new FileInfo(fileName);
                     bool createNew = true;
                     if (fileInfo.Exists)
@@ -136,7 +146,7 @@ namespace GeneralTool.CoreLibrary.Logs
                             }
                         }
                     }
-
+                    CurrentPath = fileName;
                     if (createNew)
                     {
                         currentFileStream?.Close();
@@ -145,12 +155,11 @@ namespace GeneralTool.CoreLibrary.Logs
                     }
                     else if (currentFileStream == null)
                         currentFileStream = new FileStream(fileName, FileMode.Append, FileAccess.Write, FileShare.ReadWrite);
-
-                    LogMessageInfo info = new LogMessageInfo(msg, logType, fileName) { CurrentTime = DateTime.Now, CurrentThreadId = Thread.CurrentThread.ManagedThreadId };
-                    lockDic.Enqueue(info);
-                    WriteLog();
-                    CurrentPath = fileName;
                 }
+                LogMessageInfo info = new LogMessageInfo(msg, logType, fileName) { CurrentTime = DateTime.Now, CurrentThreadId = Thread.CurrentThread.ManagedThreadId };
+                //lockDic.Enqueue(info);
+                WriteLog(info);
+
             }
             catch (Exception ex)
             {
@@ -160,6 +169,7 @@ namespace GeneralTool.CoreLibrary.Logs
 
         /// <inheritdoc/>
         public override void Waring(string msg) => Log(msg, LogType.Waring);
+
 
         /// <inheritdoc/>
         public override void Dispose()
@@ -172,6 +182,8 @@ namespace GeneralTool.CoreLibrary.Logs
                     break;
             }
 
+            //this.cancellationTokenSource?.Cancel();
+            //this.writeThread?.Join(1000);
             try
             {
                 currentFileStream?.Close();
@@ -181,37 +193,80 @@ namespace GeneralTool.CoreLibrary.Logs
             {
 
             }
+            //this.cancellationTokenSource?.Dispose();
+            //this.cancellationTokenSource = new CancellationTokenSource();
         }
 
         #endregion Public 方法
 
         #region Private 方法
 
-        private void WriteLog()
+        //private void WriteLog()
+        //{
+        //    while (!this.cancellationTokenSource.IsCancellationRequested)
+        //    {
+        //        bool re = lockDic.TryDequeue(out LogMessageInfo result);
+        //        if (re)
+        //        {
+        //            string headInfo = "";
+        //            if (ShowLogTypeInfo) headInfo = "[" + result.LogType + "]";
+        //            if (ShowLogThreadId) headInfo += " " + result.CurrentThreadId + " ";
+        //            if (ShowLogTime) headInfo += " " + result.CurrentTime + ":";
+
+        //            string msg = $"{headInfo}{result.Msg}";
+        //            result.FullMsg = msg;
+
+        //            byte[] data = Encoding.UTF8.GetBytes(msg + Environment.NewLine);
+        //            currentFileStream.Write(data, 0, data.Length);
+        //            currentFileStream.Flush();
+
+        //            if (ConsoleLogEnable)
+        //                Trace.WriteLine(msg);
+        //            // base.LogEvent?.Invoke(this, result);
+
+        //            base.LogEventMethod(this, result);
+        //        }
+        //        else
+        //        {
+        //            Thread.Sleep(5);
+        //        }
+
+        //    }
+
+        //}
+
+        private void WriteLog(LogMessageInfo result)
         {
-            bool re = lockDic.TryDequeue(out LogMessageInfo result);
-            if (re)
+            string headInfo = "";
+            if (ShowLogTypeInfo) headInfo = "[" + result.LogType + "]";
+            if (ShowLogThreadId) headInfo += " " + result.CurrentThreadId + " ";
+            if (ShowLogTime) headInfo += " " + result.CurrentTime + ":";
+
+            string msg = $"{headInfo}{result.Msg}";
+            result.FullMsg = msg;
+
+            byte[] data = Encoding.UTF8.GetBytes(msg + Environment.NewLine);
+            currentFileStream.Write(data, 0, data.Length);
+            currentFileStream.Flush();
+            Array.Clear(data, 0, data.Length);
+
+            if (ConsoleLogEnable)
+                Trace.WriteLine(msg);
+
+            try
             {
-                string headInfo = "";
-                if (ShowLogTypeInfo) headInfo = "[" + result.LogType + "]";
-                if (ShowLogThreadId) headInfo += " " + result.CurrentThreadId + " ";
-                if (ShowLogTime) headInfo += " " + result.CurrentTime + ":";
-
-                string msg = $"{headInfo}{result.Msg}";
-                result.FullMsg = msg;
-
-                byte[] data = Encoding.UTF8.GetBytes(msg + Environment.NewLine);
-                currentFileStream.Write(data, 0, data.Length);
-                currentFileStream.Flush();
-
-                if (ConsoleLogEnable)
-                    Trace.WriteLine(msg);
-                // base.LogEvent?.Invoke(this, result);
-
                 base.LogEventMethod(this, result);
             }
+            catch (Exception)
+            {
+
+            }
+
         }
 
+
         #endregion Private 方法
+
+
     }
 }

@@ -33,7 +33,7 @@ namespace GeneralTool.CoreLibrary.IniHelpers
         /// <summary>
         /// Ini对象,使用默认的保存位置
         /// </summary>
-        public static readonly IniHelper IniHelperInstance;
+        public static IniHelper IniHelperInstance { get; private set; }
 
         #endregion Public 字段
 
@@ -58,7 +58,11 @@ namespace GeneralTool.CoreLibrary.IniHelpers
             // root Windows directory if it is not specified.  By calling
             // GetFullPath, we make sure we are always passing the full path
             // the win32 functions.
-            FileInfo file = new FileInfo(path);
+
+            if (string.IsNullOrWhiteSpace(path))
+                path = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Configs\\default.ini");
+            var file = new FileInfo(path);
+
             Microsoft.VisualBasic.FileIO.FileSystem.CreateDirectory(file.Directory.FullName);
             Path = System.IO.Path.GetFullPath(path);
         }
@@ -504,15 +508,21 @@ namespace GeneralTool.CoreLibrary.IniHelpers
             if (keyName == null)
                 throw new ArgumentNullException(nameof(keyName));
 
-            StringBuilder builder = new StringBuilder(MaxSectionSize);
-            _ = NativeMethods.GetPrivateProfileString(sectionName,
+            var buffer = new byte[MaxSectionSize];
+            var rlen = NativeMethods.GetPrivateProfileString(sectionName,
                                                   keyName,
                                                   defaultValue,
-                                                  builder,
+                                                  buffer,
                                                   IniHelper.MaxSectionSize,
                                                   Path);
 
-            return builder.ToString();
+            var str = Encoding.UTF8.GetString(buffer, 0, rlen);
+            var index = str.IndexOf(';');
+            if (index > -1)
+            {
+                str = str.Substring(0, index);
+            }
+            return str;
         }
 
         /// <summary>
@@ -777,24 +787,24 @@ namespace GeneralTool.CoreLibrary.IniHelpers
         {
             #region Public 方法
 
-            [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
+            [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
             public static extern int GetPrivateProfileInt(string lpAppName,
                                                           string lpKeyName,
                                                           int lpDefault,
                                                           string lpFileName);
 
-            [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
+            [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
             public static extern int GetPrivateProfileSection(string lpAppName,
                                                               IntPtr lpReturnedString,
                                                               uint nSize,
                                                               string lpFileName);
 
-            [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
+            [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
             public static extern int GetPrivateProfileSectionNames(IntPtr lpszReturnBuffer,
                                                                    uint nSize,
                                                                    string lpFileName);
 
-            [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
+            [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
             public static extern uint GetPrivateProfileString(string lpAppName,
                                                               string lpKeyName,
                                                               string lpDefault,
@@ -802,7 +812,7 @@ namespace GeneralTool.CoreLibrary.IniHelpers
                                                               int nSize,
                                                               string lpFileName);
 
-            [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
+            [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
             public static extern uint GetPrivateProfileString(string lpAppName,
                                                               string lpKeyName,
                                                               string lpDefault,
@@ -810,7 +820,17 @@ namespace GeneralTool.CoreLibrary.IniHelpers
                                                               int nSize,
                                                               string lpFileName);
 
-            [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
+            // 声明INI文件的读操作函数 GetPrivateProfileString()
+            [System.Runtime.InteropServices.DllImport("kernel32")]
+            //private static extern int GetPrivateProfileString(string section, string key, string def, System.Text.StringBuilder retVal, int size, string filePath);
+            public static extern int GetPrivateProfileString(string section,
+                                                            string key,
+                                                            string def,
+                                                            byte[] retVal,
+                                                            int size,
+                                                            string filePath);
+
+            [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
             public static extern int GetPrivateProfileString(string lpAppName,
                                                              string lpKeyName,
                                                              string lpDefault,
@@ -822,7 +842,7 @@ namespace GeneralTool.CoreLibrary.IniHelpers
             // WritePrivateProfileString returns errors via SetLastError.
             // Failure to set this can result in errors being lost during
             // the marshal back to managed code.
-            [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+            [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
             public static extern bool WritePrivateProfileString(string lpAppName,
                                                                 string lpKeyName,
                                                                 string lpString,

@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace GeneralTool.CoreLibrary.Extensions
@@ -24,7 +25,22 @@ namespace GeneralTool.CoreLibrary.Extensions
         /// <returns></returns>
         public static string TrimAll(this string str, params char[] removeCharArr)
         {
-            foreach (char item in removeCharArr)
+            foreach (var item in removeCharArr)
+            {
+                str = str.Replace(item + "", "");
+            }
+            return str;
+        }
+
+        /// <summary>
+        /// 清除所有指定字符
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="removeCharArr">要清除的符号列表</param>
+        /// <returns></returns>
+        public static string TrimAll(this string str, params string[] removeCharArr)
+        {
+            foreach (var item in removeCharArr)
             {
                 str = str.Replace(item + "", "");
             }
@@ -133,5 +149,44 @@ namespace GeneralTool.CoreLibrary.Extensions
             return c;
         }
 
+        /// <summary>
+        /// 多项匹配
+        /// </summary>
+        /// <param name="text">待匹配的字符串</param>
+        /// <param name="parmaeters">需要匹配的字符串数组</param>
+        /// <param name="comparison"></param>
+        /// <returns></returns>
+        public static bool EqualsMore(this string text, IEnumerable<string> parmaeters, System.StringComparison comparison)
+        {
+            foreach (var item in parmaeters)
+            {
+                if (text.Equals(item, comparison))
+                    return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// 多项包含匹配
+        /// </summary>
+        /// <param name="text">待匹配的字符串</param>
+        /// <param name="parmaeters">需要匹配的字符串数组</param>
+        /// <param name="IgnoreCase">是否需要忽略大小写</param>
+        /// <returns></returns>
+        public static bool Contanis(this string text, IEnumerable<string> parmaeters, bool IgnoreCase)
+        {
+            if (IgnoreCase)
+                text = text.ToLower();
+            foreach (var item in parmaeters)
+            {
+                var t = item;
+                if (IgnoreCase)
+                    t = item.ToLower();
+
+                if (text.Contains(t))
+                    return true;
+            }
+            return false;
+        }
     }
 }

@@ -1,0 +1,21 @@
+﻿<Window x:Class="TaskServerUI.TestWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:g="clr-namespace:GeneralTool.CoreLibrary.WPFHelper.WPFControls;assembly=GeneralTool.CoreLibrary"
+        xmlns:dp="clr-namespace:GeneralTool.CoreLibrary.WPFHelper.Extensions;assembly=GeneralTool.CoreLibrary"
+        xmlns:c="clr-namespace:TaskServerUI.Commons"
+        xmlns:local="clr-namespace:TaskServerUI"
+        mc:Ignorable="d"
+        Title="TestWindow" Height="450" Width="800">
+    <StackPanel Orientation="Vertical">
+        <g:EnumCombox AttrType="{x:Type c:TestAttribute}"
+                      AttrTypeDesc="Desc"
+                      EnumType="{x:Type c:EType}"
+                      x:Name="EBox"
+                      SelectedIndex="0"/>
+        <Button Content="Test"
+                Click="TestMethod" />
+    </StackPanel>
+</Window>

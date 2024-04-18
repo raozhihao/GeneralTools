@@ -72,6 +72,10 @@ namespace GeneralTool.CoreLibrary.WPFHelper
                 object obj = Activator.CreateInstance(destinationType);
                 if (obj is IConvertible)
                 {
+                    if (destinationType.IsEnum && int.TryParse(value, out var e))
+                    {
+                        return Enum.Parse(destinationType, value);
+                    }
                     return System.Convert.ChangeType(value, destinationType);
                 }
             }

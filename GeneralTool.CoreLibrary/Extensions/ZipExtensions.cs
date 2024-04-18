@@ -8,19 +8,26 @@ namespace GeneralTool.CoreLibrary.Extensions
     /// </summary>
     public static class ZipExtensions
     {
-        public static string Zip(this string directoryPath)
+        /// <summary>
+        /// 将文件夹打包
+        /// </summary>
+        /// <param name="directoryPath"></param>
+        /// <returns></returns>
+        public static void Zip(this string directoryPath,string destFullName)
         {
             DirectoryInfo directory = new DirectoryInfo(directoryPath);
-            string direName = Path.GetFileNameWithoutExtension(directory.FullName);
-
-            string destFullName = Path.Combine(directory.Parent.FullName, direName + ".zip");
+           
             if (File.Exists(destFullName))
                 File.Delete(destFullName);
             ZipFile.CreateFromDirectory(directory.FullName, destFullName, CompressionLevel.Fastest, false);
-            return destFullName;
         }
 
-        public static string UnZip(this string zipFile, string saveDir = "")
+        /// <summary>
+        /// 解压zip包
+        /// </summary>
+        /// <param name="zipFile"></param>
+        /// <param name="saveDir"></param>
+        public static void UnZip(this string zipFile, string saveDir = "")
         {
             if (string.IsNullOrWhiteSpace(saveDir))
             {
@@ -32,7 +39,6 @@ namespace GeneralTool.CoreLibrary.Extensions
             }
 
             ZipFile.ExtractToDirectory(zipFile, saveDir);
-            return saveDir;
         }
     }
 }

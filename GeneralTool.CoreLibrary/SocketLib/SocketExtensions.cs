@@ -19,7 +19,7 @@ namespace GeneralTool.CoreLibrary.SocketLib
         /// </param>
         /// <returns>
         /// </returns>
-        public static bool IsClientConnected(this Socket socket)
+        public static bool IsClientConnected(this Socket socket,string localEndPoint, string remoteEndPoint)
         {
             if (socket == null || !socket.Connected)
                 return false;
@@ -34,7 +34,7 @@ namespace GeneralTool.CoreLibrary.SocketLib
 
                 try
                 {
-                    if (c.LocalEndPoint.Equals(socket.LocalEndPoint) && c.RemoteEndPoint.Equals(socket.RemoteEndPoint))
+                    if ((c.LocalEndPoint+"").Equals(localEndPoint) && (c.RemoteEndPoint+"").Equals(remoteEndPoint))
                     {
 
                         /* 项目“GeneralTool.CoreLibrary (net452)”的未合并的更改

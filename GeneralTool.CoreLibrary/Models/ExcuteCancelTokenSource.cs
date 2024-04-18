@@ -291,7 +291,7 @@ namespace GeneralTool.CoreLibrary.Models
         public void Cancel()
         {
             tokenSource?.Cancel();
-            IsRequestCancel = true;
+            //IsRequestCancel = true;
         }
 
         /// <summary>
@@ -326,7 +326,7 @@ namespace GeneralTool.CoreLibrary.Models
             //查看是否已经获取到了暂停信号
             await Task.Run(async () =>
             {
-                while (!IsPaused && !IsRequestCancel)
+                while (!IsPaused /*&& !IsRequestCancel*/ && !this.Token.IsCancellationRequested)
                 {
                     if (IsResumed) break;
                     try
@@ -359,7 +359,7 @@ namespace GeneralTool.CoreLibrary.Models
             IsResumed = true;
             await Task.Run(async () =>
             {
-                while (!IsResumed && !IsRequestCancel)
+                while (!IsResumed /*&& !IsRequestCancel*/ && !this.Token.IsCancellationRequested)
                 {
                     if (IsPauseNotify) break;
                     try
@@ -387,7 +387,7 @@ namespace GeneralTool.CoreLibrary.Models
             NotifyCancel();
             //WaitPause();
             isFirstRequest = false;
-            IsRequestCancel = false;
+            //IsRequestCancel = false;
             CanPause = false;
             IsPauseNotify = false;
             IsResumed = false;
@@ -403,7 +403,7 @@ namespace GeneralTool.CoreLibrary.Models
             while (IsPauseNotify)
             {
                 IsPaused = true;
-                if (IsRequestCancel && !isFirstRequest)
+                if (/*IsRequestCancel && */!isFirstRequest && this.Token.IsCancellationRequested)
                 {
                     //停止命令优先级更高
                     NotifyCancel();
@@ -443,17 +443,29 @@ namespace GeneralTool.CoreLibrary.Models
             {
                 lock (locker)
                 {
+                    ////如果是已经触发了取消事件,且未在第一次,则触发事件
+                    //if (IsRequestCancel && !isFirstRequest && this.Token.IsCancellationRequested)
+                    //{
+                    //    NotifyCancel();
+                    //}
+                    //else if (!IsRequestCancel && !this.Token.IsCancellationRequested)
+                    //{
+                    //    WaitPause();
+                    //}
+
+                    //return IsRequestCancel || this.Token.IsCancellationRequested;
+
                     //如果是已经触发了取消事件,且未在第一次,则触发事件
-                    if (IsRequestCancel && !isFirstRequest)
+                    if ( !isFirstRequest && this.Token.IsCancellationRequested)
                     {
                         NotifyCancel();
                     }
-                    else if (!IsRequestCancel)
+                    else if (!this.Token.IsCancellationRequested)
                     {
                         WaitPause();
                     }
 
-                    return IsRequestCancel;
+                    return  this.Token.IsCancellationRequested;
                 }
 
             }
@@ -465,10 +477,10 @@ namespace GeneralTool.CoreLibrary.Models
         /// </summary>
         public bool CanPause { get; set; }
 
-        /// <summary>
-        /// 是否发送了取消标记
-        /// </summary>
-        public bool IsRequestCancel { get; private set; }
+        ///// <summary>
+        ///// 是否发送了取消标记
+        ///// </summary>
+        //public bool IsRequestCancel { get; private set; }
 
         /// <summary>
         /// 取消成功事件
