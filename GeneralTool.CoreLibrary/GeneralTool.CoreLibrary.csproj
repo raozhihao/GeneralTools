@@ -13,7 +13,7 @@
 		<Company>Person</Company>
 		<IncludeSymbols>True</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
-		<Version>23.09.13</Version>
+		<Version>24.04.18</Version>
 		<RunAnalyzersDuringBuild>True</RunAnalyzersDuringBuild>
 		<RunAnalyzersDuringLiveAnalysis>True</RunAnalyzersDuringLiveAnalysis>
 		<EnableNETAnalyzers>True</EnableNETAnalyzers>
