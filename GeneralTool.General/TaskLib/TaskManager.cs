@@ -245,6 +245,7 @@ namespace GeneralTool.General.TaskLib
                         this.log.Fail(message);
                         throw new Exception(message);
                     }
+
                 }
 
                 //如果不是值类型

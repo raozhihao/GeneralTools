@@ -18,8 +18,8 @@
 		<RunAnalyzersDuringLiveAnalysis>True</RunAnalyzersDuringLiveAnalysis>
 		<EnableNETAnalyzers>True</EnableNETAnalyzers>
 		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
-		<AssemblyVersion>23.09.13</AssemblyVersion>
-		<FileVersion>23.09.13</FileVersion>
+		<AssemblyVersion>24.04.18</AssemblyVersion>
+		<FileVersion>24.04.18</FileVersion>
 		<Title>GeneralTool.CoreLibrary</Title>
 		<Copyright>Copyright Rao©  2023</Copyright>
 	</PropertyGroup>

@@ -1,0 +1,117 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:GeneralTool.CoreLibrary.WPFHelper.WPFControls">
+
+    <Style TargetType="{x:Type local:NumericControl}"
+           x:Key="NumericControl">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type local:NumericControl}">
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}"
+                            Padding="{TemplateBinding Padding}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition />
+                                <ColumnDefinition Width="auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <TextBlock Grid.Column="0"
+                                       VerticalAlignment="Center"
+                                       Style="{TemplateBinding IconStyle}" />
+
+                            <TextBox Grid.Column="1"
+                                     Text="0"
+                                     MinHeight="20"
+                                     x:Name="ValueTxt"
+                                     Style="{TemplateBinding ValueBoxStyle}" />
+
+                            <Grid Grid.Column="2">
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+
+                                <RepeatButton x:Name="UpPath"
+                                              Cursor="Hand"
+                                              VerticalAlignment="Center"
+                                              HorizontalAlignment="Center"
+                                              Background="{TemplateBinding Background}">
+                                    <RepeatButton.Style>
+                                        <Style TargetType="RepeatButton">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate>
+                                                        <Viewbox>
+                                                            <Grid Cursor="Hand"
+                                                                  Background="{Binding RelativeSource={RelativeSource AncestorType=RepeatButton,Mode=FindAncestor},Path=Background}">
+                                                                <Path Stroke="{Binding RelativeSource={RelativeSource AncestorType=local:NumericControl,Mode=FindAncestor},Path=UpButtonForeceColor}"
+                                                                      Fill="{Binding RelativeSource={RelativeSource AncestorType=local:NumericControl,Mode=FindAncestor},Path=UpButtonForeceColor}"
+                                                                      Margin="2"
+                                                                      Cursor="Hand"
+                                                                      Height="10"
+                                                                      IsHitTestVisible="True"
+                                                                      StrokeThickness="3">
+                                                                    <Path.Data>
+                                                                        <GeometryGroup FillRule="EvenOdd">
+                                                                            <LineGeometry StartPoint="0,5"
+                                                                                          EndPoint="10,5" />
+                                                                            <LineGeometry StartPoint="5,0"
+                                                                                          EndPoint="5,10" />
+                                                                        </GeometryGroup>
+                                                                    </Path.Data>
+                                                                </Path>
+                                                            </Grid>
+                                                        </Viewbox>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </RepeatButton.Style>
+                                </RepeatButton>
+
+                                <RepeatButton x:Name="DownPath"
+                                              Grid.Column="1"
+                                              VerticalAlignment="Center"
+                                              HorizontalAlignment="Center"
+                                              Cursor="Hand"
+                                              Background="{TemplateBinding Background}">
+                                    <RepeatButton.Style>
+                                        <Style TargetType="RepeatButton">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate>
+                                                        <Viewbox>
+                                                            <Grid  Background="{Binding RelativeSource={RelativeSource AncestorType=RepeatButton,Mode=FindAncestor},Path=Background}"
+                                                                   Cursor="Hand">
+                                                                <Path Stroke="{Binding RelativeSource={RelativeSource AncestorType=local:NumericControl,Mode=FindAncestor},Path=DownButtonForeceColor}"
+                                                                      Fill="{Binding RelativeSource={RelativeSource AncestorType=local:NumericControl,Mode=FindAncestor},Path=DownButtonForeceColor}"
+                                                                      Margin="2"
+                                                                      Cursor="Hand"
+                                                                      Height="10"
+                                                                      VerticalAlignment="Center"
+                                                                      IsHitTestVisible="True"
+                                                                      StrokeThickness="4"
+                                                                      Data="M0,5L10,5">
+
+                                                                </Path>
+                                                            </Grid>
+                                                        </Viewbox>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </RepeatButton.Style>
+                                </RepeatButton>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

@@ -4,15 +4,22 @@
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/GeneralTool.CoreLibrary;component/Themes/ImageViewControl.xaml" />
         <ResourceDictionary Source="pack://application:,,,/GeneralTool.CoreLibrary;component/Themes/PropertyGridControl.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/GeneralTool.CoreLibrary;component/Themes/NumericControl.xaml" />
 
         <ResourceDictionary Source="pack://application:,,,/GeneralTool.CoreLibrary;component/WPFHelper/DiagramDesigner/Resources/BlockItem.xaml" />
         <ResourceDictionary Source="pack://application:,,,/GeneralTool.CoreLibrary;component/WPFHelper/DiagramDesigner/Resources/Connection.xaml" />
         <ResourceDictionary Source="pack://application:,,,/GeneralTool.CoreLibrary;component/WPFHelper/DiagramDesigner/Resources/ZoomBox.xaml" />
     </ResourceDictionary.MergedDictionaries>
+    
     <!--  set up default styles for our custom controls  -->
     <Style TargetType="{x:Type wp:ImageViewControl}"
            BasedOn="{StaticResource ImageViewControl}" />
 
     <Style TargetType="{x:Type wp:PropertyGridControl}"
            BasedOn="{StaticResource PropertyGridControl}" />
+
+    <Style TargetType="{x:Type wp:NumericControl}"
+           BasedOn="{StaticResource  NumericControl}" />
+
+   
 </ResourceDictionary>

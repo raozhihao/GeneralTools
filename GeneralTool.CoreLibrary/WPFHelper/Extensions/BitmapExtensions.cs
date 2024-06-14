@@ -70,7 +70,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.Extensions
             try
             {
                 //锁bp到内存开始进行复制
-                BitmapData bmpData = srcBitmap.LockBits(rect, ImageLockMode.ReadWrite, pixelFormat);
+                System.Drawing.Imaging.BitmapData bmpData = srcBitmap.LockBits(rect, ImageLockMode.ReadWrite, pixelFormat);
                 IntPtr ptrBmp = bmpData.Scan0;
 
                 //若要改变图片格式，请自行计算，以8为一个单位，8位乘以1,16位乘以2,32位乘以3 ·····依次类推

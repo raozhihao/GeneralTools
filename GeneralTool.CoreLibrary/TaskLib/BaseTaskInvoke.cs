@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 
+using GeneralTool.CoreLibrary.Attributes;
 using GeneralTool.CoreLibrary.Interfaces;
 using GeneralTool.CoreLibrary.Logs;
 using GeneralTool.CoreLibrary.WPFHelper;
@@ -53,6 +54,8 @@ namespace GeneralTool.CoreLibrary.TaskLib
         /// </summary>
         public ILog Log { get; set; }
 
+       
+
         /// <summary>
         /// Token
         /// </summary>
@@ -73,6 +76,9 @@ namespace GeneralTool.CoreLibrary.TaskLib
             erroMsg = "";
             return _errorMsg;
         }
+
+       
+     
 
         #endregion Public 方法
     }

@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
+using GeneralTool.CoreLibrary.Extensions;
 using GeneralTool.CoreLibrary.Interfaces;
 using GeneralTool.CoreLibrary.Logs;
 using GeneralTool.CoreLibrary.Models;
@@ -30,10 +31,29 @@ namespace TaskServerUI
         {
             InitializeComponent();
 
+            Test();
         }
 
+        private void Test()
+        {
+            using (var map = new System.Drawing.Bitmap(@"C:\Users\raozh\Pictures\无标题.png"))
+            {
+                using (var data = new BitmapDataEx(map, true))
+                {
+                    var buffer = data.Buffer;
+                    var size = data.Size;
+                    var ptr = data.Ptr;
+                    var stride = data.Stride;
+                }
+            }
+        }
 
         private void TestMethod(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
         {
 
         }
