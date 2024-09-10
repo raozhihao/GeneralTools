@@ -12,4 +12,4 @@ using System.Runtime.InteropServices;
 
 // 如果此项目向 COM 公开，则下列 GUID 用于 typelib 的 ID。
 
-[assembly: Guid("cd73b8f3-0ab8-4f51-a646-123ee2a95269")]
+//[assembly: Guid("cd73b8f3-0ab8-4f51-a646-123ee2a95269")]

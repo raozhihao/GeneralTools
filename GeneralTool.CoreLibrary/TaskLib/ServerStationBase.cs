@@ -59,6 +59,8 @@ namespace GeneralTool.CoreLibrary.TaskLib
         /// 请求消息事件，此为第二事件
         /// </summary>
         public event Func<ServerRequest, ServerResponse> RequestEvent;
+        public event EventHandler<ServerRequest> ServerRequestEvent;
+        public event EventHandler<ServerResponse> ServerResponseEvent;
 
         #endregion Protected 属性
 
@@ -148,13 +150,19 @@ namespace GeneralTool.CoreLibrary.TaskLib
                             object[] array = new object[parameters.Length];
                             foreach (ParameterInfo parameterInfo in parameters)
                             {
-                                if (serverRequest.Parameters.TryGetValue(parameterInfo.Name, out string value))
+                                if (serverRequest.Parameters.TryGetValue(parameterInfo.Name, out var value))
                                 {
-                                    //如果有,则转换
-                                    WaterMarkAttribute wa = parameterInfo.GetCustomAttribute<WaterMarkAttribute>();
-                                    array[parameterInfo.Position] = wa != null && wa.IsJson
-                                        ? jsonConvert.DeserializeObject(value, parameterInfo.ParameterType)
-                                        : converter.ConvertSimpleType(value, parameterInfo.ParameterType);
+                                    if (parameterInfo.ParameterType == typeof(object))
+                                        array[parameterInfo.Position] = value;
+                                    else
+                                    {
+                                        //如果有,则转换
+                                        WaterMarkAttribute wa = parameterInfo.GetCustomAttribute<WaterMarkAttribute>();
+                                        array[parameterInfo.Position] = wa != null && wa.IsJson
+                                            ? jsonConvert.DeserializeObject(value + "", parameterInfo.ParameterType)
+                                            : converter.ConvertSimpleType(value, parameterInfo.ParameterType);
+                                    }
+                                    
                                 }
                                 else
                                 {
@@ -168,10 +176,10 @@ namespace GeneralTool.CoreLibrary.TaskLib
                                 {
                                     if (serverResponse.Result != null)
                                     {
-                                       var type= serverResponse.Result.GetType();
-                                        if (type == typeof(string)|| type.IsValueType||type.IsAbstract||type.IsInterface)
+                                        var type = serverResponse.Result.GetType();
+                                        if (type == typeof(string) || type.IsValueType || type.IsAbstract || type.IsInterface)
                                             serverResponse.ResultString = serverResponse.Result + "";
-                                        else 
+                                        else
                                             serverResponse.ResultString = jsonConvert.SerializeObject(serverResponse.Result);
 
                                     }
@@ -253,10 +261,10 @@ namespace GeneralTool.CoreLibrary.TaskLib
                 jsonConvert = new BaseJsonCovert();
             ServerResponse response = GetServerResponse(serverRequest, jsonConvert);
 
-            return GetReponseString(serverRequest,response,jsonConvert);
+            return GetReponseString(serverRequest, response, jsonConvert);
         }
 
-        public string GetReponseString(ServerRequest serverRequest, ServerResponse response, IJsonConvert jsonConvert )
+        public string GetReponseString(ServerRequest serverRequest, ServerResponse response, IJsonConvert jsonConvert)
         {
             RequestAddressItem item = GetRequestItem(serverRequest);//RequestRoute[serverRequest.Url];
             if (!string.IsNullOrWhiteSpace(item.Url))
@@ -357,6 +365,29 @@ namespace GeneralTool.CoreLibrary.TaskLib
         /// </returns>
         public abstract bool Start(string ip, int port);
 
+        protected void OnServerRequest(ServerRequest request)
+        {
+            try
+            {
+                this.ServerRequestEvent?.Invoke(this, request);
+            }
+            catch (Exception ex)
+            {
+                this.Log?.Fail($"{nameof(OnServerRequest)} ex: {ex}");
+            }
+        }
+
+        protected void OnServerReponse(ServerResponse response)
+        {
+            try
+            {
+                this.ServerResponseEvent?.Invoke(this, response);
+            }
+            catch (Exception ex)
+            {
+                this.Log?.Fail($"{nameof(OnServerReponse)} ex: {ex}");
+            }
+        }
         #endregion Public 方法
     }
 

@@ -121,9 +121,9 @@ namespace GeneralTool.CoreLibrary.TaskLib
         /// <param name="parameters"></param>
         /// <param name="objects"></param>
         /// <returns></returns>
-        protected virtual Dictionary<string, string> GetParameterDic(ParameterInfo[] parameters, object[] objects)
+        protected virtual Dictionary<string, object> GetParameterDic(ParameterInfo[] parameters, object[] objects)
         {
-            Dictionary<string, string> dic = new Dictionary<string, string>();
+           var dic = new Dictionary<string, object>();
 
             for (int i = 0; i < parameters.Length; i++)
             {
@@ -173,7 +173,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
             if (len != objects.Length)
                 throw new Exception("传递的参数个数与顺序应与方法一致");
 
-            Dictionary<string, string> dic = GetParameterDic(parameters, objects);
+            Dictionary<string, object> dic = GetParameterDic(parameters, objects);
 
             ServerRequest request = new ServerRequest()
             {

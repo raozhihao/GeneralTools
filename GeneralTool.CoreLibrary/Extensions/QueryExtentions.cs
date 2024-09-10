@@ -53,9 +53,9 @@ namespace GeneralTool.CoreLibrary.Extensions
         /// </param>
         /// <returns>
         /// </returns>
-        public static Dictionary<string, string> ParseQueryToDictionary(this string queryStrings)
+        public static Dictionary<string, object> ParseQueryToDictionary(this string queryStrings)
         {
-            Dictionary<string, string> dic = new Dictionary<string, string>();
+            Dictionary<string, object> dic = new Dictionary<string, object>();
             string[] split = queryStrings.Split(new char[] { '&' }, StringSplitOptions.RemoveEmptyEntries);
             foreach (string item in split)
             {
@@ -78,7 +78,7 @@ namespace GeneralTool.CoreLibrary.Extensions
         /// </param>
         /// <returns>
         /// </returns>
-        public static Dictionary<string, string> ParseUrlToQueryDictionary(this string url)
+        public static Dictionary<string, object> ParseUrlToQueryDictionary(this string url)
         {
             string queryString = url.GetQueryString();
             return queryString.ParseQueryToDictionary();

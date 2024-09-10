@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
+using System.Runtime.Serialization;
+using System.Windows.Documents;
 
 namespace GeneralTool.CoreLibrary.Extensions
 {
@@ -118,7 +122,6 @@ namespace GeneralTool.CoreLibrary.Extensions
                     property.SetValue(left, value);
                 }
             }
-
         }
 
         /// <summary>
@@ -137,6 +140,70 @@ namespace GeneralTool.CoreLibrary.Extensions
                 _ = constructor.Invoke(objInstance, null);
 
             return objInstance;
+        }
+
+        private static int count = 1;
+        private static List<object> cacheObjs = new List<object>();
+        /// <summary>
+        /// 深克隆,可以无视循环引用,但对于设置属性时属性设置方法中内部抛异常无能为力
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static object CopyDeep(this object obj)
+        {
+            count++;
+            if (obj == null) return null;
+
+            var type = obj.GetType();
+            var properties = type.GetProperties();
+
+            var instance = FormatterServices.GetUninitializedObject(type);
+
+            if (properties.Length == 0)
+            {
+                instance = obj;
+            }
+            else
+            {
+                for (int i = 0; i < properties.Length; i++)
+                {
+                    var propery = properties[i];
+                    if (propery.SetMethod != null && propery.GetMethod != null)
+                    {
+                        var proObj = propery.GetMethod.Invoke(obj, null);
+
+                        if (cacheObjs.Contains(proObj))
+                        {
+                            propery.SetValue(instance, proObj);
+                            continue;
+                        }
+                        if (proObj != null)
+                        {
+                            cacheObjs.Add(proObj);
+                            proObj = proObj.CopyDeep();
+
+                        }
+
+                        propery.SetValue(instance, proObj);
+                    }
+                }
+
+            }
+
+            count--;
+            if (count == 1) cacheObjs.Clear();
+            return instance;
+        }
+
+        /// <summary>
+        /// 转换
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static object To<T>(this object obj) where T : IConvertible
+        {
+            return Convert.ChangeType(obj, typeof(T));
         }
     }
 }

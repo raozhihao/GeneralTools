@@ -1,0 +1,257 @@
+﻿<m:MetroWindow x:Class="TaskServerUI.TaskWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TaskServerUI"
+        xmlns:convert="clr-namespace:GeneralTool.CoreLibrary.WPFHelper.Extensions;assembly=GeneralTool.CoreLibrary"
+        xmlns:m="http://metro.mahapps.com/winfx/xaml/controls"
+        mc:Ignorable="d"
+        Title="TaskWindow" Height="450" Width="800">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"
+                                  MinWidth="200" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="*"
+                                  MinWidth="400" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="400"
+                                  MinWidth="200" />
+            </Grid.ColumnDefinitions>
+
+            <m:MetroTabControl Name="TaskTab">
+
+                <m:MetroTabControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Explanation}"
+                                   Cursor="Hand" />
+                    </DataTemplate>
+                </m:MetroTabControl.ItemTemplate>
+                <m:MetroTabControl.ContentTemplate>
+                    <DataTemplate>
+                        <ListBox ItemsSource="{Binding DoTaskModels,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"
+                                 DataContext="{Binding}"
+                                 Style="{StaticResource MahApps.Styles.ListBox}"
+                                 x:Name="InterfaceList"
+                                 SelectedItem="{Binding SelectedItem}"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                 ScrollViewer.VerticalScrollBarVisibility="Auto">
+
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <RadioButton Content="{Binding Path=Url}"
+                                                 VerticalAlignment="Center"
+                                                 Style="{StaticResource MahApps.Styles.RadioButton.Win10}"
+                                                 Padding="0 5"
+                                                 VerticalContentAlignment="Center"
+                                                 IsChecked="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem,Mode=FindAncestor},
+                                                     Path=IsSelected}"
+                                                 ToolTip="{Binding DoTaskParameterItem.Explanation}"
+                                                 Cursor="Hand" />
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </DataTemplate>
+                </m:MetroTabControl.ContentTemplate>
+
+            </m:MetroTabControl>
+
+            <GridSplitter Width="2"
+                          Grid.Column="1"
+                          Background="Green" />
+
+            <Grid Grid.Column="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.Resources>
+                    <convert:DoTaskParameterConvert x:Key="TaskConvert" />
+                </Grid.Resources>
+
+                <ContentControl Grid.Row="0"
+                      Margin="10"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      local:PropertyDependecy.ItemsAutoCreateUi ="True"
+                      DataContext="{Binding  ElementName=TaskTab,Path=SelectedValue.SelectedItem.DoTaskParameterItem,Mode=TwoWay}"
+                      x:Name="ParmetersList">
+                    <ContentControl.Resources>
+                        <Style TargetType="TextBlock"
+                               BasedOn="{StaticResource MahApps.Styles.TextBlock}">
+                            <Setter Property="Margin"
+                                    Value="5" />
+                            <Setter Property="VerticalAlignment"
+                                    Value="Center" />
+                            <Setter Property="HorizontalAlignment"
+                                    Value="Right" />
+                        </Style>
+                        <Style TargetType="m:NumericUpDown">
+                            <Setter Property="Margin"
+                                    Value="5" />
+                            <Setter Property="VerticalAlignment"
+                                    Value="Center" />
+                            <Setter Property="Height"
+                                    Value="25" />
+                            <Setter Property="BorderThickness"
+                                    Value="0 0 0 1" />
+                        </Style>
+                        <Style TargetType="ComboBox">
+                            <Setter Property="Margin"
+                                    Value="5" />
+                            <Setter Property="VerticalAlignment"
+                                    Value="Center" />
+                            <Setter Property="Height"
+                                    Value="30" />
+                        </Style>
+                    </ContentControl.Resources>
+                 
+                </ContentControl>
+
+                <Button Grid.Row="1"
+                        Content="执行接口"
+                        Height="45"
+                        FontSize="20"
+                        Click="RunMethod"
+                        Cursor="Hand" />
+
+                <GroupBox Header="返回值输出"
+                          Grid.Row="2"
+                          Visibility="Visible"
+                          x:Name="ReturnGroup"
+                          Margin="0 5 0 0">
+                    <TextBox x:Name="OutTxt" />
+                </GroupBox>
+
+            </Grid>
+
+            <GridSplitter Width="2"
+                          Grid.Column="3"
+                          Background="Green" />
+
+            <Grid Grid.Column="4">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+
+                <GroupBox Header="方法信息"
+                          Grid.Row="0"
+                          DataContext="{Binding ElementName=ParmetersList,Path=DataContext,Mode=TwoWay}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                        </Grid.RowDefinitions>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Text="Url:"
+                                   Grid.Row="0"
+                                   Grid.Column="0" />
+                        <TextBox Grid.Row="0"
+                                 Grid.Column="1"
+                                 Text="{Binding Url,Mode=TwoWay}"
+                                 IsReadOnly="True"
+                                 BorderThickness="0" />
+
+                        <TextBlock Text="说明:"
+                                   Grid.Row="1"
+                                   Grid.Column="0" />
+                        <TextBox Grid.Row="1"
+                                 Grid.Column="1"
+                                 Text="{Binding Explanation,Mode=TwoWay}"
+                                 TextWrapping="Wrap"
+                                 IsReadOnly="True"
+                                 BorderThickness="0" />
+
+                        <TextBlock Text="返回:"
+                                   Grid.Row="2"
+                                   Grid.Column="0" />
+
+                        <TextBox Grid.Row="2"
+                                 Grid.Column="1"
+                                 TextWrapping="Wrap"
+                                 IsReadOnly="True"
+                                 BorderThickness="0"
+                                 Text="{Binding ReturnString,Mode=TwoWay}" />
+                    </Grid>
+
+                </GroupBox>
+
+                <GroupBox Header="参数信息"
+                          Grid.Row="1"
+                          Padding="0 10"
+                          DataContext="{Binding ElementName=ParmetersList,Path=DataContext,Mode=TwoWay}">
+                    <ScrollViewer CanContentScroll="True"
+                                  HorizontalScrollBarVisibility="Auto"
+                                  VerticalScrollBarVisibility="Auto">
+                        <ContentControl DataContext="{Binding Paramters,Mode=TwoWay}"
+                              local:DoTaskParameterInfoDependecy.DoTaskParameterInfo="True"
+                              VerticalAlignment="Top"
+                              ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                              ScrollViewer.VerticalScrollBarVisibility="Auto">
+                            <ContentControl.Resources>
+                                <Style TargetType="TextBlock"
+                                       BasedOn="{StaticResource MahApps.Styles.TextBlock}">
+                                    <Setter Property="HorizontalAlignment"
+                                            Value="Left" />
+                                    <Setter Property="Margin"
+                                            Value="5" />
+                                    <Setter Property="VerticalAlignment"
+                                            Value="Center" />
+                                </Style>
+
+                                <Style TargetType="TextBox"
+                                       BasedOn="{StaticResource MahApps.Styles.TextBox}">
+                                    <Setter Property="HorizontalAlignment"
+                                            Value="Left" />
+                                    <Setter Property="VerticalAlignment"
+                                            Value="Center" />
+                                    <Setter Property="BorderThickness"
+                                            Value="0" />
+                                    <Setter Property="TextWrapping"
+                                            Value="Wrap" />
+                                    <Setter Property="IsReadOnly"
+                                            Value="True" />
+                                </Style>
+                            </ContentControl.Resources>
+                         
+                        </ContentControl>
+                    </ScrollViewer>
+
+                </GroupBox>
+
+            </Grid>
+
+        </Grid>
+        <!--<StackPanel Orientation="Horizontal"
+                 HorizontalAlignment="Right"
+                 Grid.Row="1"
+                 Margin="0 10 0 0">
+         <Button Content="关闭"
+                 Click="CloseMethod"
+                 Padding="15 5"
+                 Margin="5" />
+         <Button Content="提交"
+                 Click="SubmitMethod"
+                 Margin="5"
+                 Padding="15 5"
+                 IsDefault="True" />
+     </StackPanel>-->
+    </Grid>
+</m:MetroWindow>

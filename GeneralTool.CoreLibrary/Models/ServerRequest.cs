@@ -14,8 +14,8 @@ namespace GeneralTool.CoreLibrary.Models
         /// <summary>
         /// 参数列表
         /// </summary>
-        public Dictionary<string, string> Parameters { get; set; } =
-        new Dictionary<string, string>();
+        public Dictionary<string, object> Parameters { get; set; } =
+        new Dictionary<string, object>();
 
         #endregion Public 字段
 
@@ -37,7 +37,7 @@ namespace GeneralTool.CoreLibrary.Models
         /// </param>
         /// <returns>
         /// </returns>
-        public string GetValue(string key)
+        public object GetValue(string key)
         {
             return Parameters[key];
         }

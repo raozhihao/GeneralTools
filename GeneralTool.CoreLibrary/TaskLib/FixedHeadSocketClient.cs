@@ -118,7 +118,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
         /// <param name="url"></param>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        public TOut SendResultObject<TOut>(string url, Dictionary<string, string> parameters, CancellationToken token) => (TOut)SendResultObject(url, parameters, token);
+        public TOut SendResultObject<TOut>(string url, Dictionary<string, object> parameters, CancellationToken token) => (TOut)SendResultObject(url, parameters, token);
 
         /// <summary>
         /// 
@@ -126,7 +126,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
         /// <param name="url"></param>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        public object SendResultObject(string url, Dictionary<string, string> parameters, CancellationToken token)
+        public object SendResultObject(string url, Dictionary<string, object> parameters, CancellationToken token)
         {
             ServerRequest request = new ServerRequest()
             {
@@ -142,7 +142,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
         /// <param name="url"></param>
         /// <param name="parameters"></param>
         /// <returns></returns>
-        public ServerResponse Send(string url, Dictionary<string, string> parameters, CancellationToken token)
+        public ServerResponse Send(string url, Dictionary<string, object> parameters, CancellationToken token)
         {
             ServerRequest request = new ServerRequest()
             {

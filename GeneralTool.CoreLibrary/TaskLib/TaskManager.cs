@@ -61,6 +61,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
             this.log = log;
             Station serverStation = new Station(jsonConvert, log, station);
             ServerStation = serverStation;
+            this.BindingEvent(ServerStation);
         }
 
         /// <summary>
@@ -89,6 +90,9 @@ namespace GeneralTool.CoreLibrary.TaskLib
         #endregion Public 构造函数
 
         #region Public 属性
+
+        public event EventHandler<ServerRequest> ServerRequestEvent;
+        public event EventHandler<ServerResponse> ServerResponseEvent;
 
         /// <summary>
         /// 获取所有任务
@@ -153,6 +157,12 @@ namespace GeneralTool.CoreLibrary.TaskLib
 
         #region Public 方法
 
+        protected void OnServerRequest(object sender,ServerRequest request)
+            => this.ServerRequestEvent?.Invoke(this, request);
+
+        protected void OnServerReponse(object sender,ServerResponse response)
+            => this.ServerResponseEvent?.Invoke(this, response);
+
         /// <summary>
         /// 添加远程服务站点
         /// </summary>
@@ -170,6 +180,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
 
             Station stationInfo = new Station(jsonConvert, log, station);
             StationInfo info = new StationInfo(ip, port, stationInfo);
+            this.BindingEvent(info.Station);
             ServerStations.Add(info);
         }
 
@@ -179,6 +190,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
         /// <param name="station"></param>
         public virtual void AddServerStation(StationInfo station)
         {
+            this.BindingEvent(station.Station);
             ServerStations.Add(station);
         }
 
@@ -328,7 +340,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
                         };
                         if (p.HasDefaultValue)
                         {
-                            it.Value = p.DefaultValue+"";
+                            it.Value = p.DefaultValue + "";
                         }
 
                         //查看是否有水印提示
@@ -427,6 +439,14 @@ namespace GeneralTool.CoreLibrary.TaskLib
             }
         }
 
+        private void BindingEvent(Station serverStation)
+        {
+            serverStation.ServerRequestEvent -= this.OnServerRequest;
+            serverStation.ServerResponseEvent -= this.OnServerReponse;
+            serverStation.ServerRequestEvent += this.OnServerRequest;
+            serverStation.ServerResponseEvent += this.OnServerReponse;
+        }
+
 
         /// <summary>
         /// 开启单个站点任务,同一个站点请勿多次调用
@@ -479,6 +499,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
                     var re = item.Station.Start(item.Ip, item.Port);
                     if (!re) throw new Exception("启动失败,请检查IP和端口");
                     log.Debug($"服务已开启 IP:{item.Ip} PORT:{item.Port}");
+
                     item.IsSocketInit = true;
                 }
                 catch (Exception ex)
@@ -616,6 +637,8 @@ namespace GeneralTool.CoreLibrary.TaskLib
                 {
 
                 }
+                item.Station.ServerRequestEvent -= this.OnServerRequest;
+                item.Station.ServerResponseEvent -= this.OnServerReponse;
             }
         }
 

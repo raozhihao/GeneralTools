@@ -101,6 +101,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
                 return;
             }
 
+            this.OnRequestEvent(serverRequest);
 
             try
             {
@@ -142,6 +143,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
                     {
                         Log.Debug($"由底层开始执行方法:{serverRequest.Url}");
                         reponse = GetServerResponse(serverRequest, JsonConvert);
+                        this.OnServerReponse(reponse);
                     }
                     catch (Exception ex6)
                     {

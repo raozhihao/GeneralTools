@@ -6,6 +6,7 @@ using GeneralTool.CoreLibrary.Attributes;
 using GeneralTool.CoreLibrary.Extensions;
 using GeneralTool.CoreLibrary.Interfaces;
 using GeneralTool.CoreLibrary.Logs;
+using GeneralTool.CoreLibrary.Models;
 
 namespace GeneralTool.CoreLibrary.TaskLib
 {
@@ -40,7 +41,11 @@ namespace GeneralTool.CoreLibrary.TaskLib
 
             this.log = log;
             ServerStation = serverStation;
+            serverStation.ServerRequestEvent += this.OnServerRequest;
+            serverStation.ServerResponseEvent += this.OnServerReponse;
         }
+
+     
 
         #endregion Public 构造函数
 
@@ -55,9 +60,20 @@ namespace GeneralTool.CoreLibrary.TaskLib
             set;
         }
 
+        public event EventHandler<ServerRequest> ServerRequestEvent;
+        public event EventHandler<ServerResponse> ServerResponseEvent;
+
         #endregion Public 属性
 
         #region Public 方法
+
+
+        protected void OnServerRequest(object sernder,ServerRequest request)
+            => this.ServerRequestEvent?.Invoke(this, request);
+
+        protected void OnServerReponse(object sernder, ServerResponse response)
+            => this.ServerResponseEvent?.Invoke(this, response);
+
 
         /// <summary>
         /// </summary>

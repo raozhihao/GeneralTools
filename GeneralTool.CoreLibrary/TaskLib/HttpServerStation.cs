@@ -14,6 +14,12 @@ using GeneralTool.CoreLibrary.Models;
 
 namespace GeneralTool.CoreLibrary.TaskLib
 {
+    public enum PostBodyMode
+    {
+        Parameter,
+        OneInstance
+    }
+
     /// <summary>
     /// Http处理程序
     /// </summary>
@@ -28,6 +34,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
         /// 请求到达
         /// </summary>
         public event EventHandler<ContextRequest> HalderContext;
+
 
         /// <summary>
         /// 
@@ -172,14 +179,14 @@ namespace GeneralTool.CoreLibrary.TaskLib
             //获取参数
             string method = context.Request.HttpMethod;
             string queryString = WebUtility.UrlDecode(context.Request.Url.Query);
-            Dictionary<string, string> dic = queryString.ParseUrlToQueryDictionary();
+            Dictionary<string, object> dic = queryString.ParseUrlToQueryDictionary();
 
             if (method.Equals("POST", StringComparison.InvariantCultureIgnoreCase))
             {
                 try
                 {
-                    dic = JsonConvert.DeserializeObject<Dictionary<string, string>>(msg);
-                    if (dic == null) dic = new Dictionary<string, string>();
+                    dic = JsonConvert.DeserializeObject<Dictionary<string, object>>(msg);
+                    if (dic == null) dic = new Dictionary<string, object>();
                 }
                 catch (Exception ex)
                 {
@@ -204,7 +211,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
                         {
                             //如果是Json类型,则直接设置了
                             //var value = this.JsonConvert.DeserializeObject(msg, pa.ParameterType);
-                            dic = new Dictionary<string, string>
+                            dic = new Dictionary<string, object>
                         {
                             { pa.Name, msg }
                         };
@@ -217,12 +224,13 @@ namespace GeneralTool.CoreLibrary.TaskLib
 
             }
 
-            foreach (KeyValuePair<string, string> item in dic)
+            foreach (KeyValuePair<string, object> item in dic)
             {
                 cmd.Parameters.Add(item.Key, item.Value);
             }
             cmd.Url = url;
 
+            this.OnServerRequest(cmd);
             string responseString;
             var reponse = this.OnRequestEvent(cmd);
             if (reponse == null)
@@ -250,6 +258,9 @@ namespace GeneralTool.CoreLibrary.TaskLib
             {
                 responseString = GetReponseString(cmd, reponse, JsonConvert);
             }
+
+            reponse = this.JsonConvert.DeserializeObject<ServerResponse>(responseString);
+            this.OnServerReponse(reponse);
 
             Log.Log($"Response:{responseString}" + Environment.NewLine);
 

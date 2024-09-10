@@ -80,7 +80,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
             if (parameters.Length != datas.Length)
                 throw new Exception("传递的参数个数与顺序应与方法一致");
 
-            Dictionary<string, string> dic = new Dictionary<string, string>();
+            var dic = new Dictionary<string, object>();
             for (int i = 0; i < parameters.Length; i++)
             {
                 System.Reflection.ParameterInfo parameterInfo = parameters[i];

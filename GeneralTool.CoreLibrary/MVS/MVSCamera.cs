@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
+using System.Windows.Controls;
 
 using static GeneralTool.CoreLibrary.MVS.MVSCameraProvider;
 
@@ -761,7 +762,7 @@ namespace GeneralTool.CoreLibrary.MVS
         /// <returns></returns>
         public virtual CameraExposureTimeInfo GetExposureTime()
         {
-            MVSCameraProvider.MVCC_FLOATVALUE value = new MVSCameraProvider.MVCC_FLOATVALUE();
+            MVCC_FLOATVALUE value = new MVSCameraProvider.MVCC_FLOATVALUE();
             _ = M_MyCamera.MV_CC_GetExposureTime_NET(ref value);
             CameraExposureTimeInfo info = new CameraExposureTimeInfo()
             {
@@ -788,11 +789,61 @@ namespace GeneralTool.CoreLibrary.MVS
         }
 
         /// <summary>
+        /// 获取帧率
+        /// </summary>
+        /// <returns></returns>
+        public virtual MVCC_FLOATVALUE GetFrame()
+        {
+            MVCC_FLOATVALUE value = new MVSCameraProvider.MVCC_FLOATVALUE();
+            _ = M_MyCamera.MV_CC_GetFrameRate_NET(ref value);
+            return value;
+        }
+
+        /// <summary>
+        /// 设置帧率
+        /// </summary>
+        /// <param name="frame"></param>
+        public virtual void SetFrame(int frame)
+        {
+            lock (M_MyCamera)
+            {
+                this.StopGrab();
+                _ = M_MyCamera.MV_CC_SetFrameRate_NET(frame);
+                _ = StartGrab();
+            }
+        }
+
+        /// <summary>
+        /// 设置触发模式
+        /// </summary>
+        /// <param name="hardTrigger">是否硬触发</param>
+        public virtual void SetTrigger(bool hardTrigger)
+        {
+            lock (M_MyCamera)
+            {
+                this.StopGrab();
+                _ = M_MyCamera.MV_CC_SetTriggerMode_NET(hardTrigger ? 1u : 0u);
+                _ = StartGrab();
+            }
+        }
+
+        /// <summary>
+        /// 获取触发模式
+        /// </summary>
+        /// <returns></returns>
+        public virtual MVCC_ENUMVALUE GetTrigger()
+        {
+            var value = new MVCC_ENUMVALUE();
+            _ = M_MyCamera.MV_CC_GetTriggerMode_NET(ref value);
+            return value;
+        }
+
+        /// <summary>
         /// 更新大小
         /// </summary>
         /// <param name="rect"></param>
         /// <returns></returns>
-        public static Rectangle ParseRect(Rectangle rect,Size maxSize,int offXInc,int offYInc,int widthInc,int heightInc)
+        public static Rectangle ParseRect(Rectangle rect, Size maxSize, int offXInc, int offYInc, int widthInc, int heightInc)
         {
             //查看当前Rect的大小是否与最大值一样
             if (rect.Width == maxSize.Width && rect.Height == maxSize.Height)
@@ -802,9 +853,9 @@ namespace GeneralTool.CoreLibrary.MVS
             }
 
             #region New
-          
+
             Point p1 = new Point(rect.X, rect.Y);
-          
+
             //将其扩大
             //计算左上角偏移点
             int xResult = p1.X - (p1.X % offXInc);

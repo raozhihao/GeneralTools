@@ -53,6 +53,9 @@ namespace GeneralTool.CoreLibrary.TaskLib
         /// <returns></returns>
         bool Start(string ip, int port);
 
+        event EventHandler<ServerRequest> ServerRequestEvent;
+        event EventHandler<ServerResponse> ServerResponseEvent;
+
         #endregion Public 方法
     }
 }
