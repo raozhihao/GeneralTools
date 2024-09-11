@@ -31,6 +31,10 @@ namespace GeneralTool.CoreLibrary.IniHelpers
         public static int MaxSectionSize { get; set; } = 32767; // 32 KB
 
         /// <summary>
+        /// 读取值时使用的编码方式
+        /// </summary>
+        public static Encoding ReadEncoding { get; set; } = Encoding.UTF8;
+        /// <summary>
         /// Ini对象,使用默认的保存位置
         /// </summary>
         public static IniHelper IniHelperInstance { get; private set; }
@@ -516,7 +520,7 @@ namespace GeneralTool.CoreLibrary.IniHelpers
                                                   IniHelper.MaxSectionSize,
                                                   Path);
 
-            var str = Encoding.UTF8.GetString(buffer, 0, rlen);
+            var str = ReadEncoding.GetString(buffer, 0, rlen);
             var index = str.IndexOf(';');
             if (index > -1)
             {

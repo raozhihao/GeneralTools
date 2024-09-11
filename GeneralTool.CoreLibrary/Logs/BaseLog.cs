@@ -21,6 +21,7 @@ namespace GeneralTool.CoreLibrary.Logs
         public bool ShowLogThreadId { get; set; }
         /// <inheritdoc/>
         public bool ShowLogTime { get; set; } = true;
+        public string TimeFomart { get; set; } = "yyyy-MM-dd HH:mm:ss.fff";
 
         /// <inheritdoc/>
         public event EventHandler<LogMessageInfo> LogEvent;

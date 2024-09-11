@@ -6,7 +6,7 @@ using GeneralTool.CoreLibrary.TaskLib;
 
 namespace GeneralTool.CoreLibrary.Attributes
 {
-   
+
     public abstract class RouteVisibleEditor
     {
 
@@ -156,6 +156,7 @@ namespace GeneralTool.CoreLibrary.Attributes
             get => reReponseFomartErroString;
             set => RegisterProperty(ref reReponseFomartErroString, value);
         }
+
 
         #endregion Public 属性
 

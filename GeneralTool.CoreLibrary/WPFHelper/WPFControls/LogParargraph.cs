@@ -95,7 +95,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         public static readonly DependencyProperty ShowFullMsgProperty = DependencyProperty.RegisterAttached(nameof(ShowFullMsg), typeof(bool), typeof(LogParargraph), new PropertyMetadata(true));
 
         #endregion Public 字段
-
+        
         /// <summary>
         /// 
         /// </summary>
@@ -176,34 +176,41 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
         private readonly object Locker = new object();
         private void Dp_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            Dispatcher.Invoke(new Action(() =>
+            try
             {
-                lock (Locker)
-                {
-                    ObservableCollection<LogMessageInfo> list = sender as ObservableCollection<LogMessageInfo>;
-                    if (Inlines.Count > MaxLineCount)
-                    {
-                        list.CollectionChanged -= Dp_CollectionChanged;
-                        list.Clear();
-                        Inlines.Clear();
+                Dispatcher.Invoke(new Action(() =>
+                   {
+                       lock (Locker)
+                       {
+                           ObservableCollection<LogMessageInfo> list = sender as ObservableCollection<LogMessageInfo>;
+                           if (Inlines.Count > MaxLineCount)
+                           {
+                               list.CollectionChanged -= Dp_CollectionChanged;
+                               list.Clear();
+                               Inlines.Clear();
 
-                        list.CollectionChanged += Dp_CollectionChanged;
-                    }
-                    else if (e.Action == NotifyCollectionChangedAction.Remove)
-                    {
-                        list.CollectionChanged -= Dp_CollectionChanged;
-                        RemoveItem(e.OldItems);
-                        list.CollectionChanged += Dp_CollectionChanged;
-                    }
-                    else if (list.Count == 0)
-                        Inlines.Clear();
-                    if (e.Action == NotifyCollectionChangedAction.Add)
-                    {
-                        AddItems(e.NewItems, e.Action);
-                    }
+                               list.CollectionChanged += Dp_CollectionChanged;
+                           }
+                           else if (e.Action == NotifyCollectionChangedAction.Remove)
+                           {
+                               list.CollectionChanged -= Dp_CollectionChanged;
+                               RemoveItem(e.OldItems);
+                               list.CollectionChanged += Dp_CollectionChanged;
+                           }
+                           else if (list.Count == 0)
+                               Inlines.Clear();
+                           if (e.Action == NotifyCollectionChangedAction.Add)
+                           {
+                               AddItems(e.NewItems, e.Action);
+                           }
 
-                }
-            }));
+                       }
+                   }), System.Windows.Threading.DispatcherPriority.Background, default, TimeSpan.FromSeconds(2));
+            }
+            catch (Exception)
+            {
+
+            }
         }
 
         private void RemoveItem(IList oldItems)

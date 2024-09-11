@@ -176,7 +176,7 @@ namespace GeneralTool.CoreLibrary.TaskLib
                                 {
                                     if (serverResponse.Result != null)
                                     {
-                                        var type = serverResponse.Result.GetType();
+                                         var type = serverResponse.Result.GetType();
                                         if (type == typeof(string) || type.IsValueType || type.IsAbstract || type.IsInterface)
                                             serverResponse.ResultString = serverResponse.Result + "";
                                         else

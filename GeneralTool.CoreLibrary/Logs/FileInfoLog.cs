@@ -240,7 +240,7 @@ namespace GeneralTool.CoreLibrary.Logs
             string headInfo = "";
             if (ShowLogTypeInfo) headInfo = "[" + result.LogType + "]";
             if (ShowLogThreadId) headInfo += " " + result.CurrentThreadId + " ";
-            if (ShowLogTime) headInfo += " " + result.CurrentTime + ":";
+            if (ShowLogTime) headInfo += " " + result.CurrentTime.ToString(this.TimeFomart) + ":";
 
             string msg = $"{headInfo}{result.Msg}";
             result.FullMsg = msg;

@@ -47,6 +47,14 @@ namespace GeneralTool.CoreLibrary.MVS
         }
 
         /// <summary>
+        /// 是否正在采集中
+        /// </summary>
+        public bool IsGrabing
+        {
+            get; protected set;
+        }
+
+        /// <summary>
         /// 是否注册图像回调
         /// </summary>
         public bool RegisterImageCallBack { get; set; }
@@ -169,7 +177,6 @@ namespace GeneralTool.CoreLibrary.MVS
                 }
             }
 
-
             ErroMsg = $"没有找到IP为 [{ip}] 的相机";
             return -1;
         }
@@ -178,10 +185,11 @@ namespace GeneralTool.CoreLibrary.MVS
         /// 打开相机,以下标
         /// </summary>
         /// <param name="index">相机下标</param>
-        /// <param name="exposureTime"></param>
+        /// <param name="exposureTime">设置曝光</param>
+        /// <param name="autoGrab">直接采集</param>
         /// <returns></returns>
 
-        public virtual bool Open(int index = 0, double exposureTime = -1)
+        public virtual bool Open(int index = 0, double exposureTime = -1, bool autoGrab = true)
         {
             if (IsOpen)
                 return true;
@@ -199,7 +207,7 @@ namespace GeneralTool.CoreLibrary.MVS
                 return false;
             }
             string first = devices[index];
-            return Open(first, exposureTime);
+            return Open(first, exposureTime, autoGrab);
         }
 
         /// <summary>
@@ -207,9 +215,16 @@ namespace GeneralTool.CoreLibrary.MVS
         /// </summary>
         /// <param name="ip"></param>
         /// <param name="exposureTime"></param>
+        /// <param name="autoGrab">直接采集</param>
         /// <returns></returns>
-        public virtual bool Open(string ip, double exposureTime = -1)
+        public virtual bool Open(string ip, double exposureTime = -1, bool autoGrab = true)
         {
+            if (IsOpen)
+                return true;
+
+            this.IsOpen = false;
+            this.IsGrabing = false;
+
             if (string.IsNullOrWhiteSpace(ip))
             {
                 ErroMsg = "没有设置IP地址";
@@ -295,13 +310,18 @@ namespace GeneralTool.CoreLibrary.MVS
                 return false;
 
             MaxSize = new Size(rect.MaxWidth, rect.MaxHeight);
-
+            this.buffer = new byte[MaxSize.Width * MaxSize.Height * 3];
             if (exposureTime > 0)
             {
                 //设置曝光
                 _ = M_MyCamera.MV_CC_SetExposureTime_NET(Convert.ToSingle(exposureTime));
             }
-            return StartGrab();
+
+            if (autoGrab)
+                return StartGrab();
+
+            this.IsOpen = true;
+            return true;
         }
 
         /// <summary>
@@ -315,7 +335,7 @@ namespace GeneralTool.CoreLibrary.MVS
             {
                 // ch:注册回调函数 | en:Register image callback
                 ImageCallback = new cbOutputExdelegate(ImageCallbackFunc);
-                nRet = this.M_MyCamera.MV_CC_RegisterImageCallBackEx_NET(ImageCallback, IntPtr.Zero);
+                nRet = this.M_MyCamera.MV_CC_RegisterImageCallBackForBGR_NET(ImageCallback, IntPtr.Zero);
                 if (MVSCameraProvider.MV_OK != nRet)
                 {
                     ShowErrorMsg("无法注册图像回调", nRet);
@@ -327,14 +347,15 @@ namespace GeneralTool.CoreLibrary.MVS
             nRet = M_MyCamera.MV_CC_StartGrabbing_NET();
             if (MVSCameraProvider.MV_OK != nRet)
             {
-                IsOpen = false;
+                this.IsOpen = false;
                 //this.ErroMsg = "Start Grabbing Fail!" + nRet;
                 ShowErrorMsg("采集出错", nRet);
                 Close();
                 return false;
             }
 
-            IsOpen = true;
+            this.IsGrabing = true;
+            this.IsOpen = true;
             return true;
         }
 
@@ -352,6 +373,7 @@ namespace GeneralTool.CoreLibrary.MVS
             {
                 //ShowErrorMsg("Stop Grabbing Fail!", nRet);
             }
+            this.IsGrabing = false;
         }
 
         private void CreateBitmap(ref Bitmap bitmap, int width, int height, PixelFormat format)
@@ -403,20 +425,31 @@ namespace GeneralTool.CoreLibrary.MVS
         }
 
         public event Action<Bitmap> OnBitmapChanged;
+        public event Action<IntPtr, MV_FRAME_OUT_INFO_EX> ImageCallBackEvent;
         private void ImageCallbackFunc(IntPtr pData, ref MV_FRAME_OUT_INFO_EX pFrameInfo, IntPtr pUser)
         {
             var width = (int)pFrameInfo.nWidth;
             var height = (int)pFrameInfo.nHeight;
-            var buffer = new byte[width * height * 3];
+            // var buffer = new byte[width * height * 3];
 
-            var pBmpImage = Marshal.UnsafeAddrOfPinnedArrayElement(buffer, 0);
-            using (var bmp = new Bitmap(width, height, width * 3, PixelFormat.Format24bppRgb, pBmpImage))
+            if (this.ImageCallBackEvent != null)
             {
-                this.OnBitmapChanged?.Invoke(bmp);
+                this.ImageCallBackEvent.Invoke(pData, pFrameInfo);
+                return;
+            }
+
+
+            try
+            {
+                using (var map = new Bitmap(width, height, width * 3, PixelFormat.Format24bppRgb, pData))
+                    this.OnBitmapChanged?.Invoke(map);
+            }
+            catch (Exception)
+            {
             }
         }
 
-        byte[] buffer = new byte[5500 * 4000 * 3];
+        byte[] buffer;
         private cbOutputExdelegate ImageCallback;
 
 
@@ -435,7 +468,6 @@ namespace GeneralTool.CoreLibrary.MVS
             }
             lock (M_MyCamera)
             {
-
                 ErroMsg = "";
                 MVSCameraProvider.MV_FRAME_OUT_INFO_EX stFrameInfoEx = new MVSCameraProvider.MV_FRAME_OUT_INFO_EX();
 
@@ -635,6 +667,7 @@ namespace GeneralTool.CoreLibrary.MVS
 
             lock (M_MyCamera)
             {
+                var grabing = this.IsGrabing;
                 //先停止采集
                 StopGrab();
                 //将其设置到最大值
@@ -654,7 +687,8 @@ namespace GeneralTool.CoreLibrary.MVS
                 //检验是因为更换相机后造的
                 CameraRectangleInfo resultRect = GetCurrentAOISize();
                 rect = resultRect.ToRectangle();
-                re = StartGrab();
+                if (this.IsGrabing)
+                    re = StartGrab();
                 return re;
             }
 
@@ -746,7 +780,8 @@ namespace GeneralTool.CoreLibrary.MVS
             }
             renderBitmap?.Dispose();
             renderBitmap = null;
-            IsOpen = false;
+            this.IsOpen = false;
+            this.IsGrabing = false;
         }
 
         public virtual void ShowErrorMsg(string csMessage, int nErrorNum)
@@ -779,13 +814,7 @@ namespace GeneralTool.CoreLibrary.MVS
         /// <param name="time"></param>
         public virtual void SetExposureTime(double time)
         {
-            //应对JAI的相机,曝光必须要先停止采集
-            lock (M_MyCamera)
-            {
-                StopGrab();
-                _ = M_MyCamera.MV_CC_SetExposureTime_NET(Convert.ToSingle(time));
-                _ = StartGrab();
-            }
+            _ = M_MyCamera.MV_CC_SetExposureTime_NET(Convert.ToSingle(time));
         }
 
         /// <summary>
@@ -805,12 +834,7 @@ namespace GeneralTool.CoreLibrary.MVS
         /// <param name="frame"></param>
         public virtual void SetFrame(int frame)
         {
-            lock (M_MyCamera)
-            {
-                this.StopGrab();
-                _ = M_MyCamera.MV_CC_SetFrameRate_NET(frame);
-                _ = StartGrab();
-            }
+            _ = M_MyCamera.MV_CC_SetFrameRate_NET(frame);
         }
 
         /// <summary>
@@ -819,12 +843,7 @@ namespace GeneralTool.CoreLibrary.MVS
         /// <param name="hardTrigger">是否硬触发</param>
         public virtual void SetTrigger(bool hardTrigger)
         {
-            lock (M_MyCamera)
-            {
-                this.StopGrab();
-                _ = M_MyCamera.MV_CC_SetTriggerMode_NET(hardTrigger ? 1u : 0u);
-                _ = StartGrab();
-            }
+            _ = M_MyCamera.MV_CC_SetTriggerMode_NET(hardTrigger ? 1u : 0u);
         }
 
         /// <summary>

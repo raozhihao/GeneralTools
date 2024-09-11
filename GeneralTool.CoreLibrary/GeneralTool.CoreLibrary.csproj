@@ -13,13 +13,13 @@
 		<Company>Person</Company>
 		<IncludeSymbols>True</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
-		<Version>24.04.18</Version>
+		<Version>24.09.19</Version>
 		<RunAnalyzersDuringBuild>True</RunAnalyzersDuringBuild>
 		<RunAnalyzersDuringLiveAnalysis>True</RunAnalyzersDuringLiveAnalysis>
 		<EnableNETAnalyzers>True</EnableNETAnalyzers>
 		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
-		<AssemblyVersion>24.04.18</AssemblyVersion>
-		<FileVersion>24.04.18</FileVersion>
+		<AssemblyVersion>24.09.19</AssemblyVersion>
+		<FileVersion>24.09.19</FileVersion>
 		<Title>GeneralTool.CoreLibrary</Title>
 		<Copyright>Copyright Rao©  2023</Copyright>
 		<DelaySign>True</DelaySign>

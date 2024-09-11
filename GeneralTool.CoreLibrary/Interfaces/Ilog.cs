@@ -169,6 +169,11 @@ namespace GeneralTool.CoreLibrary.Interfaces
         /// </summary>
         bool ShowLogTime { get; set; }
 
+        /// <summary>
+        /// 日志时间格式化
+        /// </summary>
+        string TimeFomart { get; set; }
+
         #endregion
     }
 }

@@ -45,16 +45,18 @@ namespace GeneralTool.CoreLibrary.MVS
         /// </summary>
         /// <param name="ip"></param>
         /// <param name="exposureTime">相机的初始设置曝光</param>
+        /// <param name="autoGrab">直接采集</param>
         /// <returns></returns>
-        bool Open(string ip, double exposureTime);
+        bool Open(string ip, double exposureTime, bool autoGrab = true);
 
         /// <summary>
         /// 打开指定的相机
         /// </summary>
         /// <param name="index"></param>
         /// <param name="exposureTime">相机的初始设置曝光</param>
+        /// <param name="autoGrab">直接采集</param>
         /// <returns></returns>
-        bool Open(int index = 0, double exposureTime = -1);
+        bool Open(int index = 0, double exposureTime = -1, bool autoGrab = true);
 
         /// <summary>
         /// 获取曝光

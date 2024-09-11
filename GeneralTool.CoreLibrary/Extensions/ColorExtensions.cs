@@ -29,7 +29,7 @@ namespace GeneralTool.CoreLibrary.Extensions
         /// </summary>
         /// <param name="color"></param>
         /// <returns></returns>
-        public static System.Drawing.Color ToDrawingColor(System.Windows.Media.Color color)
+        public static System.Drawing.Color ToDrawingColor(this System.Windows.Media.Color color)
         {
             return System.Drawing.Color.FromArgb(color.A, color.R, color.G, color.B);
         }
@@ -39,9 +39,18 @@ namespace GeneralTool.CoreLibrary.Extensions
         /// </summary>
         /// <param name="color"></param>
         /// <returns></returns>
-        public static System.Windows.Media.Color ToWindowColor(System.Drawing.Color color)
+        public static System.Windows.Media.Color ToWindowColor(this System.Drawing.Color color)
         {
             return System.Windows.Media.Color.FromArgb(color.A, color.R, color.G, color.B);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public static System.Windows.Media.Color GetRandomColor()
+        {
+            return System.Windows.Media.Color.FromRgb((byte)RandomEx.Next(0, 255), (byte)RandomEx.Next(0, 255), (byte)RandomEx.Next(0, 255));
         }
 
         /// <summary>
@@ -58,6 +67,8 @@ namespace GeneralTool.CoreLibrary.Extensions
         {
             return ToHexString(color.R, color.G, color.B);
         }
+
+       
 
         /// <summary>
         /// 
