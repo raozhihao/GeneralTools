@@ -5,6 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Controls.Primitives;
+using System.Runtime.CompilerServices;
 
 namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
 {
@@ -129,6 +130,9 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
             }
             this.isUpdating = true;
 
+            if (val < this.Min) val = Min;
+            if (val > this.Max) val = Max;
+            if (!IsDouble) val = Convert.ToInt32(val);
 
             this.Value = val;
 
@@ -157,11 +161,11 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
             set => this.SetValue(IsDoubleProperty, value);
         }
 
-        public readonly static DependencyProperty IsDoubleProperty = DependencyProperty.Register(nameof(IsDouble), typeof(bool), typeof(NumericControl), new PropertyMetadata(true,IsDoubleChangedMethod));
+        public readonly static DependencyProperty IsDoubleProperty = DependencyProperty.Register(nameof(IsDouble), typeof(bool), typeof(NumericControl), new PropertyMetadata(true, IsDoubleChangedMethod));
 
         private static void IsDoubleChangedMethod(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-           if(d is NumericControl n)
+            if (d is NumericControl n)
             {
                 n.SetTxt(n.Value);
             }
@@ -178,6 +182,43 @@ namespace GeneralTool.CoreLibrary.WPFHelper.WPFControls
 
         public readonly static DependencyProperty IntervalProperty = DependencyProperty.Register(nameof(Interval), typeof(double), typeof(NumericControl), new PropertyMetadata(1d));
 
+        /// <summary>
+        /// 最小值
+        /// </summary>
+        public double Min
+        {
+            get => (double)this.GetValue(MinProperty);
+            set => this.SetValue(MinProperty, value);
+        }
+
+        public readonly static DependencyProperty MinProperty = DependencyProperty.Register(nameof(Min), typeof(double), typeof(NumericControl), new PropertyMetadata(double.MinValue, MinValueChanged));
+
+        private static void MinValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is NumericControl n)
+            {
+                n.SetTxt(n.Value);
+            }
+        }
+
+        /// <summary>
+        /// 最大值
+        /// </summary>
+        public double Max
+        {
+            get => (double)this.GetValue(MaxProperty);
+            set => this.SetValue(MaxProperty, value);
+        }
+
+        public readonly static DependencyProperty MaxProperty = DependencyProperty.Register(nameof(Max), typeof(double), typeof(NumericControl), new PropertyMetadata(double.MaxValue, MaxValueChanged));
+
+        private static void MaxValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is NumericControl n)
+            {
+                n.SetTxt(n.Value);
+            }
+        }
 
         private static void ValueChangedMethod(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
