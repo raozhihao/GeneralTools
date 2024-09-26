@@ -477,7 +477,7 @@ namespace GeneralTool.CoreLibrary.WPFHelper.DiagramDesigner.Controls
                 }
             }
 
-            BlockItem block = Activator.CreateInstance(dragObject.DragType) as BlockItem;
+            BlockItem block = AppDomain.CurrentDomain.CreateInstance(dragObject.DragType).Unwrap() as BlockItem; //Activator.CreateInstance(dragObject.DragType) as BlockItem;
             block.FontSize = dragObject.FontSize;
             block.Background = dragObject.BackGround;
             block.Foreground = dragObject.ForceGround;

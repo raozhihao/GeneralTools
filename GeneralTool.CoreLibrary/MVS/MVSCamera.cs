@@ -438,15 +438,8 @@ namespace GeneralTool.CoreLibrary.MVS
                 return;
             }
 
-
-            try
-            {
-                using (var map = new Bitmap(width, height, width * 3, PixelFormat.Format24bppRgb, pData))
-                    this.OnBitmapChanged?.Invoke(map);
-            }
-            catch (Exception)
-            {
-            }
+            using (var map = new Bitmap(width, height, width * 3, PixelFormat.Format24bppRgb, pData))
+                this.OnBitmapChanged?.Invoke(map);
         }
 
         byte[] buffer;
